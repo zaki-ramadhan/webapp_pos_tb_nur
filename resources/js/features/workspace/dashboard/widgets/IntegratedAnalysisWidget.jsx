@@ -188,7 +188,7 @@ export default function IntegratedAnalysisWidget({
                                                         alt=""
                                                         className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
                                                     />
-                                                    <span className="text-sm font-semibold text-slate-800 group-hover:text-blue-900 truncate max-w-[180px] sm:max-w-[320px] lg:max-w-[420px]">
+                                                    <span className="text-sm font-medium text-slate-800 group-hover:text-blue-900 truncate max-w-[180px] sm:max-w-[320px] lg:max-w-[420px]">
                                                         {rule.antecedent}
                                                     </span>
                                                     {rule.antecedentAbc && (
@@ -224,7 +224,7 @@ export default function IntegratedAnalysisWidget({
                                                         alt=""
                                                         className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
                                                     />
-                                                    <span className="text-sm font-semibold text-slate-800 group-hover:text-blue-900 truncate max-w-[180px] sm:max-w-[320px] lg:max-w-[420px]">
+                                                    <span className="text-sm font-medium text-slate-800 group-hover:text-blue-900 truncate max-w-[180px] sm:max-w-[320px] lg:max-w-[420px]">
                                                         {rule.consequent}
                                                     </span>
                                                     {rule.consequentAbc && (

@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title inertia><?php echo e(config('app.name', 'TB Nur POS')); ?></title>
-        <link rel="icon" type="image/png" href="/logo_icon.png" />
+        <link rel="icon" type="image/webp" href="/logo_icon.webp" />
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link
             href="https://fonts.bunny.net/css?family=montserrat:400,500,600,700,800"
@@ -49,6 +49,23 @@
                 50% { opacity: 0.5; }
             }
         </style>
+        <script>
+            (function() {
+                function removeLoader() {
+                    var loader = document.getElementById('initial-loader');
+                    if (loader) {
+                        loader.style.opacity = '0';
+                        setTimeout(function() { if (loader && loader.parentNode) loader.parentNode.removeChild(loader); }, 300);
+                    }
+                }
+                if (document.readyState === 'complete') {
+                    setTimeout(removeLoader, 200);
+                } else {
+                    window.addEventListener('load', function() { setTimeout(removeLoader, 200); });
+                }
+                setTimeout(removeLoader, 2500);
+            })();
+        </script>
         <?php if (isset($component)) { $__componentOriginal1830bdc8f8b965a5838ec47487b5507c = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal1830bdc8f8b965a5838ec47487b5507c = $attributes; } ?>
 <?php $component = Inertia\View\Components\App::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
