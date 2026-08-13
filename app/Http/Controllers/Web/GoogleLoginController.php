@@ -303,30 +303,21 @@ class GoogleLoginController extends Controller
                 <p>Autentikasi berhasil, mengalihkan...</p>
                 <script>
                     (function() {
-                        var sent = false;
                         // BroadcastChannel: COOP-safe, same-origin
                         try {
                             var bc = new BroadcastChannel("google_auth");
                             bc.postMessage({ status: "success", message: %s });
                             bc.close();
-                            sent = true;
-                        } catch(e) {}
-
-                        // Fallback: postMessage via window.opener
-                        if (!sent && window.opener && !window.opener.closed) {
-                            try {
-                                window.opener.postMessage({ status: "success", message: %s }, window.location.origin);
-                                sent = true;
-                            } catch(e) {}
+                        } catch(e) {
+                            // Fallback: postMessage via window.opener
+                            if (window.opener) {
+                                try { window.opener.postMessage({ status: "success", message: %s }, window.location.origin); } catch(e2) {}
+                            }
                         }
 
-                        // Last resort: redirect this popup to dashboard
+                        // Always close popup — never redirect it to dashboard
                         setTimeout(function() {
-                            if (window.opener && !window.opener.closed) {
-                                window.close();
-                            } else {
-                                window.location.href = %s;
-                            }
+                            window.close();
                         }, 300);
                     })();
                 </script>
