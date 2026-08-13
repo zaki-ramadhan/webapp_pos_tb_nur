@@ -276,6 +276,7 @@ class GoogleLoginController extends Controller
 
     private function respondWithPopupSuccess(string $message): \Illuminate\Http\Response
     {
+        $dashboardUrl = route('dashboard');
         $html = sprintf('
             <!DOCTYPE html>
             <html>
@@ -291,31 +292,33 @@ class GoogleLoginController extends Controller
                 <div class="loader"></div>
                 <p>Autentikasi berhasil, mengalihkan...</p>
                 <script>
-                    if (window.opener) {
-                        try {
+                    var targetUrl = %s;
+                    try {
+                        if (window.opener && !window.opener.closed) {
                             window.opener.postMessage({
                                 status: "success",
                                 message: %s
                             }, "*");
-                        } catch (e) {
-                            console.error("Popup communication error:", e);
+                            setTimeout(function() {
+                                window.close();
+                            }, 150);
+                        } else {
+                            window.location.href = targetUrl;
                         }
-                        setTimeout(function() {
-                            window.close();
-                        }, 150);
-                    } else {
-                        window.location.href = %s;
+                    } catch (e) {
+                        window.location.href = targetUrl;
                     }
                 </script>
             </body>
             </html>
-        ', json_encode($message), json_encode(route('dashboard')));
+        ', json_encode($dashboardUrl), json_encode($message));
 
         return response($html)->header('Content-Type', 'text/html');
     }
 
     private function respondWithPopupError(string $message): \Illuminate\Http\Response
     {
+        $homeUrl = route('home');
         $html = sprintf('
             <!DOCTYPE html>
             <html>
@@ -331,25 +334,26 @@ class GoogleLoginController extends Controller
                 <div class="loader"></div>
                 <p>Autentikasi gagal: %s. Menutup...</p>
                 <script>
-                    if (window.opener) {
-                        try {
+                    var targetUrl = %s;
+                    try {
+                        if (window.opener && !window.opener.closed) {
                             window.opener.postMessage({
                                 status: "error",
                                 message: %s
                             }, "*");
-                        } catch (e) {
-                            console.error("Popup communication error:", e);
+                            setTimeout(function() {
+                                window.close();
+                            }, 150);
+                        } else {
+                            window.location.href = targetUrl;
                         }
-                        setTimeout(function() {
-                            window.close();
-                        }, 150);
-                    } else {
-                        window.location.href = "/?error=" + encodeURIComponent(%s);
+                    } catch (e) {
+                        window.location.href = targetUrl;
                     }
                 </script>
             </body>
             </html>
-        ', htmlspecialchars($message), json_encode($message), json_encode($message));
+        ', htmlspecialchars($message, ENT_QUOTES, 'UTF-8'), json_encode($homeUrl), json_encode($message));
 
         return response($html)->header('Content-Type', 'text/html');
     }
