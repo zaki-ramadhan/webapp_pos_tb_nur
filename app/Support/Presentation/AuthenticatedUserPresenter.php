@@ -47,14 +47,15 @@ final class AuthenticatedUserPresenter
     private static function resolveRole(User $user): string
     {
         try {
+            $email = strtolower((string) $user->email);
+            if (in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true) || $user->hasAnyRoleCodes(['super_admin'])) {
+                return 'Owner';
+            }
+
             $user->loadMissing('accessGroups');
             $groupName = $user->accessGroups->first()?->name;
             if ($groupName) {
                 return $groupName;
-            }
-
-            if ($user->hasAnyRoleCodes(['super_admin'])) {
-                return 'Owner';
             }
 
             if (! $user->relationLoaded('roles')) {
