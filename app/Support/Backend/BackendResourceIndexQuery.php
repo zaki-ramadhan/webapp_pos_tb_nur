@@ -106,9 +106,26 @@ class BackendResourceIndexQuery
             $query->orderByDesc("{$tableName}.id");
         }
 
-        return $query
+        $paginator = $query
             ->paginate($perPage)
             ->withQueryString();
+
+        if ($blueprint->key === 'products') {
+            $items = $paginator->items();
+            $productIds = collect($items)->pluck('id')->all();
+            if (count($productIds) > 0) {
+                $totals = app(\App\Support\Backend\Queries\InventoryInquiryQueryService::class)
+                    ->buildStockTotalsByProduct($productIds);
+
+                foreach ($items as $product) {
+                    $qty = (float) ($totals[$product->id] ?? 0.0);
+                    $product->setAttribute('stock_on_hand', $qty);
+                    $product->setAttribute('stock_available', $qty);
+                }
+            }
+        }
+
+        return $paginator;
     }
 
     /**
