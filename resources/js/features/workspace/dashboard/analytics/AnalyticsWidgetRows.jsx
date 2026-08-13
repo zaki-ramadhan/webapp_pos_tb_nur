@@ -39,65 +39,61 @@ export function RuleSummaryRow({ rule }) {
             <div className="mt-2.5 text-sm leading-6 font-medium text-brand-darker">
                 <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:flex-wrap">
                     <span className="text-slate-500 font-medium">Jika membeli:</span>
-                    <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 border border-blue-200 px-2 py-1">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (typeof window !== 'undefined') {
-                                    window.dispatchEvent(
-                                        new CustomEvent('workspace:open-page', {
-                                            detail: {
-                                                pageId: 'items-services',
-                                                recordId: rule.antecedentId ?? undefined,
-                                                label: rule.antecedent,
-                                                tabLabel: rule.antecedent,
-                                                openForm: Boolean(rule.antecedentId),
-                                            },
-                                        })
-                                    );
-                                }
-                            }}
-                            className="font-medium underline text-blue-700 hover:text-blue-900 cursor-pointer underline-offset-2 transition-colors text-left"
-                            title={`Klik untuk membuka halaman & detail data ${rule.antecedent}`}
-                        >
-                            {rule.antecedent}
-                        </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (typeof window !== 'undefined') {
+                                window.dispatchEvent(
+                                    new CustomEvent('workspace:open-page', {
+                                        detail: {
+                                            pageId: 'items-services',
+                                            recordId: rule.antecedentId ?? undefined,
+                                            label: rule.antecedent,
+                                            tabLabel: rule.antecedent,
+                                            openForm: Boolean(rule.antecedentId),
+                                        },
+                                    })
+                                );
+                            }
+                        }}
+                        className="group inline-flex items-center gap-1.5 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-blue-100/80 hover:border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 text-left"
+                        title={`Klik untuk membuka halaman & detail data ${rule.antecedent}`}
+                    >
+                        <span className="font-semibold text-blue-950 group-hover:text-blue-900">{rule.antecedent}</span>
                         {rule.antecedentAbc && (
                             <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.antecedentColor}18`, color: rule.antecedentColor }}>
                                 Kat {rule.antecedentAbc}
                             </span>
                         )}
-                    </span>
+                    </button>
                     <span className="text-slate-400 sm:mx-1 font-medium">&rarr; Maka tawarkan:</span>
-                    <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (typeof window !== 'undefined') {
-                                    window.dispatchEvent(
-                                        new CustomEvent('workspace:open-page', {
-                                            detail: {
-                                                pageId: 'items-services',
-                                                recordId: rule.consequentId ?? undefined,
-                                                label: rule.consequent,
-                                                tabLabel: rule.consequent,
-                                                openForm: Boolean(rule.consequentId),
-                                            },
-                                        })
-                                    );
-                                }
-                            }}
-                            className="font-medium underline text-blue-700 hover:text-blue-900 cursor-pointer underline-offset-2 transition-colors text-left"
-                            title={`Klik untuk membuka halaman & detail data ${rule.consequent}`}
-                        >
-                            {rule.consequent}
-                        </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (typeof window !== 'undefined') {
+                                window.dispatchEvent(
+                                    new CustomEvent('workspace:open-page', {
+                                        detail: {
+                                            pageId: 'items-services',
+                                            recordId: rule.consequentId ?? undefined,
+                                            label: rule.consequent,
+                                            tabLabel: rule.consequent,
+                                            openForm: Boolean(rule.consequentId),
+                                        },
+                                    })
+                                );
+                            }
+                        }}
+                        className="group inline-flex items-center gap-1.5 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-emerald-100/80 hover:border-emerald-300 focus:outline-none focus:ring-1 focus:ring-emerald-400 text-left"
+                        title={`Klik untuk membuka halaman & detail data ${rule.consequent}`}
+                    >
+                        <span className="font-semibold text-emerald-950 group-hover:text-emerald-900">{rule.consequent}</span>
                         {rule.consequentAbc && (
                             <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.consequentColor}18`, color: rule.consequentColor }}>
                                 Kat {rule.consequentAbc}
                             </span>
                         )}
-                    </span>
+                    </button>
                 </div>
             </div>
 
