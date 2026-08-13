@@ -58,7 +58,7 @@ export function RuleSummaryRow({ rule }) {
                         }}
                         className="group inline-flex items-center gap-1.5 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-blue-100/80 hover:border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 text-left"
                     >
-                        <span className="font-semibold text-blue-950 group-hover:text-blue-900">{rule.antecedent}</span>
+                        <span className="font-medium text-blue-950 group-hover:text-blue-900">{rule.antecedent}</span>
                         {rule.antecedentAbc && (
                             <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.antecedentColor}18`, color: rule.antecedentColor }}>
                                 Kat {rule.antecedentAbc}
@@ -85,7 +85,7 @@ export function RuleSummaryRow({ rule }) {
                         }}
                         className="group inline-flex items-center gap-1.5 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-emerald-100/80 hover:border-emerald-300 focus:outline-none focus:ring-1 focus:ring-emerald-400 text-left"
                     >
-                        <span className="font-semibold text-emerald-950 group-hover:text-emerald-900">{rule.consequent}</span>
+                        <span className="font-medium text-emerald-950 group-hover:text-emerald-900">{rule.consequent}</span>
                         {rule.consequentAbc && (
                             <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.consequentColor}18`, color: rule.consequentColor }}>
                                 Kat {rule.consequentAbc}
