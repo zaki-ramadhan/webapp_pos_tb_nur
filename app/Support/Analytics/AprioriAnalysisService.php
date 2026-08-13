@@ -73,50 +73,54 @@ class AprioriAnalysisService
             }
         }
 
-      // Hitung itemset 1-frequent
+        // Hitung itemset 1-frequent & 2-frequent (dengan adaptive minSupport agar selalu mendapatkan minimal 7 rule)
+        $effectiveMinSupport = $minSupport;
+        $rules = [];
 
-        $frequent1 = [];
-        foreach ($allProducts as $pid => $count) {
-            $support = $count / $n;
-            if ($support >= $minSupport) {
-                $frequent1[$pid] = $support;
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            $frequent1 = [];
+            foreach ($allProducts as $pid => $count) {
+                $support = $count / $n;
+                if ($support >= $effectiveMinSupport) {
+                    $frequent1[$pid] = $support;
+                }
             }
-        }
 
-      // Hitung itemset 2-frequent
+            $frequent2 = [];
+            $f1_keys = array_keys($frequent1);
+            $num_f1 = count($f1_keys);
 
-        $frequent2 = [];
-        $f1_keys = array_keys($frequent1);
-        $num_f1 = count($f1_keys);
+            for ($i = 0; $i < $num_f1; $i++) {
+                for ($j = $i + 1; $j < $num_f1; $j++) {
+                    $pid1 = $f1_keys[$i];
+                    $pid2 = $f1_keys[$j];
 
-        for ($i = 0; $i < $num_f1; $i++) {
-            for ($j = $i + 1; $j < $num_f1; $j++) {
-                $pid1 = $f1_keys[$i];
-                $pid2 = $f1_keys[$j];
+                    $coCount = 0;
+                    foreach ($transactionItems as $itemset) {
+                        if (in_array($pid1, $itemset) && in_array($pid2, $itemset)) {
+                            $coCount++;
+                        }
+                    }
 
-              // Hitung kemunculan
-
-                $coCount = 0;
-                foreach ($transactionItems as $itemset) {
-                    if (in_array($pid1, $itemset) && in_array($pid2, $itemset)) {
-                        $coCount++;
+                    $support = $coCount / $n;
+                    if ($support >= $effectiveMinSupport) {
+                        $frequent2[] = [
+                            'items' => [$pid1, $pid2],
+                            'support' => $support,
+                        ];
                     }
                 }
-
-                $support = $coCount / $n;
-                if ($support >= $minSupport) {
-                    $frequent2[] = [
-                        'items' => [$pid1, $pid2],
-                        'support' => $support,
-                    ];
-                }
             }
+
+            $rules = [];
+            $ruleId = 1;
+            // Peta kategori ABC sama
+            // ...
+            if (count($frequent2) >= 4 || $effectiveMinSupport <= 0.01) {
+                break;
+            }
+            $effectiveMinSupport = max(0.01, $effectiveMinSupport / 2);
         }
-
-      // Buat aturan asosiasi
-
-        $rules = [];
-        $ruleId = 1;
 
       // Peta kategori ABC
 

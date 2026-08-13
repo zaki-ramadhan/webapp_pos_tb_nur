@@ -215,37 +215,36 @@ class TransactionDataSeeder extends Seeder
 
         // 5. Sales Invoices (Rich Catalog, Varied Tactics & 18.5% YoY Growth in 2026)
         $salesPatterns = [
-            // A ↔ C Jual Silang (Utama + Aksesoris) -> Blue bars
-            [$pSemen => 15, $pKuas => 2,  $pThn => 1],
-            [$pSemen => 20, $pLem => 3,   $pKran => 2],
-            [$pPasir => 2,  $pKuas => 2],
-            [$pSemen => 12, $pPasir => 1, $pKuas => 1],
-            [$pBesi => 10,  $pLem => 2],
+            // Pair 1: Semen + Kuas (A ↔ C Blue)
+            [$pSemen => 15, $pKuas => 2, $pThn => 1],
+            [$pSemen => 12, $pKuas => 2, $pPasir => 1],
+            [$pSemen => 20, $pKuas => 3],
 
-            // A → A Paket Bundling (Utama + Utama) -> Green bars
+            // Pair 2: Pasir + Thinner (A ↔ C Blue)
+            [$pPasir => 2,  $pThn => 2,  $pSemen => 10],
+            [$pPasir => 3,  $pThn => 1],
+
+            // Pair 3: Semen + Pasir (A → A Green)
             [$pSemen => 15, $pPasir => 2],
-            [$pSemen3 => 18, $pPasirC => 2],
             [$pSemen => 22, $pPasir => 2, $pBes12 => 6],
             [$pSemen => 10, $pPasir => 1, $pBes8 => 8],
-            [$pSemen => 14, $pPasir => 2],
 
-            // B → B Paket Pelengkap (Stabil + Stabil) -> Orange bars
+            // Pair 4: Semen3 + PasirC (A → A Green)
+            [$pSemen3 => 18, $pPasirC => 2],
+            [$pSemen3 => 15, $pPasirC => 2, $pMortar => 4],
+
+            // Pair 5: Pipa + Kran (B → B Orange)
             [$pPipa => 8,   $pKran => 3],
             [$pPipa12 => 10,$pKran => 2],
             [$pPipa4 => 6,  $pKran => 2],
-            [$pCat => 4,    $pDulux => 2],
-            [$pSpnd => 6,   $pBaja => 8],
 
-            // C → C Display Rak Rakit (Aksesoris + Aksesoris) -> Purple bars
-            [$pKuas => 3,   $pThn => 2],
-            [$pLem => 4,    $pKuas => 2],
+            // Pair 6: Cat + Thinner (B → B Orange)
+            [$pCat => 4,    $pThn => 2],
+            [$pDulux => 2,  $pThn => 1],
+
+            // Pair 7: Sekop + Kawat (C → C Purple)
             [$pSekop => 2,  $pKawat => 3],
-            [$pPaku => 4,   $pKabel => 2],
-
-            // General mixed orders
-            [$pSemen => 10, $pBata => 500],
-            [$pAqua => 3,   $pKuas => 2],
-            [$pCat => 3,    $pThn => 1],
+            [$pPaku => 4,   $pKawat => 2, $pSekop => 1],
         ];
 
         $siIds = [];
