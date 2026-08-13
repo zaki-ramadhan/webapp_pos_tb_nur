@@ -18,6 +18,30 @@ class InventoryInquiryQueryService
 {
     use HasQueryHelpers;
     /**
+     * @param  array<int, int>  $productIds
+     * @return array<int, float>
+     */
+    public function buildStockTotalsByProduct(array $productIds = []): array
+    {
+        $filters = [];
+        if (count($productIds) === 1) {
+            $filters['product_id'] = $productIds[0];
+        }
+        $compositeStockMap = $this->buildStockMap($filters);
+        
+        $totals = [];
+        foreach ($compositeStockMap as $compositeKey => $qty) {
+            $parts = explode(':', $compositeKey);
+            $pid = (int) ($parts[0] ?? 0);
+            if ($pid > 0 && (empty($productIds) || in_array($pid, $productIds, true))) {
+                $totals[$pid] = (float) ($totals[$pid] ?? 0.0) + (float) $qty;
+            }
+        }
+
+        return $totals;
+    }
+
+    /**
      * @param  array<string, mixed>  $filters
      */
     public function paginateItemLocations(array $filters): LengthAwarePaginator
