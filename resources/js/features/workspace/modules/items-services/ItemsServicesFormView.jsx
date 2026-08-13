@@ -27,6 +27,7 @@ import {
     listBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
+import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
@@ -62,7 +63,7 @@ export default function ItemsServicesFormView({
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const isDirty = useMemo(
-        () => JSON.stringify(values) !== JSON.stringify(initialValues),
+        () => !areComparableValuesEqual(initialValues, values),
         [initialValues, values]
     );
 
@@ -247,6 +248,10 @@ export default function ItemsServicesFormView({
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
                 await onRefresh?.();
+                if (record) {
+                    const freshValues = buildItemsServicesFormValues(config, record);
+                    setValues(freshValues);
+                }
                 if (isDetail && record && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
