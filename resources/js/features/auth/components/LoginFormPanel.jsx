@@ -21,12 +21,13 @@ export default function LoginFormPanel({ login }) {
         password: '',
     });
 
-    const messageListenerRef = useRef(null);
+    const bcRef = useRef(null);
 
     useEffect(() => {
         return () => {
-            if (messageListenerRef.current) {
-                window.removeEventListener('message', messageListenerRef.current);
+            if (bcRef.current) {
+                bcRef.current.close();
+                bcRef.current = null;
             }
         };
     }, []);
@@ -47,40 +48,34 @@ export default function LoginFormPanel({ login }) {
         const top = (containerHeight / 2) - (height / 2) + dualScreenTop;
         const popupUrl = `${login.googleHref}${login.googleHref.includes('?') ? '&' : '?'}popup=1`;
 
-        if (messageListenerRef.current) {
-            window.removeEventListener('message', messageListenerRef.current);
+        if (bcRef.current) {
+            bcRef.current.close();
+            bcRef.current = null;
         }
 
-        const handleMessage = (event) => {
-            const isAuthorizedOrigin = event.origin === window.location.origin ||
-                (event.origin.includes('localhost') && window.location.origin.includes('127.0.0.1')) ||
-                (event.origin.includes('127.0.0.1') && window.location.origin.includes('localhost'));
+        const bc = new BroadcastChannel('google_auth');
+        bcRef.current = bc;
 
-            if (!isAuthorizedOrigin) return;
+        bc.onmessage = (e) => {
+            const data = e.data;
+            bc.close();
+            bcRef.current = null;
 
-            const data = event.data;
-            if (data && (data.status === 'success' || data.status === 'error')) {
-                if (data.status === 'success') {
-                    showLoadingToast({
-                        title: 'Berhasil',
-                        message: data.message || 'Sedang mengalihkan ke dashboard...',
-                    });
-                    setTimeout(() => {
-                        window.location.href = `${event.origin}/dashboard`;
-                    }, 100);
-                } else {
-                    showErrorToast({
-                        title: 'Login gagal',
-                        message: data.message || 'Gagal login menggunakan Google.',
-                    });
-                }
-                window.removeEventListener('message', handleMessage);
-                messageListenerRef.current = null;
+            if (data?.status === 'success') {
+                showLoadingToast({
+                    title: 'Berhasil',
+                    message: data.message || 'Sedang mengalihkan ke dashboard...',
+                });
+                setTimeout(() => {
+                    window.location.href = `${window.location.origin}/dashboard`;
+                }, 100);
+            } else {
+                showErrorToast({
+                    title: 'Login gagal',
+                    message: data?.message || 'Gagal login menggunakan Google.',
+                });
             }
         };
-
-        messageListenerRef.current = handleMessage;
-        window.addEventListener('message', handleMessage);
 
         window.open(
             popupUrl,
