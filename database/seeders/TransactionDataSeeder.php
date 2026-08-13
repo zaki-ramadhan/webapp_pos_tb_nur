@@ -203,31 +203,47 @@ class TransactionDataSeeder extends Seeder
         // 5. Sales Invoices (Calibrated for ~Rp 250M / year in 2025 & steady growth in 2026)
         // Average invoice: ~Rp 2.5 - 4.5 Million (realistic village store orders)
         $salesPatterns = [
-            [$pSemen => 12, $pPasir => 1, $pPaku => 2, $pBesi => 6,  $pKuas => 1], // ~Rp 2.1M
-            [$pSemen => 20, $pPasir => 2, $pPaku => 3, $pBesi => 10, $pKuas => 2], // ~Rp 3.8M
-            [$pSemen => 8,  $pPasir => 1, $pPaku => 1, $pThn => 1],               // ~Rp 1.2M
-            [$pSemen => 15, $pPasir => 2, $pPaku => 3, $pThn => 2],               // ~Rp 2.3M
-            [$pSemen => 25, $pPasir => 3, $pPaku => 4, $pBesi => 12],              // ~Rp 4.8M
-            [$pSemen => 10, $pPasir => 1],                                        // ~Rp 1.2M
-            [$pSemen => 18, $pPasir => 2],                                        // ~Rp 2.3M
-            [$pSemen => 6,  $pPasir => 1],                                        // ~Rp 900k
-            [$pSemen => 22, $pPasir => 2, $pBesi => 8],                           // ~Rp 3.6M
-            [$pSemen => 14, $pPasir => 1],                                        // ~Rp 1.5M
-            [$pPasir => 2,  $pPipa => 5,  $pBesi => 4],                           // ~Rp 2.2M
-            [$pPasir => 1,  $pPipa => 8,  $pBesi => 5],                           // ~Rp 2.4M
-            [$pSemen => 12, $pPipa => 4],                                         // ~Rp 1.6M
-            [$pPaku => 2,   $pBesi => 6],                                         // ~Rp 800k
-            [$pPaku => 2,   $pBesi => 8],                                         // ~Rp 1.0M
-            [$pPipa => 6,   $pLem => 2,   $pKran => 2],                           // ~Rp 1.3M
-            [$pPipa => 10,  $pLem => 3,   $pKran => 3],                           // ~Rp 2.1M
-            [$pPipa => 4,   $pLem => 1,   $pKran => 1],                           // ~Rp 800k
-            [$pPipa => 8,   $pLem => 2,   $pKran => 2],                           // ~Rp 1.6M
-            [$pLem => 2],                                                         // ~Rp 90k
-            [$pKran => 2],                                                        // ~Rp 90k
-            [$pCat => 3,    $pKuas => 2,  $pThn => 1],                           // ~Rp 500k
-            [$pCat => 2,    $pKuas => 2,  $pThn => 1],                           // ~Rp 350k
-            [$pCat => 4,    $pKuas => 3,  $pThn => 2],                           // ~Rp 700k
-            [$pCat => 3,    $pKuas => 2,  $pThn => 1],                           // ~Rp 500k
+            // Semen, Pasir, Besi, Paku combinations
+            [$pSemen => 12, $pPasir => 1, $pPaku => 2, $pBesi => 6,  $pKuas => 1],
+            [$pSemen => 20, $pPasir => 2, $pPaku => 3, $pBesi => 10, $pKuas => 2],
+            [$pSemen => 8,  $pPasir => 1, $pPaku => 1, $pThn => 1],
+            [$pSemen => 15, $pPasir => 2, $pPaku => 3, $pThn => 2],
+            [$pSemen => 25, $pPasir => 3, $pPaku => 4, $pBesi => 12],
+            [$pSemen => 10, $pPasir => 1],
+            [$pSemen => 18, $pPasir => 2],
+            [$pSemen => 6,  $pPasir => 1],
+            [$pSemen => 22, $pPasir => 2, $pBesi => 8],
+            [$pSemen => 14, $pPasir => 1],
+            [$pSemen => 16], // Semen berdiri sendiri (varies Semen->Pasir confidence to ~88%)
+            [$pSemen => 10, $pBata => 500], // Semen + Bata (tanpa pasir)
+
+            // Pipa, Kran, Lem combinations
+            [$pPipa => 6,   $pLem => 2,   $pKran => 2],
+            [$pPipa => 10,  $pLem => 3,   $pKran => 3],
+            [$pPipa => 4,   $pLem => 1,   $pKran => 1],
+            [$pPipa => 8,   $pLem => 2,   $pKran => 2],
+            [$pPipa => 5,   $pKran => 2], // Pipa + Kran (tanpa lem)
+            [$pKran => 3], // Kran saja (varies Kran->Pipa confidence to ~87%)
+            [$pKran => 2,   $pKabel => 3], // Kran + Kabel (tanpa pipa/lem)
+            [$pLem => 2],
+            [$pPasir => 2,  $pPipa => 5,  $pBesi => 4],
+            [$pPasir => 1,  $pPipa => 8,  $pBesi => 5],
+            [$pSemen => 12, $pPipa => 4],
+
+            // Cat, Kuas, Thinner combinations
+            [$pCat => 3,    $pKuas => 2,  $pThn => 1],
+            [$pCat => 2,    $pKuas => 2,  $pThn => 1],
+            [$pCat => 4,    $pKuas => 3,  $pThn => 2],
+            [$pCat => 3,    $pKuas => 2,  $pThn => 1],
+            [$pCat => 2,    $pKuas => 1], // Cat + Kuas (tanpa thinner) -> varies Thinner confidence to ~83%
+            [$pCat => 5], // Cat saja (varies Cat->Kuas confidence to ~91%)
+            [$pCat => 3,    $pThn => 1], // Cat + Thinner (tanpa kuas)
+            [$pCat => 2,    $pSemen => 5], // Cat + Semen
+
+            // Miscellaneous hardware
+            [$pPaku => 2,   $pBesi => 6],
+            [$pPaku => 2,   $pBesi => 8],
+            [$pKabel => 5,  $pKran => 1],
         ];
 
         $siIds = [];
