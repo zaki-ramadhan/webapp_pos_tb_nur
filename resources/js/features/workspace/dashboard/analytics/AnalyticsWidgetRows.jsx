@@ -40,7 +40,28 @@ export function RuleSummaryRow({ rule }) {
                 <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:flex-wrap">
                     <span className="text-slate-500 font-medium">Jika membeli:</span>
                     <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 border border-blue-200 px-2 py-1">
-                        <span className="font-bold text-blue-950">{rule.antecedent}</span>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (typeof window !== 'undefined') {
+                                    window.dispatchEvent(
+                                        new CustomEvent('workspace:open-page', {
+                                            detail: {
+                                                pageId: 'items-services',
+                                                recordId: rule.antecedentId ?? undefined,
+                                                label: rule.antecedent,
+                                                tabLabel: rule.antecedent,
+                                                openForm: Boolean(rule.antecedentId),
+                                            },
+                                        })
+                                    );
+                                }
+                            }}
+                            className="font-bold underline text-blue-700 hover:text-blue-900 cursor-pointer decoration-2 underline-offset-2 transition-colors text-left"
+                            title={`Klik untuk membuka halaman & detail data ${rule.antecedent}`}
+                        >
+                            {rule.antecedent}
+                        </button>
                         {rule.antecedentAbc && (
                             <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.antecedentColor}18`, color: rule.antecedentColor }}>
                                 Kat {rule.antecedentAbc}
@@ -49,7 +70,28 @@ export function RuleSummaryRow({ rule }) {
                     </span>
                     <span className="text-slate-400 sm:mx-1 font-medium">&rarr; Maka tawarkan:</span>
                     <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1">
-                        <span className="font-bold text-emerald-950">{rule.consequent}</span>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (typeof window !== 'undefined') {
+                                    window.dispatchEvent(
+                                        new CustomEvent('workspace:open-page', {
+                                            detail: {
+                                                pageId: 'items-services',
+                                                recordId: rule.consequentId ?? undefined,
+                                                label: rule.consequent,
+                                                tabLabel: rule.consequent,
+                                                openForm: Boolean(rule.consequentId),
+                                            },
+                                        })
+                                    );
+                                }
+                            }}
+                            className="font-bold underline text-blue-700 hover:text-blue-900 cursor-pointer decoration-2 underline-offset-2 transition-colors text-left"
+                            title={`Klik untuk membuka halaman & detail data ${rule.consequent}`}
+                        >
+                            {rule.consequent}
+                        </button>
                         {rule.consequentAbc && (
                             <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.consequentColor}18`, color: rule.consequentColor }}>
                                 Kat {rule.consequentAbc}

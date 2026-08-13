@@ -52,3 +52,28 @@ export function getProductImageUrl(name, size = 120) {
     
     return `https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=${size}&h=${size}&fit=crop&q=80`;
 }
+
+export function getBuildingStoreLayoutRecommendation(itemA = '', itemB = '') {
+    const text = (itemA + ' ' + itemB).toLowerCase();
+
+    if (/semen|pasir|besi|batu|bata|cor|beton|material|pondasi|mortar/i.test(text)) {
+        return `📍 Area Pelataran Utama / Loading Dock Depan: Posisikan tumpukan ${itemA} di atas palet lantai area depan, bersebelahan dengan ${itemB} agar armada truk & kuli toko langsung sekali muat saat bongkar-pasang kargo.`;
+    }
+    if (/pipa|kayu|seng|baja|plumbing|atap|triplek|hollow|alumunium/i.test(text)) {
+        return `📍 Lorong Rak Horizontal Panjang: Taruh ${itemA} pada rak besi bertingkat horizontal khusus barang panjang, dan pasang keranjang gantung aksesoris ${itemB} persis di seberang/ujung lorong rak tersebut.`;
+    }
+    if (/cat|kuas|thinner|amplas|lakban|rol|compound/i.test(text)) {
+        return `🎨 Zone Cat & Mix Colour / Display Eye-Level Kasir: Tempatkan kaleng ${itemA} di rak display Zone Cat, dan gantungkan ${itemB} pada hook pegboard setinggi pandangan mata (eye-level) tepat di samping kaleng cat.`;
+    }
+    if (/kran|lem|fitting|stop|seal/i.test(text)) {
+        return `🚰 Etalase Fast-Moving Plumbing (Depan Kasir): Taruh ${itemA} di etalase berpetak plumbing, dan sandingkan wadah display aksesoris ${itemB} di rak bawah kasir untuk memicu pembelian otomatis.`;
+    }
+    if (/sekop|cangkul|kawat|paku|engsel|tang|palu|gergaji/i.test(text)) {
+        return `🛠️ Rak Gantung Perkakas Pertukangan (Pegboard): Gantungkan ${itemA} pada wall-display pegboard pertukangan, dan posisikan keranjang ${itemB} di bawahnya agar pembeli alat langsung mengambil pelengkapnya.`;
+    }
+    if (/listrik|kabel|saklar|isolatip|stop kontak/i.test(text)) {
+        return `⚡ Etalase Kaca Depan Kasir (Hardware & Kelistrikan): Pajang ${itemA} di dalam etalase kaca kasir, dan posisikan ${itemB} di rak display gantung impulsif tepat di atas etalase.`;
+    }
+
+    return `📦 Rak Display Utama Toko (Eye-Level): Posisikan ${itemA} dan ${itemB} bersebelahan pada ketinggian pandangan mata (eye-level) di rak display utama toko.`;
+}

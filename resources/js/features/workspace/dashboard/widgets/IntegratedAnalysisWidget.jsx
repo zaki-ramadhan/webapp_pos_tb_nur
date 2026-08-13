@@ -1,55 +1,7 @@
 import { useState } from 'react';
-import { MapPin, MessageSquare, Megaphone, Lightbulb } from 'lucide-react';
-import { getMetric, WidgetSection, getProductImageUrl } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
+import { MapPin, MessageSquare, Megaphone } from 'lucide-react';
+import { getMetric, WidgetSection, getProductImageUrl, HighlightProductText, AbcCategoryLegend, getBuildingStoreLayoutRecommendation } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { IntegratedMatrixChart } from '@/features/workspace/dashboard/analytics/AnalyticsCharts';
-
-
-
-function HighlightProductText({ text, itemA, itemB }) {
-    if (!text) return null;
-    if (!itemA && !itemB) return <span>{text}</span>;
-
-    const escapeRegex = (str) => (str ? str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '');
-    const patterns = [itemA, itemB].filter(Boolean).map(escapeRegex);
-    if (!patterns.length) return <span>{text}</span>;
-
-    const regex = new RegExp(`(${patterns.join('|')})`, 'gi');
-    const parts = text.split(regex);
-
-    return (
-        <span>
-            {parts.map((part, index) => {
-                const lowerPart = part.toLowerCase();
-                const isItemA = itemA && lowerPart === itemA.toLowerCase();
-                const isItemB = itemB && lowerPart === itemB.toLowerCase();
-
-                if (isItemA) {
-                    return (
-                        <span
-                            key={index}
-                            className="inline-flex items-center rounded px-1.5 py-0.5 font-bold text-xs bg-blue-100 text-blue-950 border border-blue-300 shadow-sm mx-0.5"
-                        >
-                            {part}
-                        </span>
-                    );
-                }
-
-                if (isItemB) {
-                    return (
-                        <span
-                            key={index}
-                            className="inline-flex items-center rounded px-1.5 py-0.5 font-bold text-xs bg-emerald-100 text-emerald-950 border border-emerald-300 shadow-sm mx-0.5"
-                        >
-                            {part}
-                        </span>
-                    );
-                }
-
-                return <span key={index}>{part}</span>;
-            })}
-        </span>
-    );
-}
 
 export default function IntegratedAnalysisWidget({
     widget,
@@ -107,33 +59,8 @@ export default function IntegratedAnalysisWidget({
         },
     ];
 
-    const getStoreLocationRecommendation = (itemA = '', itemB = '') => {
-        const text = (itemA + ' ' + itemB).toLowerCase();
-        
-        if (/semen|pasir|besi|batu|bata|cor|beton|material|pondasi|mortar/i.test(text)) {
-            return `📍 Area Pelataran Utama / Loading Dock Depan: Posisikan tumpukan ${itemA} di atas palet lantai area depan, bersebelahan dengan ${itemB} agar armada truk & kuli toko langsung sekali muat saat bongkar-pasang kargo.`;
-        }
-        if (/pipa|kayu|seng|baja|plumbing|atap|triplek|hollow|alumunium/i.test(text)) {
-            return `📍 Lorong Rak Horizontal Panjang: Taruh ${itemA} pada rak besi bertingkat horizontal khusus barang panjang, dan pasang keranjang gantung aksesoris ${itemB} persis di seberang/ujung lorong rak tersebut.`;
-        }
-        if (/cat|kuas|thinner|amplas|lakban|rol|compound/i.test(text)) {
-            return `🎨 Zone Cat & Mix Colour / Display Eye-Level Kasir: Tempatkan kaleng ${itemA} di rak display Zone Cat, dan gantungkan ${itemB} pada hook pegboard setinggi pandangan mata (eye-level) tepat di samping kaleng cat.`;
-        }
-        if (/kran|lem|fitting|stop|seal/i.test(text)) {
-            return `🚰 Etalase Fast-Moving Plumbing (Depan Kasir): Taruh ${itemA} di etalase berpetak plumbing, dan sandingkan wadah display aksesoris ${itemB} di rak bawah kasir untuk memicu pembelian otomatis.`;
-        }
-        if (/sekop|cangkul|kawat|paku|engsel|tang|palu|gergaji/i.test(text)) {
-            return `🛠️ Rak Gantung Perkakas Pertukangan (Pegboard): Gantungkan ${itemA} pada wall-display pegboard pertukangan, dan posisikan keranjang ${itemB} di bawahnya agar pembeli alat langsung mengambil pelengkapnya.`;
-        }
-        if (/listrik|kabel|saklar|isolatip|stop kontak/i.test(text)) {
-            return `⚡ Etalase Kaca Depan Kasir (Hardware & Kelistrikan): Pajang ${itemA} di dalam etalase kaca kasir, dan posisikan ${itemB} di rak display gantung impulsif tepat di atas etalase.`;
-        }
-        
-        return `📦 Rak Display Utama Toko (Eye-Level): Posisikan ${itemA} dan ${itemB} bersebelahan pada ketinggian pandangan mata (eye-level) di rak display utama toko.`;
-    };
-
     const getStrategyTactic = (antecedentAbc, consequentAbc, antecedentName = '', consequentName = '') => {
-        const customLocation = getStoreLocationRecommendation(antecedentName, consequentName);
+        const customLocation = getBuildingStoreLayoutRecommendation(antecedentName, consequentName);
 
         if (antecedentAbc === 'A' && consequentAbc === 'C') {
             return {
@@ -219,38 +146,7 @@ export default function IntegratedAnalysisWidget({
                     expanded={expanded}
                     onToggle={onToggle}
                 >
-                    <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50/20 p-3 shadow-widget-tiny select-none">
-                        <h5 className="text-sm font-semibold text-blue-900 mb-2">Petunjuk Kategori Prioritas Barang (Analisis ABC):</h5>
-                        <div className="grid gap-2 sm:grid-cols-3">
-                            <div className="rounded-md border border-tab-active-border-x bg-white p-2.5 shadow-widget-small">
-                                <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-badge-group-a">
-                                        Kat. A
-                                    </span>
-                                    <span className="text-xs font-semibold text-brand-darker">(Utama)</span>
-                                </div>
-                                <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">80% omzet</span> toko. Prioritas utama, stok wajib dijaga ketat.</p>
-                            </div>
-                            <div className="rounded-md border border-emerald-100 bg-white p-2.5 shadow-widget-small">
-                                <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-green-410">
-                                        Kat. B
-                                    </span>
-                                    <span className="text-xs font-semibold text-brand-darker">(Stabil)</span>
-                                </div>
-                                <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">15% omzet</span> toko. Penjualan stabil untuk kebutuhan rutin.</p>
-                            </div>
-                            <div className="rounded-md border border-amber-100 bg-white p-2.5 shadow-widget-small">
-                                <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-warning">
-                                        Kat. C
-                                    </span>
-                                    <span className="text-xs font-semibold text-brand-darker">(Tambahan)</span>
-                                </div>
-                                <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">5% omzet</span> toko. Produk pelengkap/aksesoris penunjang.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <AbcCategoryLegend />
 
                     {widget.rules && widget.rules.length > 0 ? (
                         <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
@@ -274,9 +170,28 @@ export default function IntegratedAnalysisWidget({
                                                         alt=""
                                                         className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
                                                     />
-                                                    <span className="text-sm font-semibold text-slate-900 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.antecedent}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (typeof window !== 'undefined') {
+                                                                window.dispatchEvent(
+                                                                    new CustomEvent('workspace:open-page', {
+                                                                        detail: {
+                                                                            pageId: 'items-services',
+                                                                            recordId: rule.antecedentId ?? undefined,
+                                                                            label: rule.antecedent,
+                                                                            tabLabel: rule.antecedent,
+                                                                            openForm: Boolean(rule.antecedentId),
+                                                                        },
+                                                                    })
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="text-sm font-bold text-blue-700 hover:text-blue-900 underline decoration-2 underline-offset-2 transition-colors truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px] text-left cursor-pointer"
+                                                        title={`Klik untuk membuka halaman & detail data ${rule.antecedent}`}
+                                                    >
                                                         {rule.antecedent}
-                                                    </span>
+                                                    </button>
                                                     {rule.antecedentAbc && (
                                                         <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.antecedentColor }} title={rule.antecedentAbc === 'A' ? 'Omzet Utama' : rule.antecedentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
                                                             Kat. {rule.antecedentAbc}
@@ -292,9 +207,28 @@ export default function IntegratedAnalysisWidget({
                                                         alt=""
                                                         className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
                                                     />
-                                                    <span className="text-sm font-semibold text-slate-900 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.consequent}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (typeof window !== 'undefined') {
+                                                                window.dispatchEvent(
+                                                                    new CustomEvent('workspace:open-page', {
+                                                                        detail: {
+                                                                            pageId: 'items-services',
+                                                                            recordId: rule.consequentId ?? undefined,
+                                                                            label: rule.consequent,
+                                                                            tabLabel: rule.consequent,
+                                                                            openForm: Boolean(rule.consequentId),
+                                                                        },
+                                                                    })
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="text-sm font-bold text-blue-700 hover:text-blue-900 underline decoration-2 underline-offset-2 transition-colors truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px] text-left cursor-pointer"
+                                                        title={`Klik untuk membuka halaman & detail data ${rule.consequent}`}
+                                                    >
                                                         {rule.consequent}
-                                                    </span>
+                                                    </button>
                                                     {rule.consequentAbc && (
                                                         <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.consequentColor }} title={rule.consequentAbc === 'A' ? 'Omzet Utama' : rule.consequentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
                                                             Kat. {rule.consequentAbc}
@@ -325,7 +259,13 @@ export default function IntegratedAnalysisWidget({
                                                 <div className="min-w-0 flex-1">
                                                     <span className="font-bold text-emerald-950">Penataan di Rak:</span>{" "}
                                                     <span className="leading-relaxed block sm:inline">
-                                                        <HighlightProductText text={tactic.actionDisplay} itemA={rule.antecedent} itemB={rule.consequent} />
+                                                        <HighlightProductText
+                                                            text={tactic.actionDisplay}
+                                                            itemA={rule.antecedent}
+                                                            itemAId={rule.antecedentId}
+                                                            itemB={rule.consequent}
+                                                            itemBId={rule.consequentId}
+                                                        />
                                                     </span>
                                                 </div>
                                             </div>
@@ -334,7 +274,13 @@ export default function IntegratedAnalysisWidget({
                                                 <div className="min-w-0 flex-1">
                                                     <span className="font-bold text-emerald-950">Tawaran di Kasir:</span>{" "}
                                                     <span className="leading-relaxed block sm:inline">
-                                                        <HighlightProductText text={tactic.actionCashier} itemA={rule.antecedent} itemB={rule.consequent} />
+                                                        <HighlightProductText
+                                                            text={tactic.actionCashier}
+                                                            itemA={rule.antecedent}
+                                                            itemAId={rule.antecedentId}
+                                                            itemB={rule.consequent}
+                                                            itemBId={rule.consequentId}
+                                                        />
                                                     </span>
                                                 </div>
                                             </div>

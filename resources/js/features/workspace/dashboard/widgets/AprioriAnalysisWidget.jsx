@@ -1,4 +1,4 @@
-import { ActionList, getMetric, WidgetSection } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
+import { ActionList, getMetric, WidgetSection, AbcCategoryLegend } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { AnalyticsWidgetLayout } from '@/features/workspace/dashboard/analytics/AnalyticsWidgetLayout';
 import { RuleSummaryRow } from '@/features/workspace/dashboard/analytics/AnalyticsWidgetRows';
 import { AprioriRuleChart } from '@/features/workspace/dashboard/analytics/AnalyticsCharts';
@@ -57,38 +57,7 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
             toggleSummary="Buka rekomendasi penjualan silang, daftar rule teratas, dan catatan tambahan bila diperlukan."
             details={
                 <>
-                    <div className="col-span-full mb-1 rounded-lg border border-blue-100 bg-blue-50/20 p-3 shadow-widget-tiny select-none">
-                        <h5 className="text-sm font-semibold text-blue-900 mb-2">Petunjuk Kategori Prioritas Barang (Analisis ABC):</h5>
-                        <div className="grid gap-2 sm:grid-cols-3">
-                            <div className="rounded-md border border-tab-active-border-x bg-white p-2.5 shadow-widget-small">
-                                <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-badge-group-a">
-                                        Kat. A
-                                    </span>
-                                    <span className="text-xs font-semibold text-brand-darker">(Utama)</span>
-                                </div>
-                                <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">80% omzet</span> toko. Prioritas utama, stok wajib dijaga ketat.</p>
-                            </div>
-                            <div className="rounded-md border border-emerald-100 bg-white p-2.5 shadow-widget-small">
-                                <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-green-410">
-                                        Kat. B
-                                    </span>
-                                    <span className="text-xs font-semibold text-brand-darker">(Stabil)</span>
-                                </div>
-                                <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">15% omzet</span> toko. Penjualan stabil untuk kebutuhan rutin.</p>
-                            </div>
-                            <div className="rounded-md border border-amber-100 bg-white p-2.5 shadow-widget-small">
-                                <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-warning">
-                                        Kat. C
-                                    </span>
-                                    <span className="text-xs font-semibold text-brand-darker">(Tambahan)</span>
-                                </div>
-                                <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">5% omzet</span> toko. Produk pelengkap/aksesoris penunjang.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <AbcCategoryLegend />
 
                     {widget.rules && widget.rules.length > 0 && (
                         <>

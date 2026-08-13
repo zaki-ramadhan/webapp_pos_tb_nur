@@ -322,6 +322,7 @@ class DashboardBlueprintProvider
                     'period' => self::dateId(date('Y-m-d', strtotime($latestSalesInvoiceDate . ' -6 days'))) . ' - ' . self::dateId($latestSalesInvoiceDate),
                     'asOfDate' => $latestSalesInvoiceDate,
                     'balanceLabel' => 'Estimasi Saldo Kas Berjalan',
+                    'rawBalance' => $cashAvailabilitySeries !== [] ? end($cashAvailabilitySeries) : 0,
                     'balanceValue' => $cashAvailabilitySeries !== [] ? 'Rp ' . number_format(end($cashAvailabilitySeries), 0, ',', '.') : 'Rp -',
                     'labels' => $cashAvailabilityLabels,
                     'series' => [
@@ -380,7 +381,9 @@ class DashboardBlueprintProvider
                             'segment' => 'Pasangan Terlaris',
                             'transactionBase' => 'Pasangan Laris Valid',
                             'antecedent' => $rule['antecedent'],
+                            'antecedentId' => $rule['antecedentId'] ?? null,
                             'consequent' => $rule['consequent'],
+                            'consequentId' => $rule['consequentId'] ?? null,
                             'antecedentAbc' => $rule['antecedentAbc'] ?? null,
                             'antecedentColor' => $rule['antecedentColor'] ?? null,
                             'consequentAbc' => $rule['consequentAbc'] ?? null,
