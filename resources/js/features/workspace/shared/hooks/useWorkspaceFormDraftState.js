@@ -9,8 +9,11 @@ export function useWorkspaceFormDraftState({
     tabId,
     onSync,
 }) {
-    const [savedSnapshot, setSavedSnapshot] = useState(initialValues);
-    const [values, setValues] = useState(initialValues);
+    // Single atomic state container to prevent race conditions between values and savedSnapshot
+    const [state, setState] = useState(() => ({
+        values: initialValues,
+        savedSnapshot: initialValues,
+    }));
 
     const prevRecordId = useRef(recordId);
 
@@ -18,16 +21,18 @@ export function useWorkspaceFormDraftState({
     useEffect(() => {
         if (recordId !== prevRecordId.current) {
             prevRecordId.current = recordId;
-            setSavedSnapshot(initialValues);
-            setValues(initialValues);
+            setState({
+                values: initialValues,
+                savedSnapshot: initialValues,
+            });
             onSync?.(initialValues);
         }
     }, [recordId, initialValues, onSync]);
 
-    // Calculate isDirty: true ONLY if current values differ from savedSnapshot
+    // Calculate isDirty atomically: true ONLY if current values differ from savedSnapshot
     const isDirty = useMemo(
-        () => !areComparableValuesEqual(savedSnapshot, values),
-        [savedSnapshot, values]
+        () => !areComparableValuesEqual(state.savedSnapshot, state.values),
+        [state.savedSnapshot, state.values]
     );
 
     // Automatically register dirty state with WorkspaceTabStore
@@ -38,31 +43,45 @@ export function useWorkspaceFormDraftState({
         enabled: Boolean(pageId && tabId),
     });
 
-    // Mark form clean upon successful save
+    // Update user form values
+    const setValues = useCallback((updater) => {
+        setState((prev) => {
+            const nextValues = typeof updater === 'function' ? updater(prev.values) : updater;
+            return {
+                ...prev,
+                values: nextValues,
+            };
+        });
+    }, []);
+
+    // Mark form clean upon successful save (atomically syncs baseline to values)
     const markClean = useCallback((newBaseline = null) => {
-        setValues((current) => {
-            const nextBaseline = newBaseline ?? current;
-            setSavedSnapshot(nextBaseline);
-            return nextBaseline;
+        setState((prev) => {
+            const nextBaseline = newBaseline ?? prev.values;
+            return {
+                values: nextBaseline,
+                savedSnapshot: nextBaseline,
+            };
         });
     }, []);
 
     // Update DB baseline without marking user edits dirty (e.g. for background item-locations fetch)
     const updateDbBaseline = useCallback((updater) => {
-        setValues((current) => {
-            const nextValues = typeof updater === 'function' ? updater(current) : updater;
-            setSavedSnapshot(nextValues);
-            return nextValues;
+        setState((prev) => {
+            const nextValues = typeof updater === 'function' ? updater(prev.values) : updater;
+            return {
+                values: nextValues,
+                savedSnapshot: nextValues,
+            };
         });
     }, []);
 
     return {
-        values,
+        values: state.values,
         setValues,
         isDirty,
         markClean,
         updateDbBaseline,
-        savedSnapshot,
-        setSavedSnapshot,
+        savedSnapshot: state.savedSnapshot,
     };
 }
