@@ -116,18 +116,16 @@ export function buildInventoryComparableSnapshot(values) {
 }
 
 export function validateInventoryAdjustmentValues(values, config, isDetail) {
-    const isPriceAdjustment = config.labels.salesCategory !== undefined;
+    const isPriceAdjustment = config?.labels?.salesCategory !== undefined;
 
     if (isPriceAdjustment) {
         const requiredMessage = validateRequiredChecks([
             { label: config.labels.salesCategory, value: values.salesCategory, type: 'array' },
             { label: config.labels.effectiveDate, value: values.effectiveDate },
-            ...(isDetail
+            ...(isDetail || values.autoNumber === false
                 ? [{ label: config.labels.documentNumber, value: values.documentNumber }]
-                : (values.autoNumber
-                    ? [{ label: 'Tipe penomoran', value: values.numberingType }]
-                    : [{ label: config.labels.documentNumber, value: values.documentNumber }])),
-            { label: config.itemSectionTitle, value: values.items, type: 'array' },
+                : []),
+            { label: config.itemSectionTitle || 'Rincian Barang', value: values.items, type: 'array' },
         ]);
 
         if (requiredMessage) {
@@ -149,12 +147,10 @@ export function validateInventoryAdjustmentValues(values, config, isDetail) {
     }
 
     const requiredMessage = validateRequiredChecks([
-        { label: config.labels.date, value: values.date },
-        ...(isDetail
-            ? [{ label: config.labels.documentNumber, value: values.documentNumber }]
-            : (values.autoNumber
-                ? [{ label: 'Tipe penomoran', value: values.numberingType }]
-                : [{ label: config.labels.documentNumber, value: values.documentNumber }])),
+        { label: config?.labels?.date || 'Tanggal', value: values.date },
+        ...(isDetail || values.autoNumber === false
+            ? [{ label: config?.labels?.documentNumber || 'No. Penyesuaian', value: values.documentNumber }]
+            : []),
         { label: config?.itemSectionTitle || config?.detailTable?.title || 'Rincian Barang', value: values.items, type: 'array' },
     ]);
 
@@ -168,7 +164,8 @@ export function validateInventoryAdjustmentValues(values, config, isDetail) {
         if (!String(item?.name ?? '').trim()) {
             return `Nama barang pada baris ke-${i + 1} harus diisi.`;
         }
-        if (Number.parseFloat(String(item?.quantity ?? '0').replace(',', '.')) <= 0) {
+        const qty = parseNumericInput(item?.quantity);
+        if (qty <= 0) {
             return `Kuantitas barang pada baris ke-${i + 1} harus lebih dari 0.`;
         }
         if (!String(item?.unit ?? '').trim()) {
