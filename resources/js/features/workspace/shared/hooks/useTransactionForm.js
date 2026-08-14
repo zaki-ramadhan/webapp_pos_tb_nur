@@ -185,6 +185,7 @@ export function buildWorkspaceDockActions({
                     ...action,
                     tone: 'primary',
                     disabled: saveDisabled,
+                    disabledReason: saveDisabled ? (validationMessage || (!isDirty ? 'Belum ada perubahan data pada formulir' : 'Formulir belum valid')) : undefined,
                     label: saving ? 'Memproses...' : action.label,
                     onClick: onSave,
                 };

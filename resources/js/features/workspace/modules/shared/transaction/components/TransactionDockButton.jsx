@@ -62,7 +62,7 @@ export function TransactionDockButton({ action, templateLabel, favoritesStorageK
                 disabled={isDisabled}
                 aria-disabled={isDisabled}
                 aria-label={action.label}
-                title={action.label}
+                title={isDisabled ? (action.disabledReason || action.label) : action.label}
                 onClick={() => {
                     if (isDisabled) {
                         return;
