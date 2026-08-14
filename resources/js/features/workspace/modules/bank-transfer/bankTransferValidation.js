@@ -6,9 +6,9 @@ export function validateBankTransferValues(values, config) {
         { label: config.labels.fromBank, value: values.fromBankAccounts, type: 'array' },
         { label: config.labels.toBank, value: values.toBankAccounts, type: 'array' },
         { label: config.labels.entryDate, value: values.entryDate },
-        ...(values.autoNumber
-            ? []
-            : [{ label: config.labels.documentNumber, value: values.documentNumber }]),
+        ...(values.autoNumber === false
+            ? [{ label: config.labels.documentNumber, value: values.documentNumber }]
+            : []),
         { label: config.labels.transferValue, value: parseNumericInput(values.transferValue) > 0 ? values.transferValue : '' },
     ]);
 

@@ -59,9 +59,9 @@ export function buildGeneralJournalPayload(values) {
 export function validateJournalValues(values, config) {
     const requiredMessage = validateRequiredChecks([
         { label: config.labels.entryDate, value: values.entryDate },
-        ...(values.autoNumber
-            ? [{ label: 'Tipe penomoran', value: values.numberingType }]
-            : [{ label: config.labels.documentNumber, value: values.documentNumber }]),
+        ...(values.autoNumber === false
+            ? [{ label: config.labels.documentNumber, value: values.documentNumber }]
+            : []),
         { label: config.lineSectionTitle, value: values.lineItems, type: 'array' },
     ]);
 
