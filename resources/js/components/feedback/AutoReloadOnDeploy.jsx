@@ -36,7 +36,7 @@ export default function AutoReloadOnDeploy() {
         };
 
         checkDeployment();
-        const interval = setInterval(checkDeployment, 5000);
+        const interval = setInterval(checkDeployment, 15000);
 
         return () => {
             isMounted = false;
