@@ -16,6 +16,7 @@ import SocialButton from '@/features/auth/components/SocialButton';
 export default function LoginFormPanel({ login }) {
     const { props } = usePage();
     const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+    const [warningNotice, setWarningNotice] = useState('');
     const form = useForm({
         identifier: '',
         password: '',
@@ -24,7 +25,16 @@ export default function LoginFormPanel({ login }) {
     const bcRef = useRef(null);
 
     useEffect(() => {
+        function handleWindowMessage(e) {
+            if (e.data?.status === 'error' && e.data?.message) {
+                setWarningNotice(e.data.message);
+            }
+        }
+
+        window.addEventListener('message', handleWindowMessage);
+
         return () => {
+            window.removeEventListener('message', handleWindowMessage);
             if (bcRef.current) {
                 bcRef.current.close();
                 bcRef.current = null;
@@ -34,6 +44,7 @@ export default function LoginFormPanel({ login }) {
 
     function handleGoogleLogin(event) {
         event.preventDefault();
+        setWarningNotice('');
 
         const width = 500;
         const height = 550;
@@ -70,10 +81,8 @@ export default function LoginFormPanel({ login }) {
                     window.location.href = `${window.location.origin}/dashboard`;
                 }, 100);
             } else {
-                showErrorToast({
-                    title: 'Login gagal',
-                    message: data?.message || 'Gagal login menggunakan Google.',
-                });
+                const errMsg = data?.message || 'Gagal login menggunakan Google.';
+                setWarningNotice(errMsg);
             }
         };
 
@@ -146,6 +155,7 @@ export default function LoginFormPanel({ login }) {
                 <AuthHeading title={login.title} subtitle={login.subtitle} />
 
                 <form className="mt-6 space-y-3 sm:mt-8" onSubmit={submit}>
+                    {warningNotice ? <Notice tone="warning" onClose={() => setWarningNotice('')}>{warningNotice}</Notice> : null}
                     {props.flash?.warning ? <Notice tone="warning">{props.flash.warning}</Notice> : null}
                     {props.flash?.status ? <Notice tone="success">{props.flash.status}</Notice> : null}
                     {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
