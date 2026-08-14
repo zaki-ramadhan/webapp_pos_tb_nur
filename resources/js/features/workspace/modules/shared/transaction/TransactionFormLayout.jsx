@@ -12,7 +12,7 @@ export default function TransactionFormLayout({
 }) {
     return (
         <div className="flex h-full min-h-0 flex-col gap-3">
-            <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+            <div className="flex min-h-0 flex-1 flex-row gap-4">
                 <div className="min-w-0 flex-1 flex flex-col h-full min-h-0 gap-1.5">
                     {header ? (
                         <div className={`shrink-0 pr-3 pt-1.5 pb-0 bg-transparent ${sectionTabs?.length ? 'pl-[51px]' : 'pl-3'}`}>
@@ -32,14 +32,17 @@ export default function TransactionFormLayout({
                         </div>
                     </div>
 
-                    {footer ? (
-                        <div className="shrink-0 flex justify-end pt-1.5 pb-1.5 bg-transparent">
+                    <div className="shrink-0 flex items-center justify-between gap-4 pt-1.5 pb-1.5 bg-transparent">
+                        <div className="flex md:hidden">
+                            <TransactionDock actions={dockActions} />
+                        </div>
+                        <div className="ml-auto">
                             {footer}
                         </div>
-                    ) : null}
+                    </div>
                 </div>
 
-                <div className="shrink-0 lg:w-[96px] lg:pt-1.5">
+                <div className="hidden md:flex shrink-0 w-[80px] lg:w-[96px] pt-1.5">
                     <TransactionDock actions={dockActions} />
                 </div>
             </div>

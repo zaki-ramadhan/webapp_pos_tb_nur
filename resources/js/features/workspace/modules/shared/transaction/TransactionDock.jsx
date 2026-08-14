@@ -220,8 +220,8 @@ export function TransactionDock({ actions = [] }) {
     }
 
     return (
-        <div className="flex w-full justify-stretch lg:justify-start">
-            <div className="flex w-full flex-row gap-2 overflow-x-auto pb-1 sm:gap-3 lg:w-auto lg:flex-col lg:overflow-visible lg:pb-0">
+        <div className="flex w-full justify-stretch md:justify-start">
+            <div className="flex w-full flex-row gap-2 overflow-x-auto pb-1 sm:gap-3 md:w-auto md:flex-col md:overflow-visible md:pb-0">
                 {resolvedActions.map((action) => (
                     <TransactionDockButton
                         key={action.id}
