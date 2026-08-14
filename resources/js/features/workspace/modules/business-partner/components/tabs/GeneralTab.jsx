@@ -36,10 +36,9 @@ export default function GeneralTab({ config, values, isDetail, onChange }) {
                                 name="code"
                                 value={values.code}
                                 onChange={(event) => onChange('code', event.target.value)}
+                                readOnly={true}
                                 className="h-[40px] rounded-[4px] border-ui-border"
-                                inputClassName="text-xs sm:text-sm text-brand-dark"
-                                trailing={<CloseIcon className="h-4 w-4 text-text-darkest" />}
-                                trailingClassName="px-3"
+                                inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
                             />
                         </FormFieldRow>
                     )}

@@ -143,7 +143,7 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(state.resolvedError)}
-                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:${state.resolvedError ? 'text-red-400' : 'text-disabled-border-t'} ${state.isNonInteractive ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : state.resolvedError ? 'bg-transparent text-red-800' : 'text-black bg-white'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:${state.resolvedError ? 'text-red-400' : 'text-disabled-border-t'} ${state.isNonInteractive ? 'cursor-not-allowed bg-slate-100/80 text-brand-dark font-normal pointer-events-none select-none' : state.resolvedError ? 'bg-transparent text-red-800' : 'text-black bg-white'} ${inputClassName}`.trim()}
                     onChange={state.handleWrappedChange}
                     onFocus={(e) => {
                         state.isFocusedRef.current = true;

@@ -102,9 +102,10 @@ export default function SalesDepositHeader({ config, values, setValues, isDetail
                                     }))
                                 }
                                 maxLength={120}
-                                trailing={<span className="text-lg font-semibold text-brand-dark">x</span>}
+                                readOnly={isDetail}
+                                trailing={isDetail ? null : <span className="text-lg font-semibold text-brand-dark">x</span>}
                                 className="h-[40px] rounded-[4px] border-ui-border"
-                                inputClassName="text-xs sm:text-sm text-brand-dark"
+                                inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
                                 trailingClassName="px-3"
                             />
                         )}

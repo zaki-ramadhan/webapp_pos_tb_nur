@@ -217,6 +217,7 @@ export function CodeFieldRow({ values, onChange, isDetail, isLoading }) {
                 maxLength={50}
                 minLength={1}
                 isLoading={isLoading}
+                readOnly={isDetail}
             />
         </FormRow>
     );
