@@ -91,12 +91,14 @@ class AbcAnalysisService
 
           // Daftar item teratas
 
+            $sharePct = $totalRevenue > 0 ? ($revenue / $totalRevenue) * 100 : 0;
+
             $topItems[] = [
                 'name' => $row->product_name,
                 'code' => $row->product_code,
                 'unitsSold' => number_format($row->units_sold, 0, ',', '.') . ' ' . ($row->unit_name ?? 'pcs'),
                 'revenue' => 'Rp ' . number_format($revenue, 0, ',', '.') . ',00',
-                'share' => number_format(($revenue / $totalRevenue) * 100, 1, ',', '.') . '%',
+                'share' => number_format($sharePct, 1, ',', '.') . '%',
                 'category' => $category,
                 'categoryColor' => $color,
             ];
