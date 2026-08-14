@@ -199,7 +199,7 @@ export default function DashboardSidebar({
 
     return (
         <div
-            className="relative z-30 flex w-full flex-col lg:fixed lg:left-0 lg:w-[58px] lg:flex-row lg:self-stretch"
+            className="relative z-30 flex w-full flex-col lg:fixed lg:left-0 lg:w-[58px] lg:flex-row lg:self-stretch bg-[#0d2246]"
             style={
                 desktopTopOffset && typeof window !== 'undefined' && window.innerWidth >= 1024
                     ? {
@@ -313,7 +313,7 @@ export default function DashboardSidebar({
 
             <div
                 ref={railRef}
-                className="relative z-30 hidden w-full shrink-0 gap-1.5 overflow-x-auto overflow-y-hidden border-b border-blue-900 bg-[linear-gradient(90deg,#0d2246_0%,#1a3769_40%,#4E6188_100%)] px-1.5 py-1.5 lg:flex lg:h-full lg:w-[58px] lg:flex-col lg:items-center lg:justify-start lg:overflow-x-hidden lg:overflow-y-auto lg:border-b-0 lg:border-r lg:pt-3"
+                className="relative z-30 hidden w-full shrink-0 gap-1.5 overflow-x-auto overflow-y-hidden border-b border-blue-900 bg-[#0d2246] px-1.5 py-1.5 lg:flex lg:h-full lg:w-[58px] lg:flex-col lg:items-center lg:justify-start lg:overflow-x-hidden lg:overflow-y-auto lg:border-b-0 lg:border-r lg:border-r-blue-900/40 lg:pt-3"
             >
                 {sidebarItems.map((item) => (
                     <SidebarButton

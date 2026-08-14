@@ -79,7 +79,7 @@ const DashboardView = forwardRef(function DashboardView(
     return (
         <WorkspaceDraftStateProvider value={draftStateValue}>
             <section className="flex h-full min-w-0 flex-1 flex-col lg:flex-row lg:items-stretch">
-                <div className="min-h-0 shrink-0 self-stretch lg:w-[58px]">
+                <div className="min-h-0 shrink-0 self-stretch lg:w-[58px] bg-[#0d2246]">
                     <DashboardSidebar
                         sidebar={dashboard.sidebar}
                         activePanelId={activePanelId}
