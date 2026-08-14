@@ -89,11 +89,12 @@ class RegisterUserController extends Controller
 
         $user = User::query()->create($attributes);
 
-        Auth::login($user);
-        $request->session()->regenerate();
         RateLimiter::clear($this->throttleKey($request));
 
-        return redirect()->route('dashboard')->with('status', 'Pendaftaran berhasil. Akun Anda sudah aktif dan siap digunakan.');
+        return redirect()->route('home')->with(
+            'warning',
+            "Pendaftaran berhasil! Akun Anda ({$user->email}) telah terdaftar. Silakan hubungi Pemilik Toko (Owner) untuk mengaktifkan Hak Akses akun ini."
+        );
     }
 
     protected function ensureIsNotRateLimited(Request $request): void

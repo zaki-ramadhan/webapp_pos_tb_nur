@@ -136,6 +136,20 @@ class GoogleLoginController extends Controller
 
         $this->syncGoogleIdentity($user, $oauthUser);
 
+        $email = strtolower((string) $user->email);
+        $isOwner = in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true) || $user->hasAnyRoleCodes(['super_admin']);
+        $user->loadMissing('accessGroups');
+
+        if (! $isOwner && $user->accessGroups->isEmpty()) {
+            if ($usePopup) {
+                return $this->respondWithPopupError("Akun Anda ({$user->email}) belum memiliki Hak Akses. Silakan hubungi Pemilik Toko (Owner) untuk mengaktifkan akses Anda.");
+            }
+
+            return redirect()
+                ->route('home')
+                ->with('warning', "Akun Anda ({$user->email}) belum memiliki Hak Akses. Silakan hubungi Pemilik Toko (Owner) untuk mengaktifkan akses akun Anda.");
+        }
+
         Auth::login($user);
         $request->session()->regenerate();
 

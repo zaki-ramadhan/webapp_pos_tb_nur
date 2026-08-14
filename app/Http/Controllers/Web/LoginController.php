@@ -58,6 +58,19 @@ class LoginController extends Controller
             ]);
         }
 
+        $email = strtolower((string) $user->email);
+        $isOwner = in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true) || $user->hasAnyRoleCodes(['super_admin']);
+        $user->loadMissing('accessGroups');
+
+        if (! $isOwner && $user->accessGroups->isEmpty()) {
+            RateLimiter::clear($this->throttleKey($request));
+
+            return redirect()->route('home')->with(
+                'warning',
+                "Akun Anda ({$user->email}) belum memiliki Hak Akses. Silakan hubungi Pemilik Toko (Owner) untuk mengaktifkan akses akun Anda."
+            );
+        }
+
         if (app(\App\Support\Backend\BackendResourceAccessService::class)->isUserTimeRestricted($user)) {
             RateLimiter::hit($this->throttleKey($request));
 
