@@ -191,9 +191,9 @@ export default function ItemCategoryFormView({
             saveDisabled={saving || !values.name?.trim()}
             onSave={handleSave}
             actionsSlot={
-                isDetail && config.deleteLabel ? (
+                isDetail ? (
                     <DockActionButton
-                        label={saving ? 'Memproses...' : config.deleteLabel}
+                        label={saving ? 'Memproses...' : (config.deleteLabel || 'Hapus Kategori')}
                         tone="danger"
                         icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
                         disabled={saving}

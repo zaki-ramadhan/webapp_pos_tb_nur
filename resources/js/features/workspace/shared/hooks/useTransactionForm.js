@@ -158,8 +158,23 @@ export function buildWorkspaceDockActions({
     onDelete,
     additionalMaps = {}
 }) {
-    return (dockActions ?? [])
-        .filter((action) => action.id === 'save' || (isDetail && action.id === 'delete'))
+    let rawActions = Array.isArray(dockActions)
+        ? dockActions
+        : (dockActions?.[isDetail ? 'detail' : 'create'] ?? dockActions?.[isDetail ? 'detail' : 'default'] ?? []);
+
+    const hasSave = rawActions.some((a) => a && a.id === 'save');
+    const hasDelete = rawActions.some((a) => a && a.id === 'delete');
+
+    let actions = [...rawActions];
+    if (!hasSave) {
+        actions.unshift({ id: 'save', label: 'Simpan', icon: 'save', tone: 'primary' });
+    }
+    if (isDetail && !hasDelete) {
+        actions.push({ id: 'delete', label: 'Hapus', icon: 'trash', tone: 'danger' });
+    }
+
+    return actions
+        .filter((action) => action && (action.id === 'save' || (isDetail && action.id === 'delete')))
         .map((action) => {
             if (additionalMaps[action.id]) {
                 return additionalMaps[action.id](action);

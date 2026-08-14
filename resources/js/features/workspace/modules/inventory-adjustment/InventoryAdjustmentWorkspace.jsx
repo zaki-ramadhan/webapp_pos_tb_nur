@@ -19,7 +19,7 @@ import {
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { CogIcon, PrintIcon } from '@/features/workspace/shared/Icons';
-import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 import { mapDockActions } from '@/features/workspace/modules/shared/workspaceDockActions';
 import {
     applyInventoryPromptItemUpdate,
@@ -208,13 +208,15 @@ export function InventoryAdjustmentFormView({
 
     const dockActions = useMemo(
         () =>
-            mapDockActions(values.dockActions ?? [], {
-                saving,
+            buildWorkspaceDockActions({
+                dockActions: values.dockActions ?? config.dockActions,
+                isDetail,
                 saveDisabled,
+                saving,
                 onSave: onSaveClick,
                 onDelete: requestDelete,
             }),
-        [saveDisabled, saving, values.dockActions],
+        [config.dockActions, isDetail, requestDelete, saveDisabled, saving, values.dockActions],
     );
 
     const handlers = useMemo(
