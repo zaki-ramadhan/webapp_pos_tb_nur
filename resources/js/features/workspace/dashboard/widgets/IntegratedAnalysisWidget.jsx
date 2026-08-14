@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { MapPin, MessageSquare, Megaphone, Package } from 'lucide-react';
 import { getMetric, WidgetSection, getProductImageUrl, HighlightProductText, AbcCategoryLegend, getBuildingStoreLayoutRecommendation } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { IntegratedMatrixChart } from '@/features/workspace/dashboard/analytics/AnalyticsCharts';
@@ -14,6 +14,15 @@ export default function IntegratedAnalysisWidget({
     const [localChartExpanded, setLocalChartExpanded] = useState(false);
     const isChartExpanded = propChartExpanded !== undefined ? propChartExpanded : localChartExpanded;
     const handleToggleChart = onToggleChart ?? (() => setLocalChartExpanded((prev) => !prev));
+
+    const topItemsMap = useMemo(() => {
+        const map = new Map();
+        (widget.topItems ?? []).forEach((item) => {
+            if (item.name) map.set(item.name.toLowerCase().trim(), item);
+            if (item.code) map.set(item.code.toLowerCase().trim(), item);
+        });
+        return map;
+    }, [widget.topItems]);
 
     if (!widget.metrics || widget.metrics.length === 0) {
         return (
@@ -153,6 +162,8 @@ export default function IntegratedAnalysisWidget({
                         <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
                             {(widget.rules ?? []).map((rule, idx) => {
                                 const tactic = getStrategyTactic(rule.antecedentAbc, rule.consequentAbc, rule.antecedent, rule.consequent);
+                                const itemAData = topItemsMap.get(rule.antecedent?.toLowerCase().trim());
+                                const itemBData = topItemsMap.get(rule.consequent?.toLowerCase().trim());
                                 const liftVal = parseFloat(rule.lift ?? '0');
                                 let strengthText = 'Sedang';
                                 if (liftVal >= 3.0) strengthText = 'Sangat Kuat';
@@ -193,8 +204,12 @@ export default function IntegratedAnalysisWidget({
                                                         {rule.antecedent}
                                                     </span>
                                                     {rule.antecedentAbc && (
-                                                        <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.antecedentColor }} title={rule.antecedentAbc === 'A' ? 'Omzet Utama' : rule.antecedentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
-                                                            Kat. {rule.antecedentAbc}
+                                                        <span
+                                                            className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0"
+                                                            style={{ backgroundColor: rule.antecedentColor }}
+                                                            title={`Kategori ${rule.antecedentAbc}${itemAData ? ` — Omzet: ${itemAData.revenue} (${itemAData.share} kontribusi)` : ''}`}
+                                                        >
+                                                            Kat. {rule.antecedentAbc}{itemAData?.share ? ` • ${itemAData.share}` : ''}
                                                         </span>
                                                     )}
                                                 </button>
@@ -229,8 +244,12 @@ export default function IntegratedAnalysisWidget({
                                                         {rule.consequent}
                                                     </span>
                                                     {rule.consequentAbc && (
-                                                        <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.consequentColor }} title={rule.consequentAbc === 'A' ? 'Omzet Utama' : rule.consequentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
-                                                            Kat. {rule.consequentAbc}
+                                                        <span
+                                                            className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0"
+                                                            style={{ backgroundColor: rule.consequentColor }}
+                                                            title={`Kategori ${rule.consequentAbc}${itemBData ? ` — Omzet: ${itemBData.revenue} (${itemBData.share} kontribusi)` : ''}`}
+                                                        >
+                                                            Kat. {rule.consequentAbc}{itemBData?.share ? ` • ${itemBData.share}` : ''}
                                                         </span>
                                                     )}
                                                 </button>
