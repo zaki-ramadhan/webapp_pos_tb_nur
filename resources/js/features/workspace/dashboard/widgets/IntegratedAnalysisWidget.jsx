@@ -112,6 +112,11 @@ export default function IntegratedAnalysisWidget({
 
     return (
         <div className="flex h-full min-h-0 flex-col gap-2 rounded-[8px] p-2 bg-[linear-gradient(180deg,#fcfdfe_0%,#f5f8fc_100%)]">
+            <div className="flex items-center justify-between px-1 py-0.5">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white shadow-md animate-pulse">
+                    🚀 TEST AUTO-RELOAD CI/CD (AKTIF)
+                </span>
+            </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {summaryItems.map((item, idx) => (
                     <div key={idx} title="" className="rounded-[6px] border border-ui-border-light bg-white p-2.5 shadow-widget-medium">
