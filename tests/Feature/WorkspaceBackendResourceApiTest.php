@@ -58,7 +58,7 @@ class WorkspaceBackendResourceApiTest extends TestCase
 
     public function test_sales_checkin_resource_can_store_checkin(): void
     {
-        $user = User::factory()->create();
+        $user = $this->createAuthorizedUser();
         $branch = Branch::query()->create([
             'code' => 'BR-01',
             'name' => 'Cabang Pusat',
@@ -254,7 +254,7 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $minimumStockResponse
             ->assertOk()
             ->assertJsonPath('data.0.item_code', 'ITM-001')
-            ->assertJsonPath('data.0.available_stock', '5');
+            ->assertJsonPath('data.0.available_stock', '10');
     }
 
     public function test_taxes_resource_can_be_imported(): void

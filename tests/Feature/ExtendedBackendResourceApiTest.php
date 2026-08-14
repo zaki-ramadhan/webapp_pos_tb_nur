@@ -23,7 +23,7 @@ class ExtendedBackendResourceApiTest extends TestCase
 
     public function test_purchase_invoice_resource_can_store_basic_operation_document(): void
     {
-        $user = User::factory()->create();
+        $user = $this->createAuthorizedUser();
         $supplier = Supplier::query()->create([
             'code' => 'SUP-001',
             'name' => 'PT Supplier Uji',
@@ -62,7 +62,7 @@ class ExtendedBackendResourceApiTest extends TestCase
 
     public function test_fixed_asset_resource_can_store_master_with_locations(): void
     {
-        $user = User::factory()->create();
+        $user = $this->createAuthorizedUser();
 
         $response = $this->actingAs($user)->postJson('/api/backend/fixed-assets', [
             'code' => 'FA-0001',

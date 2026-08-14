@@ -7,8 +7,11 @@ use Illuminate\Auth\Middleware\Authenticate;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
 class DashboardPageTest extends TestCase
 {
+    use RefreshDatabase;
     public function test_the_dashboard_page_redirects_guests_to_home(): void
     {
         $this->get('/dashboard')
@@ -29,7 +32,7 @@ class DashboardPageTest extends TestCase
 
     public function test_the_dashboard_page_uses_authenticated_user_identity_for_the_header(): void
     {
-        $user = User::factory()->make([
+        $user = User::factory()->create([
             'id' => 99,
             'name' => 'Google User',
             'email' => 'google.user@example.com',
