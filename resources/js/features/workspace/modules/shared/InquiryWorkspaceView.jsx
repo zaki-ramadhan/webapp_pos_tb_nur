@@ -107,6 +107,7 @@ export default function InquiryWorkspaceView({
 
     const searchControl = controls.find(c => c.type === 'search');
     const dateControls = controls.filter(c => c.type === 'date' || c.type === 'label');
+    const selectControls = controls.filter(c => c.type === 'select');
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
     const { handleResizeStart, getCellStyle } = useColumnResize(config.id || 'bank-inquiry');
@@ -166,9 +167,9 @@ export default function InquiryWorkspaceView({
                         ))}
                     </div>
 
-                    {actions.length ? (
+                    {otherActions.length ? (
                         <div className="flex flex-wrap items-center gap-2">
-                            {actions.map((action) => {
+                            {otherActions.map((action) => {
                                 if (action.type === 'switch-view') {
                                     return (
                                         <TransactionSwitchViewButton
