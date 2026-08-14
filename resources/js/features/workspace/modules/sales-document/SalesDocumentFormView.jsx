@@ -9,6 +9,7 @@ import {
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
+import { buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 import {
     buildGeneratedDocumentNumber,
     buildOperationDocumentPayload,
@@ -452,29 +453,15 @@ export default function SalesDocumentFormView({
 
     const dockActions = useMemo(
         () =>
-            (values.dockActions ?? [])
-                .filter((action) => action.id === 'save' || (isDetail && action.id === 'delete'))
-                .map((action) => {
-                if (action.id === 'save') {
-                    return {
-                        ...action,
-                        label: saving ? 'Memproses...' : action.label,
-                        onClick: onSave,
-                        disabled: action.disabled || saveDisabled,
-                    };
-                }
-
-                if (action.id === 'delete') {
-                    return {
-                        ...action,
-                        label: saving ? 'Memproses...' : action.label,
-                        onClick: onRequestDelete,
-                    };
-                }
-
-                return action;
+            buildWorkspaceDockActions({
+                dockActions: values.dockActions ?? config.dockActions,
+                isDetail,
+                saveDisabled,
+                saving,
+                onSave,
+                onDelete: onRequestDelete,
             }),
-        [saveDisabled, saving, values.dockActions],
+        [config.dockActions, isDetail, onRequestDelete, onSave, saveDisabled, saving, values.dockActions],
     );
 
     return (

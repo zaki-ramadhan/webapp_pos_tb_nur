@@ -217,9 +217,9 @@ export default function WarehouseFormView({
             saveDisabled={saving}
             onSave={handleSave}
             actionsSlot={
-                isDetailMode && config.deleteLabel ? (
+                isDetailMode ? (
                     <DockActionButton
-                        label={saving ? 'Memproses...' : config.deleteLabel}
+                        label={saving ? 'Memproses...' : (config.deleteLabel || 'Hapus Gudang')}
                         tone="danger"
                         icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
                         disabled={saving}
