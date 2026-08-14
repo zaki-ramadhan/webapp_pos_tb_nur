@@ -130,7 +130,7 @@ class AbcAnalysisService
             [
                 'label' => 'Nilai Analisis',
                 'value' => \App\Support\Presentation\PosBlueprint::formatCurrencyShort($totalRevenue),
-                'helper' => 'Berdasarkan penjualan material dan perlengkapan bangunan',
+                'helper' => ($months ? "Akumulasi omzet {$months} bulan terakhir" : 'Berdasarkan penjualan material'),
                 'tone' => 'rose',
             ],
         ];

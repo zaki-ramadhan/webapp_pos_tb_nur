@@ -55,7 +55,7 @@ export default function IntegratedAnalysisWidget({
         {
             label: 'Nilai Omzet Toko',
             value: totalMetric?.value ?? '0',
-            helper: totalMetric?.helper ?? 'Total penjualan.',
+            helper: totalMetric?.helper || 'Akumulasi 3 bulan terakhir',
         },
     ];
 
