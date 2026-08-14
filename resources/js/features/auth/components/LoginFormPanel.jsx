@@ -146,6 +146,7 @@ export default function LoginFormPanel({ login }) {
                 <AuthHeading title={login.title} subtitle={login.subtitle} />
 
                 <form className="mt-6 space-y-3 sm:mt-8" onSubmit={submit}>
+                    {props.flash?.warning ? <Notice tone="warning">{props.flash.warning}</Notice> : null}
                     {props.flash?.status ? <Notice tone="success">{props.flash.status}</Notice> : null}
                     {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
                     <AuthInput
