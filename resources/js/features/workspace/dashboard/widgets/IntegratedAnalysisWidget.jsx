@@ -239,10 +239,6 @@ export default function IntegratedAnalysisWidget({
                                                 <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-800 shrink-0">
                                                     Tingkat Kepastian: {rule.confidence}
                                                 </span>
-
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-800 shrink-0">
-                                                    Daya Dorong: {rule.lift}x ({strengthText})
-                                                </span>
                                             </div>
                                         </div>
 
