@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MapPin, MessageSquare, Megaphone, Package } from 'lucide-react';
 import { getMetric, WidgetSection, getProductImageUrl, HighlightProductText, AbcCategoryLegend, getBuildingStoreLayoutRecommendation } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { IntegratedMatrixChart } from '@/features/workspace/dashboard/analytics/AnalyticsCharts';
+import { AbcTopItemRow } from '@/features/workspace/dashboard/analytics/AnalyticsWidgetRows';
 
 export default function IntegratedAnalysisWidget({
     widget,
@@ -284,6 +285,21 @@ export default function IntegratedAnalysisWidget({
                         </p>
                     )}
                 </WidgetSection>
+
+                {widget.topItems && widget.topItems.length > 0 && (
+                    <WidgetSection
+                        title="Daftar Barang Penyumbang Omzet Terbesar (Klasifikasi ABC)"
+                        caption="Rincian nominal omzet (Rp) dan persentase kontribusi (%) tiap barang berdasarkan hasil analisis Pareto 80/20 (Kategori A, B, C)."
+                        collapsible={true}
+                        expanded={true}
+                    >
+                        <div className="space-y-2 max-h-[340px] overflow-y-auto pr-1">
+                            {widget.topItems.map((item, idx) => (
+                                <AbcTopItemRow key={item.code || idx} item={item} />
+                            ))}
+                        </div>
+                    </WidgetSection>
+                )}
 
                 {widget.insight && (
                     <div className="rounded-[8px] border border-blue-200 bg-blue-50/40 p-3 text-sm text-blue-800 leading-6 flex items-start gap-2.5">
