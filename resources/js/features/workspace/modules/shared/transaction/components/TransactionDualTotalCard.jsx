@@ -6,7 +6,7 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
         return null;
     }
 
-    const maxWClass = items.length === 3 ? 'w-full sm:w-[720px] max-w-full' : items.length === 1 ? 'w-full sm:w-[264px] max-w-full' : 'w-full sm:w-[480px] max-w-full';
+    const maxWClass = items.length === 3 ? 'w-full sm:w-[720px] xl:w-[810px] 2xl:w-[900px] max-w-full' : items.length === 1 ? 'w-full sm:w-[264px] xl:w-[290px] 2xl:w-[320px] max-w-full' : 'w-full sm:w-[480px] xl:w-[540px] 2xl:w-[600px] max-w-full';
 
     const gridColsClass = items.length === 3 ? 'grid-cols-1 sm:grid-cols-3' : items.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1';
 

@@ -99,16 +99,16 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
 
     const widthClassName =
         footerParts.length >= 6
-            ? 'w-full sm:w-[900px] max-w-full'
+            ? 'w-full sm:w-[900px] xl:w-[1020px] 2xl:w-[1140px] max-w-full'
             : footerParts.length === 5
-              ? 'w-full sm:w-[780px] max-w-full'
+              ? 'w-full sm:w-[780px] xl:w-[880px] 2xl:w-[980px] max-w-full'
               : footerParts.length === 4
-                ? 'w-full sm:w-[640px] max-w-full'
+                ? 'w-full sm:w-[640px] xl:w-[720px] 2xl:w-[800px] max-w-full'
                 : footerParts.length === 3
-                  ? 'w-full sm:w-[540px] max-w-full'
+                  ? 'w-full sm:w-[540px] xl:w-[600px] 2xl:w-[680px] max-w-full'
                   : footerParts.length === 2
-                    ? 'w-full sm:w-[360px] max-w-full'
-                    : 'w-full sm:w-[264px] max-w-full';
+                    ? 'w-full sm:w-[360px] xl:w-[400px] 2xl:w-[460px] max-w-full'
+                    : 'w-full sm:w-[264px] xl:w-[290px] 2xl:w-[320px] max-w-full';
 
     return (
         <div className="flex w-full justify-end">
