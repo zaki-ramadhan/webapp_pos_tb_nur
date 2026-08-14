@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'app' => [
                 'name' => config('app.name', 'TB Nur POS'),
+                'env' => config('app.env', 'production'),
                 'locale' => app()->getLocale(),
                 'timezone' => config('app.timezone'),
             ],
