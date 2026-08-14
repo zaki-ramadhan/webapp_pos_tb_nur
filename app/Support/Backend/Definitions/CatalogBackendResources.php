@@ -108,7 +108,7 @@ class CatalogBackendResources
                 searchColumns: ['code', 'barcode', 'name', 'product_type'],
                 modelClass: Product::class,
                 with: [
-                    'category', 'baseUnit', 'attachments',
+                    'category', 'brand', 'baseUnit', 'purchaseUnit', 'attachments',
                     'groupItems', 'groupItems.childProduct', 'groupItems.unit'
                 ],
                 storeRules: [
