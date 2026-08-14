@@ -1,10 +1,18 @@
 import { useEffect, useRef } from 'react';
+import { usePage } from '@inertiajs/react';
 import { toast } from 'sonner';
 
 export default function AutoReloadOnDeploy() {
+    const { app } = usePage().props;
+    const environment = app?.env || import.meta.env.VITE_APP_ENV || 'production';
     const initialManifestRef = useRef(null);
 
+    // Hanya aktif di environment non-production (misal: staging, local, development)
+    const isAutoReloadEnabled = environment !== 'production';
+
     useEffect(() => {
+        if (!isAutoReloadEnabled) return;
+
         let isMounted = true;
 
         const checkDeployment = async () => {
@@ -28,24 +36,25 @@ export default function AutoReloadOnDeploy() {
 
                 if (text !== initialManifestRef.current) {
                     initialManifestRef.current = text;
-                    toast.info('⚡ Pembaruan sistem (CI/CD) selesai! Memperbarui halaman...', { duration: 4000 });
+                    // Notifikasi resmi menggunakan sonner package
+                    toast.info('⚡ Update CI/CD selesai! Memperbarui halaman...', { duration: 4000 });
                     setTimeout(() => {
                         window.location.href = window.location.pathname + '?v=' + Date.now();
                     }, 1000);
                 }
             } catch {
-                // Abaikan error jaringan sementara saat proses deploy berlangsung
+                // Abaikan error jaringan sementara saat deploy sedang berjalan
             }
         };
 
         checkDeployment();
-        const interval = setInterval(checkDeployment, 10000);
+        const interval = setInterval(checkDeployment, 5000);
 
         return () => {
             isMounted = false;
             clearInterval(interval);
         };
-    }, []);
+    }, [isAutoReloadEnabled]);
 
     return null;
 }
