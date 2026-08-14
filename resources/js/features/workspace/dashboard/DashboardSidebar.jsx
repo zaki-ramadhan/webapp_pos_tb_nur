@@ -14,7 +14,11 @@ import { toneClasses } from '@/features/workspace/navigation/NavigationTile';
 
 const DISABLED_SIDEBAR_GROUP_IDS = new Set(['fixed-assets', 'tax-center']);
 
-function getVisiblePanelItems(item, preferences) {
+function getVisiblePanelItems(item, preferences, user) {
+    if (user && user.hasAccessGroup === false) {
+        return [];
+    }
+
     return (item.panel?.items ?? []).filter((panelItem) => {
         const isInactive = isWorkspacePageInactive(panelItem.id, preferences);
         const isImplemented = panelItem.implemented !== false && implementedWorkspacePageIds.has(panelItem.id);
@@ -22,8 +26,8 @@ function getVisiblePanelItems(item, preferences) {
     });
 }
 
-function normalizeSidebarItem(item, preferences) {
-    const visiblePanelItems = getVisiblePanelItems(item, preferences);
+function normalizeSidebarItem(item, preferences, user) {
+    const visiblePanelItems = getVisiblePanelItems(item, preferences, user);
     const isForcedDisabled = DISABLED_SIDEBAR_GROUP_IDS.has(item.id);
 
     return {
@@ -184,7 +188,7 @@ export default function DashboardSidebar({
 }) {
     const railRef = useRef(null);
     const buttonRefs = useRef({});
-    const sidebarItems = sidebar.items.map(item => normalizeSidebarItem(item, preferences)).filter((item) => !item.disabled);
+    const sidebarItems = sidebar.items.map(item => normalizeSidebarItem(item, preferences, user)).filter((item) => !item.disabled);
     const activeItem = sidebarItems.find((item) => item.id === activePanelId && !item.disabled) ?? null;
     const activeButtonElement = activePanelId ? buttonRefs.current[activePanelId] ?? null : null;
 
