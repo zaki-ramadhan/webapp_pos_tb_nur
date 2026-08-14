@@ -198,6 +198,10 @@ function MetricLegendList({ items = [] }) {
 export function LineTrendMetric({ widget }) {
     const hasLegend = Array.isArray(widget.series) && widget.series.length > 1;
 
+    const firstSeriesData = widget.series?.[0]?.data ?? [];
+    const isNegative = firstSeriesData.some((val) => Number(val) < 0);
+    const accentColor = isNegative ? '#f87171' : widget.accent;
+
     return (
         <div className="flex flex-1 flex-col h-full min-h-0 justify-between gap-3">
             <div className="flex flex-wrap items-center justify-between gap-2 shrink-0">
@@ -229,7 +233,7 @@ export function LineTrendMetric({ widget }) {
                 <TrendLineChart
                     labels={widget.labels ?? []}
                     series={widget.series ?? []}
-                    accent={widget.accent}
+                    accent={accentColor}
                     valueFormat={widget.valueFormat ?? 'number'}
                     heightClassName="flex-1 min-h-[140px]"
                 />

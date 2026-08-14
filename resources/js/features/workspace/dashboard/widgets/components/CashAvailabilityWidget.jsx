@@ -33,7 +33,7 @@ export function CashAvailabilityWidget({ widget }) {
                 <TrendLineChart
                     labels={widget.labels ?? []}
                     series={widget.series ?? []}
-                    accent={isNegative ? '#e11d48' : widget.accent}
+                    accent={isNegative ? '#f87171' : widget.accent}
                     valueFormat={widget.valueFormat ?? 'currency'}
                     heightClassName="flex-1 min-h-[160px]"
                 />
