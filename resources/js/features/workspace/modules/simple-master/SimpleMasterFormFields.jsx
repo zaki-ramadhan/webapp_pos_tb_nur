@@ -29,7 +29,7 @@ export function FieldLabel({ field, className = '' }) {
 }
 
 
-export function MasterFieldRow({ field, value, onChange }) {
+export function MasterFieldRow({ field, value, onChange, isDetailMode = false }) {
     if (field.type === 'heading') {
         return (
             <div className={`pt-2.5 pb-1 md:col-span-2 border-b border-ui-border-medium ${field.containerClassName ?? ''}`.trim()}>
@@ -46,7 +46,7 @@ export function MasterFieldRow({ field, value, onChange }) {
                     id={field.id}
                     label={field.checkboxLabel ?? field.label}
                     checked={Boolean(value)}
-                    onChange={(event) => onChange(field.id, event.target.checked)}
+                    onChange={(event) => onChange(field.id, event.target.value)}
                     align="center"
                     labelClassName="text-base md:text-base"
                     inputClassName="mt-0 h-[18px] w-[18px]"
@@ -112,7 +112,7 @@ export function MasterFieldRow({ field, value, onChange }) {
                         onChange={(event) => onChange(field.id, event.target.value)}
                         placeholder={field.placeholder ?? 'Cari/Pilih...'}
                         className={`h-[40px] rounded-[4px] border-ui-border ${field.className ?? ''}`.trim()}
-                        inputClassName="text-xs sm:text-sm text-brand-dark"
+                        inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
                         containerClassName={field.containerClassName ?? ''}
                         trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
                         trailingClassName="px-3"
@@ -121,6 +121,8 @@ export function MasterFieldRow({ field, value, onChange }) {
             </div>
         );
     }
+
+    const isCodeOrIdField = isDetailMode && ['id', 'code', 'number', 'unitCode', 'categoryCode', 'departmentCode'].includes(field.id);
 
     return (
         <div className="grid gap-3 lg:grid-cols-[170px_1fr] lg:items-center">
@@ -131,11 +133,12 @@ export function MasterFieldRow({ field, value, onChange }) {
                     name={field.id}
                     value={value}
                     onChange={(event) => onChange(field.id, event.target.value)}
+                    readOnly={Boolean(field.readOnly || isCodeOrIdField)}
                     className={`h-[40px] rounded-[4px] border-ui-border ${field.className ?? ''}`.trim()}
-                    inputClassName="text-xs sm:text-sm text-brand-dark"
+                    inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
                     containerClassName={field.containerClassName ?? ''}
                     trailing={
-                        field.clearable && value ? (
+                        !isCodeOrIdField && field.clearable && value ? (
                             <button
                                 type="button"
                                 onClick={() => onChange(field.id, '')}
@@ -146,7 +149,7 @@ export function MasterFieldRow({ field, value, onChange }) {
                             </button>
                         ) : null
                     }
-                    trailingClassName={field.clearable ? 'pr-2' : ''}
+                    trailingClassName={field.clearable && !isCodeOrIdField ? 'pr-2' : ''}
                 />
             </div>
         </div>

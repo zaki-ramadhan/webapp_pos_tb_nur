@@ -52,8 +52,9 @@ export default function BankTransferHeader({ config, values, setValues, activeRe
                                     onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value, autoNumber: false }))}
                                     onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                     maxLength={120}
+                                    readOnly={Boolean(activeRecordId)}
                                     className="h-[40px] rounded-[4px] border-ui-border w-full"
-                                    inputClassName="text-xs sm:text-sm text-brand-dark"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
                                 />
                             )}
                         </div>

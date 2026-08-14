@@ -218,9 +218,10 @@ export default function SalesReceiptFormView({
                                                 }))
                                             }
                                             maxLength={120}
-                                            trailing={<span className="text-lg font-semibold text-brand-dark">×</span>}
+                                            readOnly={isDetail}
+                                            trailing={isDetail ? null : <span className="text-lg font-semibold text-brand-dark">×</span>}
                                             className="h-[40px] rounded-[4px] border-ui-border w-full"
-                                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                                            inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
                                             trailingClassName="px-3"
                                         />
                                     )}

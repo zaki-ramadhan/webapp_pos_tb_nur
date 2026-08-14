@@ -287,6 +287,7 @@ export default function SimpleMasterFormView({
                             field={field}
                             value={values[field.id] ?? ''}
                             onChange={handleChange}
+                            isDetailMode={isDetailMode}
                         />
                     )
                 ))}

@@ -98,9 +98,10 @@ export default function ExpenseEntryHeader({ config, values, setValues, showAuto
                                  onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
                                  onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                  maxLength={120}
-                                 trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
+                                 readOnly={isDetail}
+                                 trailing={isDetail ? null : <CloseIcon className="h-4 w-4 text-brand-dark" />}
                                  className="h-[40px] rounded-[4px] border-ui-border"
-                                 inputClassName="text-xs sm:text-sm text-brand-dark"
+                                 inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
                                  trailingClassName="px-3"
                              />
                         )}

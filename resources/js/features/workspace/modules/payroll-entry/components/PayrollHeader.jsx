@@ -82,8 +82,9 @@ export function PayrollHeader({ config, values, setValues, isDetail, handlers = 
                                  onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
                                  onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                  maxLength={120}
+                                 readOnly={isDetail}
                                  className="h-[40px] rounded-[4px] border-ui-border w-full"
-                                 inputClassName="text-xs sm:text-sm text-brand-dark"
+                                 inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
                              />
                         ) : (
                             <SelectField
