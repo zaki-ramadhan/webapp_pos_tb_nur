@@ -6,13 +6,13 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
         return null;
     }
 
-    const maxWClass = items.length === 3 ? 'max-w-[600px]' : items.length === 1 ? 'max-w-[200px]' : 'max-w-[400px]';
+    const maxWClass = items.length === 3 ? 'w-[540px] sm:w-[600px]' : items.length === 1 ? 'w-[200px] sm:w-[220px]' : 'w-[380px] sm:w-[440px]';
 
     const gridColsClass = items.length === 3 ? 'grid-cols-3' : items.length === 2 ? 'grid-cols-2' : 'grid-cols-1';
 
     return (
         <div
-            className={`grid ${gridColsClass} w-full ${maxWClass} overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${className}`.trim()}
+            className={`grid ${gridColsClass} shrink-0 ${maxWClass} overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${className}`.trim()}
         >
             {items.map((item, index) => {
                 const formattedValue = formatDisplayValue(item.value);
