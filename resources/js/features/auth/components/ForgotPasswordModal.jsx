@@ -38,7 +38,10 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
         let loadingToastId = null;
         let requestFailed = false;
 
-        form.post('/forgot-password', {
+        form.transform((data) => ({
+            ...data,
+            identifier: data.email,
+        })).post('/forgot-password', {
             preserveScroll: true,
             preserveState: true,
             onStart: () => {
@@ -56,7 +59,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
 
                 showErrorToast({
                     title: 'Permintaan gagal',
-                    message: getAuthFormMessage(errors) || getFirstInlineError(errors, ['email']) || 'Periksa kembali data akun yang Anda masukkan.',
+                    message: getAuthFormMessage(errors) || getFirstInlineError(errors, ['email', 'identifier']) || 'Periksa kembali data akun yang Anda masukkan.',
                 });
             },
             onFinish: () => {

@@ -17,13 +17,14 @@ class ForgotPasswordLinkController extends Controller
 {
     public function __invoke(Request $request): RedirectResponse
     {
-        $this->ensureIsNotRateLimited($request);
+        $rawIdentifier = trim((string) ($request->input('email') ?? $request->input('identifier') ?? ''));
+        $request->merge(['identifier' => $rawIdentifier, 'email' => $rawIdentifier]);
 
         $payload = $request->validate([
             'identifier' => ['required', 'string', 'max:255'],
         ], [
-            'identifier.required' => 'Email atau nomor handphone wajib diisi.',
-            'identifier.max' => 'Email atau nomor handphone terlalu panjang.',
+            'identifier.required' => 'Email wajib diisi.',
+            'identifier.max' => 'Email terlalu panjang.',
         ]);
 
         $identifier = trim($payload['identifier']);
@@ -43,7 +44,8 @@ class ForgotPasswordLinkController extends Controller
             RateLimiter::hit($this->throttleKey($request));
 
             throw ValidationException::withMessages([
-                'identifier' => 'Email atau nomor handphone tidak terdaftar. Periksa kembali penulisan atau daftar akun baru jika belum memiliki akun.',
+                'email' => 'Email tidak terdaftar. Periksa kembali penulisan email Anda.',
+                'identifier' => 'Email tidak terdaftar. Periksa kembali penulisan email Anda.',
             ]);
         }
 
@@ -57,7 +59,8 @@ class ForgotPasswordLinkController extends Controller
             ]);
 
             throw ValidationException::withMessages([
-                'identifier' => 'Gagal mengirim email verifikasi karena gangguan koneksi server. Silakan coba lagi beberapa saat lagi.',
+                'email' => 'Gagal mengirim email verifikasi karena pengiriman email (SMTP) server belum dikonfigurasi. Silakan hubungi Pemilik Toko (Owner) untuk reset password.',
+                'identifier' => 'Gagal mengirim email verifikasi karena pengiriman email (SMTP) server belum dikonfigurasi. Silakan hubungi Pemilik Toko (Owner) untuk reset password.',
             ]);
         }
 
