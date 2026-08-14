@@ -236,16 +236,11 @@ export default function IntegratedAnalysisWidget({
                                             </div>
 
                                             <div className="flex flex-wrap items-center gap-2 shrink-0">
-                                                <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold border shrink-0 ${tactic.bg}`}>
-                                                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tactic.badgeBg }}></span>
-                                                    {tactic.title}
-                                                </span>
-
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-800 shrink-0" title="Tingkat Kepastian Hubungan Pasangan Produk">
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-800 shrink-0">
                                                     Tingkat Kepastian: {rule.confidence}
                                                 </span>
 
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-800 shrink-0" title="Daya Dorong Penjualan (Lift Ratio)">
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-800 shrink-0">
                                                     Daya Dorong: {rule.lift}x ({strengthText})
                                                 </span>
                                             </div>
