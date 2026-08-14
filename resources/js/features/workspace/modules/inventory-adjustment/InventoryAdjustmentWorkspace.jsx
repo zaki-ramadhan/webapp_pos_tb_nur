@@ -84,15 +84,14 @@ export function InventoryAdjustmentFormView({
         status,
         setStatus,
         saving,
+        saveDisabled,
         deleteConfirmationOpen,
         setDeleteConfirmationOpen,
         selectLookup,
         handleSave,
         requestDelete,
         handleDelete,
-    } = useTransactionForm({ validationMessage });
-
-    const saveDisabled = saving || Boolean(validationMessage);
+    } = useTransactionForm({ validationMessage, isDirty });
 
 
 
