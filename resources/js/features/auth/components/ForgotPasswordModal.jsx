@@ -107,8 +107,12 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                                 autoCorrect="off"
                                 spellCheck={false}
                                 value={form.data.email}
-                                onChange={(event) => form.setData('email', event.target.value)}
-                                error={authMessage ? '' : form.errors.email}
+                                onChange={(event) => {
+                                    form.clearErrors('email');
+                                    form.clearErrors('identifier');
+                                    form.setData('email', event.target.value);
+                                }}
+                                error={form.errors.email || form.errors.identifier}
                                 required
                             />
 
@@ -117,8 +121,9 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                             <div className="flex justify-end pt-1">
                                 <button
                                     type="submit"
+                                    onClick={submit}
                                     disabled={form.processing}
-                                    className="py-2.5 px-5 rounded-[4px] bg-brand-blue hover:bg-brand-blue-hover text-xs sm:text-sm font-medium text-white shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
+                                    className="py-2.5 px-5 rounded-[4px] bg-brand-blue hover:bg-brand-blue-hover text-xs sm:text-sm font-medium text-white shadow-sm transition-colors disabled:opacity-50 cursor-pointer select-none"
                                 >
                                     {form.processing ? 'Memproses...' : 'Reset Password'}
                                 </button>
