@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { toast } from 'sonner';
+import { showInfoToast } from '@/components/feedback/toast';
 
 export default function AutoReloadOnDeploy({ initialEnv }) {
     const environment = initialEnv || import.meta.env.VITE_APP_ENV || 'production';
@@ -41,7 +41,10 @@ export default function AutoReloadOnDeploy({ initialEnv }) {
 
                 if (text !== initialManifestRef.current) {
                     initialManifestRef.current = text;
-                    toast.info('⚡ Update CI/CD selesai! Memperbarui halaman...', { duration: 4000 });
+                    showInfoToast({
+                        title: '⚡ Update CI/CD Selesai',
+                        message: 'Memperbarui halaman...',
+                    });
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);
