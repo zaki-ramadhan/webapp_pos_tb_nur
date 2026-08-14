@@ -11,7 +11,10 @@ export default function AutoReloadOnDeploy() {
             try {
                 const res = await fetch(`/build/manifest.json?t=${Date.now()}`, {
                     cache: 'no-store',
-                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' },
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                    },
                 });
                 if (!res.ok) return;
                 const text = await res.text();
@@ -27,8 +30,8 @@ export default function AutoReloadOnDeploy() {
                     initialManifestRef.current = text;
                     toast.info('⚡ Pembaruan sistem (CI/CD) selesai! Memperbarui halaman...', { duration: 4000 });
                     setTimeout(() => {
-                        window.location.reload();
-                    }, 1200);
+                        window.location.href = window.location.pathname + '?v=' + Date.now();
+                    }, 1000);
                 }
             } catch {
                 // Abaikan error jaringan sementara saat proses deploy berlangsung
@@ -36,7 +39,7 @@ export default function AutoReloadOnDeploy() {
         };
 
         checkDeployment();
-        const interval = setInterval(checkDeployment, 15000);
+        const interval = setInterval(checkDeployment, 10000);
 
         return () => {
             isMounted = false;
