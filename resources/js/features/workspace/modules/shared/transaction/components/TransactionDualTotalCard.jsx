@@ -6,9 +6,9 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
         return null;
     }
 
-    const maxWClass = items.length === 3 ? 'w-[640px] sm:w-[720px]' : items.length === 1 ? 'w-[240px] sm:w-[264px]' : 'w-[440px] sm:w-[480px]';
+    const maxWClass = items.length === 3 ? 'w-full sm:w-[720px] max-w-full' : items.length === 1 ? 'w-full sm:w-[264px] max-w-full' : 'w-full sm:w-[480px] max-w-full';
 
-    const gridColsClass = items.length === 3 ? 'grid-cols-3' : items.length === 2 ? 'grid-cols-2' : 'grid-cols-1';
+    const gridColsClass = items.length === 3 ? 'grid-cols-1 sm:grid-cols-3' : items.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1';
 
     return (
         <div

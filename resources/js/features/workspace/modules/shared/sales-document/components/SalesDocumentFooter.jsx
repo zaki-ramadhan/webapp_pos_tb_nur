@@ -87,17 +87,15 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
         { id: 'total', label: 'Total', value: buildCurrencyValue(values.total), align: 'right' },
     ];
     const gridClassName =
-        footerParts.length === 6
-            ? 'md:grid-cols-6'
-            : footerParts.length === 5
-              ? 'md:grid-cols-5'
-              : footerParts.length === 4
-                ? 'md:grid-cols-4'
-                : footerParts.length === 3
-                  ? 'md:grid-cols-3'
-                  : footerParts.length === 2
-                    ? 'md:grid-cols-2'
-                    : 'md:grid-cols-1';
+        footerParts.length >= 5
+            ? 'grid-cols-1 sm:grid-cols-3 md:grid-cols-5'
+            : footerParts.length === 4
+              ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4'
+              : footerParts.length === 3
+                ? 'grid-cols-1 sm:grid-cols-3'
+                : footerParts.length === 2
+                  ? 'grid-cols-1 sm:grid-cols-2'
+                  : 'grid-cols-1';
 
     const widthClassName =
         footerParts.length >= 6
