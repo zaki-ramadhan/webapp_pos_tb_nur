@@ -37,7 +37,7 @@ createInertiaApp({
                 <AppErrorBoundary pageProps={props.initialPage?.props}>
                     <App {...props} />
                     <FlashToastBridge />
-                    <AutoReloadOnDeploy />
+                    <AutoReloadOnDeploy initialEnv={props.initialPage?.props?.app?.env} />
                     <Toaster
                         position="top-right"
                         visibleToasts={4}

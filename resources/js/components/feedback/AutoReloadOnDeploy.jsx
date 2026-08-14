@@ -1,10 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { usePage } from '@inertiajs/react';
 import { toast } from 'sonner';
 
-export default function AutoReloadOnDeploy() {
-    const { app } = usePage().props;
-    const environment = app?.env || import.meta.env.VITE_APP_ENV || 'production';
+export default function AutoReloadOnDeploy({ initialEnv }) {
+    const environment = initialEnv || import.meta.env.VITE_APP_ENV || 'production';
     const initialManifestRef = useRef(null);
 
     // Hanya aktif di environment non-production (misal: staging, local, development)
@@ -36,7 +34,6 @@ export default function AutoReloadOnDeploy() {
 
                 if (text !== initialManifestRef.current) {
                     initialManifestRef.current = text;
-                    // Notifikasi resmi menggunakan sonner package
                     toast.info('⚡ Update CI/CD selesai! Memperbarui halaman...', { duration: 4000 });
                     setTimeout(() => {
                         window.location.href = window.location.pathname + '?v=' + Date.now();
