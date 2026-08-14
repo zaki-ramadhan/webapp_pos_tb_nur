@@ -192,17 +192,16 @@ class GoogleLoginController extends Controller
 
         try {
             $isOwner = in_array(strtolower($email), ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true);
-            $roleCode = $isOwner ? 'super_admin' : 'operator';
-            $role = \App\Domain\Identity\Models\Role::where('code', $roleCode)->first();
-            if ($role) {
-                $user->roles()->syncWithoutDetaching([$role->id]);
-            }
+            if ($isOwner) {
+                $role = \App\Domain\Identity\Models\Role::where('code', 'super_admin')->first();
+                if ($role) {
+                    $user->roles()->syncWithoutDetaching([$role->id]);
+                }
 
-            $groupCode = $isOwner ? 'OWNER' : 'KASIR';
-            $targetGroup = \App\Domain\Identity\Models\AccessGroup::where('code', $groupCode)->first()
-                ?? \App\Domain\Identity\Models\AccessGroup::where('code', 'OWNER')->first();
-            if ($targetGroup) {
-                $user->accessGroups()->syncWithoutDetaching([$targetGroup->id]);
+                $targetGroup = \App\Domain\Identity\Models\AccessGroup::where('code', 'OWNER')->first();
+                if ($targetGroup) {
+                    $user->accessGroups()->syncWithoutDetaching([$targetGroup->id]);
+                }
             }
         } catch (\Throwable $e) {
             // Ignore if tables not yet seeded
@@ -241,16 +240,16 @@ class GoogleLoginController extends Controller
             $email = strtolower((string) $user->email);
             $isOwner = in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true);
 
-            $roleCode = $isOwner ? 'super_admin' : 'operator';
-            $role = \App\Domain\Identity\Models\Role::where('code', $roleCode)->first();
-            if ($role) {
-                $user->roles()->syncWithoutDetaching([$role->id]);
-            }
+            if ($isOwner) {
+                $role = \App\Domain\Identity\Models\Role::where('code', 'super_admin')->first();
+                if ($role) {
+                    $user->roles()->syncWithoutDetaching([$role->id]);
+                }
 
-            $groupCode = $isOwner ? 'OWNER' : 'KASIR';
-            $targetGroup = \App\Domain\Identity\Models\AccessGroup::where('code', $groupCode)->first();
-            if ($targetGroup) {
-                $user->accessGroups()->sync([$targetGroup->id]);
+                $targetGroup = \App\Domain\Identity\Models\AccessGroup::where('code', 'OWNER')->first();
+                if ($targetGroup) {
+                    $user->accessGroups()->sync([$targetGroup->id]);
+                }
             }
         } catch (\Throwable) {
             // Ignore if access groups table not available
