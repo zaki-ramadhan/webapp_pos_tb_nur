@@ -25,7 +25,7 @@ class AuthValidationMessageTest extends TestCase
         $response
             ->assertRedirect('/')
             ->assertSessionHasErrors([
-                'identifier' => 'Email atau nomor handphone wajib diisi.',
+                'email' => 'Email wajib diisi.',
             ]);
     }
 
