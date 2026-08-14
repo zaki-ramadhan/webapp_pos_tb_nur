@@ -8,10 +8,9 @@ import { EmployeeFieldRow } from '@/features/workspace/modules/employee/employee
 import { SuggestionTextInput, ToggleSwitch } from '@/features/workspace/modules/employee/employeeControls';
 
 const POSITION_SUGGESTIONS = [
-    'Kasir',
-    'Kuli Muat',
-    'Kuli',
-    'Sopir',
+    'Kasir Toko',
+    'Staf Gudang & Muat',
+    'Sopir Pengiriman',
     'Pemilik Toko',
 ];
 
