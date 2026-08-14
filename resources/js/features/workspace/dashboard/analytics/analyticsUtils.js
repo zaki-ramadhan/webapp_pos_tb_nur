@@ -57,23 +57,23 @@ export function getBuildingStoreLayoutRecommendation(itemA = '', itemB = '') {
     const text = (itemA + ' ' + itemB).toLowerCase();
 
     if (/semen|pasir|besi|batu|bata|cor|beton|material|pondasi|mortar/i.test(text)) {
-        return `Posisikan tumpukan di atas palet lantai Area Pelataran Utama / Loading Dock Depan agar kuli & armada toko langsung sekali muat saat muat kargo.`;
+        return `Posisikan tumpukan di atas palet area depan toko agar kuli & armada toko langsung sekali muat saat muat barang.`;
     }
     if (/pipa|kayu|seng|baja|plumbing|atap|triplek|hollow|alumunium/i.test(text)) {
-        return `Taruh pada rak besi bertingkat horizontal khusus barang panjang, dan pasang keranjang gantung aksesoris persis di seberang/ujung lorong rak.`;
+        return `Taruh pada rak besi bertingkat khusus barang panjang, dan pasang keranjang gantung aksesoris di ujung rak.`;
     }
     if (/cat|kuas|thinner|amplas|lakban|rol|compound/i.test(text)) {
-        return `Tempatkan kaleng di rak display Zone Cat, dan gantungkan aksesoris pada hook pegboard setinggi pandangan mata (eye-level).`;
+        return `Tempatkan kaleng di area rak cat, dan gantungkan aksoris pada gantungan rak setinggi pandangan mata.`;
     }
     if (/kran|lem|fitting|stop|seal/i.test(text)) {
-        return `Taruh di etalase berpetak Fast-Moving Plumbing (Depan Kasir), dan sandingkan wadah display aksesoris di rak bawah kasir.`;
+        return `Taruh di etalase perlengkapan pipa depan kasir, dan sandingkan wadah display aksesoris di rak bawah kasir.`;
     }
     if (/sekop|cangkul|kawat|paku|engsel|tang|palu|gergaji/i.test(text)) {
-        return `Gantungkan pada wall-display pegboard pertukangan, dan posisikan keranjang aksesoris di bawahnya agar pembeli langsung mengambil pelengkapnya.`;
+        return `Gantungkan pada papan gantung pertukangan, dan posisikan keranjang aksesoris di bawahnya agar pembeli langsung mengambil pelengkapnya.`;
     }
     if (/listrik|kabel|saklar|isolatip|stop kontak/i.test(text)) {
-        return `Pajang di etalase kaca depan kasir, dan posisikan produk pelengkap di rak display gantung impulsif tepat di atas etalase.`;
+        return `Pajang di etalase alat listrik depan kasir, dan posisikan produk pelengkap di gantungannya.`;
     }
 
-    return `Posisikan bersebelahan pada ketinggian pandangan mata (eye-level) di rak display utama toko.`;
+    return `Posisikan bersebelahan setinggi pandangan mata di rak utama toko.`;
 }

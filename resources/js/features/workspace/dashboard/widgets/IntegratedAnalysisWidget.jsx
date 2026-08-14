@@ -102,7 +102,7 @@ export default function IntegratedAnalysisWidget({
             title: 'Taktik Penataan Rak Display',
             desc: 'Posisikan kedua barang ini berdekatan di rak display agar pelanggan dapat dengan mudah menemukannya bersama.',
             actionDisplay: customLocation,
-            actionCashier: `Gunakan gantungan promo / label harga bertuliskan "Sering Dibeli Bersama" di rak display toko.`,
+            actionCashier: `Gunakan gantungan promo / label harga bertuliskan "Paket Combo" di rak display toko.`,
             tone: 'slate',
             bg: 'bg-slate-50 border-slate-200 text-slate-700',
             badgeBg: 'var(--color-badge-group-a-18)',

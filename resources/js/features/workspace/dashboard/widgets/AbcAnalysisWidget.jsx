@@ -85,7 +85,7 @@ export default function AbcAnalysisWidget({ widget, expanded = false, onToggle }
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">80% omzet</span> toko. Prioritas utama, stok wajib dijaga ketat.</p>
                             </div>
-                            <div className="rounded-md border border-emerald-100 bg-white p-2.5 shadow-widget-small">
+                            <div className="rounded-md border border-tab-active-border-x bg-white p-2.5 shadow-widget-small">
                                 <div className="flex items-center gap-2 mb-1.5">
                                     <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-green-410">
                                         Kat. B
@@ -94,7 +94,7 @@ export default function AbcAnalysisWidget({ widget, expanded = false, onToggle }
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">15% omzet</span> toko. Penjualan stabil untuk kebutuhan rutin.</p>
                             </div>
-                            <div className="rounded-md border border-amber-100 bg-white p-2.5 shadow-widget-small">
+                            <div className="rounded-md border border-tab-active-border-x bg-white p-2.5 shadow-widget-small">
                                 <div className="flex items-center gap-2 mb-1.5">
                                     <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-warning">
                                         Kat. C
