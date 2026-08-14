@@ -91,17 +91,15 @@ class AbcAnalysisService
 
           // Daftar item teratas
 
-            if (count($topItems) < 5) {
-                $topItems[] = [
-                    'name' => $row->product_name,
-                    'code' => $row->product_code,
-                    'unitsSold' => number_format($row->units_sold, 0, ',', '.') . ' ' . ($row->unit_name ?? 'pcs'),
-                    'revenue' => 'Rp ' . number_format($revenue, 0, ',', '.') . ',00',
-                    'share' => number_format(($revenue / $totalRevenue) * 100, 1, ',', '.') . '%',
-                    'category' => $category,
-                    'categoryColor' => $color,
-                ];
-            }
+            $topItems[] = [
+                'name' => $row->product_name,
+                'code' => $row->product_code,
+                'unitsSold' => number_format($row->units_sold, 0, ',', '.') . ' ' . ($row->unit_name ?? 'pcs'),
+                'revenue' => 'Rp ' . number_format($revenue, 0, ',', '.') . ',00',
+                'share' => number_format(($revenue / $totalRevenue) * 100, 1, ',', '.') . '%',
+                'category' => $category,
+                'categoryColor' => $color,
+            ];
         }
 
         $pctA = $totalRevenue > 0 ? ($revenueA / $totalRevenue) * 100 : 0;
