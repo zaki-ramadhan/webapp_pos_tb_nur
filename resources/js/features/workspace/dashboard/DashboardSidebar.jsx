@@ -199,7 +199,7 @@ export default function DashboardSidebar({
 
     return (
         <div
-            className="relative z-30 flex w-full flex-col lg:fixed lg:left-0 lg:w-[58px] lg:flex-row lg:self-stretch bg-[linear-gradient(90deg,#0d2246_0%,#1a3769_40%,#4E6188_100%)]"
+            className="relative z-30 flex w-full flex-col lg:fixed lg:left-0 lg:w-[58px] lg:flex-row lg:self-stretch"
             style={
                 desktopTopOffset && typeof window !== 'undefined' && window.innerWidth >= 1024
                     ? {
