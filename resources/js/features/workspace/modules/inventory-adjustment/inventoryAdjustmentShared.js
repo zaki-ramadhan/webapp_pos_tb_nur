@@ -351,6 +351,10 @@ export async function applyInventoryPromptItemUpdate(item, setValues, setStatus,
 }
 
 export function resolveInventoryDirtyState(values, initialSnapshot) {
+    const isNew = !values.__backendRecordId && (!values.id || String(values.id).startsWith('draft-'));
+    if (isNew && (values.items ?? []).length > 0) {
+        return true;
+    }
     return !areComparableValuesEqual(buildInventoryComparableSnapshot(values), initialSnapshot);
 }
 
