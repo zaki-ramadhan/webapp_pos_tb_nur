@@ -100,17 +100,21 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
                     : 'md:grid-cols-1';
 
     const widthClassName =
-        footerParts.length >= 5
-            ? 'md:w-[83%]'
-            : footerParts.length === 4
-              ? 'md:w-2/3'
-              : footerParts.length === 3
-                ? 'md:w-1/2'
-                : 'md:w-1/3';
+        footerParts.length >= 6
+            ? 'md:w-[840px] max-w-full'
+            : footerParts.length === 5
+              ? 'md:w-[700px] max-w-full'
+              : footerParts.length === 4
+                ? 'md:w-[560px] max-w-full'
+                : footerParts.length === 3
+                  ? 'md:w-[480px] max-w-full'
+                  : footerParts.length === 2
+                    ? 'md:w-[320px] max-w-full'
+                    : 'md:w-[220px] max-w-full';
 
     return (
         <div className="flex w-full justify-end">
-            <div className={`grid w-full ${widthClassName} overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
+            <div className={`grid w-full shrink-0 ${widthClassName} overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
                 {footerParts.map((part) => (
                     <div key={part.id} className="border-b border-ui-border-light px-4 py-2.5 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 md:px-5 flex flex-col justify-between min-h-[72px]">
                         <div className="flex items-start justify-between gap-3">
