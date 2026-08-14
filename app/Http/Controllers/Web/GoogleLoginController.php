@@ -356,33 +356,31 @@ class GoogleLoginController extends Controller
             </head>
             <body>
                 <div class="loader"></div>
-                <p>Autentikasi gagal: %s. Menutup...</p>
+                <p>Menutup...</p>
                 <script>
                     (function() {
+                        var msg = %s;
                         try {
                             var bc = new BroadcastChannel("google_auth");
-                            bc.postMessage({ status: "error", message: %s });
+                            bc.postMessage({ status: "error", message: msg });
                             bc.close();
                         } catch(e) {}
 
                         if (window.opener && !window.opener.closed) {
                             try {
-                                window.opener.postMessage({ status: "error", message: %s }, window.location.origin);
+                                window.opener.postMessage({ status: "error", message: msg }, window.location.origin);
                             } catch(e) {}
                         }
 
+                        try { window.close(); } catch(e) {}
                         setTimeout(function() {
-                            if (window.opener && !window.opener.closed) {
-                                window.close();
-                            } else {
-                                window.location.href = "/?error=" + encodeURIComponent(%s);
-                            }
-                        }, 2000);
+                            try { window.close(); } catch(e) {}
+                        }, 50);
                     })();
                 </script>
             </body>
             </html>
-        ', htmlspecialchars($message), json_encode($message), json_encode($message), json_encode($message));
+        ', json_encode($message));
 
         return response($html)->header('Content-Type', 'text/html');
     }
