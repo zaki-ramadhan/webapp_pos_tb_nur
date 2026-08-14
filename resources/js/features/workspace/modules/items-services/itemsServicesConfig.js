@@ -253,44 +253,46 @@ function buildFallbackDetailRecord(row, config) {
     const supplierName = supplierObj?.name ?? (typeof supplierObj === 'string' ? supplierObj : (row.supplierName ?? ''));
     const supplierId = supplierObj?.id ?? row.main_supplier_id ?? row.mainSupplierId ?? row.supplier_id ?? row.supplier_prices?.[0]?.supplier_id ?? null;
 
-    const categoryObj = row.category ?? inferCategory(row);
-    const categoryName = typeof categoryObj === 'object' ? (categoryObj.name ?? '') : categoryObj;
-    const categoryId = typeof categoryObj === 'object' ? categoryObj.id : (row.category_id ?? row.categoryId ?? null);
+    const categoryObj = row.category;
+    const categoryName = (typeof categoryObj === 'object' ? categoryObj?.name : (typeof categoryObj === 'string' ? categoryObj : (row.categoryName ?? row.categoryFilter))) ?? '';
+    const categoryId = (typeof categoryObj === 'object' ? categoryObj?.id : null) ?? row.category_id ?? row.categoryId ?? null;
 
     const brandObj = row.brand;
-    const brandName = (typeof brandObj === 'object' ? brandObj?.name : brandObj) ?? '';
-    const brandId = typeof brandObj === 'object' ? brandObj?.id : (row.brand_id ?? row.brandId ?? null);
+    const brandName = (typeof brandObj === 'object' ? brandObj?.name : (typeof brandObj === 'string' ? brandObj : (row.brandName ?? ''))) ?? '';
+    const brandId = (typeof brandObj === 'object' ? brandObj?.id : null) ?? row.brand_id ?? row.brandId ?? null;
 
-    const baseUnitObj = row.base_unit ?? row.baseUnit ?? row.unit;
-    const baseUnitName = (typeof baseUnitObj === 'object' ? baseUnitObj?.name : baseUnitObj) ?? '';
-    const baseUnitId = typeof baseUnitObj === 'object' ? baseUnitObj?.id : (row.base_unit_id ?? row.baseUnitId ?? null);
+    const baseUnitObj = row.base_unit ?? row.baseUnit;
+    const baseUnitName = (typeof baseUnitObj === 'object' ? (baseUnitObj?.name ?? baseUnitObj?.code) : (typeof baseUnitObj === 'string' ? baseUnitObj : (row.unitName ?? row.unit ?? 'Pcs'))) ?? 'Pcs';
+    const baseUnitId = (typeof baseUnitObj === 'object' ? baseUnitObj?.id : null) ?? row.base_unit_id ?? row.baseUnitId ?? null;
 
     const purchaseUnitObj = row.purchase_unit ?? row.purchaseUnit;
-    const purchaseUnitName = (typeof purchaseUnitObj === 'object' ? purchaseUnitObj?.name : purchaseUnitObj) ?? '';
-    const purchaseUnitId = typeof purchaseUnitObj === 'object' ? purchaseUnitObj?.id : (row.purchase_unit_id ?? row.purchaseUnitId ?? null);
+    const purchaseUnitName = (typeof purchaseUnitObj === 'object' ? (purchaseUnitObj?.name ?? purchaseUnitObj?.code) : (typeof purchaseUnitObj === 'string' ? purchaseUnitObj : (row.purchaseUnitName ?? ''))) ?? '';
+    const purchaseUnitId = (typeof purchaseUnitObj === 'object' ? purchaseUnitObj?.id : null) ?? row.purchase_unit_id ?? row.purchaseUnitId ?? null;
+
+    const finalCategoryName = categoryName || inferCategory(row);
 
     return {
         ...config.createDefaults,
         name: row.name ?? '',
-        category: categoryName ? [{ id: categoryId, name: categoryName }] : [inferCategory(row)],
+        category: [{ id: categoryId, name: finalCategoryName }],
         categoryId: categoryId,
-        kind: row.kind ?? config.createDefaults.kind,
+        kind: row.kind ?? (isService ? 'Jasa' : config.createDefaults.kind),
         codeAuto: false,
         code: row.code ?? '',
         barcode: row.barcode ?? buildBarcode(row.code),
-        primaryUnit: baseUnitName ? [{ id: baseUnitId, name: baseUnitName }] : (row.unit ? [{ name: row.unit }] : []),
+        primaryUnit: [{ id: baseUnitId, name: baseUnitName }],
         baseUnitId: baseUnitId,
         unitConversions: isService
             ? []
-            : [{ id: `${row.id}-conv-1`, unit: ['Box'], quantity: '10', baseUnit: baseUnitName || row.unit || 'PCS' }],
+            : [{ id: `${row.id}-conv-1`, unit: ['Box'], quantity: '10', baseUnit: baseUnitName || 'PCS' }],
         brand: (brandName && brandName !== '-') ? [{ id: brandId, name: brandName }] : [],
         brandId: brandId,
-        mainSupplier: supplierName ? [{ id: supplierId, name: supplierName }] : [],
+        mainSupplier: (supplierName && supplierName !== '-') ? [{ id: supplierId, name: supplierName }] : [],
         mainSupplierId: supplierId,
-        purchaseUnit: purchaseUnitName ? [{ id: purchaseUnitId, name: purchaseUnitName }] : [],
+        purchaseUnit: (purchaseUnitName && purchaseUnitName !== '-') ? [{ id: purchaseUnitId, name: purchaseUnitName }] : [],
         purchaseUnitId: purchaseUnitId,
-        purchasePrice: row.purchasePrice ?? '0',
-        sellPriceLevel1: row.salePrice ?? '0',
+        purchasePrice: row.purchasePrice ?? row.default_purchase_price ?? row.purchase_price ?? '0',
+        sellPriceLevel1: row.salePrice ?? row.default_sale_price ?? row.selling_price ?? row.sale_price ?? '0',
         notes: row.notes ?? '',
         stockQuantity: row.stockAtWarehouse ?? '0',
         stockUnitValue: '0',
