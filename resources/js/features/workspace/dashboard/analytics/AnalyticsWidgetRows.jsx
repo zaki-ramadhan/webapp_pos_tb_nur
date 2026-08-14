@@ -29,11 +29,6 @@ export function RuleSummaryRow({ rule }) {
                     <span className="rounded-full border border-ui-border-light bg-ui-bg-hover px-2 py-1">{rule.segment || 'Pasangan Terlaris'}</span>
                     <span>{rule.transactionBase || 'Pasangan Laris Valid'}</span>
                 </div>
-                {rule.lift && (
-                    <span className="text-sm font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                        Daya Dorong: {rule.lift}x
-                    </span>
-                )}
             </div>
 
             <div className="mt-2.5 text-sm leading-6 font-medium text-brand-darker">
