@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, MessageSquare, Megaphone } from 'lucide-react';
+import { MapPin, MessageSquare, Megaphone, Package } from 'lucide-react';
 import { getMetric, WidgetSection, getProductImageUrl, HighlightProductText, AbcCategoryLegend, getBuildingStoreLayoutRecommendation } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { IntegratedMatrixChart } from '@/features/workspace/dashboard/analytics/AnalyticsCharts';
 
@@ -237,7 +237,7 @@ export default function IntegratedAnalysisWidget({
 
                                             <div className="flex flex-wrap items-center gap-2 shrink-0">
                                                 <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-800 shrink-0">
-                                                    Tingkat Kepastian: {rule.confidence}
+                                                    Peluang Dibeli Bersama: {rule.confidence}
                                                 </span>
                                             </div>
                                         </div>
@@ -259,9 +259,9 @@ export default function IntegratedAnalysisWidget({
                                                 </div>
                                             </div>
                                             <div className="flex items-start gap-2 border-t border-emerald-100/40 pt-2">
-                                                <MessageSquare className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                                                <Package className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                                                 <div className="min-w-0 flex-1">
-                                                    <span className="font-bold text-emerald-950">Tawaran di Kasir:</span>{" "}
+                                                    <span className="font-bold text-emerald-950">Rekomendasi Bundling:</span>{" "}
                                                     <span className="leading-relaxed block sm:inline">
                                                         <HighlightProductText
                                                             text={tactic.actionCashier}
