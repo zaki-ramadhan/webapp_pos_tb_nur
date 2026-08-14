@@ -5,7 +5,14 @@ import TextareaField from '@/components/ui/TextareaField';
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { EmployeeFieldRow } from '@/features/workspace/modules/employee/employeeViewShared';
-import { ToggleSwitch } from '@/features/workspace/modules/employee/employeeControls';
+import { SuggestionTextInput, ToggleSwitch } from '@/features/workspace/modules/employee/employeeControls';
+
+const POSITION_SUGGESTIONS = [
+    'Kasir Toko',
+    'Staf Gudang & Muat',
+    'Sopir Pengiriman',
+    'Pemilik Toko',
+];
 
 export default function EmployeeGeneralTab({ form, values, errors, onChange }) {
     return (
@@ -15,7 +22,15 @@ export default function EmployeeGeneralTab({ form, values, errors, onChange }) {
                     <TextInput name="full_name" value={values.fullName} onChange={(event) => onChange('fullName', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
                 </EmployeeFieldRow>
                 <EmployeeFieldRow label="Posisi Jabatan">
-                    <TextInput name="position" value={values.position} onChange={(event) => onChange('position', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                    <SuggestionTextInput
+                        name="position"
+                        value={values.position}
+                        onChange={(nextValue) => onChange('position', nextValue)}
+                        options={POSITION_SUGGESTIONS}
+                        placeholder="Pilih / ketik posisi (misal: Kasir Toko, Staf Gudang & Muat...)"
+                        className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
+                    />
                 </EmployeeFieldRow>
                 <EmployeeFieldRow label="Email">
                     <TextInput name="email" value={values.email} onChange={(event) => onChange('email', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
