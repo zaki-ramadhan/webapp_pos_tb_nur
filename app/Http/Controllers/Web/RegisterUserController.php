@@ -89,6 +89,16 @@ class RegisterUserController extends Controller
 
         $user = User::query()->create($attributes);
 
+        try {
+            $kasirGroup = \App\Domain\Identity\Models\AccessGroup::where('code', 'KASIR')->first()
+                ?? \App\Domain\Identity\Models\AccessGroup::where('name', 'LIKE', '%Kasir%')->first();
+            if ($kasirGroup) {
+                $user->accessGroups()->syncWithoutDetaching([$kasirGroup->id]);
+            }
+        } catch (\Throwable $e) {
+            // Ignore if access groups table not available
+        }
+
         Auth::login($user);
         $request->session()->regenerate();
         RateLimiter::clear($this->throttleKey($request));
