@@ -7,8 +7,31 @@ import WorkspaceLayout from '@/layouts/WorkspaceLayout';
 export default function DashboardPage({ dashboard, widgets }) {
     const topBarRef = useRef(null);
     const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
-    const [topbarHeight, setTopbarHeight] = useState(0);
+    const [topbarHeight, setTopbarHeight] = useState(56);
 
+    useEffect(() => {
+        if (!topBarRef.current) {
+            return undefined;
+        }
+
+        function updateTopbarHeight() {
+            setTopbarHeight(topBarRef.current?.getBoundingClientRect().height || 56);
+        }
+
+        updateTopbarHeight();
+
+        const observer = new ResizeObserver(() => {
+            updateTopbarHeight();
+        });
+
+        observer.observe(topBarRef.current);
+        window.addEventListener('resize', updateTopbarHeight);
+
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', updateTopbarHeight);
+        };
+    }, []);
 
     return (
         <WorkspaceLayout title={dashboard.sample.label}>
@@ -24,7 +47,7 @@ export default function DashboardPage({ dashboard, widgets }) {
 
                 <main
                     className="flex min-h-0 flex-1 bg-tab-active-bg"
-                    style={topbarHeight ? { paddingTop: `${topbarHeight}px` } : undefined}
+                    style={{ paddingTop: `${topbarHeight || 56}px` }}
                 >
                     <DashboardView
                         dashboard={dashboard.sampleDashboard}
