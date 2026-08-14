@@ -9,10 +9,22 @@ export function useWorkspaceFormDraftState({
     const [savedSnapshot, setSavedSnapshot] = useState(initialValues);
 
     const prevRecordId = useRef(recordId);
+    const prevInitialValues = useRef(initialValues);
+    const hasUserEditedRef = useRef(false);
 
     useEffect(() => {
-        if (recordId !== prevRecordId.current) {
+        const recordChanged = recordId !== prevRecordId.current;
+        const initialValuesChanged = JSON.stringify(initialValues) !== JSON.stringify(prevInitialValues.current);
+
+        if (recordChanged) {
             prevRecordId.current = recordId;
+            prevInitialValues.current = initialValues;
+            hasUserEditedRef.current = false;
+            setValues(initialValues);
+            setSavedSnapshot(initialValues);
+            onSync?.(initialValues);
+        } else if (initialValuesChanged && !hasUserEditedRef.current) {
+            prevInitialValues.current = initialValues;
             setValues(initialValues);
             setSavedSnapshot(initialValues);
             onSync?.(initialValues);

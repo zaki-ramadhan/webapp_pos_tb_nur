@@ -24,9 +24,11 @@ import {
     deleteBackendResource,
     extractBackendRows,
     getBackendErrorMessage,
+    getBackendResource,
     listBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
+import { mapProductRow } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { useWorkspaceFormDraftState } from '@/features/workspace/shared/hooks/useWorkspaceFormDraftState';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
@@ -43,15 +45,42 @@ export default function ItemsServicesFormView({
     onOpenDetail,
     onRefresh,
 }) {
+    const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const [fetchedRow, setFetchedRow] = useState(null);
+
+    useEffect(() => {
+        if (!recordId) {
+            setFetchedRow(null);
+            return;
+        }
+
+        let active = true;
+        getBackendResource('products', recordId)
+            .then((response) => {
+                if (!active) return;
+                const data = response?.data ?? response;
+                if (data && data.id) {
+                    setFetchedRow(mapProductRow(data));
+                }
+            })
+            .catch(() => {});
+
+        return () => {
+            active = false;
+        };
+    }, [recordId]);
+
     const detailRow = useMemo(() => {
-        const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+        if (fetchedRow && String(fetchedRow.id) === String(recordId)) {
+            return fetchedRow;
+        }
 
         if (!recordId) {
             return null;
         }
 
         return config.table.rows.find((row) => String(row.id) === String(recordId)) ?? null;
-    }, [activeLevel2Tab, config.table.rows]);
+    }, [recordId, fetchedRow, config.table.rows]);
 
     const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'general');
