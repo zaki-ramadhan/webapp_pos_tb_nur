@@ -8,6 +8,13 @@ export default function AutoReloadOnDeploy({ initialEnv }) {
     // Hanya aktif di environment non-production (misal: staging, local, development)
     const isAutoReloadEnabled = environment !== 'production';
 
+    // Clean up parameter ?v=... dari address bar jika ada dari reload sebelumnya
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.location.search.includes('v=')) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }, []);
+
     useEffect(() => {
         if (!isAutoReloadEnabled) return;
 
@@ -36,7 +43,7 @@ export default function AutoReloadOnDeploy({ initialEnv }) {
                     initialManifestRef.current = text;
                     toast.info('⚡ Update CI/CD selesai! Memperbarui halaman...', { duration: 4000 });
                     setTimeout(() => {
-                        window.location.href = window.location.pathname + '?v=' + Date.now();
+                        window.location.reload();
                     }, 1000);
                 }
             } catch {
