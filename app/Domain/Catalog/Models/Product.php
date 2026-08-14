@@ -85,7 +85,7 @@ class Product extends DomainModel
 
     public function brand(): BelongsTo
     {
-        return $this->belongsTo(ProductCategory::class, 'category_id');
+        return $this->belongsTo(Brand::class, 'brand_id');
     }
 
     public function baseUnit(): BelongsTo
