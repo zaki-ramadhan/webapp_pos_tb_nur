@@ -15,7 +15,7 @@ export default function EmployeeGeneralTab({ form, values, errors, onChange }) {
                     <TextInput name="full_name" value={values.fullName} onChange={(event) => onChange('fullName', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
                 </EmployeeFieldRow>
                 <EmployeeFieldRow label="Posisi Jabatan">
-                    <TextInput name="position" value={values.position} onChange={(event) => onChange('position', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                    <TextInput name="position" value={values.position} onChange={(event) => onChange('position', event.target.value)} placeholder="" autoComplete="off" className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
                 </EmployeeFieldRow>
                 <EmployeeFieldRow label="Email">
                     <TextInput name="email" value={values.email} onChange={(event) => onChange('email', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
