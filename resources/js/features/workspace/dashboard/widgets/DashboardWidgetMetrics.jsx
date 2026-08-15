@@ -270,6 +270,7 @@ export function RingBreakdownMetric({ widget }) {
         ? 'text-brand-darker'
         : (isLoss ? 'text-rose-600' : 'text-emerald-600');
     const valueClass = `text-base font-semibold leading-none ${valueColorClass} sm:text-lg md:text-lg lg:text-xl xl:text-xl 2xl:text-xl`;
+    const profitTone = isLoss ? 'expense' : null;
 
     return (
         <div className="flex flex-col h-full min-h-0 justify-between gap-3 flex-1">
@@ -282,7 +283,7 @@ export function RingBreakdownMetric({ widget }) {
             <div className="grid gap-4 lg:grid-cols-[164px_minmax(0,1fr)] lg:items-center lg:gap-4 min-h-0 flex-1">
                 {/* Left: Chart */}
                 <div className="flex flex-col items-center justify-center">
-                    <BreakdownDoughnutChart items={legend} percentage={percentage} centerLabel="Margin Laba" />
+                    <BreakdownDoughnutChart items={legend} percentage={percentage} centerLabel={isLoss ? 'Margin Rugi' : 'Margin Laba'} />
                 </div>
 
                 {/* Right: Legend */}
@@ -295,13 +296,12 @@ export function RingBreakdownMetric({ widget }) {
             <div className="border-t border-chart-grid-light pt-2.5 text-brand-dark flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 flex-wrap">
                     <CompareText text={compare} />
-                    <TrendIndicator trend={trend} growth={growth} />
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-brand-darker">{totalLabel}</span>
                     <div className="flex items-baseline gap-2">
                         <span className={valueClass}>{totalValue}</span>
-                        <TrendIndicator trend={trend} growth={growth} />
+                        <TrendIndicator trend={trend} growth={growth} tone={profitTone} />
                     </div>
                 </div>
             </div>
