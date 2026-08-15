@@ -39,26 +39,34 @@ export function buildInventoryAdjustmentTableRows(records) {
 }
 
 export function buildInventoryAdjustmentRecord(record, config) {
-    const items = (record.lines ?? []).map((line, index) => ({
-        id: String(line.id ?? `line-${index}`),
-        __lineId: line.id ?? null,
-        __productId: line.product_id ?? null,
-        __unitId: line.unit_id ?? null,
-        name: line.product?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
-        code: line.product?.code ?? line.reference_code ?? '',
-        adjustmentType: line.attributes?.adjustment_type ?? 'Penambahan',
-        quantity: String(line.quantity ?? 0),
-        unit: line.unit?.name ?? '',
-        unitLookup: line.unit?.name ? [line.unit.name] : [],
-        unitCost: formatCurrencyValue(line.unit_price ?? 0),
-        totalCost: formatCurrencyValue(line.total_amount ?? 0),
-        warehouse: line.warehouse?.name ? [line.warehouse.name] : [],
-        department: line.department?.name ? [line.department.name] : [],
-        notes: line.notes ?? '',
-        oldDiscount: String(line.attributes?.old_discount ?? '0'),
-        minQty: String(line.attributes?.min_qty ?? '0'),
-        newDiscount: String(line.attributes?.new_discount ?? '0'),
-    }));
+    const items = (record.lines ?? []).map((line, index) => {
+        const unitName = line.unit?.name 
+            ?? line.product?.base_unit?.name 
+            ?? line.product?.unit?.name 
+            ?? (typeof line.attributes?.unit === 'string' ? line.attributes.unit : '') 
+            ?? 'PCS';
+
+        return {
+            id: String(line.id ?? `line-${index}`),
+            __lineId: line.id ?? null,
+            __productId: line.product_id ?? null,
+            __unitId: line.unit_id ?? null,
+            name: line.product?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
+            code: line.product?.code ?? line.reference_code ?? '',
+            adjustmentType: line.attributes?.adjustment_type ?? 'Penambahan',
+            quantity: String(line.quantity ?? 0),
+            unit: unitName,
+            unitLookup: unitName ? [unitName] : ['PCS'],
+            unitCost: formatCurrencyValue(line.unit_price ?? 0),
+            totalCost: formatCurrencyValue(line.total_amount ?? 0),
+            warehouse: line.warehouse?.name ? [line.warehouse.name] : [],
+            department: line.department?.name ? [line.department.name] : [],
+            notes: line.notes ?? '',
+            oldDiscount: String(line.attributes?.old_discount ?? '0'),
+            minQty: String(line.attributes?.min_qty ?? '0'),
+            newDiscount: String(line.attributes?.new_discount ?? '0'),
+        };
+    });
     const totalAmount = items.reduce((sum, item) => sum + Number(String(item.totalCost).replace(/[^\d.-]/g, '')), 0);
     const accountLabel = record.primary_account
         ? `[${record.primary_account.code ?? ''}] ${record.primary_account.name ?? ''}`.trim()
