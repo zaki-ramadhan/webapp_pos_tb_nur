@@ -185,6 +185,14 @@ class GoogleLoginController extends Controller
             'password' => Hash::make(Str::password(32)),
         ];
 
+        // Auto-lookup phone number from employees table if available
+        $employee = \Illuminate\Support\Facades\DB::table('employees')
+            ->whereRaw('LOWER(email) = ?', [$email])
+            ->first();
+        if ($employee && !empty($employee->mobile_phone)) {
+            $attributes['phone'] = preg_replace('/[^\d+]/', '', $employee->mobile_phone);
+        }
+
         if ($this->supportsGoogleIdentity()) {
             $attributes['google_id'] = trim((string) $oauthUser->getId()) ?: null;
             $attributes['google_avatar'] = $oauthUser->getAvatar();
@@ -216,6 +224,16 @@ class GoogleLoginController extends Controller
                 if ($targetGroup) {
                     $user->accessGroups()->syncWithoutDetaching([$targetGroup->id]);
                 }
+            } elseif ($employee) {
+                $role = \App\Domain\Identity\Models\Role::where('code', 'operator')->orWhere('code', 'kasir')->first();
+                if ($role) {
+                    $user->roles()->syncWithoutDetaching([$role->id]);
+                }
+
+                $targetGroup = \App\Domain\Identity\Models\AccessGroup::where('code', 'KASIR')->first();
+                if ($targetGroup) {
+                    $user->accessGroups()->syncWithoutDetaching([$targetGroup->id]);
+                }
             }
         } catch (\Throwable $e) {
             // Ignore if tables not yet seeded
@@ -227,6 +245,15 @@ class GoogleLoginController extends Controller
     private function syncGoogleIdentity(User $user, OAuthUser $oauthUser): void
     {
         $attributes = [];
+
+        if (empty($user->phone)) {
+            $empPhone = \Illuminate\Support\Facades\DB::table('employees')
+                ->whereRaw('LOWER(email) = ?', [strtolower((string) $user->email)])
+                ->value('mobile_phone');
+            if ($empPhone) {
+                $attributes['phone'] = preg_replace('/[^\d+]/', '', $empPhone);
+            }
+        }
 
         if ($this->supportsGoogleIdentity()) {
             $googleId = trim((string) $oauthUser->getId());
