@@ -205,19 +205,21 @@ export function InventoryAdjustmentFormView({
         });
     }
 
+    const isSaveDisabled = saving || (isDetail ? saveDisabled : (values.items ?? []).length === 0);
+
     const dockActions = useMemo(
         () =>
             buildWorkspaceDockActions({
                 dockActions: values.dockActions ?? config.dockActions,
                 isDetail,
-                saveDisabled,
+                saveDisabled: isSaveDisabled,
                 saving,
                 validationMessage,
-                isDirty,
+                isDirty: true,
                 onSave: onSaveClick,
                 onDelete: requestDelete,
             }),
-        [config.dockActions, isDetail, isDirty, requestDelete, saveDisabled, saving, validationMessage, values.dockActions],
+        [config.dockActions, isDetail, isSaveDisabled, requestDelete, saving, validationMessage, values.dockActions],
     );
 
     const handlers = useMemo(
