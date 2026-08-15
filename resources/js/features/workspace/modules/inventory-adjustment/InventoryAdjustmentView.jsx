@@ -155,8 +155,9 @@ export default function InventoryAdjustmentView({
     );
     const resolvedBuildRecord = useMemo(
         () => (row = {}) => {
-            if (row.__backendRecord) {
-                return buildBackendInventoryAdjustmentRecord(row.__backendRecord, config);
+            const raw = row?.__backendRecord ?? row;
+            if (raw && (raw.lines !== undefined || raw.document_number !== undefined || raw.entry_date !== undefined || raw.id)) {
+                return buildBackendInventoryAdjustmentRecord(raw, config);
             }
 
             return buildInventoryAdjustmentRecord(row, config);

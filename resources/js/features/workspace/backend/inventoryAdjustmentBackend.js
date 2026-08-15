@@ -40,10 +40,11 @@ export function buildInventoryAdjustmentTableRows(records) {
 
 export function buildInventoryAdjustmentRecord(record, config) {
     const items = (record.lines ?? []).map((line, index) => {
+        const rawAttrs = typeof line.attributes === 'string' ? JSON.parse(line.attributes || '{}') : (line.attributes || {});
         const unitName = line.unit?.name 
             ?? line.product?.base_unit?.name 
             ?? line.product?.unit?.name 
-            ?? (typeof line.attributes?.unit === 'string' ? line.attributes.unit : '') 
+            ?? (typeof rawAttrs?.unit === 'string' ? rawAttrs.unit : '') 
             ?? 'PCS';
 
         return {
@@ -53,7 +54,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
             __unitId: line.unit_id ?? null,
             name: line.product?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
             code: line.product?.code ?? line.reference_code ?? '',
-            adjustmentType: line.attributes?.adjustment_type ?? 'Penambahan',
+            adjustmentType: rawAttrs?.adjustment_type ?? line.adjustment_type ?? 'Penambahan',
             quantity: String(line.quantity ?? 0),
             unit: unitName,
             unitLookup: unitName ? [unitName] : ['PCS'],
@@ -62,9 +63,9 @@ export function buildInventoryAdjustmentRecord(record, config) {
             warehouse: line.warehouse?.name ? [line.warehouse.name] : [],
             department: line.department?.name ? [line.department.name] : [],
             notes: line.notes ?? '',
-            oldDiscount: String(line.attributes?.old_discount ?? '0'),
-            minQty: String(line.attributes?.min_qty ?? '0'),
-            newDiscount: String(line.attributes?.new_discount ?? '0'),
+            oldDiscount: String(rawAttrs?.old_discount ?? '0'),
+            minQty: String(rawAttrs?.min_qty ?? '0'),
+            newDiscount: String(rawAttrs?.new_discount ?? '0'),
         };
     });
     const totalAmount = items.reduce((sum, item) => sum + Number(String(item.totalCost).replace(/[^\d.-]/g, '')), 0);
