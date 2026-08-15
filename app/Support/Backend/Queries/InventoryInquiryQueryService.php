@@ -383,7 +383,7 @@ class InventoryInquiryQueryService
         foreach ($operationDocuments as $document) {
             foreach ($document->lines as $line) {
                 $productId = $line->product_id ? (int) $line->product_id : null;
-                $warehouseId = $line->warehouse_id ? (int) $line->warehouse_id : ($document->warehouse_id ? (int) $document->warehouse_id : null);
+                $warehouseId = $line->warehouse_id ? (int) $line->warehouse_id : ($document->warehouse_id ? (int) $document->warehouse_id : 1);
 
                 if ($productId === null) {
                     continue;
@@ -414,6 +414,12 @@ class InventoryInquiryQueryService
 
                 if (in_array($document->document_type, ['sales_delivery', 'sales_invoice', 'purchase_return'], true)) {
                     $quantity *= -1;
+                } elseif ($document->document_type === 'inventory_adjustment') {
+                    $attributes = is_string($line->attributes) ? json_decode($line->attributes, true) : ($line->attributes ?? []);
+                    $adjType = $attributes['adjustment_type'] ?? 'Penambahan';
+                    if ($adjType === 'Pengurangan' && $quantity > 0) {
+                        $quantity *= -1;
+                    }
                 }
 
                 $key = sprintf('%d:%d', $productId, $warehouseId);

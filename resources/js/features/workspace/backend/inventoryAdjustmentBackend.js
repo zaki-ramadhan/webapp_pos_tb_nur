@@ -114,6 +114,7 @@ export function buildInventoryAdjustmentPayload(values) {
             id: item.__lineId ?? undefined,
             product_id: item.__productId ?? null,
             unit_id: item.__unitId ?? null,
+            warehouse_id: item.__warehouseId ?? item.warehouse_id ?? 1,
             description: item.name?.trim() ?? '',
             reference_code: item.code?.trim() ?? '',
             quantity: parseNumericInput(item.quantity),
@@ -138,6 +139,7 @@ export function buildInventoryAdjustmentPayload(values) {
 
     return {
         branch_id: values.__branchId ?? 1,
+        warehouse_id: values.__warehouseId ?? 1,
         primary_account_id: values.__adjustmentAccountId ?? null,
         document_number: values.documentNumber?.trim(),
         numbering_type: values.numberingType?.trim() || null,
