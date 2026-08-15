@@ -21,6 +21,7 @@ import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/Wo
 import { CogIcon, PrintIcon } from '@/features/workspace/shared/Icons';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 import { mapDockActions } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import {
     applyInventoryPromptItemUpdate,
     buildFormValues,
@@ -51,31 +52,32 @@ export function InventoryAdjustmentFormView({
     onRefresh,
 }) {
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const targetRow = useMemo(
-        () => (activeRecordId ? config.table?.rows?.find((row) => row.id === activeRecordId) : null),
-        [activeRecordId, config.table?.rows],
-    );
-
-    const sourceRecord = useMemo(
-        () =>
-            activeRecordId
-                ? typeof buildRecord === 'function'
-                    ? buildRecord(targetRow ?? { id: activeRecordId }, config)
-                    : (targetRow ?? { id: activeRecordId })
-                : (config.draft ?? config.formDefaults),
-        [activeRecordId, buildRecord, targetRow],
-    );
-    const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
-    const [values, setValues] = useState(() => buildFormValues(sourceRecord));
-    const [selectedItem, setSelectedItem] = useState(null);
     const isDetail = Boolean(activeRecordId);
-    const initialSnapshot = useMemo(() => buildInventoryComparableSnapshot(buildFormValues(sourceRecord)), [sourceRecord]);
+
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
+        resourceName: backendConfig?.resource || (pageId === 'price-adjustment' ? 'price-adjustments' : 'inventory-adjustments'),
+        activeRecordId,
+        buildRecord,
+        config,
+    });
+
+    const resolvedSourceRecord = useMemo(() => {
+        if (isDetail) {
+            return sourceRecord || { id: activeRecordId };
+        }
+        return config.draft ?? config.formDefaults;
+    }, [activeRecordId, config.draft, config.formDefaults, isDetail, sourceRecord]);
+
+    const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
+    const [values, setValues] = useState(() => buildFormValues(resolvedSourceRecord));
+    const [selectedItem, setSelectedItem] = useState(null);
+    const initialSnapshot = useMemo(() => buildInventoryComparableSnapshot(buildFormValues(resolvedSourceRecord)), [resolvedSourceRecord]);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
-        setValues(buildFormValues(sourceRecord));
+        setValues(buildFormValues(resolvedSourceRecord));
         setSelectedItem(null);
-    }, [activeLevel2Tab?.id]);
+    }, [activeLevel2Tab?.id, resolvedSourceRecord]);
 
     const validationMessage = useMemo(() => validateInventoryAdjustmentValues(values, config, isDetail, pageId), [config, isDetail, pageId, values]);
     const isDirty = useMemo(() => resolveInventoryDirtyState(values, initialSnapshot), [initialSnapshot, values]);
@@ -176,6 +178,14 @@ export function InventoryAdjustmentFormView({
                 await onRefresh?.();
 
                 if (!isDetail && record?.id) {
+                    if (record && typeof buildRecord === 'function') {
+                        const parsedRecord = buildRecord(record, config);
+                        if (typeof window !== 'undefined') {
+                            window.__savedRecordsCache = window.__savedRecordsCache || {};
+                            window.__savedRecordsCache[String(record.id)] = parsedRecord;
+                        }
+                    }
+
                     onOpenDetail?.({
                         recordId: String(record.id),
                         label: record.document_number ?? resolvedDocumentNumber,
