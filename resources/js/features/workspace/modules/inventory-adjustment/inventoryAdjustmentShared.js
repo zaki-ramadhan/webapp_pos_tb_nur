@@ -61,11 +61,15 @@ export function cloneItems(items = []) {
 }
 
 export function buildFormValues(source = {}) {
+    const items = cloneItems(source.items);
+    const totals = buildTotals(source, items);
+
     return {
         ...source,
+        ...totals,
         adjustmentAccount: cloneList(source.adjustmentAccount),
         branches: cloneList(source.branches),
-        items: cloneItems(source.items),
+        items,
     };
 }
 
