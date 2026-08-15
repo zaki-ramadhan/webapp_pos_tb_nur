@@ -148,7 +148,7 @@ class TransactionDataSeeder extends Seeder
                     'customer_id' => ($quoteCount % 2 === 0) ? $c1 : $c4,
                     'currency_id' => $currencyId,
                     'responsible_user_id' => $userKasirId,
-                    'document_number' => sprintf('SQ.%04d.%02d.%05d', $year, $m, $quoteCount),
+                    'document_number' => sprintf('PN.%04d.%02d.0001', $year, $m),
                     'status' => ($quoteCount <= 4) ? 'Approved' : 'Pending',
                     'entry_date' => $entryDate,
                     'due_date' => date('Y-m-d', strtotime($entryDate . ' + 14 days')),
@@ -183,7 +183,7 @@ class TransactionDataSeeder extends Seeder
                     'customer_id' => ($orderCount % 2 === 0) ? $c2 : $c3,
                     'currency_id' => $currencyId,
                     'responsible_user_id' => $userKasirId,
-                    'document_number' => sprintf('SO.%04d.%02d.%05d', $year, $m, $orderCount),
+                    'document_number' => sprintf('SO.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
                     'due_date' => date('Y-m-d', strtotime($entryDate . ' + 10 days')),
@@ -233,7 +233,7 @@ class TransactionDataSeeder extends Seeder
                     'customer_id' => $c1,
                     'currency_id' => $currencyId,
                     'responsible_user_id' => $userAdminId,
-                    'document_number' => sprintf('DO.%04d.%02d.%05d', $year, $m, $delivCount),
+                    'document_number' => sprintf('SJ.%04d.%02d.0001', $year, $m),
                     'status' => 'Shipped',
                     'entry_date' => $entryDate,
                     'subtotal' => 0,
@@ -306,7 +306,7 @@ class TransactionDataSeeder extends Seeder
                     $dt = Carbon::parse($entryDate);
 
                     $pattern = $salesPatterns[($invoiceSeq - 1) % count($salesPatterns)];
-                    $docNo = sprintf('SI.%04d.%02d.%05d', $year, $m, $invoiceSeq);
+                    $docNo = sprintf('FP.%04d.%02d.%04d', $year, $m, $k);
                     $custId = ($invoiceSeq % 5 === 0) ? $c5 : (($invoiceSeq % 4 === 0) ? $c4 : (($invoiceSeq % 3 === 0) ? $c3 : (($invoiceSeq % 2 === 0) ? $c2 : $c1)));
 
                     $docId = DB::table('operation_documents')->insertGetId([
@@ -327,7 +327,7 @@ class TransactionDataSeeder extends Seeder
                         'created_at' => $dt,
                         'updated_at' => $dt,
                     ]);
-                    $siIds[$invoiceSeq] = $docId;
+                    $siIds[$invoiceSeq] = ['id' => $docId, 'number' => $docNo];
 
                     $totalAmount = 0;
                     foreach ($pattern as $productId => $qty) {
@@ -374,7 +374,8 @@ class TransactionDataSeeder extends Seeder
                 $srCount++;
                 $entryDate = $buildEntryDate($year, $m, 11);
                 $dt = Carbon::parse($entryDate);
-                $refSiId = $siIds[$srCount] ?? $siIds[1];
+                $refSi = $siIds[$srCount] ?? ($siIds[1] ?? null);
+                $refSiId = is_array($refSi) ? $refSi['id'] : $refSi;
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'sales_return',
                     'branch_id' => $branchId,
@@ -383,7 +384,7 @@ class TransactionDataSeeder extends Seeder
                     'currency_id' => $currencyId,
                     'related_document_id' => $refSiId,
                     'responsible_user_id' => $userKasirId,
-                    'document_number' => sprintf('SR.%04d.%02d.%05d', $year, $m, $srCount),
+                    'document_number' => sprintf('RJ.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
                     'subtotal' => 0,
@@ -411,7 +412,7 @@ class TransactionDataSeeder extends Seeder
                     'customer_id' => $c1,
                     'currency_id' => $currencyId,
                     'primary_account_id' => $accBankBCA,
-                    'document_number' => sprintf('SD.%04d.%02d.%05d', $year, $m, $sdCount),
+                    'document_number' => sprintf('UM.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
                     'subtotal' => 1500000,
@@ -433,8 +434,9 @@ class TransactionDataSeeder extends Seeder
                 $entryDate = $buildEntryDate($year, $m, 14);
                 $dt = Carbon::parse($entryDate);
                 $payAmount = 1250000;
-                $refDocNo = sprintf('SI.%04d.%02d.%05d', $year, $m, $receiptSeq);
-                $refSiId = $siIds[$receiptSeq] ?? null;
+                $refSi = $siIds[$receiptSeq] ?? null;
+                $refDocNo = is_array($refSi) ? $refSi['number'] : sprintf('FP.%04d.%02d.0001', $year, $m);
+                $refSiId = is_array($refSi) ? $refSi['id'] : $refSi;
 
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'sales_receipt',
@@ -443,7 +445,7 @@ class TransactionDataSeeder extends Seeder
                     'currency_id' => $currencyId,
                     'primary_account_id' => $accKasKecil,
                     'related_document_id' => $refSiId,
-                    'document_number' => sprintf('CR.%04d.%02d.%05d', $year, $m, $receiptSeq),
+                    'document_number' => sprintf('KW.%04d.%02d.0001', $year, $m),
                     'status' => 'Lunas',
                     'payment_method' => 'Kas',
                     'entry_date' => $entryDate,
@@ -485,7 +487,7 @@ class TransactionDataSeeder extends Seeder
                     'supplier_id' => ($poCount % 5 === 0) ? $s5 : (($poCount % 4 === 0) ? $s4 : (($poCount % 3 === 0) ? $s3 : (($poCount % 2 === 0) ? $s2 : $s1))),
                     'currency_id' => $currencyId,
                     'responsible_user_id' => $userAdminId,
-                    'document_number' => sprintf('PO.%04d.%02d.%05d', $year, $m, $poCount),
+                    'document_number' => sprintf('PO.%04d.%02d.0001', $year, $m),
                     'status' => 'Approved',
                     'entry_date' => $entryDate,
                     'due_date' => date('Y-m-d', strtotime($entryDate . ' + 15 days')),
@@ -515,7 +517,7 @@ class TransactionDataSeeder extends Seeder
                     'supplier_id' => ($grCount % 2 === 0) ? $s1 : $s4,
                     'currency_id' => $currencyId,
                     'responsible_user_id' => $userAdminId,
-                    'document_number' => sprintf('GR.%04d.%02d.%05d', $year, $m, $grCount),
+                    'document_number' => sprintf('PB.%04d.%02d.0001', $year, $m),
                     'status' => 'Received',
                     'entry_date' => $entryDate,
                     'subtotal' => 0,
@@ -539,6 +541,7 @@ class TransactionDataSeeder extends Seeder
                 $entryDate = $buildEntryDate($year, $m, 8);
                 $dt = Carbon::parse($entryDate);
                 $isPaid = ($piSeq % 3 !== 0);
+                $docNo = sprintf('FB.%04d.%02d.0001', $year, $m);
 
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'purchase_invoice',
@@ -547,7 +550,7 @@ class TransactionDataSeeder extends Seeder
                     'supplier_id' => ($piSeq % 5 === 0) ? $s5 : (($piSeq % 4 === 0) ? $s4 : (($piSeq % 3 === 0) ? $s3 : (($piSeq % 2 === 0) ? $s2 : $s1))),
                     'currency_id' => $currencyId,
                     'responsible_user_id' => $userAdminId,
-                    'document_number' => sprintf('PI.%04d.%02d.%05d', $year, $m, $piSeq),
+                    'document_number' => $docNo,
                     'status' => $isPaid ? 'Lunas' : 'Belum Lunas',
                     'entry_date' => $entryDate,
                     'due_date' => $isPaid ? null : date('Y-m-d', strtotime($entryDate . ' + 30 days')),
@@ -561,7 +564,7 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $piIds[] = $docId;
+                $piIds[$piSeq] = ['id' => $docId, 'number' => $docNo];
 
                 if ($year === 2025) {
                     $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 40 + ($m % 3), 75000, $dt);
@@ -589,7 +592,8 @@ class TransactionDataSeeder extends Seeder
                 $prCount++;
                 $entryDate = $buildEntryDate($year, $m, 12);
                 $dt = Carbon::parse($entryDate);
-                $refPiId = $piIds[$prCount - 1] ?? null;
+                $refPi = $piIds[$prCount] ?? ($piIds[1] ?? null);
+                $refPiId = is_array($refPi) ? $refPi['id'] : $refPi;
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'purchase_return',
                     'branch_id' => $branchId,
@@ -598,7 +602,7 @@ class TransactionDataSeeder extends Seeder
                     'currency_id' => $currencyId,
                     'related_document_id' => $refPiId,
                     'responsible_user_id' => $userAdminId,
-                    'document_number' => sprintf('PR.%04d.%02d.%05d', $year, $m, $prCount),
+                    'document_number' => sprintf('RB.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
                     'subtotal' => 0,
@@ -621,8 +625,9 @@ class TransactionDataSeeder extends Seeder
                 $entryDate = $buildEntryDate($year, $m, 14);
                 $dt = Carbon::parse($entryDate);
                 $payAmount = 4500000;
-                $refDocNo = sprintf('PI.%04d.%02d.%05d', $year, $m, $pySeq);
-                $refPiId = $piIds[$pySeq - 1] ?? null;
+                $refPi = $piIds[$pySeq] ?? null;
+                $refDocNo = is_array($refPi) ? $refPi['number'] : sprintf('FB.%04d.%02d.0001', $year, $m);
+                $refPiId = is_array($refPi) ? $refPi['id'] : $refPi;
 
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'purchase_payment',
@@ -631,7 +636,7 @@ class TransactionDataSeeder extends Seeder
                     'currency_id' => $currencyId,
                     'primary_account_id' => $accBankMnd,
                     'related_document_id' => $refPiId,
-                    'document_number' => sprintf('PY.%04d.%02d.%05d', $year, $m, $pySeq),
+                    'document_number' => sprintf('BYB.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'payment_method' => 'Transfer Bank',
                     'entry_date' => $entryDate,
@@ -671,7 +676,7 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'responsible_user_id' => $userKasirId,
-                    'document_number' => sprintf('REQ.%04d.%02d.%05d', $year, $m, $reqCount),
+                    'document_number' => sprintf('PBG.%04d.%02d.0001', $year, $m),
                     'status' => 'Approved',
                     'entry_date' => $entryDate,
                     'subtotal' => 0,
@@ -698,7 +703,7 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'responsible_user_id' => $userAdminId,
-                    'document_number' => sprintf('IA.%04d.%02d.%05d', $year, $m, $iaSeq),
+                    'document_number' => sprintf('PS.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
                     'subtotal' => 750000,
@@ -739,7 +744,7 @@ class TransactionDataSeeder extends Seeder
                     'warehouse_id' => $warehouseId,
                     'counterpart_warehouse_id' => 2,
                     'responsible_user_id' => $userAdminId,
-                    'document_number' => sprintf('TRF.%04d.%02d.%05d', $year, $m, $trfSeq),
+                    'document_number' => sprintf('TP.%04d.%02d.0001', $year, $m),
                     'status' => 'Completed',
                     'entry_date' => $entryDate,
                     'subtotal' => 0,
@@ -767,7 +772,7 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'currency_id' => $currencyId,
                     'primary_account_id' => $accKasKecil,
-                    'document_number' => sprintf('CP.%04d.%02d.%05d', $year, $m, $cpSeq),
+                    'document_number' => sprintf('KK.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
                     'subtotal' => 200000,
@@ -808,7 +813,7 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'currency_id' => $currencyId,
                     'primary_account_id' => $accKasKecil,
-                    'document_number' => sprintf('CR-IN.%04d.%02d.%05d', $year, $m, $crSeq),
+                    'document_number' => sprintf('KM.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
                     'subtotal' => 300000,
@@ -849,7 +854,7 @@ class TransactionDataSeeder extends Seeder
                     'currency_id' => $currencyId,
                     'primary_account_id' => $accBankBCA,
                     'secondary_account_id' => $accBankMnd,
-                    'document_number' => sprintf('BT.%04d.%02d.%05d', $year, $m, $btSeq),
+                    'document_number' => sprintf('TB.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
                     'subtotal' => 3000000,
@@ -875,7 +880,7 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'responsible_user_id' => $userAdminId,
-                    'document_number' => sprintf('GJ.%04d.%02d.%05d', $year, $m, $gjSeq),
+                    'document_number' => sprintf('JU.%04d.%02d.0001', $year, $m),
                     'reference_number' => 'REF-OPS-' . $gjSeq,
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
@@ -931,7 +936,7 @@ class TransactionDataSeeder extends Seeder
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                foreach ($expenseTemplates as $tpl) {
+                foreach ($expenseTemplates as $tplIdx => $tpl) {
                     $expSeq++;
                     $entryDate = $buildEntryDate($year, $m, 12);
                     $dueDate = date('Y-m-d', strtotime($entryDate . ' + 14 days'));
@@ -944,7 +949,7 @@ class TransactionDataSeeder extends Seeder
                         'warehouse_id' => $warehouseId,
                         'currency_id' => $currencyId,
                         'primary_account_id' => $accUtangBeban,
-                        'document_number' => sprintf('EXP.%04d.%02d.%05d', $year, $m, $expSeq),
+                        'document_number' => sprintf('BB.%04d.%02d.%04d', $year, $m, $tplIdx + 1),
                         'status' => 'Terbayar',
                         'entry_date' => $entryDate,
                         'due_date' => $dueDate,
@@ -1005,7 +1010,7 @@ class TransactionDataSeeder extends Seeder
                     'warehouse_id' => $warehouseId,
                     'currency_id' => $currencyId,
                     'primary_account_id' => 34,
-                    'document_number' => sprintf('PAY.%04d.%02d.%05d', $year, $m, $paySeq),
+                    'document_number' => sprintf('GJ.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
                     'subtotal' => 0,
