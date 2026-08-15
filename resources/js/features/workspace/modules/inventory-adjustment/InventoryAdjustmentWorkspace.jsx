@@ -77,7 +77,7 @@ export function InventoryAdjustmentFormView({
         setSelectedItem(null);
     }, [activeLevel2Tab?.id]);
 
-    const validationMessage = useMemo(() => validateInventoryAdjustmentValues(values, config, isDetail), [config, isDetail, values]);
+    const validationMessage = useMemo(() => validateInventoryAdjustmentValues(values, config, isDetail, pageId), [config, isDetail, pageId, values]);
     const isDirty = useMemo(() => resolveInventoryDirtyState(values, initialSnapshot), [initialSnapshot, values]);
 
     const {
