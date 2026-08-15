@@ -177,10 +177,12 @@ export function validateInventoryAdjustmentValues(values, config, isDetail, page
 }
 
 export function buildInventoryDocumentNumber(pageId) {
-    const prefix = pageId === 'price-adjustment' ? 'PA' : 'IA';
-    const dateLabel = new Date().toISOString().slice(0, 10).replaceAll('-', '.');
+    const prefix = pageId === 'price-adjustment' ? 'PH' : 'PS';
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
 
-    return `${prefix}.${dateLabel}.${Date.now()}`;
+    return `${prefix}.${year}.${month}.0001`;
 }
 
 export async function promptInventoryAdjustmentItemEditor(item = null, pageId = 'inventory-adjustment') {
