@@ -114,16 +114,19 @@ export function formatDisplayValue(val) {
     if (typeof val === 'string') {
         const trimmed = val.trim();
 
-      // Dates (e.g. 23/07/2026 or 2026-07-23)
+        // Phone numbers, mobile numbers, or codes starting with 0 (e.g. 081234567890, 0218273618, 001)
+        if (/^0\d+$/.test(trimmed)) return trimmed;
 
+        // Long numeric identifiers / phone numbers (e.g. +628123456789, 628123456789)
+        if (/^\+?\d{10,16}$/.test(trimmed)) return trimmed;
+
+        // Dates (e.g. 23/07/2026 or 2026-07-23)
         if (/^\d{1,4}[/-]\d{1,2}[/-]\d{1,4}$/.test(trimmed)) return val;
 
-      // Document codes / references (e.g. IR.2026.07.23.001, SP-00001, BSH-404)
-
+        // Document codes / references (e.g. IR.2026.07.23.001, SP-00001, BSH-404)
         if (/^[A-Za-z0-9_-]+\.[\d\.]+$|^[A-Za-z0-9_-]+-\d+$/i.test(trimmed) && /[A-Za-z_-]/.test(trimmed)) return val;
 
-      // Currency values (e.g. Rp 1000 or -Rp 1000)
-
+        // Currency values (e.g. Rp 1000 or -Rp 1000)
         if (/^(-?Rp\s*|Rp\s*-?)\d[\d\.,]*$/i.test(trimmed)) {
             const isNegative = trimmed.includes('-');
             const rawNum = trimmed.replace(/^(Rp\s*-?|-?Rp\s*)/i, '');
@@ -133,8 +136,7 @@ export function formatDisplayValue(val) {
             }
         }
 
-      // Parenthesized count / quantity (e.g. "1 Barang (11111)")
-
+        // Parenthesized count / quantity (e.g. "1 Barang (11111)")
         if (/\([0-9]+\)/.test(trimmed)) {
             return trimmed.replace(/\((\d+)\)/g, (match, p1) => {
                 const parsed = parseAmountInput(p1, { allowDecimal: true, emptyValue: null });
@@ -142,8 +144,7 @@ export function formatDisplayValue(val) {
             });
         }
 
-      // Pure numeric strings (e.g. 1000 or 1000.5)
-
+        // Pure numeric strings (e.g. 1000 or 1000.5)
         if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
             const parsed = parseAmountInput(trimmed, { allowDecimal: true, emptyValue: null });
             if (parsed !== null) {

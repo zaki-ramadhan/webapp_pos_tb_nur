@@ -11,6 +11,32 @@ export default function formatTableTextValue(value, column = null) {
             if ((colId.includes('unit') || colLabel.includes('satuan')) && typeof value === 'string') {
                 return value.replace(/\s*\[[^\]]+\]|\[[^\]]+\]\s*/g, '').trim();
             }
+
+            const isPhoneOrCodeColumn = colId.includes('phone') || 
+                                        colId.includes('mobile') || 
+                                        colId.includes('whatsapp') || 
+                                        colId.includes('telp') || 
+                                        colId.includes('hp') || 
+                                        colId.includes('ktp') || 
+                                        colId.includes('nik') || 
+                                        colId.includes('npwp') || 
+                                        colId.includes('account_number') || 
+                                        colId.includes('rekening') || 
+                                        colId.includes('postal') || 
+                                        colLabel.includes('telepon') || 
+                                        colLabel.includes('handphone') || 
+                                        colLabel.includes('hp') || 
+                                        colLabel.includes('whatsapp') || 
+                                        colLabel.includes('wa') || 
+                                        colLabel.includes('rekening') || 
+                                        colLabel.includes('ktp') || 
+                                        colLabel.includes('nik') || 
+                                        colLabel.includes('npwp') || 
+                                        colLabel.includes('pos');
+
+            if (isPhoneOrCodeColumn) {
+                return String(value ?? '').trim();
+            }
             
             const isNameColumn = colId.includes('customer') || 
                                  colId.includes('supplier') || 
