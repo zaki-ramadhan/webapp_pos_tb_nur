@@ -177,7 +177,7 @@ class InventoryBackendResources
             $rule = $rule->ignore($record);
         }
 
-        return ['required', 'string', 'max:120', $rule];
+        return ['nullable', 'string', 'max:120', $rule];
     }
 
     /**
