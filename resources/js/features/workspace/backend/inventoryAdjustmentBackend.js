@@ -47,6 +47,12 @@ export function buildInventoryAdjustmentRecord(record, config) {
             ?? (typeof rawAttrs?.unit === 'string' ? rawAttrs.unit : '') 
             ?? 'PCS';
 
+        const itemQty = Number(line.quantity) || 0;
+        const itemUnitPrice = Number(line.unit_price) || 0;
+        const itemTotalAmount = line.total_amount !== undefined && line.total_amount !== null && Number(line.total_amount) > 0
+            ? Number(line.total_amount)
+            : (itemQty * itemUnitPrice);
+
         return {
             id: String(line.id ?? `line-${index}`),
             __lineId: line.id ?? null,
@@ -58,8 +64,8 @@ export function buildInventoryAdjustmentRecord(record, config) {
             quantity: String(line.quantity ?? 0),
             unit: unitName,
             unitLookup: unitName ? [unitName] : ['PCS'],
-            unitCost: formatCurrencyValue(line.unit_price ?? 0),
-            totalCost: formatCurrencyValue(line.total_amount ?? 0),
+            unitCost: formatCurrencyValue(itemUnitPrice),
+            totalCost: formatCurrencyValue(itemTotalAmount),
             warehouse: line.warehouse?.name ? [line.warehouse.name] : [],
             department: line.department?.name ? [line.department.name] : [],
             notes: line.notes ?? '',
@@ -68,7 +74,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
             newDiscount: String(rawAttrs?.new_discount ?? '0'),
         };
     });
-    const totalAmount = items.reduce((sum, item) => sum + Number(String(item.totalCost).replace(/[^\d.-]/g, '')), 0);
+    const totalAmount = Number(record.total_amount) || items.reduce((sum, item) => sum + parseNumericInput(item.totalCost), 0);
     const accountLabel = record.primary_account
         ? `[${record.primary_account.code ?? ''}] ${record.primary_account.name ?? ''}`.trim()
         : '';
