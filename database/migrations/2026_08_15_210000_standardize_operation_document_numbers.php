@@ -11,7 +11,7 @@ return new class extends Migration
             return;
         }
 
-         = [
+        $prefixes = [
             'sales_quote' => 'PN',
             'sales_order' => 'SO',
             'sales_delivery' => 'SJ',
@@ -43,41 +43,47 @@ return new class extends Migration
             'asset_move' => 'PMA',
         ];
 
-         = DB::table('operation_documents')->orderBy('id', 'asc')->get();
-        foreach ( as ) {
-             = (string) (->document_number ?? '');
-             = ->document_type ?? 'operation';
-             = [] ?? 'DOC';
+        $docs = DB::table('operation_documents')->orderBy('id', 'asc')->get();
+        foreach ($docs as $doc) {
+            $oldNumber = (string) ($doc->document_number ?? '');
+            $docType = $doc->document_type ?? 'operation';
+            $prefix = $prefixes[$docType] ?? 'DOC';
 
-             = ->entry_date ? \Carbon\Carbon::parse(->entry_date) : now();
-             = ->format('Y');
-             = ->format('m');
+            $date = $doc->entry_date ? \Carbon\Carbon::parse($doc->entry_date) : now();
+            $year = $date->format('Y');
+            $month = $date->format('m');
 
-             = false;
-            if (preg_match('/^[A-Z]+\.\d{4}\.\d{2}\.\d{4}$/', )) {
-                 = explode('.', );
-                if ([0] === ) {
-                     = true;
+            $isValid = false;
+            if (preg_match('/^[A-Z]+\.\d{4}\.\d{2}\.\d{4}$/', $oldNumber)) {
+                $parts = explode('.', $oldNumber);
+                if ($parts[0] === $prefix) {
+                    $isValid = true;
                 }
             }
 
-            if (!) {
-                 = 1;
+            if (!$isValid) {
+                $seq = 1;
                 do {
-                     = str_pad(, 4, '0', STR_PAD_LEFT);
-                     = "{}.{}.{}.{}";
-                     = DB::table('operation_documents')
-                        ->where('document_number', )
-                        ->where('id', '!=', ->id)
+                    $seqStr = str_pad($seq, 4, '0', STR_PAD_LEFT);
+                    $newNumber = "{$prefix}.{$year}.{$month}.{$seqStr}";
+                    $exists = DB::table('operation_documents')
+                        ->where('document_number', $newNumber)
+                        ->where('id', '!=', $doc->id)
                         ->exists();
-                    if () {
-                        ++;
+                    if ($exists) {
+                        $seq++;
                     }
-                } while ();
+                } while ($exists);
 
                 DB::table('operation_documents')
-                    ->where('id', ->id)
-                    ->update(['document_number' => ]);
+                    ->where('id', $doc->id)
+                    ->update(['document_number' => $newNumber]);
+
+                if (!empty($oldNumber) && \Illuminate\Support\Facades\Schema::hasTable('operation_document_lines')) {
+                    DB::table('operation_document_lines')
+                        ->where('reference_code', $oldNumber)
+                        ->update(['reference_code' => $newNumber]);
+                }
             }
         }
     }
