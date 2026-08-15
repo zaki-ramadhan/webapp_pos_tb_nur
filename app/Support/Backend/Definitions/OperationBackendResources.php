@@ -400,7 +400,7 @@ class OperationBackendResources
             'responsible_user_id' => ['nullable', 'integer', 'exists:users,id'],
             'user_ids' => ['sometimes', 'array'],
             'user_ids.*' => ['integer', 'exists:users,id'],
-            'document_number' => ['required', 'string', 'max:120', Rule::unique('operation_documents', 'document_number')],
+            'document_number' => ['nullable', 'string', 'max:120', Rule::unique('operation_documents', 'document_number')],
             'reference_number' => ['nullable', 'string', 'max:120'],
             'status' => ['nullable', 'string', 'max:80'],
             'payment_method' => ['nullable', 'string', 'max:80'],
@@ -491,7 +491,7 @@ class OperationBackendResources
     private static function replaceDocumentNumberRule(array $rules, Model $record): array
     {
         $rules['document_number'] = [
-            'required',
+            'nullable',
             'string',
             'max:120',
             Rule::unique('operation_documents', 'document_number')->ignore($record),
