@@ -3,9 +3,10 @@ import Pusher from 'pusher-js';
 
 window.Pusher = Pusher;
 
+const isEnabled = String(import.meta.env.VITE_REVERB_ENABLED ?? '').toLowerCase() === 'true';
 const reverbKey = import.meta.env.VITE_REVERB_APP_KEY;
 
-if (reverbKey) {
+if (isEnabled && reverbKey) {
     const host = import.meta.env.VITE_REVERB_HOST || (typeof window !== 'undefined' ? window.location.hostname : 'localhost');
     const isSecure = typeof window !== 'undefined' ? window.location.protocol === 'https:' : true;
     const port = import.meta.env.VITE_REVERB_PORT ? Number(import.meta.env.VITE_REVERB_PORT) : (isSecure ? 443 : 80);
