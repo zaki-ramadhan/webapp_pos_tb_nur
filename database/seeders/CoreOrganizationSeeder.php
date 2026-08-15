@@ -13,7 +13,7 @@ class CoreOrganizationSeeder extends Seeder
             [
                 'code' => 'JKT-01',
                 'name' => 'TOKO UTAMA',
-                'phone' => '021-8273618',
+                'phone' => '0218273618',
                 'email' => 'toko.utama@tbnur.com',
                 'street' => 'Jl. Raya Sunan Gunung Jati No. 45',
                 'city' => 'Cirebon',
@@ -26,7 +26,7 @@ class CoreOrganizationSeeder extends Seeder
             [
                 'code' => 'SBY-02',
                 'name' => 'CABANG KEDUA',
-                'phone' => '031-7261823',
+                'phone' => '0317261823',
                 'email' => 'cabang.kedua@tbnur.com',
                 'street' => 'Jl. Raya Tuparev No. 102',
                 'city' => 'Cirebon',
