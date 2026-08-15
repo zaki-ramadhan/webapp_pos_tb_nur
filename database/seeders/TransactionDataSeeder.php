@@ -122,12 +122,11 @@ class TransactionDataSeeder extends Seeder
             return $lineTotal;
         };
 
-        // Helper closure to generate safe historical entry dates (Max August 14, 2026)
+        // Helper closure to generate safe historical entry dates (Chronological & bounded)
         $buildEntryDate = function ($year, $m, $defaultDay) {
             if ($year === 2026 && $m === 8) {
-                $day = min(14, max(1, $defaultDay % 15));
-                if ($day === 0) $day = 14;
-                return sprintf('2026-08-%02d', $day);
+                $safeDay = min(9, max(1, $defaultDay));
+                return sprintf('2026-08-%02d', $safeDay);
             }
             $safeDay = min(28, max(1, $defaultDay));
             return sprintf('%04d-%02d-%02d', $year, $m, $safeDay);
@@ -301,8 +300,13 @@ class TransactionDataSeeder extends Seeder
                 $invoicesThisMonth = 6;
                 for ($k = 1; $k <= $invoicesThisMonth; $k++) {
                     $invoiceSeq++;
-                    $defaultDay = 4 * $k + ($invoiceSeq % 2);
-                    $entryDate = $buildEntryDate($year, $m, $defaultDay);
+                    if ($year === 2026 && $m === 8) {
+                        $augDays = [1 => 2, 2 => 3, 3 => 5, 4 => 6, 5 => 8, 6 => 9];
+                        $defaultDay = $augDays[$k] ?? 9;
+                    } else {
+                        $defaultDay = 4 * $k;
+                    }
+                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $defaultDay);
                     $dt = Carbon::parse($entryDate);
 
                     $pattern = $salesPatterns[($invoiceSeq - 1) % count($salesPatterns)];
