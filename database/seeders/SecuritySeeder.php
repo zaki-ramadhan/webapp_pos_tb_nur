@@ -19,8 +19,8 @@ class SecuritySeeder extends Seeder
             ['group_key' => 'company_info', 'setting_key' => 'company-name', 'value' => 'UD. TB Nur', 'label' => 'Nama Toko'],
             ['group_key' => 'company_info', 'setting_key' => 'business-category', 'value' => 'GROSIR / WHOLESALER', 'label' => 'Kategori Usaha'],
             ['group_key' => 'company_info', 'setting_key' => 'business-field', 'value' => 'Bahan Bangunan', 'label' => 'Bidang Usaha'],
-            ['group_key' => 'company_info', 'setting_key' => 'phone', 'value' => '021-56693463', 'label' => 'Telepon'],
-            ['group_key' => 'company_info', 'setting_key' => 'fax', 'value' => '021-56693463', 'label' => 'Faksimili'],
+            ['group_key' => 'company_info', 'setting_key' => 'phone', 'value' => '02156693463', 'label' => 'Telepon'],
+            ['group_key' => 'company_info', 'setting_key' => 'fax', 'value' => '02156693463', 'label' => 'Faksimili'],
             ['group_key' => 'company_info', 'setting_key' => 'email', 'value' => 'admin@tbnur.com', 'label' => 'Email'],
             ['group_key' => 'company_info', 'setting_key' => 'start-date', 'value' => '01/06/2025', 'label' => 'Tanggal Mulai Data'],
             ['group_key' => 'company_info', 'setting_key' => 'accounting-period', 'value' => 'Januari - Desember', 'label' => 'Periode Akuntansi'],
@@ -166,7 +166,7 @@ class SecuritySeeder extends Seeder
             [
                 'name' => 'Zaki Ramadhan',
                 'email' => 'piscokpiscok2610@gmail.com',
-                'phone' => '0812-8273-6188',
+                'phone' => '081282736188',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -175,7 +175,7 @@ class SecuritySeeder extends Seeder
             [
                 'name' => 'Hj. Nurhayati',
                 'email' => 'nurhayati.karya@gmail.com',
-                'phone' => '0812-9876-5432',
+                'phone' => '081298765432',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -184,7 +184,7 @@ class SecuritySeeder extends Seeder
             [
                 'name' => 'Ahmad Fauzi',
                 'email' => 'ahmad.fauzi87@gmail.com',
-                'phone' => '0812-8976-5431',
+                'phone' => '081289765431',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -193,7 +193,7 @@ class SecuritySeeder extends Seeder
             [
                 'name' => 'Bambang Suryono',
                 'email' => 'bambang.suryono88@gmail.com',
-                'phone' => '0857-1234-5678',
+                'phone' => '085712345678',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -202,7 +202,7 @@ class SecuritySeeder extends Seeder
             [
                 'name' => 'Siti Rahmawati',
                 'email' => 'siti.rahmawati95@gmail.com',
-                'phone' => '0813-7654-3210',
+                'phone' => '081376543210',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -211,7 +211,7 @@ class SecuritySeeder extends Seeder
             [
                 'name' => 'Diki Dermawan',
                 'email' => 'diki.dermawan92@gmail.com',
-                'phone' => '0821-9876-1234',
+                'phone' => '082198761234',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),

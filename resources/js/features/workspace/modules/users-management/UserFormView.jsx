@@ -216,7 +216,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                             id="phone"
                             name="phone"
                             value={values.phone}
-                            onChange={(e) => setValues({ ...values, phone: e.target.value })}
+                            onChange={(e) => setValues({ ...values, phone: e.target.value.replace(/-/g, '') })}
                             placeholder=""
                             className="h-[36px] w-full rounded-[4px] border-ui-border"
                             inputClassName="text-xs sm:text-sm"
