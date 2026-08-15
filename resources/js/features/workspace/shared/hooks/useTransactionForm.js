@@ -154,6 +154,9 @@ export function buildWorkspaceDockActions({
     isDetail,
     saveDisabled,
     saving,
+    validationMessage = null,
+    isDirty = false,
+    disabledReason = null,
     onSave,
     onDelete,
     additionalMaps = {}
@@ -181,11 +184,14 @@ export function buildWorkspaceDockActions({
             }
 
             if (action.id === 'save') {
+                const resolvedDisabledReason = disabledReason
+                    || (saveDisabled ? (validationMessage || (!isDirty ? 'Belum ada perubahan data pada formulir' : 'Formulir belum valid')) : undefined);
+
                 return {
                     ...action,
                     tone: 'primary',
                     disabled: saveDisabled,
-                    disabledReason: saveDisabled ? (validationMessage || (!isDirty ? 'Belum ada perubahan data pada formulir' : 'Formulir belum valid')) : undefined,
+                    disabledReason: resolvedDisabledReason,
                     label: saving ? 'Memproses...' : action.label,
                     onClick: onSave,
                 };

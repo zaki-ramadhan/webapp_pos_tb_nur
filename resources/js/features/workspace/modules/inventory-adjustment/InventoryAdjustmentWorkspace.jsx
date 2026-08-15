@@ -212,10 +212,12 @@ export function InventoryAdjustmentFormView({
                 isDetail,
                 saveDisabled,
                 saving,
+                validationMessage,
+                isDirty,
                 onSave: onSaveClick,
                 onDelete: requestDelete,
             }),
-        [config.dockActions, isDetail, requestDelete, saveDisabled, saving, values.dockActions],
+        [config.dockActions, isDetail, isDirty, requestDelete, saveDisabled, saving, validationMessage, values.dockActions],
     );
 
     const handlers = useMemo(
