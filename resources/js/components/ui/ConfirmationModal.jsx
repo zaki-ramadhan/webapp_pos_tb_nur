@@ -8,20 +8,20 @@ function ConfirmationIllustration({ iconVariant = 'warning' }) {
     return <img src="/assets/images/pop-up-confirm-icon.svg" className="h-14 w-14 shrink-0" alt="Confirm" aria-hidden="true" />;
 }
 
-function FormattedMessage({ message }) {
+function FormattedMessage({ message, iconVariant }) {
     if (!message) return null;
     if (typeof message !== 'string') return message;
 
     const lines = message.split('\n');
     const header = lines[0];
-    const details = lines.slice(1);
+    const errorLines = lines.slice(1);
 
     if (lines.length > 1 && header.includes('Silakan perbaiki')) {
         return (
             <div>
-                <p className="text-xs sm:text-sm font-normal leading-relaxed text-slate-700">{header}</p>
-                <div className="mt-1 space-y-0.5 text-xs sm:text-sm leading-relaxed text-red-600 font-normal">
-                    {details.map((line, idx) => (
+                <p className="text-xs sm:text-sm font-normal leading-6 text-slate-800">{header}</p>
+                <div className="mt-1 space-y-0.5 text-xs sm:text-sm leading-6 text-red-600 font-normal">
+                    {errorLines.map((line, idx) => (
                         <p key={idx}>{line}</p>
                     ))}
                 </div>
@@ -29,20 +29,10 @@ function FormattedMessage({ message }) {
         );
     }
 
-    if (lines.length > 1) {
-        return (
-            <div className="space-y-1">
-                <p className="text-xs sm:text-sm font-normal leading-relaxed text-slate-700">{header}</p>
-                {details.map((line, idx) => (
-                    <p key={idx} className="text-xs sm:text-sm font-medium leading-relaxed text-slate-900 break-words">
-                        {line}
-                    </p>
-                ))}
-            </div>
-        );
-    }
+    const isCancelOrDelete = message.includes('dibatalkan') || message.includes('dihapus') || iconVariant === 'error' || iconVariant === 'danger' || iconVariant === 'warning';
+    const textColor = isCancelOrDelete ? 'text-red-600 font-normal' : 'text-slate-800 font-normal';
 
-    return <p className="text-xs sm:text-sm font-normal leading-relaxed text-slate-700 whitespace-pre-line">{message}</p>;
+    return <p className={`text-sm sm:text-base leading-6 whitespace-pre-line ${textColor}`}>{message}</p>;
 }
 
 export default function ConfirmationModal({
