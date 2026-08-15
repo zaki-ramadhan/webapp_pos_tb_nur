@@ -563,8 +563,13 @@ class TransactionDataSeeder extends Seeder
                 ]);
                 $piIds[] = $docId;
 
-                $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 80 + ($m * 3), 75000, $dt);
-                $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 1200 + ($m * 50), 800, $dt);
+                if ($year === 2025) {
+                    $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 40 + ($m % 3), 75000, $dt);
+                    $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 600, 800, $dt);
+                } else {
+                    $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 62 + ($m % 4), 75000, $dt);
+                    $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 1000, 800, $dt);
+                }
                 $subtotal = $t1 + $t2;
 
                 DB::table('operation_documents')->where('id', $docId)->update([
@@ -917,9 +922,9 @@ class TransactionDataSeeder extends Seeder
         $accBebanListrik = DB::table('accounts')->where('code', '610201')->value('id') ?? 66;
 
         $expenseTemplates = [
-            ['desc' => 'Beban Listrik, Air & Telepon Toko Utama', 'amount' => 750000, 'acc' => $accBebanListrik, 'code' => '610201'],
-            ['desc' => 'Beban Pemeliharaan & Servis Kendaraan Toko', 'amount' => 850000, 'acc' => $accBebanListrik, 'code' => '610201'],
-            ['desc' => 'Beban Administrasi Kantor & Internet Wi-Fi', 'amount' => 450000, 'acc' => $accBebanListrik, 'code' => '610201'],
+            ['desc' => 'Beban Listrik, Air & Telepon Toko Utama', 'amount' => 450000, 'acc' => $accBebanListrik, 'code' => '610201'],
+            ['desc' => 'Beban Pemeliharaan & Servis Kendaraan Toko', 'amount' => 350000, 'acc' => $accBebanListrik, 'code' => '610201'],
+            ['desc' => 'Beban Administrasi Kantor & Internet Wi-Fi', 'amount' => 250000, 'acc' => $accBebanListrik, 'code' => '610201'],
         ];
 
         $expSeq = 0;
@@ -1020,7 +1025,7 @@ class TransactionDataSeeder extends Seeder
                 ]);
 
                 foreach ($employeesList as $empIdx => $emp) {
-                    $baseSal = 1800000 + ($empIdx * 300000);
+                    $baseSal = 1200000 + ($empIdx * 300000);
                     $taxVal = 50000;
                     $netPaid = $baseSal - $taxVal;
                     $totalDocAmount += $netPaid;
