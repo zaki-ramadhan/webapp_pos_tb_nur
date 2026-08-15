@@ -27,13 +27,13 @@ const defaultAccountValues = {
 };
 
 const listColumns = [
-    { id: 'name', label: 'Nama Barang', widthClassName: 'w-[20%]', align: 'left', truncate: true },
-    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[120px]', align: 'left' },
-    { id: 'kind', label: 'Jenis Barang', widthClassName: 'w-[120px]', align: 'left' },
-    { id: 'unit', label: 'Satuan', widthClassName: 'w-[90px]', align: 'left', noWrap: true },
-    { id: 'salePrice', label: 'Def. Hrg. Jual Satuan', widthClassName: 'w-[160px]', align: 'right', noWrap: true },
-    { id: 'stockAtWarehouse', label: 'Stok Fisik', widthClassName: 'w-[100px]', align: 'right', noWrap: true },
-    { id: 'saleableStock', label: 'Stok dapat dijual', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
+    { id: 'name', label: 'Nama Barang', widthClassName: 'min-w-[220px] w-full', align: 'left', truncate: true },
+    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[110px]', align: 'left' },
+    { id: 'kind', label: 'Jenis Barang', widthClassName: 'w-[110px]', align: 'left' },
+    { id: 'unit', label: 'Satuan', widthClassName: 'w-[80px]', align: 'left', noWrap: true },
+    { id: 'salePrice', label: 'Def. Hrg. Jual Satuan', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
+    { id: 'stockAtWarehouse', label: 'Stok Fisik', widthClassName: 'w-[90px]', align: 'right', noWrap: true },
+    { id: 'saleableStock', label: 'Stok dapat dijual', widthClassName: 'w-[130px]', align: 'right', noWrap: true },
     
   // Kolom-kolom baru (default disembunyikan di Settings menu)
 
