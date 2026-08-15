@@ -32,7 +32,7 @@ const listColumns = [
     { id: 'kind', label: 'Jenis Barang', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'unit', label: 'Satuan', widthClassName: 'w-[90px]', align: 'left', noWrap: true },
     { id: 'salePrice', label: 'Def. Hrg. Jual Satuan', widthClassName: 'w-[160px]', align: 'right', noWrap: true },
-    { id: 'stockAtWarehouse', label: 'Kts (Gdng Peng...)', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
+    { id: 'stockAtWarehouse', label: 'Kts (Gudang Pengguna)', widthClassName: 'w-[180px]', align: 'right', noWrap: true },
     { id: 'saleableStock', label: 'Stok dapat dijual', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
     
   // Kolom-kolom baru (default disembunyikan di Settings menu)
