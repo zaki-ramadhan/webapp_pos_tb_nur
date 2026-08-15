@@ -158,8 +158,8 @@ export function InventoryAdjustmentFormView({
             execute: async () => {
                 const resolvedDocumentNumber =
                     values.autoNumber || !String(values.documentNumber ?? '').trim()
-                        ? buildInventoryDocumentNumber(pageId)
-                        : values.documentNumber;
+                        ? null
+                        : values.documentNumber?.trim();
                 const payload = buildInventoryAdjustmentPayload({
                     ...values,
                     documentNumber: resolvedDocumentNumber,
