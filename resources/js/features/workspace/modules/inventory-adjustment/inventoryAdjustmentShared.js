@@ -115,17 +115,17 @@ export function buildInventoryComparableSnapshot(values) {
     };
 }
 
-export function validateInventoryAdjustmentValues(values, config, isDetail) {
-    const isPriceAdjustment = config?.labels?.salesCategory !== undefined;
+export function validateInventoryAdjustmentValues(values, config, isDetail, pageId = 'inventory-adjustment') {
+    const isPriceAdjustment = pageId === 'price-adjustment' || config?.id === 'price-adjustment';
 
     if (isPriceAdjustment) {
         const requiredMessage = validateRequiredChecks([
-            { label: config.labels.salesCategory, value: values.salesCategory, type: 'array' },
-            { label: config.labels.effectiveDate, value: values.effectiveDate },
+            { label: config?.labels?.salesCategory || 'Kategori Penjualan', value: values.salesCategory, type: 'array' },
+            { label: config?.labels?.effectiveDate || 'Tanggal Efektif', value: values.effectiveDate },
             ...(isDetail || values.autoNumber === false
-                ? [{ label: config.labels.documentNumber, value: values.documentNumber }]
+                ? [{ label: config?.labels?.documentNumber || 'Nomor', value: values.documentNumber }]
                 : []),
-            { label: config.itemSectionTitle || 'Rincian Barang', value: values.items, type: 'array' },
+            { label: config?.itemSectionTitle || 'Rincian Barang', value: values.items, type: 'array' },
         ]);
 
         if (requiredMessage) {
