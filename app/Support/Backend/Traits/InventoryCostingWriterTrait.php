@@ -97,9 +97,21 @@ trait InventoryCostingWriterTrait
                         );
                     }
                 } elseif ($docType === 'inventory_adjustment') {
+                    $warehouseId = $warehouseId ?: (\App\Domain\Catalog\Models\Warehouse::first()?->id ?? 1);
                     if ($warehouseId) {
+                        $attributes = is_string($line->attributes) ? json_decode($line->attributes, true) : ($line->attributes ?? []);
+                        $adjType = $attributes['adjustment_type'] ?? 'Penambahan';
                         $qty = (float) $line->quantity;
-                        if ($qty > 0) {
+                        if ($adjType === 'Pengurangan' || $qty < 0) {
+                            $this->consumeStockHelper(
+                                $costingService,
+                                $line,
+                                $productId,
+                                $warehouseId,
+                                abs($qty),
+                                $entryDate
+                            );
+                        } else {
                             $this->recordEntryHelper(
                                 $costingService,
                                 $sourceType,
@@ -109,15 +121,6 @@ trait InventoryCostingWriterTrait
                                 $warehouseId,
                                 $qty,
                                 (float) ($line->unit_price ?? 0),
-                                $entryDate
-                            );
-                        } elseif ($qty < 0) {
-                            $this->consumeStockHelper(
-                                $costingService,
-                                $line,
-                                $productId,
-                                $warehouseId,
-                                abs($qty),
                                 $entryDate
                             );
                         }
