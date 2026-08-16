@@ -36,10 +36,22 @@ export default defineConfig({
             output: {
                 manualChunks(id) {
                     if (id.includes('node_modules')) {
-                        return 'vendor';
+                        if (id.includes('xlsx')) {
+                            return 'vendor-export-excel';
+                        }
+                        if (id.includes('jspdf')) {
+                            return 'vendor-export-pdf';
+                        }
+                        if (id.includes('chart.js') || id.includes('react-chartjs-2')) {
+                            return 'vendor-charts';
+                        }
+                        if (id.includes('lucide-react')) {
+                            return 'vendor-icons';
+                        }
+                        return 'vendor-core';
                     }
-                }
-            }
-        }
+                },
+            },
+        },
     }
 });
