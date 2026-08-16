@@ -3,7 +3,8 @@ import Pusher from 'pusher-js';
 
 window.Pusher = Pusher;
 
-const reverbKey = import.meta.env.VITE_REVERB_APP_KEY || 'eh3awxry6zdrubcvw6mc';
+const getReverbKey = () => (typeof window !== 'undefined' ? window.__REVERB_KEY__ : null) || import.meta.env.VITE_REVERB_APP_KEY || 'pos_tb_nur_reverb_key';
+const reverbKey = getReverbKey();
 
 if (typeof window !== 'undefined' && reverbKey) {
     const isSecure = window.location.protocol === 'https:';
