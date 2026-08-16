@@ -12,6 +12,9 @@
         />
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app/App.jsx'])
+        <script>
+            window.__REVERB_KEY__ = "{{ config('broadcasting.connections.reverb.key') ?? env('REVERB_APP_KEY', 'pos_tb_nur_reverb_key') }}";
+        </script>
         <x-inertia::head />
     </head>
     <body class="bg-[var(--color-surface)] text-[var(--color-ink)] antialiased">
