@@ -7,7 +7,6 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
-import TextInput from '@/components/ui/TextInput';
 import Pagination from '@/components/ui/Pagination';
 import { RefreshIcon } from '@/features/workspace/shared/Icons';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -34,7 +33,6 @@ function getTodayDate() {
 export default function ItemMutationTab({ productId }) {
     const [dateFrom, setDateFrom] = useState(getThirtyDaysAgoDate);
     const [dateTo, setDateTo] = useState(getTodayDate);
-    const [search, setSearch] = useState('');
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
@@ -49,7 +47,6 @@ export default function ItemMutationTab({ productId }) {
     useEffect(() => {
         setDateFrom(getThirtyDaysAgoDate());
         setDateTo(getTodayDate());
-        setSearch('');
         setPage(1);
     }, [productId]);
 
@@ -61,7 +58,6 @@ export default function ItemMutationTab({ productId }) {
                 product_id: productId,
                 date_from: dateFrom,
                 date_to: dateTo,
-                search: search.trim(),
                 page,
                 per_page: perPage,
             });
@@ -102,62 +98,45 @@ export default function ItemMutationTab({ productId }) {
 
     return (
         <div className="space-y-2">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                    <TransactionDateInput
-                        value={dateFrom}
-                        onChange={(e) => {
-                            const nextDateFrom = typeof e === 'string' ? e : e?.target?.value;
-                            if (nextDateFrom) {
-                                setDateFrom(nextDateFrom);
-                                setPage(1);
-                                if (dateTo && nextDateFrom > dateTo) {
-                                    setDateTo(nextDateFrom);
-                                }
-                            }
-                        }}
-                        className="w-[140px]"
-                    />
-                    <span className="text-sm text-slate-500 font-normal">s/d</span>
-                    <TransactionDateInput
-                        value={dateTo}
-                        minDate={dateFrom}
-                        onChange={(e) => {
-                            const nextDateTo = typeof e === 'string' ? e : e?.target?.value;
-                            if (nextDateTo) {
-                                setDateTo(nextDateTo);
-                                setPage(1);
-                            }
-                        }}
-                        className="w-[140px]"
-                    />
-                    <button
-                        type="button"
-                        onClick={() => {
+            <div className="flex flex-wrap items-center gap-2">
+                <TransactionDateInput
+                    value={dateFrom}
+                    onChange={(e) => {
+                        const nextDateFrom = typeof e === 'string' ? e : e?.target?.value;
+                        if (nextDateFrom) {
+                            setDateFrom(nextDateFrom);
                             setPage(1);
-                            fetchMutations();
-                        }}
-                        title="Muat ulang"
-                        className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer"
-                    >
-                        <RefreshIcon className="h-4 w-4" />
-                    </button>
-                </div>
-
-                <div className="w-full sm:w-[260px]">
-                    <TextInput
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                setPage(1);
-                                fetchMutations();
+                            if (dateTo && nextDateFrom > dateTo) {
+                                setDateTo(nextDateFrom);
                             }
-                        }}
-                        placeholder="Cari/Pilih..."
-                        className="h-[34px] text-xs sm:text-sm"
-                    />
-                </div>
+                        }
+                    }}
+                    className="w-[140px]"
+                />
+                <span className="text-sm text-slate-500 font-normal">s/d</span>
+                <TransactionDateInput
+                    value={dateTo}
+                    minDate={dateFrom}
+                    onChange={(e) => {
+                        const nextDateTo = typeof e === 'string' ? e : e?.target?.value;
+                        if (nextDateTo) {
+                            setDateTo(nextDateTo);
+                            setPage(1);
+                        }
+                    }}
+                    className="w-[140px]"
+                />
+                <button
+                    type="button"
+                    onClick={() => {
+                        setPage(1);
+                        fetchMutations();
+                    }}
+                    title="Muat ulang"
+                    className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer"
+                >
+                    <RefreshIcon className="h-4 w-4" />
+                </button>
             </div>
 
             <DataTable wrapperClassName="border-table-wrapper-border">
