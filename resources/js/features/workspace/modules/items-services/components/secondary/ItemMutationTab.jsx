@@ -152,8 +152,8 @@ export default function ItemMutationTab({ productId }) {
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || '-'}</DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || '-'}</DataTableCell>
                                 <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.unit_cost) || '0'}</DataTableCell>
-                                <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.in_qty) || '-'}</DataTableCell>
-                                <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.out_qty) || '-'}</DataTableCell>
+                                <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.in_qty) || '0'}</DataTableCell>
+                                <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.out_qty) || '0'}</DataTableCell>
                                 <DataTableCell className="text-right text-sm font-normal text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
                             </DataTableRow>
                         ))
