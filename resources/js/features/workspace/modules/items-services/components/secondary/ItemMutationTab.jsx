@@ -8,6 +8,7 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import TextInput from '@/components/ui/TextInput';
+import Pagination from '@/components/ui/Pagination';
 import { RefreshIcon } from '@/features/workspace/shared/Icons';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
@@ -36,11 +37,20 @@ export default function ItemMutationTab({ productId }) {
     const [search, setSearch] = useState('');
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [perPage, setPerPage] = useState(15);
+    const [paginationMeta, setPaginationMeta] = useState({
+        total: 0,
+        lastPage: 1,
+        from: 0,
+        to: 0,
+    });
 
     useEffect(() => {
         setDateFrom(getThirtyDaysAgoDate());
         setDateTo(getTodayDate());
         setSearch('');
+        setPage(1);
     }, [productId]);
 
     const fetchMutations = async () => {
@@ -52,11 +62,20 @@ export default function ItemMutationTab({ productId }) {
                 date_from: dateFrom,
                 date_to: dateTo,
                 search: search.trim(),
-                per_page: 200,
+                page,
+                per_page: perPage,
             });
-            setRows(extractBackendRows(res));
+            const extracted = extractBackendRows(res);
+            setRows(extracted);
+            setPaginationMeta({
+                total: typeof res?.total === 'number' ? res.total : extracted.length,
+                lastPage: typeof res?.last_page === 'number' ? res.last_page : 1,
+                from: typeof res?.from === 'number' ? res.from : (extracted.length > 0 ? 1 : 0),
+                to: typeof res?.to === 'number' ? res.to : extracted.length,
+            });
         } catch {
             setRows([]);
+            setPaginationMeta({ total: 0, lastPage: 1, from: 0, to: 0 });
         } finally {
             setLoading(false);
         }
@@ -64,7 +83,7 @@ export default function ItemMutationTab({ productId }) {
 
     useEffect(() => {
         fetchMutations();
-    }, [productId, dateFrom, dateTo]);
+    }, [productId, dateFrom, dateTo, page, perPage]);
 
     const handleOpenDocument = (row) => {
         if (!row.page_id || !row.document_id) return;
@@ -91,6 +110,7 @@ export default function ItemMutationTab({ productId }) {
                             const nextDateFrom = typeof e === 'string' ? e : e?.target?.value;
                             if (nextDateFrom) {
                                 setDateFrom(nextDateFrom);
+                                setPage(1);
                                 if (dateTo && nextDateFrom > dateTo) {
                                     setDateTo(nextDateFrom);
                                 }
@@ -104,13 +124,19 @@ export default function ItemMutationTab({ productId }) {
                         minDate={dateFrom}
                         onChange={(e) => {
                             const nextDateTo = typeof e === 'string' ? e : e?.target?.value;
-                            if (nextDateTo) setDateTo(nextDateTo);
+                            if (nextDateTo) {
+                                setDateTo(nextDateTo);
+                                setPage(1);
+                            }
                         }}
                         className="w-[140px]"
                     />
                     <button
                         type="button"
-                        onClick={fetchMutations}
+                        onClick={() => {
+                            setPage(1);
+                            fetchMutations();
+                        }}
                         title="Muat ulang"
                         className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer"
                     >
@@ -122,7 +148,12 @@ export default function ItemMutationTab({ productId }) {
                     <TextInput
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') fetchMutations(); }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                setPage(1);
+                                fetchMutations();
+                            }
+                        }}
                         placeholder="Cari/Pilih..."
                         className="h-[34px] text-xs sm:text-sm"
                     />
@@ -153,6 +184,9 @@ export default function ItemMutationTab({ productId }) {
                     ) : rows.length > 0 ? (
                         rows.map((row, index) => {
                             const isClickable = Boolean(row.page_id && row.document_id);
+                            const hasIn = Boolean(row.in_qty && row.in_qty !== '0');
+                            const hasOut = Boolean(row.out_qty && row.out_qty !== '0');
+
                             return (
                                 <DataTableRow
                                     key={row.id}
@@ -167,9 +201,21 @@ export default function ItemMutationTab({ productId }) {
                                     <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || '-'}</DataTableCell>
                                     <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || '-'}</DataTableCell>
                                     <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.unit_cost) || '0'}</DataTableCell>
-                                    <DataTableCell className="text-center text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.in_qty) || '0'}</DataTableCell>
-                                    <DataTableCell className="text-center text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.out_qty) || '0'}</DataTableCell>
-                                    <DataTableCell className="text-right text-sm font-normal text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
+                                    <DataTableCell className="text-center text-sm px-3 py-2">
+                                        {hasIn ? (
+                                            <span className="font-semibold text-emerald-600">+{formatAmountInput(row.in_qty)}</span>
+                                        ) : (
+                                            <span className="text-slate-400">0</span>
+                                        )}
+                                    </DataTableCell>
+                                    <DataTableCell className="text-center text-sm px-3 py-2">
+                                        {hasOut ? (
+                                            <span className="font-semibold text-rose-600">-{formatAmountInput(row.out_qty)}</span>
+                                        ) : (
+                                            <span className="text-slate-400">0</span>
+                                        )}
+                                    </DataTableCell>
+                                    <DataTableCell className="text-right text-sm font-semibold text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
                                 </DataTableRow>
                             );
                         })
@@ -182,6 +228,24 @@ export default function ItemMutationTab({ productId }) {
                     )}
                 </DataTableBody>
             </DataTable>
+
+            {paginationMeta.total > 0 ? (
+                <Pagination
+                    page={page}
+                    perPage={perPage}
+                    total={paginationMeta.total}
+                    lastPage={paginationMeta.lastPage}
+                    from={paginationMeta.from}
+                    to={paginationMeta.to}
+                    onPageChange={(nextPage) => setPage(nextPage)}
+                    onPerPageChange={(nextPerPage) => {
+                        setPerPage(nextPerPage);
+                        setPage(1);
+                    }}
+                    perPageOptions={[10, 15, 25, 50, 100]}
+                    className="mt-2 rounded-[4px] border border-ui-border-light shadow-none"
+                />
+            ) : null}
         </div>
     );
 }
