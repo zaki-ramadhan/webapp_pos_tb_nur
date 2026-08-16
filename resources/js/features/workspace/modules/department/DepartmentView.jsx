@@ -74,8 +74,6 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, level2Tabs
                 },
             },
             table: {
-                loading,
-
                 ...page.table,
                 ...departmentResource.tableProps,
                 columns: (() => {

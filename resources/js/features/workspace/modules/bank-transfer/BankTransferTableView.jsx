@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 import useTableSort from '@/features/workspace/shared/useTableSort';
 import Pagination from '@/components/ui/Pagination';

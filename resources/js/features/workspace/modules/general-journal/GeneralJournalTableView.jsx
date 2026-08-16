@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
 import useTableSort from '@/features/workspace/shared/useTableSort';
 
