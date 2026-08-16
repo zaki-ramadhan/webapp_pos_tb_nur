@@ -140,7 +140,7 @@ export default function ItemMutationTab({ productId }) {
                         <DataTableHead className="text-right text-white font-light px-3 py-2">Nilai Satuan</DataTableHead>
                         <DataTableHead className="text-center text-white font-light px-3 py-2">Masuk</DataTableHead>
                         <DataTableHead className="text-center text-white font-light px-3 py-2">Keluar</DataTableHead>
-                        <DataTableHead className="text-right text-white font-light px-3 py-2">Saldo</DataTableHead>
+                        <DataTableHead className="text-right text-white font-light px-3 py-2">Sisa Stok</DataTableHead>
                     </DataTableRow>
                 </DataTableHeader>
                 <DataTableBody>
