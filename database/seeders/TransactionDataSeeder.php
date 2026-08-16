@@ -546,15 +546,26 @@ class TransactionDataSeeder extends Seeder
                 $dt = Carbon::parse($entryDate);
                 $isPaid = ($piSeq % 3 !== 0);
                 $docNo = sprintf('FB.%04d.%02d.0001', $year, $m);
+                $supplierId = ($piSeq % 5 === 0) ? $s5 : (($piSeq % 4 === 0) ? $s4 : (($piSeq % 3 === 0) ? $s3 : (($piSeq % 2 === 0) ? $s2 : $s1)));
+                $supplierBillNo = match ($supplierId) {
+                    $s1 => sprintf('INV/SI/%04d/%02d/%04d', $year, $m, 1000 + $piSeq),
+                    $s2 => sprintf('KS-INV-%04d%02d-%03d', $year, $m, $piSeq),
+                    $s3 => sprintf('AVN/FAK/%02d/%04d/%03d', $m, $year, $piSeq),
+                    $s4 => sprintf('ETR-INV-%04d-%04d', $year, 2000 + $piSeq),
+                    $s5 => sprintf('RCK/PB/%04d/%02d/%03d', $year, $m, $piSeq),
+                    default => sprintf('INV-SUP-%04d%02d-%03d', $year, $m, $piSeq),
+                };
 
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'purchase_invoice',
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
-                    'supplier_id' => ($piSeq % 5 === 0) ? $s5 : (($piSeq % 4 === 0) ? $s4 : (($piSeq % 3 === 0) ? $s3 : (($piSeq % 2 === 0) ? $s2 : $s1))),
+                    'supplier_id' => $supplierId,
                     'currency_id' => $currencyId,
                     'responsible_user_id' => $userAdminId,
                     'document_number' => $docNo,
+                    'reference_number' => $supplierBillNo,
+                    'external_number' => $supplierBillNo,
                     'status' => $isPaid ? 'Lunas' : 'Belum Lunas',
                     'entry_date' => $entryDate,
                     'due_date' => $isPaid ? null : date('Y-m-d', strtotime($entryDate . ' + 30 days')),

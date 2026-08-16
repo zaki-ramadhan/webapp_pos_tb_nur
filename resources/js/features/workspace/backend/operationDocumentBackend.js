@@ -100,6 +100,8 @@ export function buildOperationDocumentTableRows(pageId, records) {
             __backendRecord: record,
             number: record.document_number ?? '',
             documentNumber: record.document_number ?? '',
+            billNumber: record.reference_number || record.external_number || record.metadata?.bill_number || '-',
+            referenceNumber: record.reference_number || record.external_number || '',
             date: formatIsoDate(record.entry_date),
             customer: partnerName,
             customerShort: truncateText(partnerName),
