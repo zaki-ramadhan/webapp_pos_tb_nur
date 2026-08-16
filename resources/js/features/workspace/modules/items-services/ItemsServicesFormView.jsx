@@ -155,17 +155,21 @@ export default function ItemsServicesFormView({
         }));
     }
 
+    const isStock = useMemo(() => {
+        const k = String(values.kind ?? '').trim().toLowerCase();
+        return k === 'persediaan' || k === 'stock' || k === 'inventory' || !k;
+    }, [values.kind]);
+
     const rightTabs = useMemo(() => {
-        if (!isDetail || values.kind !== 'Persediaan') return [];
+        if (!isDetail || !isStock) return [];
         return [
             { id: 'mutasi', label: 'Mutasi' },
             { id: 'gudang', label: 'Gudang' },
         ];
-    }, [isDetail, values.kind]);
+    }, [isDetail, isStock]);
 
     const filteredTabs = useMemo(() => {
-        const isStock = values.kind === 'Persediaan';
-        const isGroup = values.kind === 'Grup';
+        const isGroup = values.kind === 'Grup' || String(values.kind ?? '').toLowerCase() === 'group';
         return (config.tabs ?? []).filter((tab) => {
             if (tab.id === 'stock') {
                 return isStock;
@@ -175,7 +179,7 @@ export default function ItemsServicesFormView({
             }
             return true;
         });
-    }, [config.tabs, values.kind]);
+    }, [config.tabs, isStock, values.kind]);
 
     useEffect(() => {
         const allTabs = [...filteredTabs, ...rightTabs];

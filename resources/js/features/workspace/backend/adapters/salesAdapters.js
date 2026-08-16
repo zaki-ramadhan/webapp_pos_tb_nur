@@ -187,6 +187,12 @@ export function mapProductRow(record) {
     const salePrice5 = formatPrice(prices[3]?.price);
 
     const rawFlags = typeof record.flags === 'string' ? JSON.parse(record.flags) : (record.flags ?? {});
+    const rawKind = String(record.product_type ?? record.kind ?? '').trim().toLowerCase();
+    const normalizedKind = (rawKind === 'group' || rawKind === 'grup')
+        ? 'Grup'
+        : (rawKind === 'non_stock' || rawKind === 'non_persediaan' || rawKind === 'non persediaan')
+            ? 'Non Persediaan'
+            : 'Persediaan';
 
     return {
         id: record.id,
@@ -194,7 +200,7 @@ export function mapProductRow(record) {
         code: record.code ?? '',
         barcode: record.barcode ?? '',
         name: record.name ?? '',
-        type: record.product_type ?? 'Persediaan',
+        type: normalizedKind,
         category: record.category ?? record.category?.name ?? 'Umum',
         categoryName: record.category?.name ?? 'Umum',
         unit: record.base_unit?.name ?? record.base_unit?.code ?? 'Pcs',
@@ -226,7 +232,7 @@ export function mapProductRow(record) {
         brand: record.brand ?? record.brand?.name ?? null,
         brandName: record.brand?.name ?? null,
         categoryFilter: record.category?.name ?? 'Umum',
-        kind: record.product_type ?? 'Persediaan',
+        kind: normalizedKind,
         inventoryAccountId: record.inventory_account_id ?? null,
         salesAccountId: record.sales_account_id ?? null,
         salesReturnAccountId: record.sales_return_account_id ?? null,
