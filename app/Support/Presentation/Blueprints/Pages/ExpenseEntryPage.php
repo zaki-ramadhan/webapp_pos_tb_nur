@@ -186,7 +186,7 @@ class ExpenseEntryPage
                             [
                                 'id' => 'expense-entry-line-3',
                                 'account' => '713.300-01',
-                                'accountName' => 'Jasa Profesional',
+                                'accountName' => 'Biaya Konsultan / Profesional',
                                 'amount' => '52,500,000',
                             ],
                         ],

@@ -87,8 +87,8 @@ export default function InventoryAdjustmentDetailsSection({
                     resource="products"
                     value={values.itemSearch || ''}
                     placeholder={config?.detailSearchPlaceholder || 'Cari/Pilih Barang...'}
-                    searchLabel="Cari barang dan jasa"
-                    dialogTitle="Pilih Barang/Jasa"
+                    searchLabel="Cari barang"
+                    dialogTitle="Pilih Barang"
                     onSelectAccount={(productRecord) => {
                         if (productRecord) {
                             onSelectItem?.(productRecord);

@@ -51,7 +51,7 @@ export default function DashboardWidgetCard({
             description: 'Widget ini menggunakan algoritma asosiasi penjualan (Apriori) dan klasifikasi omzet produk (ABC). Datanya diinput melalui:',
             sources: [
                 { pageId: 'sales-invoice', label: 'Faktur Penjualan' },
-                { pageId: 'items-services', label: 'Barang & Jasa' },
+                { pageId: 'items-services', label: 'Barang' },
             ]
         },
         'recent-activity': { pageId: 'activity-log', label: 'Log Aktivitas' },
@@ -61,7 +61,7 @@ export default function DashboardWidgetCard({
             description: 'Widget ini menghitung estimasi laba bersih dari total penjualan dikurangi HPP (kuantitas terjual × Harga Beli Barang) dan pengeluaran operasional:',
             sources: [
                 { pageId: 'sales-invoice', label: 'Faktur Penjualan (Sumber Pendapatan)' },
-                { pageId: 'items-services', label: 'Barang & Jasa (Sumber Harga Beli / HPP)' },
+                { pageId: 'items-services', label: 'Barang (Sumber Harga Beli / HPP)' },
                 { pageId: 'expense-entry', label: 'Pencatatan Beban (Beban Operasional)' },
                 { pageId: 'payroll-entry', label: 'Pencatatan Gaji (Beban Gaji Karyawan)' },
             ]
@@ -90,7 +90,7 @@ export default function DashboardWidgetCard({
             description: 'Widget ini menghitung akumulasi kuantitas barang terlaris dari rincian transaksi penjualan:',
             sources: [
                 { pageId: 'sales-invoice', label: 'Faktur Penjualan (Sumber Transaksi Penjualan)' },
-                { pageId: 'items-services', label: 'Barang & Jasa (Master Data Barang)' },
+                { pageId: 'items-services', label: 'Barang (Master Data Barang)' },
             ]
         },
         'cash-availability': {

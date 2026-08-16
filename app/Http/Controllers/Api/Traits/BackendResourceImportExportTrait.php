@@ -59,7 +59,7 @@ trait BackendResourceImportExportTrait
             'purchase_unit_id' => 'satuan pembelian',
             'sales_unit_id' => 'satuan penjualan',
             'supplier_id' => 'pemasok',
-            'product_id' => 'barang/jasa',
+            'product_id' => 'barang',
             'tax_id' => 'pajak',
             'branch_id' => 'cabang',
             'user_id' => 'pengguna',

@@ -73,7 +73,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
 
             <CodeFieldRow values={values} onChange={onChange} isDetail={isDetail} isLoading={isLoading} />
 
-            {values.kind !== 'Non Persediaan' && values.kind !== 'Jasa' && (
+            {values.kind !== 'Non Persediaan' && (
                 <FormRow
                     label="UPC/Barcode"
                     info="Kode barcode standar yang dapat dibaca oleh alat Scanner/Barcode Reader."

@@ -559,7 +559,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentRevenue,
                 'currency_id' => $currencyId,
                 'code' => '410102',
-                'name' => 'Pendapatan Jasa Pengiriman',
+                'name' => 'Pendapatan Ongkos Kirim / Pengiriman',
                 'account_type' => 'Revenue',
                 'is_active' => true,
                 'created_at' => now(),

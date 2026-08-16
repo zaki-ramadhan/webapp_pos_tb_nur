@@ -56,9 +56,9 @@ export function renderItemsServicesDockIcon(icon) {
 function getFormRowTooltip(label) {
     const cleanLabel = String(label || '').trim().replace(/:$/, '');
     const map = {
-        'Pemasok Utama': 'Pemasok utama untuk memesan barang/jasa ini.',
+        'Pemasok Utama': 'Pemasok utama untuk memesan barang ini.',
         'Harga Beli': 'Harga beli default/terakhir dari pemasok.',
-        'Ref Kode Pajak': 'Referensi kode perpajakan yang digunakan untuk barang/jasa ini.',
+        'Ref Kode Pajak': 'Referensi kode perpajakan yang digunakan untuk barang ini.',
     };
     return map[cleanLabel] || `Informasi tentang ${cleanLabel}`;
 }
@@ -203,7 +203,7 @@ export function CodeFieldRow({ values, onChange, isDetail, isLoading }) {
                     className="h-[40px] rounded-[4px] border-ui-border bg-white"
                     selectClassName="text-xs sm:text-sm text-brand-dark"
                 >
-                    <option value="auto">Barang & Jasa</option>
+                    <option value="auto">Barang</option>
                 </SelectField>
             </FormRow>
         );

@@ -48,7 +48,7 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
         <AccountLookupTextInput
             resource={config.itemSearchResource}
             placeholder={config.itemSearchPlaceholder}
-            searchLabel="Cari barang dan jasa"
+            searchLabel="Cari barang"
             onSelectAccount={(record) => {
                 if (!record) return;
                 handlers?.onSelectItem?.(record);

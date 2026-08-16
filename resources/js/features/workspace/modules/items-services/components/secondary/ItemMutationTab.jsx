@@ -13,15 +13,35 @@ import { TransactionDateInput } from '@/features/workspace/modules/shared/Transa
 import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
-export default function ItemMutationTab({ productId }) {
-    const today = new Date().toISOString().split('T')[0];
-    const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+function getThirtyDaysAgoDate() {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
-    const [dateFrom, setDateFrom] = useState(firstDay);
-    const [dateTo, setDateTo] = useState(today);
+function getTodayDate() {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+export default function ItemMutationTab({ productId }) {
+    const [dateFrom, setDateFrom] = useState(getThirtyDaysAgoDate);
+    const [dateTo, setDateTo] = useState(getTodayDate);
     const [search, setSearch] = useState('');
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setDateFrom(getThirtyDaysAgoDate());
+        setDateTo(getTodayDate());
+        setSearch('');
+    }, [productId]);
 
     const fetchMutations = async () => {
         if (!productId) return;
@@ -137,7 +157,6 @@ export default function ItemMutationTab({ productId }) {
                                 <DataTableRow
                                     key={row.id}
                                     onClick={isClickable ? () => handleOpenDocument(row) : undefined}
-                                    title={isClickable ? `Buka ${row.document_type || 'Transaksi'}: ${row.document_number}` : undefined}
                                     className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${
                                         isClickable ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''
                                     }`.trim()}
@@ -148,8 +167,8 @@ export default function ItemMutationTab({ productId }) {
                                     <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || '-'}</DataTableCell>
                                     <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || '-'}</DataTableCell>
                                     <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.unit_cost) || '0'}</DataTableCell>
-                                    <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.in_qty) || '0'}</DataTableCell>
-                                    <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.out_qty) || '0'}</DataTableCell>
+                                    <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{row.in_qty ? formatAmountInput(row.in_qty) : '-'}</DataTableCell>
+                                    <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{row.out_qty ? formatAmountInput(row.out_qty) : '-'}</DataTableCell>
                                     <DataTableCell className="text-right text-sm font-normal text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
                                 </DataTableRow>
                             );

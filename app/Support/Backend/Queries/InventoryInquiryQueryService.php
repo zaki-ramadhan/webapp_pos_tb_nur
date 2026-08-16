@@ -213,6 +213,11 @@ class InventoryInquiryQueryService
 
         $rows = collect();
 
+        $product = Product::find($productId);
+        $defaultPurchasePrice = (float) ($product?->default_purchase_price ?? 0);
+        $defaultSalePrice = (float) ($product?->default_sale_price ?? 0);
+        $fallbackPrice = $defaultPurchasePrice > 0 ? $defaultPurchasePrice : $defaultSalePrice;
+
         $invDocs = InventoryDocument::query()
             ->with(['lines'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
@@ -239,6 +244,14 @@ class InventoryInquiryQueryService
                         default => str_replace('_', '-', $docTypeStr),
                     };
 
+                    $lineCost = (float) (
+                        ($line->unit_cost ?? null)
+                        ?: ($line->attributes['unit_cost'] ?? null)
+                        ?: ($line->attributes['cost'] ?? null)
+                        ?: ($line->attributes['unit_price'] ?? null)
+                        ?: $fallbackPrice
+                    );
+
                     $rows->push([
                         'id' => 'inv-'.$doc->id.'-'.$line->id.'-'.$whId,
                         'document_id' => $doc->id,
@@ -255,7 +268,7 @@ class InventoryInquiryQueryService
                         },
                         'description' => $doc->notes ?? $line->notes ?? '-',
                         'warehouse' => $wh?->name ?? '-',
-                        'unit_cost' => $this->formatNumber((float) ($line->unit_cost ?? 0)),
+                        'unit_cost' => $this->formatNumber($lineCost),
                         'in_qty' => $qty > 0 ? $this->formatNumber($qty) : '',
                         'out_qty' => $qty < 0 ? $this->formatNumber(abs($qty)) : '',
                         'qty_change' => $qty,
@@ -267,7 +280,7 @@ class InventoryInquiryQueryService
         $opDocs = OperationDocument::query()
             ->with(['lines', 'warehouse'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
-            ->whereIn('document_type', ['goods_receipt', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
+            ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
             ->when($dateFrom, fn ($q) => $q->whereDate('entry_date', '>=', $dateFrom->toDateString()))
             ->when($dateTo, fn ($q) => $q->whereDate('entry_date', '<=', $dateTo->toDateString()))
@@ -288,12 +301,24 @@ class InventoryInquiryQueryService
                 $docTypeStr = (string) $doc->document_type;
                 $pageId = match ($docTypeStr) {
                     'goods_receipt' => 'goods-receipt',
+                    'purchase_invoice' => 'purchase-invoice',
                     'sales_delivery' => 'sales-delivery',
                     'sales_invoice' => 'sales-invoice',
                     'sales_return' => 'sales-return',
                     'purchase_return' => 'purchase-return',
                     default => str_replace('_', '-', $docTypeStr),
                 };
+
+                $linePrice = (float) ($line->unit_price ?? 0);
+                $docCost = (float) (
+                    ($linePrice > 0 ? $linePrice : null)
+                    ?: ($line->attributes['unit_price'] ?? null)
+                    ?: ($line->attributes['unit_cost'] ?? null)
+                    ?: ($line->attributes['cost'] ?? null)
+                    ?: ($doc->document_type === 'sales_invoice' || $doc->document_type === 'sales_delivery'
+                        ? ($defaultSalePrice > 0 ? $defaultSalePrice : $fallbackPrice)
+                        : ($defaultPurchasePrice > 0 ? $defaultPurchasePrice : $fallbackPrice))
+                );
 
                 $rows->push([
                     'id' => 'op-'.$doc->id.'-'.$line->id,
@@ -305,6 +330,7 @@ class InventoryInquiryQueryService
                     'document_number' => $doc->document_number ?? '-',
                     'document_type' => match ($doc->document_type) {
                         'goods_receipt' => 'Penerimaan Barang',
+                        'purchase_invoice' => 'Faktur Pembelian',
                         'sales_delivery' => 'Pengiriman Penjualan',
                         'sales_invoice' => 'Faktur Penjualan',
                         'sales_return' => 'Retur Penjualan',
@@ -313,6 +339,7 @@ class InventoryInquiryQueryService
                     },
                     'description' => $doc->notes ?? $line->description ?? '-',
                     'warehouse' => $wh?->name ?? '-',
+                    'unit_cost' => $this->formatNumber($docCost),
                     'in_qty' => $qty > 0 ? $this->formatNumber($qty) : '',
                     'out_qty' => $qty < 0 ? $this->formatNumber(abs($qty)) : '',
                     'qty_change' => $qty,
@@ -358,7 +385,7 @@ class InventoryInquiryQueryService
             $priorOp = OperationDocument::query()
                 ->with(['lines'])
                 ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
-                ->whereIn('document_type', ['goods_receipt', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
+                ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereDate('entry_date', '<', $dateFrom->toDateString())
                 ->get();
@@ -383,7 +410,7 @@ class InventoryInquiryQueryService
             $row['balance'] = $this->formatNumber($runningBalance);
 
             return $row;
-        });
+        })->sortByDesc('raw_date')->values();
 
         $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
         if ($search !== '') {

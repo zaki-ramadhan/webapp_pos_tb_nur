@@ -200,8 +200,8 @@ export default function ItemsServicesFormView({
         }
 
         await executeCrudFormAction({
-            loadingMessage: isDetail ? 'Sedang memperbarui barang/jasa.' : 'Sedang menyimpan barang/jasa.',
-            successMessage: isDetail ? 'Barang/jasa berhasil diperbarui.' : 'Barang/jasa berhasil dibuat.',
+            loadingMessage: isDetail ? 'Sedang memperbarui barang.' : 'Sedang menyimpan barang.',
+            successMessage: isDetail ? 'Barang berhasil diperbarui.' : 'Barang berhasil dibuat.',
             setSaving,
             setStatus,
             execute: async () => {
@@ -314,8 +314,8 @@ export default function ItemsServicesFormView({
         }
 
         await executeCrudFormAction({
-            loadingMessage: 'Sedang menghapus barang/jasa.',
-            successMessage: 'Barang/jasa berhasil dihapus.',
+            loadingMessage: 'Sedang menghapus barang.',
+            successMessage: 'Barang berhasil dihapus.',
             setSaving,
             setStatus,
             onStart: () => setDeleteConfirmationOpen(false),
@@ -402,7 +402,7 @@ export default function ItemsServicesFormView({
                 title="Konfirmasi"
                 message={
                     values.unitConversions && values.unitConversions.length > 0 ? (
-                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}\n\nBarang/jasa ini memiliki data konversi unit berelasi yang akan ikut terhapus.`
+                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}\n\nBarang ini memiliki data konversi unit berelasi yang akan ikut terhapus.`
                     ) : (
                         `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}`
                     )

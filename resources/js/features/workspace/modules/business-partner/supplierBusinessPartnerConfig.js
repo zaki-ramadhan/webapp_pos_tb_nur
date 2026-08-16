@@ -83,7 +83,7 @@ export const supplierBusinessPartnerTemplate = createTemplate({
         rows: SUPPLIER_ROWS,
         filters: [
             { id: 'inactive', rowKey: 'inactiveValue', options: [{ value: 'all', label: 'Non Aktif: Semua' }] },
-            { id: 'category', rowKey: 'category', options: [{ value: 'all', label: 'Kategori: Semua' }, { value: 'Umum', label: 'Kategori: Umum' }, { value: 'HANDPHONE', label: 'Kategori: HANDPHONE' }] },
+            { id: 'category', rowKey: 'category', options: [{ value: 'all', label: 'Kategori: Semua' }, { value: 'Umum', label: 'Kategori: Umum' }, { value: 'Distributor Material', label: 'Kategori: Distributor Material' }] },
         ],
         pageValue: '19',
     }),
@@ -102,16 +102,10 @@ export const supplierBusinessPartnerTemplate = createTemplate({
     detailRecords: SUPPLIER_DETAIL_RECORDS,
     generalRightFields: [
         {
-            id: 'serviceVendor',
-            type: 'checkbox',
-            label: 'Penjual Jasa',
-            checkboxLabel: 'Ya, Penjual jasa orang pribadi (Dikenakan PPh 21)',
-        },
-        {
             id: 'supplierType',
             type: 'select',
             label: 'Tipe Pemasok',
-            options: ['- Pilih Tipe Pemasok -'],
+            options: ['- Pilih Tipe Pemasok -', 'Distributor Utama', 'Pabrikasi / Produsen', 'Sub-Agen / Grosir'],
         },
     ],
     purchaseConfig: {

@@ -90,7 +90,7 @@ const PREFERENCE_FIELD_RENDERERS = {
         );
     },
     'chip-search'(field, value, onChange) {
-        const options = ['GROSIR / WHOLESALER', 'RETAIL / ECERAN', 'MANUFAKTUR / PABRIKASI', 'JASA / SERVICE', 'KONTRAKTOR'];
+        const options = ['TOKO BANGUNAN', 'RETAIL / ECERAN', 'GROSIR / WHOLESALER', 'DISTRIBUTOR / AGEN', 'KONTRAKTOR'];
         return (
             <PreferenceLookupAutocomplete
                 field={field}
