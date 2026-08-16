@@ -96,6 +96,29 @@ export default function useBackendIndexResource({
 
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(initialPerPage);
+    const [search, setSearchState] = useState('');
+    const [sortBy, setSortByState] = useState('');
+    const [sortDirection, setSortDirectionState] = useState('asc');
+
+    const setSearch = (nextSearch) => {
+        setSearchState(nextSearch ?? '');
+        setPage(1);
+    };
+
+    const setSort = (columnId, direction) => {
+        if (!columnId) {
+            setSortByState('');
+            setSortDirectionState('asc');
+            return;
+        }
+        setSortByState(columnId);
+        if (direction) {
+            setSortDirectionState(direction);
+        } else {
+            setSortDirectionState((prev) => (sortBy === columnId ? (prev === 'asc' ? 'desc' : 'asc') : 'asc'));
+        }
+    };
+
     const [loading, setLoading] = useState(() => {
         if (!enabled || !resource || isForbiddenInstantly) return false;
         const initialFilters = {
@@ -118,6 +141,8 @@ export default function useBackendIndexResource({
     const requestFilters = useMemo(() => {
         const base = {
             ...normalizedFilters,
+            ...(search.trim() ? { search: search.trim() } : {}),
+            ...(sortBy ? { sort_by: sortBy, sort_direction: sortDirection } : {}),
             page,
             per_page: perPage,
         };
@@ -130,7 +155,7 @@ export default function useBackendIndexResource({
             ...base,
             _refresh: reloadVersion,
         };
-    }, [normalizedFilters, page, perPage, reloadVersion]);
+    }, [normalizedFilters, search, sortBy, sortDirection, page, perPage, reloadVersion]);
 
     const cacheKey = useMemo(() => getCacheKey(resource, requestFilters), [resource, requestFilters]);
 
@@ -247,6 +272,31 @@ export default function useBackendIndexResource({
     const rows = useMemo(() => isForbiddenInstantly ? [] : extractBackendRows(payload), [payload, isForbiddenInstantly]);
     const total = useMemo(() => isForbiddenInstantly ? 0 : extractBackendTotal(payload), [payload, isForbiddenInstantly]);
 
+    const serverPaginationProps = useMemo(() => ({
+        page,
+        perPage,
+        total,
+        lastPage: payload?.last_page ?? 1,
+        from: payload?.from ?? 0,
+        to: payload?.to ?? 0,
+        onPageChange: setPage,
+        onPerPageChange: setPerPage,
+        search,
+        onSearch: setSearch,
+        sortBy,
+        sortDirection,
+        onSort: setSort,
+    }), [page, perPage, total, payload?.last_page, payload?.from, payload?.to, setPage, setPerPage, search, setSearch, sortBy, sortDirection, setSort]);
+
+    const serverTableProps = useMemo(() => ({
+        search,
+        onSearch: setSearch,
+        sortBy,
+        sortDirection,
+        onSort: setSort,
+        pagination: serverPaginationProps,
+    }), [search, setSearch, sortBy, sortDirection, setSort, serverPaginationProps]);
+
     return {
         payload,
         rows,
@@ -261,6 +311,13 @@ export default function useBackendIndexResource({
         lastPage: payload?.last_page ?? 1,
         from: payload?.from ?? 0,
         to: payload?.to ?? 0,
+        search,
+        setSearch,
+        sortBy,
+        sortDirection,
+        setSort,
+        serverTableProps,
+        serverPaginationProps,
     };
 }
 

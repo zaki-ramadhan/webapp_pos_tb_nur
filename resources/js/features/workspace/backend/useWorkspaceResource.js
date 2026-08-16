@@ -38,6 +38,11 @@ export default function useWorkspaceResource({
             loading,
             error,
             onRefresh: reload,
+            search: resourceState.search,
+            onSearch: resourceState.setSearch,
+            sortBy: resourceState.sortBy,
+            sortDirection: resourceState.sortDirection,
+            onSort: resourceState.setSort,
             pagination: {
                 page,
                 perPage,
@@ -47,6 +52,11 @@ export default function useWorkspaceResource({
                 to,
                 onPageChange: setPage,
                 onPerPageChange: setPerPage,
+                search: resourceState.search,
+                onSearch: resourceState.setSearch,
+                sortBy: resourceState.sortBy,
+                sortDirection: resourceState.sortDirection,
+                onSort: resourceState.setSort,
             },
         };
     }, [
@@ -62,6 +72,11 @@ export default function useWorkspaceResource({
         to,
         setPage,
         setPerPage,
+        resourceState.search,
+        resourceState.setSearch,
+        resourceState.sortBy,
+        resourceState.sortDirection,
+        resourceState.setSort,
     ]);
 
     return {

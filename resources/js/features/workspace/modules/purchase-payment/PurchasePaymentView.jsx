@@ -17,13 +17,7 @@ export default function PurchasePaymentView({ page, mode, activeLevel2Tab, level
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'purchase-payments',
         initialPerPage: 25,
@@ -40,28 +34,20 @@ export default function PurchasePaymentView({ page, mode, activeLevel2Tab, level
                     return result;
                 }, {}),
                 table: {
-                loading,
-
+                    loading,
+                    error,
+                    emptyLabel: loading ? 'Memuat data...' : (error || baseConfig.table?.emptyLabel || 'Tidak ada data'),
                     ...baseConfig.table,
                     rows: mappedRows,
                     filters: buildPurchasePaymentFilters(baseConfig.table?.filters, mappedRows),
                     pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
                     refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
-                onRefresh: reload,
+                    onRefresh: reload,
+                    ...serverTableProps,
                 },
             };
         },
-        [loading, page.purchasePayment, rows, total, reload],
+        [loading, error, page.purchasePayment, rows, total, reload, serverTableProps],
     );
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);

@@ -38,6 +38,9 @@ function ApprovalFilterSlot({ filters: filterDefs, values, onChange }) {
 }
 
 export default function TransactionApprovalTableView({ table, onCreate, onRefresh, onOpenDetail }) {
+    const isServerSearch = Boolean(table.onSearch || table.pagination?.onSearch);
+    const isServerSort = Boolean(table.onSort || table.pagination?.onSort);
+
     const [filterValues, setFilterValues] = useState(() =>
         table.filters.reduce((result, filter) => {
             result[filter.id] = filter.options?.[0]?.value ?? '';
@@ -49,6 +52,18 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
         setFilterValues((current) => ({ ...current, [filterId]: value }));
     }
 
+    const handleSortClick = (columnId) => {
+        if (isServerSort) {
+            const onSort = table.onSort || table.pagination?.onSort;
+            const currentKey = table.sortBy || table.pagination?.sortBy;
+            const currentDir = table.sortDirection || table.pagination?.sortDirection || 'asc';
+            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
+            onSort?.(columnId, nextDir);
+        } else {
+            handleClientSort(columnId);
+        }
+    };
+
     const filteredRows = useMemo(() => {
         return table.rows.filter((row) =>
             table.filters.every((filter) => {
@@ -58,7 +73,8 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
         );
     }, [filterValues, table.filters, table.rows]);
 
-    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
     const { handleResizeStart, getCellStyle } = useColumnResize('transaction-approval');
 
     return (
@@ -88,8 +104,8 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                                     align={column.align}
                                     widthClassName={column.widthClassName}
                                     sortable={column.sortable !== false}
-                                    sortDirection={sortKey === column.id ? sortDir : null}
-                                    onSort={() => handleSort(column.id)}
+                                    sortDirection={isServerSort ? ((table.sortBy || table.pagination?.sortBy) === column.id ? (table.sortDirection || table.pagination?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                    onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                     style={getCellStyle(column.id, { position: 'relative' })}
                                     onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />

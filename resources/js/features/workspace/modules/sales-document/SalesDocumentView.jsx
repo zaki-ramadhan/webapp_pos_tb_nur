@@ -26,13 +26,7 @@ export default function SalesDocumentView({
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverTableProps,
     } = useBackendIndexResource({
         resource: backendConfig?.resource,
         initialPerPage: 25,
@@ -58,19 +52,10 @@ export default function SalesDocumentView({
                 refreshLabel: config.table?.refreshLabel || 'Muat ulang',
                 emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
                 onRefresh: reload,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+                ...serverTableProps,
             },
         };
-    }, [backendConfig, config, error, loading, pageId, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [backendConfig, config, error, loading, pageId, reload, rows, total, serverTableProps]);
 
     const resolvedBuildRecord = useMemo(
         () => (row = {}) => {

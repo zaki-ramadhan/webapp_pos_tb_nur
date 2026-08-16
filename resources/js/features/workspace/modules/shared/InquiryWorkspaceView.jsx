@@ -109,8 +109,22 @@ export default function InquiryWorkspaceView({
     const dateControls = controls.filter(c => c.type === 'date' || c.type === 'label');
     const selectControls = controls.filter(c => c.type === 'select');
 
-    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const isServerSort = Boolean(pagination?.onSort || config.table?.onSort);
+    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
     const { handleResizeStart, getCellStyle } = useColumnResize(config.id || 'bank-inquiry');
+
+    const handleSortClick = (columnId) => {
+        if (isServerSort) {
+            const onSort = pagination?.onSort || config.table?.onSort;
+            const currentKey = pagination?.sortBy || config.table?.sortBy;
+            const currentDir = pagination?.sortDirection || config.table?.sortDirection || 'asc';
+            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
+            onSort?.(columnId, nextDir);
+        } else {
+            handleClientSort(columnId);
+        }
+    };
 
     const resolvedColumns = useMemo(() => {
         return config.table.columns.map((col) => {
@@ -230,8 +244,8 @@ export default function InquiryWorkspaceView({
                                                 align={column.align}
                                                 widthClassName={column.widthClassName}
                                                 sortable={column.sortable !== false}
-                                                sortDirection={sortKey === column.id ? sortDir : null}
-                                                onSort={() => handleSort(column.id)}
+                                                sortDirection={isServerSort ? ((pagination?.sortBy || config.table?.sortBy) === column.id ? (pagination?.sortDirection || config.table?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                                onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                                 style={getCellStyle(column.id, { position: 'relative' })}
                                                 onResizeStart={(e) => handleResizeStart(e, column.id)}
                                             />

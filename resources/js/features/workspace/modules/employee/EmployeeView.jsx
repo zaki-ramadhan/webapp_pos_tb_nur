@@ -98,19 +98,10 @@ export default function EmployeeView({
                 refreshLabel: page.table?.refreshLabel || 'Muat ulang',
                 emptyLabel: employeeResource.loading ? 'Memuat data...' : (employeeResource.error || page.table?.emptyLabel || 'Tidak ada data'),
                 onRefresh: employeeResource.reload,
-                pagination: {
-                    page: employeeResource.page,
-                    perPage: employeeResource.perPage,
-                    total: employeeResource.total,
-                    lastPage: employeeResource.lastPage,
-                    from: employeeResource.from,
-                    to: employeeResource.to,
-                    onPageChange: employeeResource.setPage,
-                    onPerPageChange: employeeResource.setPerPage,
-                },
+                ...employeeResource.serverTableProps,
             },
         };
-    }, [branchResource.rows, departmentResource.rows, userResource.rows, employeeResource.error, employeeResource.loading, employeeResource.reload, employeeResource.rows, employeeResource.total, employeeResource.page, employeeResource.perPage, employeeResource.lastPage, employeeResource.from, employeeResource.to, employeeResource.setPage, employeeResource.setPerPage, page]);
+    }, [branchResource.rows, departmentResource.rows, userResource.rows, employeeResource, page]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

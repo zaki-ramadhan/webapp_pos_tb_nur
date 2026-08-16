@@ -28,7 +28,10 @@ function matchesFilter(row, filter, selectedValue) {
 }
 
 export default function JournalActivityLogTableView({ config, onOpenDetail }) {
-    const [keyword, setKeyword] = useState('');
+    const isServerSearch = Boolean(config.table.onSearch || config.table.pagination?.onSearch);
+    const isServerSort = Boolean(config.table.onSort || config.table.pagination?.onSort);
+
+    const [keyword, setKeyword] = useState(config.table.search ?? config.table.pagination?.search ?? '');
 
     const filtersConfig = useMemo(() => buildActivityLogFilters(config.table.rows), [config.table.rows]);
     const [filters, setFilters] = useState(() =>
@@ -37,6 +40,27 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
             return result;
         }, {}),
     );
+
+    useEffect(() => {
+        if (!isServerSearch) return;
+        const timer = setTimeout(() => {
+            const onSearch = config.table.onSearch || config.table.pagination?.onSearch;
+            onSearch?.(keyword);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [keyword, isServerSearch, config.table.onSearch, config.table.pagination?.onSearch]);
+
+    const handleSortClick = (columnId) => {
+        if (isServerSort) {
+            const onSort = config.table.onSort || config.table.pagination?.onSort;
+            const currentKey = config.table.sortBy || config.table.pagination?.sortBy;
+            const currentDir = config.table.sortDirection || config.table.pagination?.sortDirection || 'asc';
+            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
+            onSort?.(columnId, nextDir);
+        } else {
+            handleClientSort(columnId);
+        }
+    };
 
     useEffect(() => {
         setFilters((currentFilters) =>
@@ -67,6 +91,15 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
     }, [cleanedColumns, visibleColumnIds]);
 
     const filteredRows = useMemo(() => {
+        if (isServerSearch) {
+            return config.table.rows.filter((row) => {
+                const passesFilters = filtersConfig.every((filter) =>
+                    matchesFilter(row, filter, filters[filter.id] ?? 'all'),
+                );
+                return passesFilters;
+            });
+        }
+
         const normalizedKeyword = keyword.trim().toLowerCase();
 
         return config.table.rows.filter((row) => {
@@ -89,9 +122,10 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                     .includes(normalizedKeyword),
             );
         });
-    }, [config.table.rows, keyword, filters, filtersConfig]);
+    }, [isServerSearch, config.table.rows, keyword, filters, filtersConfig, config.table.columns]);
 
-    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
 
     useEffect(() => {
         tableRegistry.setActiveTable(cleanedColumns, sortedRows, 'journal-activity-log');
@@ -135,7 +169,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                     widthClassName: 'sm:w-[342px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
-                pageValue={filteredRows.length.toLocaleString('id-ID')}
+                pageValue={config.table.total ? config.table.total.toLocaleString('id-ID') : sortedRows.length.toLocaleString('id-ID')}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
@@ -154,8 +188,8 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                                     align={column.align}
                                     widthClassName={column.widthClassName}
                                     sortable={column.sortable !== false}
-                                    sortDirection={sortKey === column.id ? sortDir : null}
-                                    onSort={() => handleSort(column.id)}
+                                    sortDirection={isServerSort ? ((config.table.sortBy || config.table.pagination?.sortBy) === column.id ? (config.table.sortDirection || config.table.pagination?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                    onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                     style={getCellStyle(column.id, { position: 'relative' })}
                                     onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />

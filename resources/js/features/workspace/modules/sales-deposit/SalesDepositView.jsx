@@ -17,13 +17,7 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, level2Ta
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'sales-deposits',
         initialPerPage: 25,
@@ -50,19 +44,10 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, level2Ta
                 emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
                 onRefresh: reload,
                 refreshLoading: loading,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+                ...serverTableProps,
             },
         };
-    }, [loading, error, reload, page.salesDeposit, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [loading, error, reload, page.salesDeposit, rows, total, serverTableProps]);
 
     const buildRecord = useCallback((row) => {
         if (row?.__backendRecord) {

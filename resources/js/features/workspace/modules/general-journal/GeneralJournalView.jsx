@@ -12,13 +12,7 @@ export default function GeneralJournalView({ page, mode, activeLevel2Tab, level2
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'general-journals',
         initialPerPage: 25,
@@ -44,22 +38,13 @@ export default function GeneralJournalView({ page, mode, activeLevel2Tab, level2
                     rows: mappedRows,
                     filters: buildGeneralJournalFilters(page.generalJournal.table?.filters, mappedRows),
                     pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
                     refreshLabel: page.generalJournal?.table?.refreshLabel || 'Muat ulang',
-                onRefresh: reload,
+                    onRefresh: reload,
+                    ...serverTableProps,
                 },
             };
         },
-        [error, loading, page.generalJournal, rows, total, reload],
+        [error, loading, page.generalJournal, rows, total, reload, serverTableProps],
     );
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);

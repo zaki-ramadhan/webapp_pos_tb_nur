@@ -18,13 +18,7 @@ export default function BankTransferView({
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'bank-transfers',
         initialPerPage: 25,
@@ -74,19 +68,10 @@ export default function BankTransferView({
                 refreshLabel: tableConfigBase.refreshLabel || 'Muat ulang',
                 emptyLabel: loading ? 'Memuat data...' : (error || tableConfigBase.emptyLabel || 'Tidak ada data'),
                 onRefresh: reload,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+                ...serverTableProps,
             },
         };
-    }, [formConfig, page, mappedRows, total, loading, error, reload, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [formConfig, page, mappedRows, total, loading, error, reload, serverTableProps]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

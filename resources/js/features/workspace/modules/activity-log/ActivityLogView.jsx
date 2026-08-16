@@ -44,20 +44,22 @@ export default function ActivityLogView({ page }) {
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to,
+        sortBy,
+        sortDirection,
+        setSort,
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'activity-logs',
         initialPerPage: 25,
-        filters: {
-            search: keyword.trim(),
-        },
     });
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            serverTableProps.onSearch(keyword);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [keyword, serverTableProps.onSearch]);
+
     const rows = useMemo(() => mapActivityLogRows(backendRows), [backendRows]);
     const filtersConfig = useMemo(() => buildActivityLogFilters(rows), [rows]);
 
@@ -82,17 +84,8 @@ export default function ActivityLogView({ page }) {
         columns: cleanedColumns,
         rows,
         pageValue: total.toLocaleString('id-ID'),
-        pagination: {
-            page: currentPage,
-            perPage,
-            total,
-            lastPage,
-            from,
-            to,
-            onPageChange: setPage,
-            onPerPageChange: setPerPage,
-        },
-    }), [filtersConfig, page.table, cleanedColumns, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+        ...serverTableProps,
+    }), [filtersConfig, page.table, cleanedColumns, rows, total, serverTableProps]);
 
     const [filters, setFilters] = useState(() =>
         filtersConfig.reduce((result, filter) => {
@@ -114,24 +107,21 @@ export default function ActivityLogView({ page }) {
         );
     }, [filtersConfig]);
 
-    const filteredRows = useMemo(() => {
-        const normalizedKeyword = keyword.trim().toLowerCase();
+    const handleSortClick = (columnId) => {
+        const nextDir = sortBy === columnId ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+        setSort(columnId, nextDir);
+    };
 
+    const filteredRows = useMemo(() => {
         return rows.filter((row) => {
             const passesFilters = filtersConfig.every((filter) =>
                 matchesFilter(row, filter, filters[filter.id] ?? 'all'),
             );
-
-            if (!passesFilters) return false;
-            if (!normalizedKeyword) return true;
-
-            return cleanedColumns.some((col) =>
-                String(row[col.id] ?? '').toLowerCase().includes(normalizedKeyword),
-            );
+            return passesFilters;
         });
-    }, [filters, keyword, rows, filtersConfig, cleanedColumns]);
+    }, [filters, rows, filtersConfig]);
 
-    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const sortedRows = filteredRows;
 
     useEffect(() => {
         tableRegistry.setActiveTable(cleanedColumns, sortedRows, 'activity-log');
@@ -177,7 +167,7 @@ export default function ActivityLogView({ page }) {
                     widthClassName: 'sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
-                pageValue={filteredRows.length.toLocaleString('id-ID')}
+                pageValue={total.toLocaleString('id-ID')}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
@@ -194,8 +184,8 @@ export default function ActivityLogView({ page }) {
                                     align={column.align}
                                     widthClassName={column.widthClassName}
                                     sortable={column.sortable !== false}
-                                    sortDirection={sortKey === column.id ? sortDir : null}
-                                    onSort={() => handleSort(column.id)}
+                                    sortDirection={sortBy === column.id ? sortDirection : null}
+                                    onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                     style={getCellStyle(column.id, { position: 'relative' })}
                                     onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />

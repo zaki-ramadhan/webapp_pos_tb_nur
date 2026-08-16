@@ -70,7 +70,10 @@ export default function DepositTableView({
     onOpenDetail,
     rowSearchFields = [],
 }) {
-    const [keyword, setKeyword] = useState('');
+    const isServerSearch = Boolean(config.table.onSearch || config.table.pagination?.onSearch);
+    const isServerSort = Boolean(config.table.onSort || config.table.pagination?.onSort);
+
+    const [keyword, setKeyword] = useState(config.table.search ?? config.table.pagination?.search ?? '');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
             result[filter.id] = filter.options[0]?.value ?? 'all';
@@ -78,11 +81,42 @@ export default function DepositTableView({
         }, {}),
     );
 
+    useEffect(() => {
+        if (!isServerSearch) return;
+        const timer = setTimeout(() => {
+            const onSearch = config.table.onSearch || config.table.pagination?.onSearch;
+            onSearch?.(keyword);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [keyword, isServerSearch, config.table.onSearch, config.table.pagination?.onSearch]);
+
+    const handleSortClick = (columnId) => {
+        if (isServerSort) {
+            const onSort = config.table.onSort || config.table.pagination?.onSort;
+            const currentKey = config.table.sortBy || config.table.pagination?.sortBy;
+            const currentDir = config.table.sortDirection || config.table.pagination?.sortDirection || 'asc';
+            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
+            onSort?.(columnId, nextDir);
+        } else {
+            handleClientSort(columnId);
+        }
+    };
+
     const resolvedSearchFields = rowSearchFields.length
         ? rowSearchFields
         : config.table.columns.map((column) => column.id);
 
     const filteredRows = useMemo(() => {
+        if (isServerSearch) {
+            return config.table.rows.filter((row) => {
+                const matchesFilters = config.table.filters.every((filter) => {
+                    const selectedValue = filters[filter.id];
+                    return !selectedValue || selectedValue === 'all' ? true : row[filter.rowKey] === selectedValue;
+                });
+                return matchesFilters;
+            });
+        }
+
         const normalizedKeyword = keyword.trim().toLowerCase();
 
         return config.table.rows.filter((row) => {
@@ -105,9 +139,10 @@ export default function DepositTableView({
                     .includes(normalizedKeyword),
             );
         });
-    }, [config.table.filters, config.table.rows, filters, keyword, resolvedSearchFields]);
+    }, [isServerSearch, config.table.filters, config.table.rows, filters, keyword, resolvedSearchFields]);
 
-    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
     const { handleResizeStart, getCellStyle } = useColumnResize('deposit-workspace');
 
     return (
@@ -124,6 +159,8 @@ export default function DepositTableView({
                 refreshButton={{
                     label: config.table.refreshLabel,
                     icon: <RefreshIcon className="h-4.5 w-4.5" />,
+                    onClick: config.table.onRefresh,
+                    loading: config.table.loading,
                 }}
                 rightControls={
                     <>
@@ -151,6 +188,7 @@ export default function DepositTableView({
                     widthClassName: 'sm:w-[342px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
+                pageValue={config.table.total ? config.table.total.toLocaleString('id-ID') : sortedRows.length.toLocaleString('id-ID')}
                 />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
@@ -169,8 +207,8 @@ export default function DepositTableView({
                                     align={column.align}
                                     widthClassName={column.widthClassName}
                                     sortable={column.sortable !== false}
-                                    sortDirection={sortKey === column.id ? sortDir : null}
-                                    onSort={() => handleSort(column.id)}
+                                    sortDirection={isServerSort ? ((config.table.sortBy || config.table.pagination?.sortBy) === column.id ? (config.table.sortDirection || config.table.pagination?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                    onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                     style={getCellStyle(column.id, { position: 'relative' })}
                                     onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />
@@ -196,7 +234,7 @@ export default function DepositTableView({
                                 >
                                     {sortedRows.length > 0 ? (
                                         <DataTableCell className="px-3 text-center text-base text-table-row-number">
-                                        {index + 1}
+                                        {config.table.pagination?.from ? (config.table.pagination.from + index) : (index + 1)}
                                     </DataTableCell>
                                     ) : null}
 {config.table.columns.map((column) => (

@@ -48,7 +48,7 @@ class BackendResourceIndexQuery
         $modelInstance = new $modelClass();
         $tableName = $modelInstance->getTable();
         foreach ($filters as $key => $value) {
-            if (in_array($key, ['search', 'per_page', 'page', 'only_available'], true)) {
+            if (in_array($key, ['search', 'per_page', 'page', 'only_available', 'sort_by', 'sort_direction', 'sort_dir'], true)) {
                 continue;
             }
             if ($key === 'exclude_type' && Schema::hasColumn($tableName, 'account_type')) {
@@ -97,7 +97,12 @@ class BackendResourceIndexQuery
             }
         }
 
-        if ($tableName === 'accounts') {
+        $sortBy = (string) ($filters['sort_by'] ?? '');
+        $sortDir = strtolower((string) ($filters['sort_direction'] ?? $filters['sort_dir'] ?? 'asc')) === 'desc' ? 'desc' : 'asc';
+
+        if ($sortBy !== '' && Schema::hasColumn($tableName, $sortBy)) {
+            $query->orderBy("{$tableName}.{$sortBy}", $sortDir);
+        } elseif ($tableName === 'accounts') {
             $query->orderBy("{$tableName}.code", 'asc');
         } elseif (Schema::hasColumn($tableName, 'name')) {
             $query->orderBy("{$tableName}.name", 'asc')
@@ -133,6 +138,14 @@ class BackendResourceIndexQuery
      */
     protected function applySearch(Builder $query, string $keyword, array $searchColumns): void
     {
+        $tableName = $query->getModel()->getTable();
+        if ($searchColumns === []) {
+            $searchColumns = array_values(array_filter(
+                ['code', 'name', 'document_number', 'notes', 'description', 'email', 'phone', 'barcode'],
+                fn ($col) => Schema::hasColumn($tableName, $col)
+            ));
+        }
+
         if ($searchColumns === []) {
             return;
         }
@@ -143,14 +156,15 @@ class BackendResourceIndexQuery
             return;
         }
 
-        $query->where(function (Builder $builder) use ($keyword, $searchColumns): void {
+        $query->where(function (Builder $builder) use ($keyword, $searchColumns, $tableName): void {
             foreach ($searchColumns as $index => $column) {
+                $fullCol = "{$tableName}.{$column}";
                 if ($index === 0) {
-                    $builder->where($column, 'like', "%{$keyword}%");
+                    $builder->where($fullCol, 'like', "%{$keyword}%");
                     continue;
                 }
 
-                $builder->orWhere($column, 'like', "%{$keyword}%");
+                $builder->orWhere($fullCol, 'like', "%{$keyword}%");
             }
         });
     }

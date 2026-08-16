@@ -10,13 +10,7 @@ export default function TransactionApprovalView({ page, mode, activeLevel2Tab, o
         total,
         loading,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to,
+        serverTableProps,
     } = useBackendIndexResource({ resource: 'transaction-approval-rules', initialPerPage: 25 });
 
     const resolvedTable = useMemo(() => ({
@@ -26,8 +20,8 @@ export default function TransactionApprovalView({ page, mode, activeLevel2Tab, o
         loading,
         refreshLabel: page.table?.refreshLabel || 'Muat ulang',
         onRefresh: reload,
-        pagination: { page: currentPage, perPage, total, lastPage, from, to, onPageChange: setPage, onPerPageChange: setPerPage },
-    }), [loading, page.table, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
+        ...serverTableProps,
+    }), [loading, page.table, rows, total, reload, serverTableProps]);
 
     return mode === 'table' ? (
         <TransactionApprovalTableView

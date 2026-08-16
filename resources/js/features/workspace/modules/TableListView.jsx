@@ -77,7 +77,11 @@ export default function TableListView({
     menuButton = null,
     onRowClick = null,
 }) {
-    const [keyword, setKeyword] = useState('');
+    const isServerSearch = Boolean(table.onSearch || table.pagination?.onSearch);
+    const isServerSort = Boolean(table.onSort || table.pagination?.onSort);
+    const hasExternalPagination = Boolean(table.pagination);
+
+    const [keyword, setKeyword] = useState(table.search ?? table.pagination?.search ?? '');
     const [filters, setFilters] = useState(() =>
         (table.filters ?? []).reduce((result, filter) => {
             result[filter.id] = filter.options?.[0]?.value ?? 'all';
@@ -85,9 +89,17 @@ export default function TableListView({
         }, {}),
     );
 
-    const hasExternalPagination = Boolean(table.pagination);
     const [localPage, setLocalPage] = useState(1);
     const [localPerPage, setLocalPerPage] = useState(25);
+
+    useEffect(() => {
+        if (!isServerSearch) return;
+        const timer = setTimeout(() => {
+            const onSearch = table.onSearch || table.pagination?.onSearch;
+            onSearch?.(keyword);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [keyword, isServerSearch, table.onSearch, table.pagination?.onSearch]);
 
     useEffect(() => {
         if (!hasExternalPagination) {
@@ -95,12 +107,32 @@ export default function TableListView({
         }
     }, [keyword, filters, hasExternalPagination]);
 
+    const handleSortClick = (columnId) => {
+        if (isServerSort) {
+            const onSort = table.onSort || table.pagination?.onSort;
+            const currentKey = table.sortBy || table.pagination?.sortBy;
+            const currentDir = table.sortDirection || table.pagination?.sortDirection || 'asc';
+            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
+            onSort?.(columnId, nextDir);
+        } else {
+            handleClientSort(columnId);
+        }
+    };
+
     const filteredRows = useMemo(() => {
+        if (isServerSearch) {
+            return (table.rows ?? []).filter((row) => {
+                return (table.filters ?? []).every((filter) =>
+                    matchesFilter(row, filter, filters[filter.id] ?? 'all'),
+                );
+            });
+        }
+
         const normalizedKeyword = keyword.trim().toLowerCase();
         const searchCols = (table.columns ?? []).filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
         const searchKeys = searchCols.map(col => col.id);
 
-        return table.rows.filter((row) => {
+        return (table.rows ?? []).filter((row) => {
             const passesFilters = (table.filters ?? []).every((filter) =>
                 matchesFilter(row, filter, filters[filter.id] ?? 'all'),
             );
@@ -114,9 +146,10 @@ export default function TableListView({
                     .includes(normalizedKeyword),
             );
         });
-    }, [filters, keyword, table.columns, table.filters, table.rows]);
+    }, [isServerSearch, filters, keyword, table.columns, table.filters, table.rows]);
 
-    const { sortedRows: displayRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const displayRows = isServerSort ? filteredRows : clientSortedRows;
 
     const paginatedRows = useMemo(() => {
         if (hasExternalPagination) {
@@ -248,8 +281,8 @@ export default function TableListView({
                                     widthClassName={column.widthClassName}
                                     sortable={column.sortable !== false}
                                     noWrap={column.noWrap === true}
-                                    sortDirection={sortKey === column.id ? sortDir : null}
-                                    onSort={column.sortable !== false ? () => handleSort(column.id) : null}
+                                    sortDirection={isServerSort ? ((table.sortBy || table.pagination?.sortBy) === column.id ? (table.sortDirection || table.pagination?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                    onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                     style={getCellStyle(column.id, { position: 'relative' })}
                                     onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />

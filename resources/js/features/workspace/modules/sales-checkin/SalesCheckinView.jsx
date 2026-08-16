@@ -14,13 +14,7 @@ export default function SalesCheckinView({ page }) {
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'sales-checkins',
         initialPerPage: 25,
@@ -40,18 +34,9 @@ export default function SalesCheckinView({ page }) {
             importButton: false,
             printButton: false,
             exportConfig: false,
-            pagination: {
-                page: currentPage,
-                perPage,
-                total,
-                lastPage,
-                from,
-                to,
-                onPageChange: setPage,
-                onPerPageChange: setPerPage,
-            },
+            ...serverTableProps,
         };
-    }, [error, loading, page.table, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [error, loading, page.table, reload, rows, total, serverTableProps]);
 
     return <TableListView table={table} />;
 }
