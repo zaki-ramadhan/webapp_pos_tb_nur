@@ -44,7 +44,6 @@ return new class extends Migration
                 ->where('id', $doc->id)
                 ->update([
                     'reference_number' => $supplierBillNo,
-                    'external_number' => $supplierBillNo,
                 ]);
         }
     }

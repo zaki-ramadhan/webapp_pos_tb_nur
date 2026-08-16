@@ -565,7 +565,6 @@ class TransactionDataSeeder extends Seeder
                     'responsible_user_id' => $userAdminId,
                     'document_number' => $docNo,
                     'reference_number' => $supplierBillNo,
-                    'external_number' => $supplierBillNo,
                     'status' => $isPaid ? 'Lunas' : 'Belum Lunas',
                     'entry_date' => $entryDate,
                     'due_date' => $isPaid ? null : date('Y-m-d', strtotime($entryDate . ' + 30 days')),
