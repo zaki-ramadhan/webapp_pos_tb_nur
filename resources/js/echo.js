@@ -3,19 +3,19 @@ import Pusher from 'pusher-js';
 
 window.Pusher = Pusher;
 
-const isEnabled = String(import.meta.env.VITE_REVERB_ENABLED ?? '').toLowerCase() === 'true';
-const reverbKey = import.meta.env.VITE_REVERB_APP_KEY;
+const reverbKey = import.meta.env.VITE_REVERB_APP_KEY || 'eh3awxry6zdrubcvw6mc';
 
-if (isEnabled && reverbKey) {
-    const host = import.meta.env.VITE_REVERB_HOST || (typeof window !== 'undefined' ? window.location.hostname : 'localhost');
-    const isSecure = typeof window !== 'undefined' ? window.location.protocol === 'https:' : true;
-    const port = import.meta.env.VITE_REVERB_PORT ? Number(import.meta.env.VITE_REVERB_PORT) : (isSecure ? 443 : 80);
+if (typeof window !== 'undefined' && reverbKey) {
+    const isSecure = window.location.protocol === 'https:';
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const host = isLocal ? (import.meta.env.VITE_REVERB_HOST || 'localhost') : window.location.hostname;
+    const port = isLocal ? Number(import.meta.env.VITE_REVERB_PORT || 8080) : (isSecure ? 443 : 80);
 
     try {
         window.Echo = new Echo({
             broadcaster: 'reverb',
             key: reverbKey,
-            wsHost: host === 'localhost' && typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? window.location.hostname : host,
+            wsHost: host,
             wsPort: port,
             wssPort: port,
             forceTLS: isSecure,
