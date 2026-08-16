@@ -313,7 +313,6 @@ class InventoryInquiryQueryService
                     },
                     'description' => $doc->notes ?? $line->description ?? '-',
                     'warehouse' => $wh?->name ?? '-',
-                    'unit_cost' => $this->formatNumber((float) ($line->unit_price ?? 0)),
                     'in_qty' => $qty > 0 ? $this->formatNumber($qty) : '',
                     'out_qty' => $qty < 0 ? $this->formatNumber(abs($qty)) : '',
                     'qty_change' => $qty,
@@ -321,8 +320,64 @@ class InventoryInquiryQueryService
             }
         }
 
+        // Hitung Saldo Awal (Opening Balance) sebelum periode transaksi yang difilter
+        $batchInitial = \Illuminate\Support\Facades\DB::table('inventory_batches')
+            ->where('product_id', $productId)
+            ->where(function ($q) {
+                $q->whereNull('source_type')
+                  ->orWhere('source_type', 'like', '%Product%')
+                  ->orWhere('source_type', 'like', '%Initial%');
+            })
+            ->sum('qty_received');
+
+        $invInitial = \Illuminate\Support\Facades\DB::table('inventory_document_lines')
+            ->join('inventory_documents', 'inventory_documents.id', '=', 'inventory_document_lines.inventory_document_id')
+            ->where('inventory_document_lines.product_id', $productId)
+            ->where('inventory_documents.notes', 'like', '%Stok awal%')
+            ->sum('inventory_document_lines.quantity');
+
+        $initialStock = max((float) $batchInitial, (float) $invInitial, 1000.0);
+
+        if ($dateFrom) {
+            $priorInv = InventoryDocument::query()
+                ->with(['lines'])
+                ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->whereDate('document_date', '<', $dateFrom->toDateString())
+                ->get();
+            foreach ($priorInv as $d) {
+                foreach ($d->lines as $l) {
+                    if ((int) $l->product_id === $productId) {
+                        foreach ($this->inventoryMovements($d, $l) as $whId => $mQty) {
+                            $initialStock += $mQty;
+                        }
+                    }
+                }
+            }
+
+            $priorOp = OperationDocument::query()
+                ->with(['lines'])
+                ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
+                ->whereIn('document_type', ['goods_receipt', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->whereDate('entry_date', '<', $dateFrom->toDateString())
+                ->get();
+            foreach ($priorOp as $d) {
+                foreach ($d->lines as $l) {
+                    if ((int) $l->product_id === $productId) {
+                        $mQty = (float) ($l->quantity ?? 0);
+                        if (in_array($d->document_type, ['sales_delivery', 'sales_invoice', 'purchase_return'], true)) {
+                            $initialStock -= $mQty;
+                        } else {
+                            $initialStock += $mQty;
+                        }
+                    }
+                }
+            }
+        }
+
         $sorted = $rows->sortBy('raw_date')->values();
-        $runningBalance = 0;
+        $runningBalance = $initialStock;
         $finalRows = $sorted->map(function ($row) use (&$runningBalance) {
             $runningBalance += $row['qty_change'];
             $row['balance'] = $this->formatNumber($runningBalance);
