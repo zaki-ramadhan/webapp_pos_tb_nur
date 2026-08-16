@@ -12,18 +12,155 @@ function normalizeQueryParams(params = {}) {
     );
 }
 
-export async function listBackendResource(resource, params = {}) {
-    const response = await getBackendClient().get(`/api/backend/${resource}`, {
-        params: normalizeQueryParams(params),
-    });
+const apiCache = new Map();
+const inFlightRequests = new Map();
 
-    return response.data;
+const CACHE_TTL_LIST_MS = 5000;
+const CACHE_TTL_SHOW_MS = 15000;
+const CACHE_TTL_STATIC_MS = 300000; // 5 menit untuk data master statis
+
+const STATIC_RESOURCES = new Set([
+    'units',
+    'brands',
+    'product-categories',
+    'customer-categories',
+    'supplier-categories',
+    'payment-terms',
+    'taxes',
+    'currencies',
+    'item-locations',
+]);
+
+function getCacheKey(type, resource, params = {}) {
+    return `${type}::${resource}::${JSON.stringify(normalizeQueryParams(params))}`;
+}
+
+function getFromSessionStorage(key) {
+    if (typeof window === 'undefined' || !window.sessionStorage) return null;
+    try {
+        const item = window.sessionStorage.getItem(key);
+        if (!item) return null;
+        const parsed = JSON.parse(item);
+        if (Date.now() - parsed.timestamp < CACHE_TTL_STATIC_MS) {
+            return parsed.data;
+        }
+        window.sessionStorage.removeItem(key);
+    } catch {
+        return null;
+    }
+    return null;
+}
+
+function saveToSessionStorage(key, data) {
+    if (typeof window === 'undefined' || !window.sessionStorage) return;
+    try {
+        window.sessionStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
+    } catch {
+      // Abaikan jika kuota penyimpanan browser penuh
+
+    }
+}
+
+export function clearBackendCache(resource = null) {
+    if (!resource) {
+        apiCache.clear();
+        inFlightRequests.clear();
+        if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {
+            window.__clearBackendCache();
+        }
+        return;
+    }
+
+    const norm = resource.toLowerCase();
+    for (const key of apiCache.keys()) {
+        if (key.toLowerCase().includes(norm)) {
+            apiCache.delete(key);
+        }
+    }
+    for (const key of inFlightRequests.keys()) {
+        if (key.toLowerCase().includes(norm)) {
+            inFlightRequests.delete(key);
+        }
+    }
+
+    if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {
+        window.__clearBackendCache(resource);
+    }
+}
+
+export async function listBackendResource(resource, params = {}) {
+    const isForceRefresh = params._refresh !== undefined;
+    const cleanParams = normalizeQueryParams(params);
+    const cacheKey = getCacheKey('list', resource, cleanParams);
+    const isStatic = STATIC_RESOURCES.has(resource);
+
+    if (!isForceRefresh) {
+        const cached = apiCache.get(cacheKey);
+        const ttl = isStatic ? CACHE_TTL_STATIC_MS : CACHE_TTL_LIST_MS;
+        if (cached && Date.now() - cached.timestamp < ttl) {
+            return cached.data;
+        }
+
+        if (isStatic) {
+            const sessionData = getFromSessionStorage(cacheKey);
+            if (sessionData) {
+                apiCache.set(cacheKey, { data: sessionData, timestamp: Date.now() });
+                return sessionData;
+            }
+        }
+
+        if (inFlightRequests.has(cacheKey)) {
+            return inFlightRequests.get(cacheKey);
+        }
+    }
+
+    const requestPromise = (async () => {
+        try {
+            const response = await getBackendClient().get(`/api/backend/${resource}`, {
+                params: cleanParams,
+            });
+            const data = response.data;
+
+            apiCache.set(cacheKey, { data, timestamp: Date.now() });
+            if (isStatic) {
+                saveToSessionStorage(cacheKey, data);
+            }
+            return data;
+        } finally {
+            inFlightRequests.delete(cacheKey);
+        }
+    })();
+
+    inFlightRequests.set(cacheKey, requestPromise);
+    return requestPromise;
 }
 
 export async function getBackendResource(resource, recordId) {
-    const response = await getBackendClient().get(`/api/backend/${resource}/${recordId}`);
+    if (!recordId) return null;
+    const cacheKey = getCacheKey('show', resource, { id: recordId });
 
-    return response.data?.data ?? null;
+    const cached = apiCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL_SHOW_MS) {
+        return cached.data;
+    }
+
+    if (inFlightRequests.has(cacheKey)) {
+        return inFlightRequests.get(cacheKey);
+    }
+
+    const requestPromise = (async () => {
+        try {
+            const response = await getBackendClient().get(`/api/backend/${resource}/${recordId}`);
+            const data = response.data?.data ?? null;
+            apiCache.set(cacheKey, { data, timestamp: Date.now() });
+            return data;
+        } finally {
+            inFlightRequests.delete(cacheKey);
+        }
+    })();
+
+    inFlightRequests.set(cacheKey, requestPromise);
+    return requestPromise;
 }
 
 export function sanitizePayload(payload) {
@@ -49,19 +186,19 @@ export function sanitizePayload(payload) {
 
 export async function createBackendResource(resource, payload) {
     const response = await getBackendClient().post(`/api/backend/${resource}`, sanitizePayload(payload));
-
+    clearBackendCache(resource);
     return response.data;
 }
 
 export async function updateBackendResource(resource, recordId, payload) {
     const response = await getBackendClient().put(`/api/backend/${resource}/${recordId}`, sanitizePayload(payload));
-
+    clearBackendCache(resource);
     return response.data;
 }
 
 export async function deleteBackendResource(resource, recordId) {
     const response = await getBackendClient().delete(`/api/backend/${resource}/${recordId}`);
-
+    clearBackendCache(resource);
     return response.data;
 }
 
