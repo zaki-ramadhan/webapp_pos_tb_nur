@@ -57,7 +57,7 @@ export default function AccountLookupSuggestions({
 }) {
     const entityLabels = {
         accounts: 'akun perkiraan',
-        products: 'barang & jasa',
+        products: 'barang',
         'shipping-methods': 'metode pengiriman',
         'fob-terms': 'syarat FOB',
         employees: 'kontak/karyawan',

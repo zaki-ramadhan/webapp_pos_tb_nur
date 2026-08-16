@@ -111,7 +111,7 @@ export default function TakeItemsModal({ open, onClose, onApply, mode = 'purchas
         <WorkspaceDialog
             open={open}
             onClose={onClose}
-            title="Ambil Barang & Jasa"
+            title="Ambil Barang"
             headerIcon={() => null}
             maxWidthClassName="!max-w-[760px] w-full"
             contentClassName="bg-white px-4 py-3 flex flex-col gap-3 min-h-[360px] max-h-[70vh] overflow-y-auto"

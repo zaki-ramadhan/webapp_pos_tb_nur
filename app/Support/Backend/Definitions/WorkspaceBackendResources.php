@@ -169,6 +169,8 @@ class WorkspaceBackendResources
                 'warehouse_id' => ['nullable', 'integer', 'exists:warehouses,id'],
                 'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
                 'as_of_date' => ['nullable', 'string'],
+                'date_from' => ['nullable', 'string'],
+                'date_to' => ['nullable', 'string'],
             ],
             indexUsing: $indexUsing,
             showUsing: self::unsupportedShow(),

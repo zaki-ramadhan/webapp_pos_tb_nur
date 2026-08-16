@@ -161,7 +161,7 @@ const defaultSalesOrderConfig = {
     },
     sectionTabs: salesOrderSectionTabs,
     itemSearchResource: 'products',
-    itemSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
+    itemSearchPlaceholder: 'Cari/Pilih Barang...',
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: salesOrderItemColumns,

@@ -42,8 +42,8 @@ export function AccountLookupField({
 }) {
     const isProducts = resource === 'products';
     const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
-    const resolvedSearchLabel = searchLabel ?? (isProducts ? 'Cari barang dan jasa' : 'Cari akun perkiraan');
-    const resolvedDialogTitle = dialogTitle ?? (isProducts ? 'Pilih Barang/Jasa' : 'Pilih Akun Perkiraan');
+    const resolvedSearchLabel = searchLabel ?? (isProducts ? 'Cari barang' : 'Cari akun perkiraan');
+    const resolvedDialogTitle = dialogTitle ?? (isProducts ? 'Pilih Barang' : 'Pilih Akun Perkiraan');
 
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
@@ -151,8 +151,8 @@ export function AccountLookupTextInput({
 }) {
     const isProducts = resource === 'products';
     const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
-    const resolvedSearchLabel = searchLabel ?? (isProducts ? 'Cari barang dan jasa' : 'Cari akun perkiraan');
-    const resolvedDialogTitle = dialogTitle ?? (isProducts ? 'Pilih Barang/Jasa' : 'Pilih Akun Perkiraan');
+    const resolvedSearchLabel = searchLabel ?? (isProducts ? 'Cari barang' : 'Cari akun perkiraan');
+    const resolvedDialogTitle = dialogTitle ?? (isProducts ? 'Pilih Barang' : 'Pilih Akun Perkiraan');
 
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');

@@ -7,10 +7,6 @@ import {
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 
 export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) {
-    if (values.kind === 'Jasa') {
-        return null;
-    }
-
     return (
         <section className="space-y-7">
             <div className="space-y-2">

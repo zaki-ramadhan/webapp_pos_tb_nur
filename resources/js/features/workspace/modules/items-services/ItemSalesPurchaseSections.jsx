@@ -49,10 +49,6 @@ export function ItemSalesInfoSection({ config, values, onChange, isLoading }) {
 }
 
 export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) {
-    if (values.kind === 'Jasa') {
-        return null;
-    }
-
     return (
         <section className="space-y-7">
             <div className="space-y-2">

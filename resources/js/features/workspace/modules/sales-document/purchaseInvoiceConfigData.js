@@ -201,7 +201,7 @@ export const defaultPurchaseInvoiceConfig = {
         settingsItems: [{ id: 'arrange-columns', label: 'Atur kolom' }],
     },
     sectionTabs: purchaseInvoiceSectionTabs,
-    itemSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
+    itemSearchPlaceholder: 'Cari/Pilih Barang...',
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: purchaseInvoiceItemColumns,

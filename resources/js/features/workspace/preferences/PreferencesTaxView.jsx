@@ -19,7 +19,7 @@ import {
 function getTaxTooltip(label) {
     const cleanLabel = String(label || '').trim();
     if (cleanLabel.includes('Tampilkan Kuantitas')) {
-        return 'Mengisi nilai kuantitas default = 1 dan mengambil harga jual terbaru saat memilih item barang/jasa.';
+        return 'Mengisi nilai kuantitas default = 1 dan mengambil harga jual terbaru saat memilih item barang.';
     }
     if (cleanLabel.includes('Default DPP')) {
         return 'Menetapkan perhitungan DPP Pajak secara otomatis sebesar 11/12 dari nilai transaksi bruto.';

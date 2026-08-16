@@ -16,53 +16,53 @@ const DEPENDENCY_GUIDES = {
         description: 'Sebelum mengimpor data Karyawan, pastikan data Cabang dan Departemen yang digunakan oleh Karyawan tersebut sudah terdaftar di sistem agar data relasi tidak terputus.'
     },
     'products': {
-        title: 'Barang & Jasa (Produk)',
+        title: 'Barang (Produk)',
         dependencies: [
             { label: 'Satuan Barang', path: 'item-unit' },
             { label: 'Kategori Barang', path: 'item-category' },
             { label: 'Merek Barang', path: 'item-brand' }
         ],
-        description: 'Sebelum mengimpor data Barang & Jasa, pastikan Satuan Utama dan Kategori Barang yang dicantumkan sudah terdaftar.'
+        description: 'Sebelum mengimpor data Barang, pastikan Satuan Utama dan Kategori Barang yang dicantumkan sudah terdaftar.'
     },
     'sales-invoices': {
         title: 'Faktur Penjualan',
         dependencies: [
             { label: 'Pelanggan', path: 'customer-category' },
-            { label: 'Barang & Jasa', path: 'items-services' }
+            { label: 'Barang', path: 'items-services' }
         ],
-        description: 'Sebelum mengimpor Faktur Penjualan, pastikan data Pelanggan dan Barang & Jasa yang dibeli sudah terdaftar.'
+        description: 'Sebelum mengimpor Faktur Penjualan, pastikan data Pelanggan dan Barang yang dibeli sudah terdaftar.'
     },
     'purchase-invoices': {
         title: 'Faktur Pembelian',
         dependencies: [
             { label: 'Pemasok (Supplier)', path: 'supplier-category' },
-            { label: 'Barang & Jasa', path: 'items-services' }
+            { label: 'Barang', path: 'items-services' }
         ],
-        description: 'Sebelum mengimpor Faktur Pembelian, pastikan data Pemasok dan Barang & Jasa yang dibeli sudah terdaftar.'
+        description: 'Sebelum mengimpor Faktur Pembelian, pastikan data Pemasok dan Barang yang dibeli sudah terdaftar.'
     },
     'sales-orders': {
         title: 'Pesanan Penjualan',
         dependencies: [
             { label: 'Pelanggan', path: 'customer-category' },
-            { label: 'Barang & Jasa', path: 'items-services' }
+            { label: 'Barang', path: 'items-services' }
         ],
-        description: 'Sebelum mengimpor Pesanan Penjualan, pastikan data Pelanggan dan Barang & Jasa yang dibeli sudah terdaftar.'
+        description: 'Sebelum mengimpor Pesanan Penjualan, pastikan data Pelanggan dan Barang yang dibeli sudah terdaftar.'
     },
     'sales-returns': {
         title: 'Retur Penjualan',
         dependencies: [
             { label: 'Pelanggan', path: 'customer-category' },
-            { label: 'Barang & Jasa', path: 'items-services' }
+            { label: 'Barang', path: 'items-services' }
         ],
-        description: 'Sebelum mengimpor Retur Penjualan, pastikan data Pelanggan dan Barang & Jasa sudah terdaftar.'
+        description: 'Sebelum mengimpor Retur Penjualan, pastikan data Pelanggan dan Barang sudah terdaftar.'
     },
     'purchase-returns': {
         title: 'Retur Pembelian',
         dependencies: [
             { label: 'Pemasok (Supplier)', path: 'supplier-category' },
-            { label: 'Barang & Jasa', path: 'items-services' }
+            { label: 'Barang', path: 'items-services' }
         ],
-        description: 'Sebelum mengimpor Retur Pembelian, pastikan data Pemasok dan Barang & Jasa sudah terdaftar.'
+        description: 'Sebelum mengimpor Retur Pembelian, pastikan data Pemasok dan Barang sudah terdaftar.'
     }
 };
 

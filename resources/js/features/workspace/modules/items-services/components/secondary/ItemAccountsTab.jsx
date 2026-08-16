@@ -17,9 +17,6 @@ export default function ItemAccountsTab({ config, values, onChange }) {
     ];
 
     const fields = allFields.filter(({ key }) => {
-        if (values.kind === 'Jasa') {
-            return key === 'sales' || key === 'salesReturn' || key === 'salesDiscount';
-        }
         if (values.kind === 'Non Persediaan') {
             return key !== 'inventory' && key !== 'deliveredGoods';
         }

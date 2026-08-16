@@ -208,7 +208,7 @@ class TaxPreferences
                     [
                         'id' => 'tax-default-quantity-price-row',
                         'type' => 'single-checkbox',
-                        'label' => "Tampilkan Kuantitas\ndan Harga secara\nDefault pada Item\nBarang/Jasa",
+                        'label' => "Tampilkan Kuantitas\ndan Harga secara\nDefault pada Item\nBarang",
                         'showInfo' => true,
                         'option' => [
                             'id' => 'tax-default-quantity-price',

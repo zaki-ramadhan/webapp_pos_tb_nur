@@ -142,7 +142,7 @@ class BackendActivityLogger
         $resourceMap = [
             'brands' => 'Merek',
             'units' => 'Satuan',
-            'products' => 'Barang & Jasa',
+            'products' => 'Barang',
             'expense-entries' => 'Pencatatan Beban',
             'payroll-entries' => 'Pencatatan Gaji',
             'accounts' => 'Akun Perkiraan',
@@ -155,7 +155,7 @@ class BackendActivityLogger
             'departments' => 'Departemen',
             'group-accesses' => 'Hak Akses',
             'inventory-adjustments' => 'Penyesuaian Persediaan',
-            'item-categories' => 'Kategori Barang & Jasa',
+            'item-categories' => 'Kategori Barang',
             'item-requests' => 'Permintaan Barang',
             'salary-allowances' => 'Tunjangan & Gaji',
             'sales-checkins' => 'Kunjungan Sales',

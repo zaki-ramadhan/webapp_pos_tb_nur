@@ -832,7 +832,7 @@ class TransactionDataSeeder extends Seeder
                     'operation_document_id' => $docId,
                     'line_type' => 'cash_receipt',
                     'account_id' => $accPendapatanLain,
-                    'description' => 'Pendapatan Jasa Pengiriman / Lain-Lain',
+                    'description' => 'Pendapatan Ongkos Kirim / Lain-Lain',
                     'reference_code' => '410102',
                     'quantity' => 1,
                     'unit_price' => 300000,

@@ -29,7 +29,7 @@ class FeaturePreferences
                         'icon' => 'numbering',
                         'column' => 2,
                         'items' => [
-                            ['id' => 'delivery-service', 'label' => 'Jasa Pengiriman', 'checked' => false],
+                            ['id' => 'delivery-service', 'label' => 'Biaya Pengiriman (Ekspedisi)', 'checked' => false],
                         ],
                     ],
                 ],

@@ -6,8 +6,6 @@ import {
 } from '@/features/workspace/modules/items-services/itemsServicesViewShared';
 
 export default function ItemOtherTab({ config, values, onChange }) {
-    const isService = values.kind === 'Jasa';
-
     return (
         <div className="grid gap-8 lg:grid-cols-2">
             <section className="space-y-2">
@@ -27,8 +25,7 @@ export default function ItemOtherTab({ config, values, onChange }) {
                 </div>
             </section>
 
-            {!isService && (
-                <section className="space-y-2">
+            <section className="space-y-2">
                     <SectionHeading title={config.labels.dimensionInfo} />
 
                     <div className="mt-4 space-y-2">
@@ -70,7 +67,6 @@ export default function ItemOtherTab({ config, values, onChange }) {
                         </FormRow>
                     </div>
                 </section>
-            )}
         </div>
     );
 }

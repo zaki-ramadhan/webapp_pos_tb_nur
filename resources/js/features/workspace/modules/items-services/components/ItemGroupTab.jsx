@@ -55,7 +55,7 @@ export default function ItemGroupTab({ values, onChange }) {
                 <BackendLookupField
                     resource="products"
                     values={[]}
-                    placeholder="Cari/Pilih Barang & Jasa..."
+                    placeholder="Cari/Pilih Barang..."
                     searchLabel="Cari barang untuk rincian grup"
                     onSelect={handleAddItem}
                 />

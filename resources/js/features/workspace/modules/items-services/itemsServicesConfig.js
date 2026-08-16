@@ -114,8 +114,17 @@ const defaultConfig = {
         },
     ],
     tabs: itemTabs,
-    categoryOptions: ['Umum', 'Accessories', 'Handphone', 'Jasa'],
-    kindOptions: ['Persediaan', 'Non Persediaan', 'Jasa', 'Grup'],
+    categoryOptions: [
+        'Umum',
+        'Bahan Bangunan Utama',
+        'Besi & Struktur Baja',
+        'Semen & Pasir',
+        'Keramik & Perekat',
+        'Cat & Perlengkapan',
+        'Pipa & Plumbing',
+        'Kelistrikan & Alat Pertukangan',
+    ],
+    kindOptions: ['Persediaan', 'Non Persediaan', 'Grup'],
     branchOptions: ['[Semua Cabang]', 'JAKARTA', 'SURABAYA'],
     labels: {
         generalInfo: 'Informasi Barang',
@@ -156,8 +165,8 @@ const defaultConfig = {
                 hint: WORKSPACE_INACTIVE_HINT,
                 options: [
                     { value: 'all', label: 'Merek Barang: Semua' },
-                    { value: 'Apple', label: 'Merek Barang: Apple' },
-                    { value: 'Samsung', label: 'Merek Barang: Samsung' },
+                    { value: 'Gresik', label: 'Merek Barang: Semen Gresik' },
+                    { value: 'Tiga Roda', label: 'Merek Barang: Tiga Roda' },
                 ],
             },
             {
@@ -165,9 +174,9 @@ const defaultConfig = {
                 rowKey: 'categoryFilter',
                 options: [
                     { value: 'all', label: 'Kategori Barang: Semua' },
-                    { value: 'Accessories', label: 'Kategori Barang: Accessories' },
-                    { value: 'Handphone', label: 'Kategori Barang: Handphone' },
-                    { value: 'Jasa', label: 'Kategori Barang: Jasa' },
+                    { value: 'Bahan Bangunan Utama', label: 'Kategori: Bahan Bangunan Utama' },
+                    { value: 'Besi & Struktur Baja', label: 'Kategori: Besi & Struktur Baja' },
+                    { value: 'Cat & Perlengkapan', label: 'Kategori: Cat & Perlengkapan' },
                 ],
             },
             {
@@ -176,7 +185,8 @@ const defaultConfig = {
                 options: [
                     { value: 'all', label: 'Jenis Barang: Semua' },
                     { value: 'Persediaan', label: 'Jenis Barang: Persediaan' },
-                    { value: 'Jasa', label: 'Jenis Barang: Jasa' },
+                    { value: 'Non Persediaan', label: 'Jenis Barang: Non Persediaan' },
+                    { value: 'Grup', label: 'Jenis Barang: Grup' },
                 ],
             },
         ],
@@ -213,26 +223,18 @@ function cloneAccounts(accounts = {}) {
 }
 
 function inferCategory(row) {
-    if (row.kind === 'Jasa') {
-        return 'Jasa';
-    }
-
     const name = String(row.name ?? '').toLowerCase();
 
-    if (name.includes('iphone 5 16 gb') || name.includes('iphone 5 32 gb') || name.includes('iphone 5 64 gb')) {
-        return 'Handphone';
+    if (name.includes('semen') || name.includes('pasir') || name.includes('bata') || name.includes('split')) {
+        return 'Bahan Bangunan Utama';
     }
 
-    if (
-        name.includes('anti gores') ||
-        name.includes('charger') ||
-        name.includes('connector') ||
-        name.includes('cable') ||
-        name.includes('headset') ||
-        name.includes('hard case') ||
-        name.includes('flex')
-    ) {
-        return 'Accessories';
+    if (name.includes('besi') || name.includes('baja') || name.includes('wiremesh') || name.includes('hollow')) {
+        return 'Besi & Struktur Baja';
+    }
+
+    if (name.includes('cat') || name.includes('thinner') || name.includes('kuas')) {
+        return 'Cat & Perlengkapan';
     }
 
     return 'Umum';
@@ -247,8 +249,6 @@ function buildBarcode(code) {
 }
 
 function buildFallbackDetailRecord(row, config) {
-    const isService = row.kind === 'Jasa';
-
     const supplierObj = row.main_supplier ?? row.mainSupplier ?? row.supplier_prices?.[0]?.supplier ?? row.supplierPrices?.[0]?.supplier ?? row.supplier;
     const supplierName = supplierObj?.name ?? (typeof supplierObj === 'string' ? supplierObj : (row.supplierName ?? ''));
     const supplierId = supplierObj?.id ?? row.main_supplier_id ?? row.mainSupplierId ?? row.supplier_id ?? row.supplier_prices?.[0]?.supplier_id ?? null;
@@ -276,15 +276,13 @@ function buildFallbackDetailRecord(row, config) {
         name: row.name ?? '',
         category: [{ id: categoryId, name: finalCategoryName }],
         categoryId: categoryId,
-        kind: row.kind ?? (isService ? 'Jasa' : config.createDefaults.kind),
+        kind: row.kind ?? config.createDefaults.kind,
         codeAuto: false,
         code: row.code ?? '',
         barcode: row.barcode ?? buildBarcode(row.code),
         primaryUnit: [{ id: baseUnitId, name: baseUnitName }],
         baseUnitId: baseUnitId,
-        unitConversions: isService
-            ? []
-            : [{ id: `${row.id}-conv-1`, unit: ['Box'], quantity: '10', baseUnit: baseUnitName || 'PCS' }],
+        unitConversions: [{ id: `${row.id}-conv-1`, unit: ['Box'], quantity: '10', baseUnit: baseUnitName || 'PCS' }],
         brand: (brandName && brandName !== '-') ? [{ id: brandId, name: brandName }] : [],
         brandId: brandId,
         mainSupplier: (supplierName && supplierName !== '-') ? [{ id: supplierId, name: supplierName }] : [],
