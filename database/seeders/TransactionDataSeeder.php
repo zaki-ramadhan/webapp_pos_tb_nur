@@ -21,7 +21,7 @@ class TransactionDataSeeder extends Seeder
         $warehouseId = DB::table('warehouses')->first()->id ?? 1;
         $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id') ?? 1;
 
-        $accKasKecil  = DB::table('accounts')->where('code', '110101')->value('id') ?? 1;
+        $accKasKecil  = DB::table('accounts')->where('code', '110101')->value('id') ?? DB::table('accounts')->value('id');
         $accBankBCA   = DB::table('accounts')->where('code', '110102')->value('id') ?? $accKasKecil;
         $accBankMnd   = DB::table('accounts')->where('code', '110103')->value('id') ?? $accKasKecil;
 
