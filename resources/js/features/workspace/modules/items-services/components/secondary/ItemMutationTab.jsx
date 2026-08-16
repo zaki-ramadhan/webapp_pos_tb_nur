@@ -201,21 +201,13 @@ export default function ItemMutationTab({ productId }) {
                                     <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || '-'}</DataTableCell>
                                     <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || '-'}</DataTableCell>
                                     <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.unit_cost) || '0'}</DataTableCell>
-                                    <DataTableCell className="text-center text-sm px-3 py-2">
-                                        {hasIn ? (
-                                            <span className="font-semibold text-emerald-600">+{formatAmountInput(row.in_qty)}</span>
-                                        ) : (
-                                            <span className="text-slate-400">0</span>
-                                        )}
+                                    <DataTableCell className={`text-center text-sm px-3 py-2 ${hasIn ? 'text-emerald-600' : 'text-text-workspace-dark'}`}>
+                                        {formatAmountInput(row.in_qty) || '0'}
                                     </DataTableCell>
-                                    <DataTableCell className="text-center text-sm px-3 py-2">
-                                        {hasOut ? (
-                                            <span className="font-semibold text-rose-600">-{formatAmountInput(row.out_qty)}</span>
-                                        ) : (
-                                            <span className="text-slate-400">0</span>
-                                        )}
+                                    <DataTableCell className={`text-center text-sm px-3 py-2 ${hasOut ? 'text-rose-600' : 'text-text-workspace-dark'}`}>
+                                        {formatAmountInput(row.out_qty) || '0'}
                                     </DataTableCell>
-                                    <DataTableCell className="text-right text-sm font-semibold text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
+                                    <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
                                 </DataTableRow>
                             );
                         })
