@@ -9,6 +9,7 @@ class PartyEntitySeeder extends Seeder
 {
     public function run(): void
     {
+        $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id') ?? DB::table('currencies')->value('id') ?? 1;
         $accBebanGajiId = DB::table('accounts')->where('code', '610101')->value('id')
             ?? DB::table('accounts')->where('code', '611.002-01')->value('id')
             ?? DB::table('accounts')->value('id');
@@ -126,13 +127,13 @@ class PartyEntitySeeder extends Seeder
 
         $suppCatMat = DB::table('supplier_categories')->insertGetId(['code' => 'MAT', 'name' => 'Produsen Material Utama', 'is_default' => true, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
 
-        // Seed customers (real buyers)
+        // Seed customers (real local buyers in Cirebon area)
         DB::table('customers')->insert([
-            ['category_id' => $custCatProject, 'currency_id' => $currencyId, 'code' => 'CUST-001', 'name' => 'CV. Nur Jaya Karya', 'business_phone' => '081258291020', 'mobile_phone' => '081258291020', 'email' => 'nurjaya.karya@gmail.com', 'billing_address' => 'Jl. Tomang Raya No. 100, Jakarta Barat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $custCatRetail, 'currency_id' => $currencyId, 'code' => 'CUST-002', 'name' => 'Toko Bangunan Subur', 'business_phone' => '081234567891', 'mobile_phone' => '081234567891', 'email' => 'toko.subur.terusan@gmail.com', 'billing_address' => 'Jl. Kebon Jeruk Utama No. 45, Jakarta Barat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $custCatRetail, 'currency_id' => $currencyId, 'code' => 'CUST-003', 'name' => 'H. Bambang Suryono', 'business_phone' => '081388776655', 'mobile_phone' => '081388776655', 'email' => 'bambang.suryono88@gmail.com', 'billing_address' => 'Jl. Meruya Indah Blok B4, Jakarta Barat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $custCatProject, 'currency_id' => $currencyId, 'code' => 'CUST-004', 'name' => 'Ir. Ahmad Rifai (Proyek Perumahan)', 'business_phone' => '081599887766', 'mobile_phone' => '081599887766', 'email' => 'ahmad.rifai.proyek@gmail.com', 'billing_address' => 'Kawasan Proyek Perum Asri, Jakarta Barat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $custCatRetail, 'currency_id' => $currencyId, 'code' => 'CUST-005', 'name' => 'Pak Eko Prasetyo', 'business_phone' => '081711223344', 'mobile_phone' => '081711223344', 'email' => 'eko.prasetyo.renovasi@gmail.com', 'billing_address' => 'Jl. Pos Pengumben No. 18, Jakarta Barat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['category_id' => $custCatProject, 'currency_id' => $currencyId, 'code' => 'CUST-001', 'name' => 'CV Nur Jaya Karya', 'business_phone' => '081258291020', 'mobile_phone' => '081258291020', 'email' => 'nurjaya.karya@gmail.com', 'billing_address' => 'Jl. Raya Guwa Kidul No. 100, Kaliwedi, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['category_id' => $custCatRetail, 'currency_id' => $currencyId, 'code' => 'CUST-002', 'name' => 'Toko Bangunan Subur', 'business_phone' => '081234567891', 'mobile_phone' => '081234567891', 'email' => 'toko.subur.cirebon@gmail.com', 'billing_address' => 'Jl. By Pass Arjawinangun No. 45, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['category_id' => $custCatRetail, 'currency_id' => $currencyId, 'code' => 'CUST-003', 'name' => 'H. Bambang Suryono', 'business_phone' => '081388776655', 'mobile_phone' => '081388776655', 'email' => 'bambang.suryono88@gmail.com', 'billing_address' => 'Jl. Fatahillah No. 12, Plered, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['category_id' => $custCatProject, 'currency_id' => $currencyId, 'code' => 'CUST-004', 'name' => 'Ir. Ahmad Rifai (Proyek Perumahan)', 'business_phone' => '081599887766', 'mobile_phone' => '081599887766', 'email' => 'ahmad.rifai.proyek@gmail.com', 'billing_address' => 'Kawasan Perumahan Asri, Kedawung, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['category_id' => $custCatRetail, 'currency_id' => $currencyId, 'code' => 'CUST-005', 'name' => 'Pak Eko Prasetyo', 'business_phone' => '081711223344', 'mobile_phone' => '081711223344', 'email' => 'eko.prasetyo.renovasi@gmail.com', 'billing_address' => 'Jl. Panembahan Ratu No. 18, Weru, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // Seed suppliers (real distributors & suppliers in Cirebon region)
