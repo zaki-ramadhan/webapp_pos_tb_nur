@@ -131,32 +131,29 @@ export default function ItemMutationTab({ productId }) {
                             </DataTableCell>
                         </DataTableRow>
                     ) : rows.length > 0 ? (
-                        rows.map((row) => (
-                            <DataTableRow key={row.id} className="border-ui-border-row bg-white">
-                                <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.date || '-'}</DataTableCell>
-                                <DataTableCell className="text-left text-sm font-normal px-3 py-2">
-                                    {row.page_id && row.document_id ? (
-                                        <button
-                                            type="button"
-                                            onClick={() => handleOpenDocument(row)}
-                                            title={`Buka ${row.document_type || 'Transaksi'}: ${row.document_number}`}
-                                            className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-normal text-left transition"
-                                        >
-                                            {row.document_number || '-'}
-                                        </button>
-                                    ) : (
-                                        <span className="text-blue-600">{row.document_number || '-'}</span>
-                                    )}
-                                </DataTableCell>
-                                <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.document_type || '-'}</DataTableCell>
-                                <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || '-'}</DataTableCell>
-                                <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || '-'}</DataTableCell>
-                                <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.unit_cost) || '0'}</DataTableCell>
-                                <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.in_qty) || '0'}</DataTableCell>
-                                <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.out_qty) || '0'}</DataTableCell>
-                                <DataTableCell className="text-right text-sm font-normal text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
-                            </DataTableRow>
-                        ))
+                        rows.map((row, index) => {
+                            const isClickable = Boolean(row.page_id && row.document_id);
+                            return (
+                                <DataTableRow
+                                    key={row.id}
+                                    onClick={isClickable ? () => handleOpenDocument(row) : undefined}
+                                    title={isClickable ? `Buka ${row.document_type || 'Transaksi'}: ${row.document_number}` : undefined}
+                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${
+                                        isClickable ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''
+                                    }`.trim()}
+                                >
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.date || '-'}</DataTableCell>
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.document_number || '-'}</DataTableCell>
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.document_type || '-'}</DataTableCell>
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || '-'}</DataTableCell>
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || '-'}</DataTableCell>
+                                    <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.unit_cost) || '0'}</DataTableCell>
+                                    <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.in_qty) || '0'}</DataTableCell>
+                                    <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.out_qty) || '0'}</DataTableCell>
+                                    <DataTableCell className="text-right text-sm font-normal text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
+                                </DataTableRow>
+                            );
+                        })
                     ) : (
                         <DataTableRow className="border-ui-border-row bg-white">
                             <DataTableCell colSpan={9} className="px-3 py-2 text-center text-sm text-black">
