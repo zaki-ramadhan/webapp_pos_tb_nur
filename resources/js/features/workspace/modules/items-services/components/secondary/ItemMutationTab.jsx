@@ -46,6 +46,21 @@ export default function ItemMutationTab({ productId }) {
         fetchMutations();
     }, [productId, dateFrom, dateTo]);
 
+    const handleOpenDocument = (row) => {
+        if (!row.page_id || !row.document_id) return;
+
+        window.dispatchEvent(
+            new CustomEvent('workspace:open-page', {
+                detail: {
+                    pageId: row.page_id,
+                    recordId: row.document_id,
+                    tabLabel: row.document_number || 'Dokumen',
+                    label: row.document_number || 'Dokumen',
+                },
+            }),
+        );
+    };
+
     return (
         <div className="space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -119,7 +134,20 @@ export default function ItemMutationTab({ productId }) {
                         rows.map((row) => (
                             <DataTableRow key={row.id} className="border-ui-border-row bg-white">
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.date || '-'}</DataTableCell>
-                                <DataTableCell className="text-left text-sm font-normal text-blue-600 px-3 py-2">{row.document_number || '-'}</DataTableCell>
+                                <DataTableCell className="text-left text-sm font-normal px-3 py-2">
+                                    {row.page_id && row.document_id ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => handleOpenDocument(row)}
+                                            title={`Buka ${row.document_type || 'Transaksi'}: ${row.document_number}`}
+                                            className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-normal text-left transition"
+                                        >
+                                            {row.document_number || '-'}
+                                        </button>
+                                    ) : (
+                                        <span className="text-blue-600">{row.document_number || '-'}</span>
+                                    )}
+                                </DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.document_type || '-'}</DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || '-'}</DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || '-'}</DataTableCell>

@@ -231,8 +231,19 @@ class InventoryInquiryQueryService
                 $movements = $this->inventoryMovements($doc, $line);
                 foreach ($movements as $whId => $qty) {
                     $wh = $warehouses->get($whId);
+                    $docTypeStr = (string) $doc->document_type;
+                    $pageId = match ($docTypeStr) {
+                        'stock_transfer' => 'stock-transfer',
+                        'stock_opname_result' => 'stock-opname-result',
+                        'inventory_adjustment' => 'inventory-adjustment',
+                        default => str_replace('_', '-', $docTypeStr),
+                    };
+
                     $rows->push([
                         'id' => 'inv-'.$doc->id.'-'.$line->id.'-'.$whId,
+                        'document_id' => $doc->id,
+                        'raw_document_type' => $docTypeStr,
+                        'page_id' => $pageId,
                         'raw_date' => $doc->document_date ? Carbon::parse($doc->document_date)->timestamp : 0,
                         'date' => $doc->document_date ? Carbon::parse($doc->document_date)->format('d/m/Y') : '-',
                         'document_number' => $doc->document_number ?? '-',
@@ -274,8 +285,21 @@ class InventoryInquiryQueryService
                 $whId = $line->warehouse_id ?? $doc->warehouse_id;
                 $wh = $whId ? $warehouses->get($whId) : $doc->warehouse;
 
+                $docTypeStr = (string) $doc->document_type;
+                $pageId = match ($docTypeStr) {
+                    'goods_receipt' => 'goods-receipt',
+                    'sales_delivery' => 'sales-delivery',
+                    'sales_invoice' => 'sales-invoice',
+                    'sales_return' => 'sales-return',
+                    'purchase_return' => 'purchase-return',
+                    default => str_replace('_', '-', $docTypeStr),
+                };
+
                 $rows->push([
                     'id' => 'op-'.$doc->id.'-'.$line->id,
+                    'document_id' => $doc->id,
+                    'raw_document_type' => $docTypeStr,
+                    'page_id' => $pageId,
                     'raw_date' => $doc->entry_date ? Carbon::parse($doc->entry_date)->timestamp : 0,
                     'date' => $doc->entry_date ? Carbon::parse($doc->entry_date)->format('d/m/Y') : '-',
                     'document_number' => $doc->document_number ?? '-',
