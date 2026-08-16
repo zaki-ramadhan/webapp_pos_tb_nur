@@ -1,6 +1,7 @@
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
+import { useFormSaveShortcut } from '@/features/workspace/shared/hooks/useFormSaveShortcut';
 
 export default function ModuleFormTemplate({
     form,
@@ -13,6 +14,8 @@ export default function ModuleFormTemplate({
     children,
     actionsSlot,
 }) {
+    useFormSaveShortcut(onSave, { disabled: Boolean(saveDisabled || saving) });
+
     const hasTabs = (form.tabs && form.tabs.length > 0) || (form.rightTabs && form.rightTabs.length > 0);
 
     return (
