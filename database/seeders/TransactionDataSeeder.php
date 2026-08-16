@@ -41,6 +41,9 @@ class TransactionDataSeeder extends Seeder
         $s3 = $suppliersMap['SUPP-003'] ?? 1;
         $s4 = $suppliersMap['SUPP-004'] ?? 1;
         $s5 = $suppliersMap['SUPP-005'] ?? 1;
+        $s6 = $suppliersMap['SUPP-006'] ?? 1;
+        $s7 = $suppliersMap['SUPP-007'] ?? 1;
+        $s8 = $suppliersMap['SUPP-008'] ?? 1;
 
         $pSemen  = $productsMap['SMN-050'] ?? 1;
         $pSemen3 = $productsMap['SMN-040'] ?? $pSemen;
@@ -546,13 +549,17 @@ class TransactionDataSeeder extends Seeder
                 $dt = Carbon::parse($entryDate);
                 $isPaid = ($piSeq % 3 !== 0);
                 $docNo = sprintf('FB.%04d.%02d.0001', $year, $m);
-                $supplierId = ($piSeq % 5 === 0) ? $s5 : (($piSeq % 4 === 0) ? $s4 : (($piSeq % 3 === 0) ? $s3 : (($piSeq % 2 === 0) ? $s2 : $s1)));
+                $supplierPool = [$s1, $s4, $s2, $s3, $s5, $s6, $s7, $s8];
+                $supplierId = $supplierPool[($piSeq - 1) % count($supplierPool)];
                 $supplierBillNo = match ($supplierId) {
-                    $s1 => sprintf('INV/SI/%04d/%02d/%04d', $year, $m, 1000 + $piSeq),
-                    $s2 => sprintf('KS-INV-%04d%02d-%03d', $year, $m, $piSeq),
-                    $s3 => sprintf('AVN/FAK/%02d/%04d/%03d', $m, $year, $piSeq),
-                    $s4 => sprintf('ETR-INV-%04d-%04d', $year, 2000 + $piSeq),
-                    $s5 => sprintf('RCK/PB/%04d/%02d/%03d', $year, $m, $piSeq),
+                    $s1 => sprintf('INV/NMP/%04d/%02d/%04d', $year, $m, 1000 + $piSeq),
+                    $s2 => sprintf('SIB/INV/%04d-%02d%02d', $year, $m, $piSeq),
+                    $s3 => sprintf('CUI/FAK/%02d/%04d/%03d', $m, $year, $piSeq),
+                    $s4 => sprintf('MBP-INV-%04d%02d-%03d', $year, $m, $piSeq),
+                    $s5 => sprintf('GIAS/PB/%04d/%02d/%03d', $year, $m, $piSeq),
+                    $s6 => sprintf('PBA-NOTA-%04d%02d%02d', $year, $m, $piSeq),
+                    $s7 => sprintf('PRI/INV/%04d/%02d/%03d', $year, $m, $piSeq),
+                    $s8 => sprintf('RKM-INV-%02d%02d-%03d', substr((string)$year, -2), $m, $piSeq),
                     default => sprintf('INV-SUP-%04d%02d-%03d', $year, $m, $piSeq),
                 };
 
