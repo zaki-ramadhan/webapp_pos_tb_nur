@@ -35,8 +35,20 @@ export default function ModuleTableTemplate({
     disableColumnSettings = false,
     disableRefresh = false,
 }) {
-    const [keyword, setKeyword] = useState('');
+    const isServerSearch = Boolean(table.onSearch || table.pagination?.onSearch);
+    const isServerSort = Boolean(table.onSort || table.pagination?.onSort);
+
+    const [keyword, setKeyword] = useState(table.search ?? table.pagination?.search ?? '');
     const [inactiveFilter, setInactiveFilter] = useState(table.filterOptions?.[0]?.value ?? 'all');
+
+    useEffect(() => {
+        if (!isServerSearch) return;
+        const timer = setTimeout(() => {
+            const onSearch = table.onSearch || table.pagination?.onSearch;
+            onSearch?.(keyword);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [keyword, isServerSearch, table.onSearch, table.pagination?.onSearch]);
 
     const cleanedColumns = useMemo(() => {
         return (table.columns ?? []).map(col => ({
@@ -53,7 +65,29 @@ export default function ModuleTableTemplate({
         return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
     }, [cleanedColumns, visibleColumnIds]);
 
+    const handleSortClick = (columnId) => {
+        if (isServerSort) {
+            const onSort = table.onSort || table.pagination?.onSort;
+            const currentKey = table.sortBy || table.pagination?.sortBy;
+            const currentDir = table.sortDirection || table.pagination?.sortDirection || 'asc';
+            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
+            onSort?.(columnId, nextDir);
+        } else {
+            handleClientSort(columnId);
+        }
+    };
+
     const filteredRows = useMemo(() => {
+        if (isServerSearch) {
+            if (!customFiltersSlot && inactiveFilter !== 'all') {
+                return (table.rows ?? []).filter((row) => row[inactiveFilterKey] === inactiveFilter);
+            }
+            if (customRowFilter) {
+                return (table.rows ?? []).filter(customRowFilter);
+            }
+            return table.rows ?? [];
+        }
+
         const normalizedKeyword = keyword.trim().toLowerCase();
 
         return (table.rows ?? []).filter((row) => {
@@ -78,9 +112,10 @@ export default function ModuleTableTemplate({
                     .includes(normalizedKeyword)
             );
         });
-    }, [customFiltersSlot, customRowFilter, inactiveFilter, inactiveFilterKey, keyword, table.rows, table.columns]);
+    }, [isServerSearch, customFiltersSlot, customRowFilter, inactiveFilter, inactiveFilterKey, keyword, table.rows, table.columns]);
 
-    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
 
     useEffect(() => {
         tableRegistry.setActiveTable(cleanedColumns, sortedRows, resourceName);
@@ -175,8 +210,8 @@ export default function ModuleTableTemplate({
                                         align={column.align}
                                         widthClassName={column.widthClassName}
                                         sortable={column.sortable !== false}
-                                        sortDirection={sortKey === column.id ? sortDir : null}
-                                        onSort={column.sortable !== false ? () => handleSort(column.id) : null}
+                                        sortDirection={isServerSort ? ((table.sortBy || table.pagination?.sortBy) === column.id ? (table.sortDirection || table.pagination?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                        onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                         style={getCellStyle(column.id, { position: 'relative' })}
                                         onResizeStart={(e) => handleResizeStart(e, column.id)}
                                     />
@@ -202,7 +237,7 @@ export default function ModuleTableTemplate({
                                             className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 text-center text-base text-table-row-number whitespace-nowrap"
                                             style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
                                         >
-                                            {index + 1}
+                                            {table.pagination?.from ? (table.pagination.from + index) : (index + 1)}
                                         </DataTableCell>
                                          {visibleColumns.map((column) => {
                                              const isCheckbox = column.id === 'checkbox';

@@ -18,13 +18,7 @@ export default function ItemsServicesView({
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'products',
         initialPerPage: 25,
@@ -66,21 +60,12 @@ export default function ItemsServicesView({
                 rows: mapped,
                 filters: updatedFilters,
                 pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
                 refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
+                ...serverTableProps,
             },
         };
-    }, [loading, page.itemsServices, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [loading, error, page.itemsServices, reload, rows, total, serverTableProps]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

@@ -19,13 +19,7 @@ export default function BankInquiryView({ page }) {
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverPaginationProps,
     } = useBackendIndexResource({
         resource,
         filters,
@@ -55,8 +49,6 @@ export default function BankInquiryView({ page }) {
         });
     }, []);
 
-
-
     return (
         <InquiryWorkspaceView
             key={page.id}
@@ -67,16 +59,7 @@ export default function BankInquiryView({ page }) {
             error={error}
             onRefresh={reload}
             onValuesChange={handleValuesChange}
-            pagination={{
-                page: currentPage,
-                perPage,
-                total,
-                lastPage,
-                from,
-                to,
-                onPageChange: setPage,
-                onPerPageChange: setPerPage,
-            }}
+            pagination={serverPaginationProps}
         />
     );
 }

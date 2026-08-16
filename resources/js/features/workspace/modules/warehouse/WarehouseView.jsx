@@ -18,13 +18,7 @@ export default function WarehouseView({
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to,
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'warehouses',
         initialPerPage: 25,
@@ -116,19 +110,10 @@ export default function WarehouseView({
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+                ...serverTableProps,
             },
         };
-    }, [loading, page.warehouse, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
+    }, [loading, error, page.warehouse, rows, total, reload, serverTableProps]);
 
     const handlePersist = useCallback((record) => {
         setFetchedDetailRow({ ...record, __source: 'backend' });

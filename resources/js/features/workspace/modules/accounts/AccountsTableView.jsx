@@ -10,7 +10,10 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
 export default function AccountsTableView({ config, onCreate, onOpenDetail, loading = false, error = '', onReload = null }) {
-    const [keyword, setKeyword] = useState('');
+    const isServerSearch = Boolean(config.table.onSearch || config.table.pagination?.onSearch);
+    const isServerSort = Boolean(config.table.onSort || config.table.pagination?.onSort);
+
+    const [keyword, setKeyword] = useState(config.table.search ?? config.table.pagination?.search ?? '');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
             result[filter.id] = filter.options[0]?.value ?? 'all';
@@ -18,7 +21,40 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
         }, {}),
     );
 
+    useEffect(() => {
+        if (!isServerSearch) return;
+        const timer = setTimeout(() => {
+            const onSearch = config.table.onSearch || config.table.pagination?.onSearch;
+            onSearch?.(keyword);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [keyword, isServerSearch, config.table.onSearch, config.table.pagination?.onSearch]);
+
+    const handleSortClick = (columnId) => {
+        if (isServerSort) {
+            const onSort = config.table.onSort || config.table.pagination?.onSort;
+            const currentKey = config.table.sortBy || config.table.pagination?.sortBy;
+            const currentDir = config.table.sortDirection || config.table.pagination?.sortDirection || 'asc';
+            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
+            onSort?.(columnId, nextDir);
+        } else {
+            handleClientSort(columnId);
+        }
+    };
+
     const filteredRows = useMemo(() => {
+        if (isServerSearch) {
+            return config.table.rows.filter((row) => {
+                return config.table.filters.every((filter) => {
+                    const selectedValue = filters[filter.id];
+                    if (!selectedValue || selectedValue === 'all' || !filter.rowKey) {
+                        return true;
+                    }
+                    return row[filter.rowKey] === selectedValue;
+                });
+            });
+        }
+
         const normalizedKeyword = keyword.trim().toLowerCase();
 
         return config.table.rows.filter((row) => {
@@ -47,9 +83,10 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                     .includes(normalizedKeyword),
             );
         });
-    }, [config.table.filters, config.table.rows, filters, keyword]);
+    }, [isServerSearch, config.table.filters, config.table.rows, filters, keyword]);
 
-    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -73,7 +110,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                     widthClassName: 'sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
-                pageValue={sortedRows.length.toLocaleString('id-ID')}
+                pageValue={config.table.total ? config.table.total.toLocaleString('id-ID') : sortedRows.length.toLocaleString('id-ID')}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
@@ -89,32 +126,34 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                         })
                     }
                     getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
-                                            renderHeaderCell={(column) => {
-                            const sortable = column.sortable !== false;
-                            const direction = sortKey === column.id ? sortDir : null;
-                            const justifyClass = column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start';
+                    renderHeaderCell={(column) => {
+                        const sortable = column.sortable !== false;
+                        const activeKey = isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy) : sortKey;
+                        const activeDir = isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection) : sortDir;
+                        const direction = activeKey === column.id ? activeDir : null;
+                        const justifyClass = column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start';
 
-                            if (!sortable) {
-                                return <span className="block truncate">{column.label}</span>;
-                            }
+                        if (!sortable) {
+                            return <span className="block truncate">{column.label}</span>;
+                        }
 
-                            return (
-                                <button
-                                    type="button"
-                                    onClick={() => handleSort(column.id)}
-                                    className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${justifyClass}`}
-                                >
-                                    <span className="block whitespace-nowrap truncate min-w-0 flex-1 text-left">{column.label}</span>
-                                    {direction === 'asc' ? (
-                                        <ChevronUp className="h-3.5 w-3.5 shrink-0 text-white" />
-                                    ) : direction === 'desc' ? (
-                                        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-white" />
-                                    ) : (
-                                        <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-white opacity-40" />
-                                    )}
-                                </button>
-                            );
-                        }}
+                        return (
+                            <button
+                                type="button"
+                                onClick={() => handleSortClick(column.id)}
+                                className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${justifyClass}`}
+                            >
+                                <span className="block whitespace-nowrap truncate min-w-0 flex-1 text-left">{column.label}</span>
+                                {direction === 'asc' ? (
+                                    <ChevronUp className="h-3.5 w-3.5 shrink-0 text-white" />
+                                ) : direction === 'desc' ? (
+                                    <ChevronDown className="h-3.5 w-3.5 shrink-0 text-white" />
+                                ) : (
+                                    <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-white/50" />
+                                )}
+                            </button>
+                        );
+                    }}
                     renderCell={({ row, column }) => {
                         if (column.id === 'code') {
                             return (

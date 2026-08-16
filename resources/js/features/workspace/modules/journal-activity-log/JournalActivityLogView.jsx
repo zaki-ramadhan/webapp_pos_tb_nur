@@ -12,13 +12,7 @@ export default function JournalActivityLogView({ page, activeLevel2Tab, onOpenDe
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'journal-activity-logs',
         initialPerPage: 25,
@@ -37,23 +31,14 @@ export default function JournalActivityLogView({ page, activeLevel2Tab, onOpenDe
                 refreshLabel: page.journalActivityLog?.table?.refreshLabel || 'Muat ulang',
                 emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
                 onRefresh: reload,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+                ...serverTableProps,
             },
             rowMap: mappedRows.reduce((result, row) => {
                 result[row.id] = row;
                 return result;
             }, {}),
         }),
-        [error, loading, mappedRows, page.journalActivityLog, reload, total],
+        [error, loading, mappedRows, page.journalActivityLog, reload, total, serverTableProps],
     );
 
     return activeLevel2Tab?.tabType === 'detail' ? (

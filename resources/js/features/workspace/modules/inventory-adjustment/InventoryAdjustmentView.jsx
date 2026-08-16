@@ -35,7 +35,12 @@ export default function InventoryAdjustmentView({
         setPerPage,
         lastPage,
         from,
-        to
+        to,
+        search,
+        setSearch,
+        sortBy,
+        sortDirection,
+        setSort,
     } = useBackendIndexResource({
         resource: backendConfig?.resource,
         initialPerPage: 25,
@@ -76,7 +81,7 @@ export default function InventoryAdjustmentView({
                 return d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
             };
 
-            const dynamicFilters = (baseConfig.table.filters ?? []).map(f => {
+            const dynamicFilters = (baseConfig.table?.filters ?? []).map(f => {
                 if (f.id === 'date') {
                     return {
                         ...f,
@@ -138,20 +143,11 @@ export default function InventoryAdjustmentView({
                     createLabel: baseConfig.table.createLabel || 'Tambah Penyesuaian',
                     emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
                     onRefresh: reload,
-                    pagination: {
-                        page: currentPage,
-                        perPage,
-                        total,
-                        lastPage,
-                        from,
-                        to,
-                        onPageChange: setPage,
-                        onPerPageChange: setPerPage,
-                    },
+                    ...serverTableProps,
                 },
             };
         },
-        [backendConfig, error, loading, pageConfig, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage],
+        [backendConfig, error, loading, pageConfig, reload, rows, total, isPriceAdjustment, serverTableProps],
     );
     const resolvedBuildRecord = useMemo(
         () => (row = {}) => {

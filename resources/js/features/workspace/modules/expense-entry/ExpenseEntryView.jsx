@@ -16,13 +16,7 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Ta
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
+        serverTableProps,
     } = useBackendIndexResource({
         resource: 'expense-entries',
         initialPerPage: 25,
@@ -45,22 +39,13 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Ta
                 rows: mappedRows,
                 filters: buildExpenseEntryFilters(tableConfig.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
                 emptyLabel: loading ? 'Memuat data...' : (error || tableConfig.emptyLabel || 'Tidak ada data'),
                 refreshLabel: tableConfig.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
+                ...serverTableProps,
             },
         };
-    }, [error, loading, page, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
+    }, [page, rows, total, loading, error, reload, serverTableProps]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

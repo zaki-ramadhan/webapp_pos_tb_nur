@@ -19,7 +19,10 @@ import {
 import { TransferTableFilterBar } from './BankTransferSections';
 
 export default function BankTransferTableView({ config, onCreate, onOpenDetail }) {
-    const [keyword, setKeyword] = useState('');
+    const isServerSearch = Boolean(config.table.onSearch || config.table.pagination?.onSearch);
+    const isServerSort = Boolean(config.table.onSort || config.table.pagination?.onSort);
+
+    const [keyword, setKeyword] = useState(config.table.search ?? config.table.pagination?.search ?? '');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
             result[filter.id] = filter.options[0]?.value ?? 'all';
@@ -27,7 +30,39 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
         }, {}),
     );
 
+    useEffect(() => {
+        if (!isServerSearch) return;
+        const timer = setTimeout(() => {
+            const onSearch = config.table.onSearch || config.table.pagination?.onSearch;
+            onSearch?.(keyword);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [keyword, isServerSearch, config.table.onSearch, config.table.pagination?.onSearch]);
+
+    const handleSortClick = (columnId) => {
+        if (columnId === '__no') return;
+        if (isServerSort) {
+            const onSort = config.table.onSort || config.table.pagination?.onSort;
+            const currentKey = config.table.sortBy || config.table.pagination?.sortBy;
+            const currentDir = config.table.sortDirection || config.table.pagination?.sortDirection || 'asc';
+            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
+            onSort?.(columnId, nextDir);
+        } else {
+            handleClientSort(columnId);
+        }
+    };
+
     const filteredRows = useMemo(() => {
+        if (isServerSearch) {
+            return config.table.rows.filter((row) => {
+                return config.table.filters.every((filter) => {
+                    const selectedValue = filters[filter.id];
+                    if (!selectedValue || selectedValue === 'all') return true;
+                    return row[filter.rowKey] === selectedValue;
+                });
+            });
+        }
+
         const normalizedKeyword = keyword.trim().toLowerCase();
 
         return config.table.rows.filter((row) => {
@@ -40,39 +75,30 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
             if (!matchesFilters) return false;
             if (!normalizedKeyword) return true;
 
-          // Search across all meaningful text columns
-
             const searchFields = ['number', 'date', 'fromBank', 'toBank', 'description', 'purchasePayment', 'fromTotal', 'toTotal'];
             return searchFields.some((field) =>
                 String(row[field] ?? '').toLowerCase().includes(normalizedKeyword),
             );
         });
-    }, [config.table.filters, config.table.rows, filters, keyword]);
+    }, [isServerSearch, config.table.filters, config.table.rows, filters, keyword]);
 
-    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
-
-  // Inject row-number column at the front
+    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
 
     const columnsWithNo = useMemo(() => {
-        if (filteredRows.length === 0) {
-            return config.table.columns;
-        }
         return [
-            { id: '__no', label: 'No.', widthClassName: 'w-px' },
+            { id: '__no', label: 'No.', widthClassName: 'w-px', sortable: false },
             ...config.table.columns,
         ];
-    }, [config.table.columns, filteredRows.length]);
-
-    
+    }, [config.table.columns]);
 
     const rowsWithNo = useMemo(() => {
-        const { page = 1, perPage = 25 } = config.table.pagination ?? {};
-        const offset = (page - 1) * perPage;
-        return filteredRows.map((row, index) => ({
+        const { from = 1 } = config.table.pagination ?? {};
+        return sortedRows.map((row, index) => ({
             ...row,
-            __no: offset + index + 1,
+            __no: from + index,
         }));
-    }, [filteredRows, config.table.pagination]);
+    }, [sortedRows, config.table.pagination]);
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -99,7 +125,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                     widthClassName: 'sm:w-[342px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
-                pageValue={sortedRows.length.toLocaleString('id-ID')}
+                pageValue={config.table.total ? config.table.total.toLocaleString('id-ID') : sortedRows.length.toLocaleString('id-ID')}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
@@ -111,32 +137,34 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                     minWidthClassName="min-w-[1280px]"
                     onRowClick={(row) => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                     getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
-                                            renderHeaderCell={(column) => {
-                            const sortable = column.sortable !== false;
-                            const direction = sortKey === column.id ? sortDir : null;
-                            const justifyClass = column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start';
+                    renderHeaderCell={(column) => {
+                        const sortable = column.sortable !== false && column.id !== '__no';
+                        const activeKey = isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy) : sortKey;
+                        const activeDir = isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection) : sortDir;
+                        const direction = activeKey === column.id ? activeDir : null;
+                        const justifyClass = column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start';
 
-                            if (!sortable) {
-                                return <span className="block truncate">{column.label}</span>;
-                            }
+                        if (!sortable) {
+                            return <span className="block truncate">{column.label}</span>;
+                        }
 
-                            return (
-                                <button
-                                    type="button"
-                                    onClick={() => handleSort(column.id)}
-                                    className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${justifyClass}`}
-                                >
-                                    <span className="block whitespace-nowrap truncate min-w-0 flex-1 text-left">{column.label}</span>
-                                    {direction === 'asc' ? (
-                                        <ChevronUp className="h-3.5 w-3.5 shrink-0 text-white" />
-                                    ) : direction === 'desc' ? (
-                                        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-white" />
-                                    ) : (
-                                        <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-white opacity-40" />
-                                    )}
-                                </button>
-                            );
-                        }}
+                        return (
+                            <button
+                                type="button"
+                                onClick={() => handleSortClick(column.id)}
+                                className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${justifyClass}`}
+                            >
+                                <span className="block whitespace-nowrap truncate min-w-0 flex-1 text-left">{column.label}</span>
+                                {direction === 'asc' ? (
+                                    <ChevronUp className="h-3.5 w-3.5 shrink-0 text-white" />
+                                ) : direction === 'desc' ? (
+                                    <ChevronDown className="h-3.5 w-3.5 shrink-0 text-white" />
+                                ) : (
+                                    <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-white/50" />
+                                )}
+                            </button>
+                        );
+                    }}
                 />
             </div>
 

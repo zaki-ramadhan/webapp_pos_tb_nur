@@ -19,16 +19,7 @@ export default function UsersManagementView({ page, mode, activeLevel2Tab, level
         emptyLabel: usersResource.error || page.table?.emptyLabel || 'Tidak ada data',
         refreshLabel: page.table?.refreshLabel || 'Muat ulang',
         onRefresh: usersResource.reload,
-        pagination: {
-            page: usersResource.page,
-            perPage: usersResource.perPage,
-            total: usersResource.total,
-            lastPage: usersResource.lastPage,
-            from: usersResource.from,
-            to: usersResource.to,
-            onPageChange: usersResource.setPage,
-            onPerPageChange: usersResource.setPerPage,
-        },
+        ...usersResource.serverTableProps,
     }), [usersResource, page.table]);
 
     const lookupData = useMemo(() => ({

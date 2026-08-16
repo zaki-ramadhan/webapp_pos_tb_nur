@@ -13,13 +13,7 @@ export default function SimpleMasterView({ page, mode, activeLevel2Tab, level2Ta
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to,
+        serverTableProps,
     } = useBackendIndexResource({
         resource: backendConfig?.resource,
         initialPerPage: 25,
@@ -72,19 +66,10 @@ export default function SimpleMasterView({ page, mode, activeLevel2Tab, level2Ta
                 refreshLabel: page.table?.refreshLabel || 'Muat ulang',
                 emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
                 onRefresh: reload,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+                ...serverTableProps,
             },
         };
-    }, [backendConfig, error, loading, page, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [backendConfig, error, loading, page, reload, rows, total, serverTableProps]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 
