@@ -81,18 +81,18 @@ class TransactionDataSeeder extends Seeder
         DB::table('inventory_batches')->truncate();
         $allProducts = DB::table('products')->get();
         foreach ($allProducts as $p) {
-            $remaining = 420;
+            $remaining = 4500;
             if ($p->code === 'BTA-001') {
-                $remaining = 150;
+                $remaining = 1500;
             } elseif ($p->code === 'KBL-002') {
-                $remaining = 2;
+                $remaining = 50;
             }
 
             DB::table('inventory_batches')->insert([
                 'product_id' => $p->id,
                 'warehouse_id' => $warehouseId,
                 'entry_date' => '2025-01-02 08:00:00',
-                'qty_received' => 1000,
+                'qty_received' => 15000,
                 'qty_remaining' => $remaining,
                 'unit_cost' => $p->default_purchase_price,
                 'source_type' => 'opening_balance',
@@ -300,15 +300,10 @@ class TransactionDataSeeder extends Seeder
             $growthMultiplier = ($year === 2026) ? 1.18 : 1.00;
 
             for ($m = 1; $m <= $maxMonth; $m++) {
-                $invoicesThisMonth = 6;
+                $invoicesThisMonth = ($year === 2026 && $m === 8) ? 18 : 6;
                 for ($k = 1; $k <= $invoicesThisMonth; $k++) {
                     $invoiceSeq++;
-                    if ($year === 2026 && $m === 8) {
-                        $augDays = [1 => 2, 2 => 3, 3 => 5, 4 => 6, 5 => 8, 6 => 9];
-                        $defaultDay = $augDays[$k] ?? 9;
-                    } else {
-                        $defaultDay = 4 * $k;
-                    }
+                    $defaultDay = ($year === 2026 && $m === 8) ? $k : (4 * $k);
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $defaultDay);
                     $dt = Carbon::parse($entryDate);
 
@@ -437,45 +432,54 @@ class TransactionDataSeeder extends Seeder
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $receiptSeq++;
-                $entryDate = $buildEntryDate($year, $m, 14);
-                $dt = Carbon::parse($entryDate);
-                $payAmount = 1250000;
-                $refSi = $siIds[$receiptSeq] ?? null;
-                $refDocNo = is_array($refSi) ? $refSi['number'] : sprintf('FP.%04d.%02d.0001', $year, $m);
-                $refSiId = is_array($refSi) ? $refSi['id'] : $refSi;
+                $rcCountThisMonth = ($year === 2026 && $m === 8) ? 6 : 1;
+                for ($rcK = 1; $rcK <= $rcCountThisMonth; $rcK++) {
+                    $receiptSeq++;
+                    if ($year === 2026 && $m === 8) {
+                        $augRcDays = [1 => 5, 2 => 8, 3 => 11, 4 => 14, 5 => 17, 6 => 18];
+                        $rcDay = $augRcDays[$rcK] ?? 18;
+                    } else {
+                        $rcDay = 14;
+                    }
+                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $rcDay);
+                    $dt = Carbon::parse($entryDate);
+                    $payAmount = 1250000 + (($receiptSeq % 4) * 250000);
+                    $refSi = $siIds[$receiptSeq] ?? null;
+                    $refDocNo = is_array($refSi) ? $refSi['number'] : sprintf('FP.%04d.%02d.%04d', $year, $m, $rcK);
+                    $refSiId = is_array($refSi) ? $refSi['id'] : $refSi;
 
-                $docId = DB::table('operation_documents')->insertGetId([
-                    'document_type' => 'sales_receipt',
-                    'branch_id' => $branchId,
-                    'customer_id' => ($receiptSeq % 5 === 0) ? $c5 : (($receiptSeq % 4 === 0) ? $c4 : (($receiptSeq % 3 === 0) ? $c3 : (($receiptSeq % 2 === 0) ? $c2 : $c1))),
-                    'currency_id' => $currencyId,
-                    'primary_account_id' => $accKasKecil,
-                    'related_document_id' => $refSiId,
-                    'document_number' => sprintf('KW.%04d.%02d.0001', $year, $m),
-                    'status' => 'Lunas',
-                    'payment_method' => 'Kas',
-                    'entry_date' => $entryDate,
-                    'subtotal' => $payAmount,
-                    'total_amount' => $payAmount,
-                    'paid_amount' => $payAmount,
-                    'is_closed' => true,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                    $docId = DB::table('operation_documents')->insertGetId([
+                        'document_type' => 'sales_receipt',
+                        'branch_id' => $branchId,
+                        'customer_id' => ($receiptSeq % 5 === 0) ? $c5 : (($receiptSeq % 4 === 0) ? $c4 : (($receiptSeq % 3 === 0) ? $c3 : (($receiptSeq % 2 === 0) ? $c2 : $c1))),
+                        'currency_id' => $currencyId,
+                        'primary_account_id' => $accKasKecil,
+                        'related_document_id' => $refSiId,
+                        'document_number' => sprintf('KW.%04d.%02d.%04d', $year, $m, $rcK),
+                        'status' => 'Lunas',
+                        'payment_method' => 'Kas',
+                        'entry_date' => $entryDate,
+                        'subtotal' => $payAmount,
+                        'total_amount' => $payAmount,
+                        'paid_amount' => $payAmount,
+                        'is_closed' => true,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
 
-                DB::table('operation_document_lines')->insert([
-                    'operation_document_id' => $docId,
-                    'line_type' => 'sales_receipt',
-                    'description' => $refDocNo,
-                    'reference_code' => $refDocNo,
-                    'quantity' => 1,
-                    'unit_price' => $payAmount,
-                    'total_amount' => $payAmount,
-                    'sort_order' => 1,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                    DB::table('operation_document_lines')->insert([
+                        'operation_document_id' => $docId,
+                        'line_type' => 'sales_receipt',
+                        'description' => $refDocNo,
+                        'reference_code' => $refDocNo,
+                        'quantity' => 1,
+                        'unit_price' => $payAmount,
+                        'total_amount' => $payAmount,
+                        'sort_order' => 1,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
+                }
             }
         }
 
@@ -544,64 +548,73 @@ class TransactionDataSeeder extends Seeder
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $piSeq++;
-                $entryDate = $buildEntryDate($year, $m, 8);
-                $dt = Carbon::parse($entryDate);
-                $isPaid = ($piSeq % 3 !== 0);
-                $docNo = sprintf('FB.%04d.%02d.0001', $year, $m);
-                $supplierPool = [$s1, $s4, $s2, $s3, $s5, $s6, $s7, $s8];
-                $supplierId = $supplierPool[($piSeq - 1) % count($supplierPool)];
-                $supplierBillNo = match ($supplierId) {
-                    $s1 => sprintf('INV/NMP/%04d/%02d/%04d', $year, $m, 1000 + $piSeq),
-                    $s2 => sprintf('SIB/INV/%04d-%02d%02d', $year, $m, $piSeq),
-                    $s3 => sprintf('CUI/FAK/%02d/%04d/%03d', $m, $year, $piSeq),
-                    $s4 => sprintf('MBP-INV-%04d%02d-%03d', $year, $m, $piSeq),
-                    $s5 => sprintf('GIAS/PB/%04d/%02d/%03d', $year, $m, $piSeq),
-                    $s6 => sprintf('PBA-NOTA-%04d%02d%02d', $year, $m, $piSeq),
-                    $s7 => sprintf('PRI/INV/%04d/%02d/%03d', $year, $m, $piSeq),
-                    $s8 => sprintf('RKM-INV-%02d%02d-%03d', substr((string)$year, -2), $m, $piSeq),
-                    default => sprintf('INV-SUP-%04d%02d-%03d', $year, $m, $piSeq),
-                };
+                $piCountThisMonth = ($year === 2026 && $m === 8) ? 6 : 1;
+                for ($piK = 1; $piK <= $piCountThisMonth; $piK++) {
+                    $piSeq++;
+                    if ($year === 2026 && $m === 8) {
+                        $augPiDays = [1 => 4, 2 => 8, 3 => 11, 4 => 14, 5 => 17, 6 => 18];
+                        $piDay = $augPiDays[$piK] ?? 18;
+                    } else {
+                        $piDay = 8;
+                    }
+                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $piDay);
+                    $dt = Carbon::parse($entryDate);
+                    $isPaid = ($piSeq % 3 !== 0);
+                    $docNo = sprintf('FB.%04d.%02d.%04d', $year, $m, $piK);
+                    $supplierPool = [$s1, $s4, $s2, $s3, $s5, $s6, $s7, $s8];
+                    $supplierId = $supplierPool[($piSeq - 1) % count($supplierPool)];
+                    $supplierBillNo = match ($supplierId) {
+                        $s1 => sprintf('INV/NMP/%04d/%02d/%04d', $year, $m, 1000 + $piSeq),
+                        $s2 => sprintf('SIB/INV/%04d-%02d%02d', $year, $m, $piSeq),
+                        $s3 => sprintf('CUI/FAK/%02d/%04d/%03d', $m, $year, $piSeq),
+                        $s4 => sprintf('MBP-INV-%04d%02d-%03d', $year, $m, $piSeq),
+                        $s5 => sprintf('GIAS/PB/%04d/%02d/%03d', $year, $m, $piSeq),
+                        $s6 => sprintf('PBA-NOTA-%04d%02d%02d', $year, $m, $piSeq),
+                        $s7 => sprintf('PRI/INV/%04d/%02d/%03d', $year, $m, $piSeq),
+                        $s8 => sprintf('RKM-INV-%02d%02d-%03d', (int) substr((string) $year, -2), $m, $piSeq),
+                        default => sprintf('INV-SUP-%04d%02d-%03d', $year, $m, $piSeq),
+                    };
 
-                $docId = DB::table('operation_documents')->insertGetId([
-                    'document_type' => 'purchase_invoice',
-                    'branch_id' => $branchId,
-                    'warehouse_id' => $warehouseId,
-                    'supplier_id' => $supplierId,
-                    'currency_id' => $currencyId,
-                    'responsible_user_id' => $userAdminId,
-                    'document_number' => $docNo,
-                    'reference_number' => $supplierBillNo,
-                    'status' => $isPaid ? 'Lunas' : 'Belum Lunas',
-                    'entry_date' => $entryDate,
-                    'due_date' => $isPaid ? null : date('Y-m-d', strtotime($entryDate . ' + 30 days')),
-                    'subtotal' => 0,
-                    'discount_total' => 0,
-                    'tax_total' => 0,
-                    'total_amount' => 0,
-                    'paid_amount' => 0,
-                    'outstanding_amount' => 0,
-                    'is_closed' => true,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
-                $piIds[$piSeq] = ['id' => $docId, 'number' => $docNo];
+                    $docId = DB::table('operation_documents')->insertGetId([
+                        'document_type' => 'purchase_invoice',
+                        'branch_id' => $branchId,
+                        'warehouse_id' => $warehouseId,
+                        'supplier_id' => $supplierId,
+                        'currency_id' => $currencyId,
+                        'responsible_user_id' => $userAdminId,
+                        'document_number' => $docNo,
+                        'reference_number' => $supplierBillNo,
+                        'status' => $isPaid ? 'Lunas' : 'Belum Lunas',
+                        'entry_date' => $entryDate,
+                        'due_date' => $isPaid ? null : date('Y-m-d', strtotime($entryDate . ' + 30 days')),
+                        'subtotal' => 0,
+                        'discount_total' => 0,
+                        'tax_total' => 0,
+                        'total_amount' => 0,
+                        'paid_amount' => 0,
+                        'outstanding_amount' => 0,
+                        'is_closed' => true,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
+                    $piIds[$piSeq] = ['id' => $docId, 'number' => $docNo];
 
-                if ($year === 2025) {
-                    $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 40 + ($m % 3), 75000, $dt);
-                    $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 600, 800, $dt);
-                } else {
-                    $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 62 + ($m % 4), 75000, $dt);
-                    $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 1000, 800, $dt);
+                    if ($year === 2025) {
+                        $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 40 + ($m % 3), 75000, $dt);
+                        $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 600, 800, $dt);
+                    } else {
+                        $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 62 + ($m % 4), 75000, $dt);
+                        $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 1000, 800, $dt);
+                    }
+                    $subtotal = $t1 + $t2;
+
+                    DB::table('operation_documents')->where('id', $docId)->update([
+                        'subtotal' => $subtotal,
+                        'total_amount' => $subtotal,
+                        'paid_amount' => $isPaid ? $subtotal : 0,
+                        'outstanding_amount' => $isPaid ? 0 : $subtotal,
+                    ]);
                 }
-                $subtotal = $t1 + $t2;
-
-                DB::table('operation_documents')->where('id', $docId)->update([
-                    'subtotal' => $subtotal,
-                    'total_amount' => $subtotal,
-                    'paid_amount' => $isPaid ? $subtotal : 0,
-                    'outstanding_amount' => $isPaid ? 0 : $subtotal,
-                ]);
             }
         }
 
@@ -642,45 +655,54 @@ class TransactionDataSeeder extends Seeder
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $pySeq++;
-                $entryDate = $buildEntryDate($year, $m, 14);
-                $dt = Carbon::parse($entryDate);
-                $payAmount = 4500000;
-                $refPi = $piIds[$pySeq] ?? null;
-                $refDocNo = is_array($refPi) ? $refPi['number'] : sprintf('FB.%04d.%02d.0001', $year, $m);
-                $refPiId = is_array($refPi) ? $refPi['id'] : $refPi;
+                $pyCountThisMonth = ($year === 2026 && $m === 8) ? 4 : 1;
+                for ($pyK = 1; $pyK <= $pyCountThisMonth; $pyK++) {
+                    $pySeq++;
+                    if ($year === 2026 && $m === 8) {
+                        $augPyDays = [1 => 8, 2 => 12, 3 => 16, 4 => 18];
+                        $pyDay = $augPyDays[$pyK] ?? 18;
+                    } else {
+                        $pyDay = 14;
+                    }
+                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $pyDay);
+                    $dt = Carbon::parse($entryDate);
+                    $payAmount = 4500000;
+                    $refPi = $piIds[$pySeq] ?? null;
+                    $refDocNo = is_array($refPi) ? $refPi['number'] : sprintf('FB.%04d.%02d.%04d', $year, $m, $pyK);
+                    $refPiId = is_array($refPi) ? $refPi['id'] : $refPi;
 
-                $docId = DB::table('operation_documents')->insertGetId([
-                    'document_type' => 'purchase_payment',
-                    'branch_id' => $branchId,
-                    'supplier_id' => $s1,
-                    'currency_id' => $currencyId,
-                    'primary_account_id' => $accBankMnd,
-                    'related_document_id' => $refPiId,
-                    'document_number' => sprintf('BYB.%04d.%02d.0001', $year, $m),
-                    'status' => 'Posted',
-                    'payment_method' => 'Transfer Bank',
-                    'entry_date' => $entryDate,
-                    'subtotal' => $payAmount,
-                    'total_amount' => $payAmount,
-                    'paid_amount' => $payAmount,
-                    'is_closed' => true,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                    $docId = DB::table('operation_documents')->insertGetId([
+                        'document_type' => 'purchase_payment',
+                        'branch_id' => $branchId,
+                        'supplier_id' => $s1,
+                        'currency_id' => $currencyId,
+                        'primary_account_id' => $accBankMnd,
+                        'related_document_id' => $refPiId,
+                        'document_number' => sprintf('BYB.%04d.%02d.%04d', $year, $m, $pyK),
+                        'status' => 'Posted',
+                        'payment_method' => 'Transfer Bank',
+                        'entry_date' => $entryDate,
+                        'subtotal' => $payAmount,
+                        'total_amount' => $payAmount,
+                        'paid_amount' => $payAmount,
+                        'is_closed' => true,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
 
-                DB::table('operation_document_lines')->insert([
-                    'operation_document_id' => $docId,
-                    'line_type' => 'purchase_payment',
-                    'description' => $refDocNo,
-                    'reference_code' => $refDocNo,
-                    'quantity' => 1,
-                    'unit_price' => $payAmount,
-                    'total_amount' => $payAmount,
-                    'sort_order' => 1,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                    DB::table('operation_document_lines')->insert([
+                        'operation_document_id' => $docId,
+                        'line_type' => 'purchase_payment',
+                        'description' => $refDocNo,
+                        'reference_code' => $refDocNo,
+                        'quantity' => 1,
+                        'unit_price' => $payAmount,
+                        'total_amount' => $payAmount,
+                        'sort_order' => 1,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
+                }
             }
         }
 
@@ -785,38 +807,47 @@ class TransactionDataSeeder extends Seeder
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $cpSeq++;
-                $entryDate = $buildEntryDate($year, $m, 10);
-                $dt = Carbon::parse($entryDate);
-                $docId = DB::table('operation_documents')->insertGetId([
-                    'document_type' => 'cash_payment',
-                    'branch_id' => $branchId,
-                    'currency_id' => $currencyId,
-                    'primary_account_id' => $accKasKecil,
-                    'document_number' => sprintf('KK.%04d.%02d.0001', $year, $m),
-                    'status' => 'Posted',
-                    'entry_date' => $entryDate,
-                    'subtotal' => 200000,
-                    'total_amount' => 200000,
-                    'notes' => 'Pembelian perlengkapan toko',
-                    'is_closed' => true,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                $cpCountThisMonth = ($year === 2026 && $m === 8) ? 4 : 1;
+                for ($cpK = 1; $cpK <= $cpCountThisMonth; $cpK++) {
+                    $cpSeq++;
+                    if ($year === 2026 && $m === 8) {
+                        $augCpDays = [1 => 6, 2 => 12, 3 => 17, 4 => 18];
+                        $cpDay = $augCpDays[$cpK] ?? 18;
+                    } else {
+                        $cpDay = 10;
+                    }
+                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $cpDay);
+                    $dt = Carbon::parse($entryDate);
+                    $docId = DB::table('operation_documents')->insertGetId([
+                        'document_type' => 'cash_payment',
+                        'branch_id' => $branchId,
+                        'currency_id' => $currencyId,
+                        'primary_account_id' => $accKasKecil,
+                        'document_number' => sprintf('KK.%04d.%02d.%04d', $year, $m, $cpK),
+                        'status' => 'Posted',
+                        'entry_date' => $entryDate,
+                        'subtotal' => 200000 + (($cpSeq % 3) * 50000),
+                        'total_amount' => 200000 + (($cpSeq % 3) * 50000),
+                        'notes' => 'Pembelian perlengkapan toko dan operasional',
+                        'is_closed' => true,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
 
-                DB::table('operation_document_lines')->insert([
-                    'operation_document_id' => $docId,
-                    'line_type' => 'cash_payment',
-                    'account_id' => $accPerlengkapan,
-                    'description' => 'Pembelian perlengkapan toko',
-                    'reference_code' => '120101',
-                    'quantity' => 1,
-                    'unit_price' => 200000,
-                    'total_amount' => 200000,
-                    'sort_order' => 1,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                    DB::table('operation_document_lines')->insert([
+                        'operation_document_id' => $docId,
+                        'line_type' => 'cash_payment',
+                        'account_id' => $accPerlengkapan,
+                        'description' => 'Pembelian perlengkapan toko dan operasional',
+                        'reference_code' => '120101',
+                        'quantity' => 1,
+                        'unit_price' => 200000 + (($cpSeq % 3) * 50000),
+                        'total_amount' => 200000 + (($cpSeq % 3) * 50000),
+                        'sort_order' => 1,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
+                }
             }
         }
 
@@ -826,38 +857,47 @@ class TransactionDataSeeder extends Seeder
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $crSeq++;
-                $entryDate = $buildEntryDate($year, $m, 11);
-                $dt = Carbon::parse($entryDate);
-                $docId = DB::table('operation_documents')->insertGetId([
-                    'document_type' => 'cash_receipt',
-                    'branch_id' => $branchId,
-                    'currency_id' => $currencyId,
-                    'primary_account_id' => $accKasKecil,
-                    'document_number' => sprintf('KM.%04d.%02d.0001', $year, $m),
-                    'status' => 'Posted',
-                    'entry_date' => $entryDate,
-                    'subtotal' => 300000,
-                    'total_amount' => 300000,
-                    'notes' => 'Penerimaan kas pendapatan lain-lain toko',
-                    'is_closed' => true,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                $crCountThisMonth = ($year === 2026 && $m === 8) ? 4 : 1;
+                for ($crK = 1; $crK <= $crCountThisMonth; $crK++) {
+                    $crSeq++;
+                    if ($year === 2026 && $m === 8) {
+                        $augCrDays = [1 => 5, 2 => 11, 3 => 16, 4 => 18];
+                        $crDay = $augCrDays[$crK] ?? 18;
+                    } else {
+                        $crDay = 11;
+                    }
+                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $crDay);
+                    $dt = Carbon::parse($entryDate);
+                    $docId = DB::table('operation_documents')->insertGetId([
+                        'document_type' => 'cash_receipt',
+                        'branch_id' => $branchId,
+                        'currency_id' => $currencyId,
+                        'primary_account_id' => $accKasKecil,
+                        'document_number' => sprintf('KM.%04d.%02d.%04d', $year, $m, $crK),
+                        'status' => 'Posted',
+                        'entry_date' => $entryDate,
+                        'subtotal' => 300000 + (($crSeq % 3) * 100000),
+                        'total_amount' => 300000 + (($crSeq % 3) * 100000),
+                        'notes' => 'Penerimaan kas pendapatan lain-lain toko',
+                        'is_closed' => true,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
 
-                DB::table('operation_document_lines')->insert([
-                    'operation_document_id' => $docId,
-                    'line_type' => 'cash_receipt',
-                    'account_id' => $accPendapatanLain,
-                    'description' => 'Pendapatan Ongkos Kirim / Lain-Lain',
-                    'reference_code' => '410102',
-                    'quantity' => 1,
-                    'unit_price' => 300000,
-                    'total_amount' => 300000,
-                    'sort_order' => 1,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                    DB::table('operation_document_lines')->insert([
+                        'operation_document_id' => $docId,
+                        'line_type' => 'cash_receipt',
+                        'account_id' => $accPendapatanLain,
+                        'description' => 'Pendapatan Ongkos Kirim / Lain-Lain',
+                        'reference_code' => '410102',
+                        'quantity' => 1,
+                        'unit_price' => 300000 + (($crSeq % 3) * 100000),
+                        'total_amount' => 300000 + (($crSeq % 3) * 100000),
+                        'sort_order' => 1,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
+                }
             }
         }
 
@@ -866,25 +906,33 @@ class TransactionDataSeeder extends Seeder
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
-                $btSeq++;
-                $entryDate = $buildEntryDate($year, $m, 13);
-                $dt = Carbon::parse($entryDate);
-                DB::table('operation_documents')->insert([
-                    'document_type' => 'bank_transfer',
-                    'branch_id' => $branchId,
-                    'currency_id' => $currencyId,
-                    'primary_account_id' => $accBankBCA,
-                    'secondary_account_id' => $accBankMnd,
-                    'document_number' => sprintf('TB.%04d.%02d.0001', $year, $m),
-                    'status' => 'Posted',
-                    'entry_date' => $entryDate,
-                    'subtotal' => 3000000,
-                    'total_amount' => 3000000,
-                    'notes' => 'Transfer dari Bank BCA ke Bank Mandiri toko',
-                    'is_closed' => true,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                $btCountThisMonth = ($year === 2026 && $m === 8) ? 2 : 1;
+                for ($btK = 1; $btK <= $btCountThisMonth; $btK++) {
+                    $btSeq++;
+                    if ($year === 2026 && $m === 8) {
+                        $btDay = ($btK === 1) ? 10 : 17;
+                    } else {
+                        $btDay = 13;
+                    }
+                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $btDay);
+                    $dt = Carbon::parse($entryDate);
+                    DB::table('operation_documents')->insert([
+                        'document_type' => 'bank_transfer',
+                        'branch_id' => $branchId,
+                        'currency_id' => $currencyId,
+                        'primary_account_id' => $accBankBCA,
+                        'secondary_account_id' => $accBankMnd,
+                        'document_number' => sprintf('TB.%04d.%02d.%04d', $year, $m, $btK),
+                        'status' => 'Posted',
+                        'entry_date' => $entryDate,
+                        'subtotal' => 3000000,
+                        'total_amount' => 3000000,
+                        'notes' => 'Transfer dari Bank BCA ke Bank Mandiri toko',
+                        'is_closed' => true,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
+                }
             }
         }
 
@@ -893,52 +941,61 @@ class TransactionDataSeeder extends Seeder
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $gjSeq++;
-                $entryDate = $buildEntryDate($year, $m, 13);
-                $dt = Carbon::parse($entryDate);
-                $docId = DB::table('operation_documents')->insertGetId([
-                    'document_type' => 'general_journal',
-                    'branch_id' => $branchId,
-                    'warehouse_id' => $warehouseId,
-                    'responsible_user_id' => $userAdminId,
-                    'document_number' => sprintf('JU.%04d.%02d.0001', $year, $m),
-                    'reference_number' => 'REF-OPS-' . $gjSeq,
-                    'status' => 'Posted',
-                    'entry_date' => $entryDate,
-                    'subtotal' => 500000,
-                    'total_amount' => 500000,
-                    'notes' => 'Jurnal penyesuaian operasional toko',
-                    'is_closed' => true,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                $gjCountThisMonth = ($year === 2026 && $m === 8) ? 3 : 1;
+                for ($gjK = 1; $gjK <= $gjCountThisMonth; $gjK++) {
+                    $gjSeq++;
+                    if ($year === 2026 && $m === 8) {
+                        $augGjDays = [1 => 8, 2 => 14, 3 => 18];
+                        $gjDay = $augGjDays[$gjK] ?? 18;
+                    } else {
+                        $gjDay = 13;
+                    }
+                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $gjDay);
+                    $dt = Carbon::parse($entryDate);
+                    $docId = DB::table('operation_documents')->insertGetId([
+                        'document_type' => 'general_journal',
+                        'branch_id' => $branchId,
+                        'warehouse_id' => $warehouseId,
+                        'responsible_user_id' => $userAdminId,
+                        'document_number' => sprintf('JU.%04d.%02d.%04d', $year, $m, $gjK),
+                        'reference_number' => 'REF-OPS-' . $gjSeq,
+                        'status' => 'Posted',
+                        'entry_date' => $entryDate,
+                        'subtotal' => 500000,
+                        'total_amount' => 500000,
+                        'notes' => 'Jurnal penyesuaian operasional toko',
+                        'is_closed' => true,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
 
-                DB::table('operation_document_lines')->insert([
-                    'operation_document_id' => $docId,
-                    'line_type' => 'general_journal',
-                    'account_id' => $accPerlengkapan,
-                    'description' => 'Debet Perlengkapan Toko',
-                    'reference_code' => '120101',
-                    'debit_amount' => 500000,
-                    'credit_amount' => 0,
-                    'total_amount' => 500000,
-                    'sort_order' => 1,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
-                DB::table('operation_document_lines')->insert([
-                    'operation_document_id' => $docId,
-                    'line_type' => 'general_journal',
-                    'account_id' => $accKasKecil,
-                    'description' => 'Kredit Kas Kecil Toko',
-                    'reference_code' => '110101',
-                    'debit_amount' => 0,
-                    'credit_amount' => 500000,
-                    'total_amount' => 500000,
-                    'sort_order' => 2,
-                    'created_at' => $dt,
-                    'updated_at' => $dt,
-                ]);
+                    DB::table('operation_document_lines')->insert([
+                        'operation_document_id' => $docId,
+                        'line_type' => 'general_journal',
+                        'account_id' => $accPerlengkapan,
+                        'description' => 'Debet Perlengkapan Toko',
+                        'reference_code' => '120101',
+                        'debit_amount' => 500000,
+                        'credit_amount' => 0,
+                        'total_amount' => 500000,
+                        'sort_order' => 1,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
+                    DB::table('operation_document_lines')->insert([
+                        'operation_document_id' => $docId,
+                        'line_type' => 'general_journal',
+                        'account_id' => $accKasKecil,
+                        'description' => 'Kredit Kas Kecil Toko',
+                        'reference_code' => '110101',
+                        'debit_amount' => 0,
+                        'credit_amount' => 500000,
+                        'total_amount' => 500000,
+                        'sort_order' => 2,
+                        'created_at' => $dt,
+                        'updated_at' => $dt,
+                    ]);
+                }
             }
         }
 
