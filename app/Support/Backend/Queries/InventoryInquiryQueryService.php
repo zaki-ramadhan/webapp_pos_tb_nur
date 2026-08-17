@@ -69,9 +69,8 @@ class InventoryInquiryQueryService
     public function paginateItemLocations(array $filters): LengthAwarePaginator
     {
         if (
-            (filled($filters['product_id'] ?? null) && (int) $filters['product_id'] === -1) ||
-            (filled($filters['warehouse_id'] ?? null) && (int) $filters['warehouse_id'] === -1) ||
-            filter_var($filters['require_target'] ?? false, FILTER_VALIDATE_BOOLEAN)
+            filter_var($filters['require_target'] ?? false, FILTER_VALIDATE_BOOLEAN) ||
+            (!filled($filters['product_id'] ?? null) && !filled($filters['warehouse_id'] ?? null) && isset($filters['require_target']))
         ) {
             return $this->paginateRows(collect(), $filters);
         }

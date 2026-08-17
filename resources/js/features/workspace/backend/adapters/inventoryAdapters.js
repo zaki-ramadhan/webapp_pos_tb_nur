@@ -14,9 +14,7 @@ export function buildInventoryFilters(pageId, values) {
 
         if (!hasTarget) {
             return {
-                require_target: true,
-                product_id: -1,
-                warehouse_id: -1,
+                require_target: 1,
                 as_of_date: normalizeDisplayDate(values.asOfDate),
                 per_page: 100,
             };

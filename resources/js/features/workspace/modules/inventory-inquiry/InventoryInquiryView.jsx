@@ -224,14 +224,14 @@ export default function InventoryInquiryView({ config, pageId }) {
 
 
     useEffect(() => {
-        if (error && !isAccessRestricted) {
+        if (error && !isAccessRestricted && (!isItemLocation || hasTarget)) {
             showSystemErrorModal({
                 title: 'Terjadi Permasalahan pada Pemrosesan',
                 description: 'Silakan perbaiki permasalahan berikut ini:',
                 message: typeof error === 'string' ? error : (error.message || 'Terjadi kesalahan saat memuat data.'),
             });
         }
-    }, [error, isAccessRestricted]);
+    }, [error, isAccessRestricted, isItemLocation, hasTarget]);
 
     function handleButtonClick(controlId) {
         if (controlId === 'order' || controlId === 'request') {
@@ -405,7 +405,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                 </div>
             </fieldset>
 
-            {error && !isAccessRestricted ? (
+            {error && !isAccessRestricted && (!isItemLocation || hasTarget) ? (
                 <div className="mt-3 rounded-[6px] border border-danger-border bg-surface px-3 py-2 text-sm text-red-850">
                     {error}
                 </div>
@@ -491,7 +491,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                 {firstColumnIsCheckbox ? <DataTableCell className="px-2.5 py-2 text-black" /> : null}
                                 <DataTableCell
                                     colSpan={dataColumns.length + 1}
-                                    className="px-2.5 py-8 text-center text-base text-text-muted italic"
+                                    className="px-2.5 py-2 text-center text-base text-black font-normal"
                                 >
                                     {emptyMessage}
                                 </DataTableCell>
