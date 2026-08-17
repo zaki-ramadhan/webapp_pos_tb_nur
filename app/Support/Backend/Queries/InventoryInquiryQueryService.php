@@ -210,7 +210,7 @@ class InventoryInquiryQueryService
             $rows->push([
                 'id' => 'batch-' . $batch->id,
                 'warehouse_id' => (int) $batch->warehouse_id,
-                'warehouse' => $wh?->name ?? 'Gudang Utama',
+                'warehouse' => $wh?->name ?? ('Gudang #' . $batch->warehouse_id),
                 'date' => $batch->entry_date ? Carbon::parse($batch->entry_date)->format('d/m/Y') : Carbon::now()->format('d/m/Y'),
                 'quantity' => (float) $batch->qty_received,
                 'raw_quantity' => (float) $batch->qty_received,
@@ -249,10 +249,11 @@ class InventoryInquiryQueryService
                     continue;
                 }
 
+                $whId = (int) ($line->warehouse_id ?? $doc->warehouse_id ?? 1);
                 $rows->push([
                     'id' => 'op-line-' . $line->id,
-                    'warehouse_id' => (int) ($line->warehouse_id ?? $doc->warehouse_id ?? 1),
-                    'warehouse' => $wh?->name ?? 'Gudang Utama',
+                    'warehouse_id' => $whId,
+                    'warehouse' => $wh?->name ?? ('Gudang #' . $whId),
                     'date' => $doc->entry_date ? Carbon::parse($doc->entry_date)->format('d/m/Y') : ($doc->created_at ? Carbon::parse($doc->created_at)->format('d/m/Y') : Carbon::now()->format('d/m/Y')),
                     'quantity' => $qty,
                     'raw_quantity' => $qty,
@@ -288,10 +289,11 @@ class InventoryInquiryQueryService
                     continue;
                 }
 
+                $whId = (int) ($doc->warehouse_id ?? $line->warehouse_id ?? 1);
                 $rows->push([
                     'id' => 'doc-line-' . $line->id,
-                    'warehouse_id' => (int) ($doc->warehouse_id ?? $line->warehouse_id ?? 1),
-                    'warehouse' => $wh?->name ?? 'Gudang Utama',
+                    'warehouse_id' => $whId,
+                    'warehouse' => $wh?->name ?? ('Gudang #' . $whId),
                     'date' => $doc->document_date ? Carbon::parse($doc->document_date)->format('d/m/Y') : ($doc->created_at ? Carbon::parse($doc->created_at)->format('d/m/Y') : Carbon::now()->format('d/m/Y')),
                     'quantity' => $qty,
                     'raw_quantity' => $qty,
@@ -313,7 +315,7 @@ class InventoryInquiryQueryService
                     $rows->push([
                         'id' => 'loc-' . ($item['id'] ?? $item['warehouse_id']),
                         'warehouse_id' => (int) ($item['warehouse_id'] ?? 1),
-                        'warehouse' => $item['warehouse'] ?? 'Gudang Utama',
+                        'warehouse' => $item['warehouse'] ?? ('Gudang #' . ($item['warehouse_id'] ?? 1)),
                         'date' => Carbon::now()->format('d/m/Y'),
                         'quantity' => $qty,
                         'raw_quantity' => $qty,
