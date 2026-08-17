@@ -241,12 +241,14 @@ class CatalogBackendResources
                                     $warehouseName = trim((string) $stockRow['warehouse']);
                                     $warehouseId = \App\Domain\Catalog\Models\Warehouse::where('name', $warehouseName)
                                         ->orWhere('code', $warehouseName)
+                                        ->orWhere('name', 'like', '%' . $warehouseName . '%')
                                         ->value('id');
                                 }
                                 if (!$warehouseId && !empty($stockRow['warehouse_name'])) {
                                     $warehouseName = trim((string) $stockRow['warehouse_name']);
                                     $warehouseId = \App\Domain\Catalog\Models\Warehouse::where('name', $warehouseName)
                                         ->orWhere('code', $warehouseName)
+                                        ->orWhere('name', 'like', '%' . $warehouseName . '%')
                                         ->value('id');
                                 }
                                 if (!$warehouseId) {

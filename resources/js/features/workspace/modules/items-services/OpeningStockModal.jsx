@@ -7,9 +7,11 @@ import { CalendarIcon, CalculatorIcon } from '@/features/workspace/shared/Icons'
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
+import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+
 export default function OpeningStockModal({ open, onClose, onConfirm, initialUnit = [], initialUnitCost = '' }) {
     const [activeTab, setActiveTab] = useState('details');
-    const [warehouse, setWarehouse] = useState([{ name: 'Utama' }]);
+    const [warehouse, setWarehouse] = useState([{ id: 1, name: 'Gudang Utama' }]);
     const [date, setDate] = useState(buildTodayDisplayDate());
     const [quantity, setQuantity] = useState('1');
     const [unit, setUnit] = useState(initialUnit);
@@ -22,7 +24,20 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
 
     useEffect(() => {
         if (open) {
-            setWarehouse([{ name: 'Utama' }]);
+            listBackendResource('warehouses', { per_page: 10 })
+                .then((res) => {
+                    const rows = extractBackendRows(res);
+                    const defaultWh = rows.find((r) => r.is_active !== false) || rows[0];
+                    if (defaultWh) {
+                        setWarehouse([{ id: defaultWh.id, name: defaultWh.name }]);
+                    } else {
+                        setWarehouse([{ id: 1, name: 'Gudang Utama' }]);
+                    }
+                })
+                .catch(() => {
+                    setWarehouse([{ id: 1, name: 'Gudang Utama' }]);
+                });
+
             setDate(buildTodayDisplayDate());
             setQuantity('1');
             setUnit(initialUnit);
