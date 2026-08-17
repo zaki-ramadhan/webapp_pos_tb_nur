@@ -57,33 +57,6 @@ export default function DashboardWidgetGrid({
             }
 
             setDisplayWidgets(currentList);
-
-            // Restore saved dates per widget across page refreshes
-            try {
-                const savedDatesJson = localStorage.getItem('pos_tb_nur_widget_dates');
-                if (savedDatesJson) {
-                    const datesMap = JSON.parse(savedDatesJson);
-                    if (datesMap && typeof datesMap === 'object') {
-                        Object.entries(datesMap).forEach(([wId, savedDate]) => {
-                            if (savedDate) {
-                                fetch(`/api/workspace/dashboard/widget-data?widget_id=${wId}&as_of_date=${savedDate}`, {
-                                    headers: {
-                                        'Accept': 'application/json',
-                                        'X-Requested-With': 'XMLHttpRequest',
-                                    },
-                                })
-                                    .then((res) => (res.ok ? res.json() : null))
-                                    .then((data) => {
-                                        if (data?.widget && data?.widgetId) {
-                                            window.dispatchEvent(new CustomEvent('pos:update-single-widget', { detail: data }));
-                                        }
-                                    })
-                                    .catch(() => {});
-                            }
-                        });
-                    }
-                }
-            } catch (e) {}
         }
     }, [widgets]);
 
