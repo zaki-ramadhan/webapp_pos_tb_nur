@@ -25,8 +25,26 @@ export function useWorkspaceFormDraftState({
             onSync?.(initialValues);
         } else if (initialValuesChanged && !hasUserEditedRef.current) {
             prevInitialValues.current = initialValues;
-            setValues(initialValues);
-            setSavedSnapshot(initialValues);
+            setValues((prev) => {
+                const preserved = {};
+                if (Array.isArray(prev.openingStockRows) && prev.openingStockRows.length > 0 && (!initialValues.openingStockRows || initialValues.openingStockRows.length === 0)) {
+                    preserved.openingStockRows = prev.openingStockRows;
+                }
+                return {
+                    ...initialValues,
+                    ...preserved,
+                };
+            });
+            setSavedSnapshot((prev) => {
+                const preserved = {};
+                if (Array.isArray(prev.openingStockRows) && prev.openingStockRows.length > 0 && (!initialValues.openingStockRows || initialValues.openingStockRows.length === 0)) {
+                    preserved.openingStockRows = prev.openingStockRows;
+                }
+                return {
+                    ...initialValues,
+                    ...preserved,
+                };
+            });
             onSync?.(initialValues);
         }
     }, [recordId, initialValues, onSync]);
