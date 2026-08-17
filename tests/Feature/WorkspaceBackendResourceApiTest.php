@@ -260,6 +260,53 @@ class WorkspaceBackendResourceApiTest extends TestCase
             ->assertJsonPath('data.0.available_stock', '10');
     }
 
+    public function test_product_update_with_opening_stock_rows_creates_inventory_adjustment(): void
+    {
+        $user = User::factory()->create();
+        $branch = \App\Domain\Organization\Models\Branch::create(['name' => 'Cabang Utama', 'code' => 'CBG-01', 'is_active' => true]);
+        $wh1 = Warehouse::create(['branch_id' => $branch->id, 'name' => 'Gudang Utama', 'code' => 'G-01', 'is_active' => true]);
+        $wh2 = Warehouse::create(['branch_id' => $branch->id, 'name' => 'Gudang Material', 'code' => 'G-02', 'is_active' => true]);
+        $unit = Unit::create(['name' => 'PCS', 'code' => 'PCS', 'is_active' => true]);
+        $product = Product::create([
+            'code' => 'BRG-TEST-01',
+            'name' => 'Asbes Gelombang Test',
+            'product_type' => 'Persediaan',
+            'base_unit_id' => $unit->id,
+            'default_purchase_price' => 52000,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($user)->putJson('/api/backend/products/'.$product->id, [
+            'code' => $product->code,
+            'name' => $product->name,
+            'product_type' => 'Persediaan',
+            'base_unit_id' => $unit->id,
+            'opening_stock_rows' => [
+                [
+                    'warehouse_id' => $wh2->id,
+                    'quantity' => 123,
+                    'unit_cost' => 52000,
+                    'date' => '17/08/2026',
+                ],
+            ],
+        ]);
+
+        $response->assertOk();
+
+        $this->assertDatabaseHas('inventory_documents', [
+            'document_type' => 'inventory_adjustment',
+            'warehouse_id' => $wh2->id,
+        ]);
+
+        $locResponse = $this->actingAs($user)->getJson('/api/backend/item-locations?product_id='.$product->id);
+        $locResponse->assertOk();
+
+        $rows = collect($locResponse->json('data'));
+        $materialRow = $rows->firstWhere('warehouse', 'Gudang Material');
+        $this->assertNotNull($materialRow);
+        $this->assertEquals('123', str_replace(['.', ','], '', $materialRow['saleable_stock']));
+    }
+
     public function test_taxes_resource_can_be_imported(): void
     {
         $user = User::factory()->create();
