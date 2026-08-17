@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { uploadBackendAttachment } from '@/features/workspace/backend/workspaceBackendApi';
+import { compressImageFile } from '@/features/workspace/shared/imageCompressor';
 import { PaperclipIcon, CloseIcon, PlusIcon } from './Icons';
 
 export default function AttachmentUploadField({
@@ -8,7 +9,7 @@ export default function AttachmentUploadField({
     label = 'Unggah Berkas',
     accept = 'image/*',
     multiple = false,
-    maxSizeMb = 3,
+    maxSizeMb = 10,
     maxFiles = 5,
 }) {
     const [uploading, setUploading] = useState(false);
@@ -26,10 +27,10 @@ export default function AttachmentUploadField({
             return;
         }
 
-      // Validate format
+        // Validate format
 
         if (accept.startsWith('image/')) {
-            const invalidFormat = files.find((file) => !file.type.startsWith('image/'));
+            const invalidFormat = files.find((file) => !file.type.startsWith('image/') && !/\.(jpg|jpeg|png|webp|gif|bmp|jfif|pjpeg|avif)$/i.test(file.name || ''));
             if (invalidFormat) {
                 setError('Hanya berkas gambar (JPG, JPEG, PNG, WEBP, GIF) yang diperbolehkan.');
                 return;
@@ -44,14 +45,17 @@ export default function AttachmentUploadField({
 
         setUploading(true);
         try {
-            const uploadedAttachments = [];
-            for (const file of files) {
-                const attachment = await uploadBackendAttachment(file);
-                if (attachment) {
-                    uploadedAttachments.push(attachment);
-                }
-            }
+            // Compress images locally in browser first (e.g. 5MB -> ~70KB in 30ms)
+            const preparedFiles = await Promise.all(
+                files.map((file) => compressImageFile(file))
+            );
 
+            // Upload compressed files concurrently
+            const uploadResults = await Promise.all(
+                preparedFiles.map((file) => uploadBackendAttachment(file))
+            );
+
+            const uploadedAttachments = uploadResults.filter(Boolean);
             const newList = multiple ? [...currentList, ...uploadedAttachments] : uploadedAttachments;
             onChange(newList);
         } catch (err) {

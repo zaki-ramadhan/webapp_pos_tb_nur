@@ -240,9 +240,10 @@ export default function ItemsServicesFormView({
                     allow_edit_group_quantity: Boolean(values.allowEditGroupQuantity),
                     use_group_price: values.useGroupPrice !== false,
                     notes: values.notes?.trim() || null,
-                    is_active: values.isActive !== false,
-                    attachment_ids: (values.attachments ?? []).map((att) => att.id),
-                    inventory_account_id: values.inventoryAccountId ?? null,
+                    attachment_ids: (values.attachments ?? [])
+                        .map((att) => (typeof att === 'object' ? att?.id : att))
+                        .filter((id) => id != null && !isNaN(Number(id)) && Number(id) > 0)
+                        .map(Number),
                     sales_account_id: values.salesAccountId ?? null,
                     sales_return_account_id: values.salesReturnAccountId ?? null,
                     sales_discount_account_id: values.salesDiscountAccountId ?? null,
