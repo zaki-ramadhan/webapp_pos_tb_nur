@@ -11,8 +11,7 @@ export function buildWarehouseEntry(backendRecord, defaults) {
         return { ...defaults };
     }
 
-  // Backend record (dari API show/index)
-
+    // Backend record (dari API show/index)
     if (backendRecord.__source === 'backend') {
         const r = backendRecord;
         return {
@@ -20,40 +19,39 @@ export function buildWarehouseEntry(backendRecord, defaults) {
             code: r.code ?? '',
             name: r.name ?? '',
             description: r.description ?? '',
-            responsiblePerson: r.responsible_person ?? '',
-            isDamagedWarehouse: r.warehouse_type === 'damaged',
-            inactive: r.is_active === false,
-            allUsers: r.all_users !== false,
-            street: r.street ?? '',
-            city: r.city ?? '',
-            postalCode: r.postal_code ?? '',
-            province: r.province ?? '',
-            country: r.country ?? '',
-            groupBranch: cloneList(r.group_branch),
+            responsiblePerson: r.responsible_person ?? r.responsiblePerson ?? '',
+            isDamagedWarehouse: r.warehouse_type === 'damaged' || Boolean(r.isDamagedWarehouse),
+            inactive: r.is_active === false || Boolean(r.inactive),
+            allUsers: r.all_users !== false && r.allUsers !== false,
+            street: r.street || r.branch?.street || '',
+            city: r.city || r.branch?.city || '',
+            postalCode: r.postal_code || r.postalCode || r.branch?.postal_code || '',
+            province: r.province || r.branch?.province || '',
+            country: r.country || r.branch?.country || '',
+            groupBranch: cloneList(r.group_branch || r.groupBranch || (r.branch?.name ? [r.branch.name] : [])),
             users: cloneList(r.users),
-            branchId: r.branch_id ?? r.branch?.id ?? null,
+            branchId: r.branch_id ?? r.branch?.id ?? r.branchId ?? null,
         };
     }
 
-  // Mock detailRecord (dari config.detailRecords)
-
+    // Mock detailRecord (dari config.detailRecords)
     return {
         id: backendRecord.id ?? null,
         code: backendRecord.code ?? '',
         name: backendRecord.name ?? '',
         description: backendRecord.description ?? '',
-        responsiblePerson: backendRecord.responsiblePerson ?? '',
-        isDamagedWarehouse: Boolean(backendRecord.isDamagedWarehouse),
-        inactive: Boolean(backendRecord.inactive),
-        allUsers: backendRecord.allUsers ?? true,
-        street: backendRecord.street ?? '',
-        city: backendRecord.city ?? '',
-        postalCode: backendRecord.postalCode ?? '',
-        province: backendRecord.province ?? '',
-        country: backendRecord.country ?? '',
-        groupBranch: cloneList(backendRecord.groupBranch),
+        responsiblePerson: backendRecord.responsiblePerson ?? backendRecord.responsible_person ?? '',
+        isDamagedWarehouse: Boolean(backendRecord.isDamagedWarehouse || backendRecord.warehouse_type === 'damaged'),
+        inactive: Boolean(backendRecord.inactive || backendRecord.is_active === false),
+        allUsers: backendRecord.allUsers ?? (backendRecord.all_users !== false),
+        street: backendRecord.street || backendRecord.branch?.street || '',
+        city: backendRecord.city || backendRecord.branch?.city || '',
+        postalCode: backendRecord.postalCode || backendRecord.postal_code || backendRecord.branch?.postal_code || '',
+        province: backendRecord.province || backendRecord.branch?.province || '',
+        country: backendRecord.country || backendRecord.branch?.country || '',
+        groupBranch: cloneList(backendRecord.groupBranch || backendRecord.group_branch || (backendRecord.branch?.name ? [backendRecord.branch.name] : [])),
         users: cloneList(backendRecord.users),
-        branchId: backendRecord.branchId ?? null,
+        branchId: backendRecord.branchId ?? backendRecord.branch_id ?? backendRecord.branch?.id ?? null,
     };
 }
 

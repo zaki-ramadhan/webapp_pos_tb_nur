@@ -24,67 +24,54 @@ export default function WarehouseView({
         initialPerPage: 25,
     });
 
-  // ─── Pola SalaryAllowance: fetch detail record di level View ─────────────
+    const defaults = useMemo(() => page.warehouse?.createDefaults ?? {}, [page.warehouse]);
 
-    const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-
-  // Inisialisasi synchronous untuk mock records agar data sudah siap saat mount pertama
-
-    const [fetchedDetailRow, setFetchedDetailRow] = useState(() => {
-        if (!recordId) return null;
-        const mockDetail = page.warehouse?.detailRecords?.[recordId];
-        if (mockDetail) return { ...mockDetail, id: recordId, __source: 'mock' };
-        return null;
+    const [fetchedDetailRowMap, setFetchedDetailRowMap] = useState(() => {
+        const initial = {};
+        const mockRecords = page.warehouse?.detailRecords ?? {};
+        Object.entries(mockRecords).forEach(([id, data]) => {
+            initial[id] = { ...data, id, __source: 'mock' };
+        });
+        return initial;
     });
-    const [fetchingId, setFetchingId] = useState(null);
 
+    // Fetch detail records untuk setiap tab detail yang sedang dibuka
     useEffect(() => {
-        if (!recordId) { if (activeLevel2Tab?.kind === 'view') { return; } setFetchedDetailRow(null); return; }
-
-      // Cek mock dulu (string id seperti 'warehouse-jakarta')
-
-        const mockDetail = page.warehouse?.detailRecords?.[recordId];
-        if (mockDetail) {
-            setFetchedDetailRow({ ...mockDetail, id: recordId, __source: 'mock' });
-            return;
-        }
-
-      // Fetch dari backend hanya jika ID numerik
-
-        const numericId = Number(recordId);
-        if (!Number.isFinite(numericId) || numericId <= 0) return;
-
-        let active = true;
-        setFetchingId(recordId);
-
-        async function fetchDetail() {
-            try {
-                const record = await getBackendResource('warehouses', recordId);
-                if (active && record) {
-                    setFetchedDetailRow({ ...record, __source: 'backend' });
-                }
-            } catch {
-                /* Ignore */
-            } finally {
-                if (active) setFetchingId(null);
+        const detailTabs = (level2Tabs || []).filter((t) => t.tabType === 'detail' && t.recordId);
+        if (activeLevel2Tab?.tabType === 'detail' && activeLevel2Tab.recordId) {
+            if (!detailTabs.some((t) => String(t.recordId) === String(activeLevel2Tab.recordId))) {
+                detailTabs.push(activeLevel2Tab);
             }
         }
-        fetchDetail();
-        return () => {
-            active = false;
-        };
-    }, [recordId, page.warehouse?.detailRecords]);
 
-  // ─── Bangun entry lengkap yang dioper ke FormView ─────────────────────────
+        detailTabs.forEach((tab) => {
+            const rid = tab.recordId;
+            const numericId = Number(rid);
+            if (Number.isFinite(numericId) && numericId > 0 && !fetchedDetailRowMap[rid]) {
+                getBackendResource('warehouses', rid)
+                    .then((record) => {
+                        if (record) {
+                            setFetchedDetailRowMap((prev) => ({
+                                ...prev,
+                                [rid]: { ...record, __source: 'backend' },
+                            }));
+                        }
+                    })
+                    .catch(() => {});
+            }
+        });
+    }, [level2Tabs, activeLevel2Tab, fetchedDetailRowMap]);
 
-    const defaults = useMemo(() => page.warehouse?.createDefaults ?? {}, [page.warehouse]);
-    const warehouseEntry = useMemo(
-        () => buildWarehouseEntry(fetchedDetailRow, defaults),
-        [fetchedDetailRow, defaults],
-    );
+    const handlePersist = useCallback((record) => {
+        if (record?.id) {
+            setFetchedDetailRowMap((prev) => ({
+                ...prev,
+                [record.id]: { ...record, __source: 'backend' },
+            }));
+        }
+    }, []);
 
-  // ─── Config untuk tabel ───────────────────────────────────────────────────
-
+    // ─── Config untuk tabel ───────────────────────────────────────────────────
     const config = useMemo(() => {
         const baseConfig = page.warehouse;
         return {
@@ -103,7 +90,7 @@ export default function WarehouseView({
                         { id: 'description', label: 'Keterangan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },
                         { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
                     ];
-                    const filteredExtra = extraCols.filter(col => !baseCols.some(bc => bc.id === col.id));
+                    const filteredExtra = extraCols.filter((col) => !baseCols.some((bc) => bc.id === col.id));
                     return [...baseCols, ...filteredExtra];
                 })(),
                 rows: rows.map(mapWarehouseTableRow),
@@ -115,34 +102,25 @@ export default function WarehouseView({
         };
     }, [loading, error, page.warehouse, rows, total, reload, serverTableProps]);
 
-    const handlePersist = useCallback((record) => {
-        setFetchedDetailRow({ ...record, __source: 'backend' });
-    }, []);
-
-        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
-
-    useEffect(() => {
-        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
-            setLastActiveFormTab(activeLevel2Tab);
-        } else if (!activeLevel2Tab) {
-            setLastActiveFormTab(null);
-        }
-    }, [activeLevel2Tab]);
-
     return (
         <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
             <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                 <WarehouseTableView
-            config={config}
-            onCreate={onOpenContent}
-            onOpenDetail={onOpenDetail}
-            onRefresh={reload}
-        />
+                    config={config}
+                    onCreate={onOpenContent}
+                    onOpenDetail={onOpenDetail}
+                    onRefresh={reload}
+                />
             </div>
             {level2Tabs.map((tab) => {
                 if (tab.kind !== 'content') return null;
 
                 const isCurrentForm = mode === 'form' && activeLevel2Tab?.id === tab.id;
+                const tabRecordId = tab.tabType === 'detail' ? tab.recordId : null;
+                const tabRawRecord = tabRecordId
+                    ? (fetchedDetailRowMap[tabRecordId] || page.warehouse?.detailRecords?.[tabRecordId] || null)
+                    : null;
+                const tabEntry = buildWarehouseEntry(tabRawRecord, defaults);
 
                 return (
                     <div
@@ -151,15 +129,15 @@ export default function WarehouseView({
                     >
                         <WarehouseFormView
                             key={tab.id}
-            config={config}
-            entry={warehouseEntry}
-            isDetailMode={Boolean(recordId)}
-            activeLevel2Tab={tab}
-            onOpenContent={onOpenContent}
-            onOpenDetail={onOpenDetail}
-            onCloseDetail={onCloseDetail}
-            onRefresh={reload}
-            onPersist={handlePersist}
+                            config={config}
+                            entry={tabEntry}
+                            isDetailMode={Boolean(tabRecordId)}
+                            activeLevel2Tab={tab}
+                            onOpenContent={onOpenContent}
+                            onOpenDetail={onOpenDetail}
+                            onCloseDetail={onCloseDetail}
+                            onRefresh={reload}
+                            onPersist={handlePersist}
                         />
                     </div>
                 );
