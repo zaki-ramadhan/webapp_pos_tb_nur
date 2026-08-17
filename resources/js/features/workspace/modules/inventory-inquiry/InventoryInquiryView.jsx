@@ -340,6 +340,23 @@ export default function InventoryInquiryView({ config, pageId }) {
         setFilters(buildInventoryFilters(pageId, nextValues));
     }
 
+    const isItemLocation = pageId === 'item-location';
+    const isWarehouseMode = values.itemType === 'warehouse';
+    const hasTarget = isWarehouseMode
+        ? Boolean(values.warehouseSearchId || (values.warehouseSearch && values.warehouseSearch.trim()))
+        : Boolean(values.itemSearchId || (values.itemSearch && values.itemSearch.trim()));
+
+    const emptyMessage = useMemo(() => {
+        if (loading) return 'Memuat data...';
+        if (error) return error;
+        if (isItemLocation && !hasTarget) {
+            return isWarehouseMode
+                ? 'Silakan cari dan pilih gudang untuk melihat daftar stok barang di gudang tersebut.'
+                : 'Silakan cari dan pilih barang untuk melihat sebaran stok di setiap gudang.';
+        }
+        return config.table.emptyLabel || 'Tidak ada data';
+    }, [loading, error, isItemLocation, hasTarget, isWarehouseMode, config.table.emptyLabel]);
+
     return (
         <div className="flex flex-col flex-1 min-h-0 h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light overflow-hidden">
             <fieldset disabled={isAccessRestricted} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
