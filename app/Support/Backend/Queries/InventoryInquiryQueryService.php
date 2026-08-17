@@ -68,6 +68,14 @@ class InventoryInquiryQueryService
      */
     public function paginateItemLocations(array $filters): LengthAwarePaginator
     {
+        if (
+            (filled($filters['product_id'] ?? null) && (int) $filters['product_id'] === -1) ||
+            (filled($filters['warehouse_id'] ?? null) && (int) $filters['warehouse_id'] === -1) ||
+            filter_var($filters['require_target'] ?? false, FILTER_VALIDATE_BOOLEAN)
+        ) {
+            return $this->paginateRows(collect(), $filters);
+        }
+
         $stockMap = $this->buildStockMap($filters);
         $warehouses = Warehouse::query()->with('branch')->get()->keyBy('id');
         $products = $this->queryProducts($filters)->keyBy('id');
@@ -352,10 +360,14 @@ class InventoryInquiryQueryService
                     'supplier' => $product->preferredSupplier?->name ?? '-',
                     'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
                     'current_stock' => $this->formatNumber($currentStock),
+                    'available_stock' => $this->formatNumber($currentStock),
                     'minimum_stock' => $this->formatNumber($minimumStock),
+                    'minimum_limit' => $this->formatNumber($minimumStock),
                     'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
                     'raw_current_stock' => $currentStock,
+                    'raw_available_stock' => $currentStock,
                     'raw_minimum_stock' => $minimumStock,
+                    'raw_minimum_limit' => $minimumStock,
                 ];
             })
             ->filter()
