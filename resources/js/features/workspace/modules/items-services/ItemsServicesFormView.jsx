@@ -47,10 +47,12 @@ export default function ItemsServicesFormView({
 }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const [fetchedRow, setFetchedRow] = useState(null);
+    const [dbStockRows, setDbStockRows] = useState([]);
 
     useEffect(() => {
         if (!recordId) {
             setFetchedRow(null);
+            setDbStockRows([]);
             return;
         }
 
@@ -84,7 +86,14 @@ export default function ItemsServicesFormView({
 
     const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'general');
-    const initialValues = useMemo(() => buildItemsServicesFormValues(config, detailRow), [detailRow, config]);
+    const initialValues = useMemo(() => {
+        const base = buildItemsServicesFormValues(config, detailRow);
+        if (dbStockRows.length > 0) {
+            base.openingStockRows = dbStockRows;
+        }
+        return base;
+    }, [detailRow, config, dbStockRows]);
+
     const {
         values,
         setValues,
@@ -111,10 +120,13 @@ export default function ItemsServicesFormView({
     }, [activeTabInstanceId, detailRow?.id]);
 
     useEffect(() => {
-        if (!detailRow?.id) return;
+        if (!recordId) {
+            setDbStockRows([]);
+            return;
+        }
         let active = true;
 
-        listBackendResource('item-locations', { product_id: detailRow.id, per_page: 100 })
+        listBackendResource('item-locations', { product_id: recordId, per_page: 100 })
             .then((response) => {
                 if (!active) return;
                 const rows = extractBackendRows(response);
@@ -137,6 +149,7 @@ export default function ItemsServicesFormView({
                     })
                     .filter((r) => r.quantity !== 0);
 
+                setDbStockRows(stockRows);
                 updateDbBaseline((prev) => {
                     const hasUserRows = (prev.openingStockRows ?? []).some((r) => !r.__fromDb);
                     if (hasUserRows) return prev;
@@ -146,7 +159,7 @@ export default function ItemsServicesFormView({
             .catch(() => {});
 
         return () => { active = false; };
-    }, [detailRow?.id, updateDbBaseline]);
+    }, [recordId, updateDbBaseline]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
