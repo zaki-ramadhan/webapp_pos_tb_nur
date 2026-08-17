@@ -336,6 +336,62 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $this->assertEquals('SA-TEST-99999', $showResponse->json('data.document_number'));
     }
 
+    public function test_inventory_adjustment_creation_updates_item_locations_and_mutations(): void
+    {
+        $user = User::factory()->create();
+        $branch = \App\Domain\Organization\Models\Branch::create(['code' => 'BR-01', 'name' => 'Toko Utama', 'is_active' => true]);
+        $wh = Warehouse::create(['branch_id' => $branch->id, 'code' => 'WH-ADJ-01', 'name' => 'Gudang Utama', 'is_active' => true]);
+        $unit = Unit::create(['code' => 'LBR', 'name' => 'Lembar', 'precision' => 0, 'is_active' => true]);
+        $product = Product::create([
+            'code' => 'ASB-TEST-01',
+            'name' => 'Asbes Test 180',
+            'base_unit_id' => $unit->id,
+            'purchase_unit_id' => $unit->id,
+            'sales_unit_id' => $unit->id,
+            'product_type' => 'stock',
+            'is_active' => true,
+            'default_purchase_price' => 52000,
+        ]);
+
+        $payload = [
+            'warehouse_id' => $wh->id,
+            'entry_date' => now()->toDateString(),
+            'notes' => 'Test Penyesuaian',
+            'lines' => [
+                [
+                    'product_id' => $product->id,
+                    'unit_id' => $unit->id,
+                    'warehouse_id' => $wh->id,
+                    'quantity' => 15,
+                    'unit_price' => 52000,
+                    'total_amount' => 780000,
+                    'attributes' => [
+                        'adjustment_type' => 'Penambahan',
+                    ],
+                ],
+            ],
+        ];
+
+        $postResponse = $this->actingAs($user)->postJson('/api/backend/inventory-adjustments', $payload);
+        $postResponse->assertStatus(201);
+        $docId = $postResponse->json('data.id');
+
+        // Verify mutations query
+        $mutResponse = $this->actingAs($user)->getJson('/api/backend/product-mutations?product_id='.$product->id);
+        $mutResponse->assertOk();
+        $mutRows = $mutResponse->json('data');
+        $this->assertNotEmpty($mutRows);
+        $matching = collect($mutRows)->firstWhere('document_id', $docId);
+        $this->assertNotNull($matching);
+
+        // Verify item-locations query
+        $locResponse = $this->actingAs($user)->getJson('/api/backend/item-locations?product_id='.$product->id);
+        $locResponse->assertOk();
+        $locRows = $locResponse->json('data');
+        $this->assertNotEmpty($locRows);
+        $this->assertEquals(15.0, (float) $locRows[0]['saleable_stock']);
+    }
+
     public function test_taxes_resource_can_be_imported(): void
     {
         $user = User::factory()->create();
