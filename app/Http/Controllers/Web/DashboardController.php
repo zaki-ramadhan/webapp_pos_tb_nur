@@ -35,7 +35,7 @@ class DashboardController extends Controller
         return Inertia::render('DashboardPage', [
             ...$props,
             'widgets' => Inertia::defer(function () use ($sample, $analytics, $cacheKey, $forceRefresh, $months, $asOfDate) {
-                if ($forceRefresh || config('app.env') === 'local') {
+                if ($forceRefresh) {
                     \Illuminate\Support\Facades\Cache::forget($cacheKey);
                 }
 
@@ -60,7 +60,7 @@ class DashboardController extends Controller
 
         $cacheKey = 'dashboard_widgets_' . $sample . '_' . ($months ?? 'all') . '_' . $asOfDate;
 
-        if ($request->has('force_refresh') || config('app.env') === 'local') {
+        if ($request->has('force_refresh')) {
             \Illuminate\Support\Facades\Cache::forget($cacheKey);
         }
 
@@ -90,7 +90,7 @@ class DashboardController extends Controller
 
         $cacheKey = 'dashboard_widgets_' . $sample . '_' . ($months ?? 'all') . '_' . $asOfDate;
 
-        if ($request->has('force_refresh') || config('app.env') === 'local') {
+        if ($request->has('force_refresh')) {
             \Illuminate\Support\Facades\Cache::forget($cacheKey);
         }
 

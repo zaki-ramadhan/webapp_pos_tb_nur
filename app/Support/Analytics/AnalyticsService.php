@@ -26,7 +26,10 @@ class AnalyticsService
      */
     public function getAbcAnalysis(?int $months = 3): array
     {
-        return $this->abcService->calculate($months);
+        $cacheKey = 'analytics_abc_' . ($months ?? 'all');
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($months) {
+            return $this->abcService->calculate($months);
+        });
     }
 
     /**
@@ -39,6 +42,9 @@ class AnalyticsService
      */
     public function getAprioriAnalysis(float $minSupport = 0.05, float $minConfidence = 0.4, ?int $months = 3): array
     {
-        return $this->aprioriService->calculate($minSupport, $minConfidence, $months);
+        $cacheKey = 'analytics_apriori_' . ($months ?? 'all') . '_' . (int) ($minSupport * 100) . '_' . (int) ($minConfidence * 100);
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($minSupport, $minConfidence, $months) {
+            return $this->aprioriService->calculate($minSupport, $minConfidence, $months);
+        });
     }
 }
