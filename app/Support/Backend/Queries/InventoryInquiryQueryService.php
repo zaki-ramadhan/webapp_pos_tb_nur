@@ -42,7 +42,7 @@ class InventoryInquiryQueryService
             ->with('lines')
             ->where('document_type', 'sales_order')
             ->where('is_closed', false)
-            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
             ->get()
             ->flatMap(fn ($doc) => $doc->lines)
             ->groupBy('product_id')
@@ -217,7 +217,7 @@ class InventoryInquiryQueryService
             ->with(['lines.unit', 'warehouse'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
             ->where('document_type', 'inventory_adjustment')
-            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
             ->orderBy('id', 'asc')
             ->get();
 
@@ -370,7 +370,7 @@ class InventoryInquiryQueryService
         $invDocs = InventoryDocument::query()
             ->with(['lines'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
-            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
             ->when($dateFrom, fn ($q) => $q->where(function ($sub) use ($dateFrom) {
                 $sub->whereDate('document_date', '>=', $dateFrom->toDateString())
                     ->orWhere(fn ($nullSub) => $nullSub->whereNull('document_date')->whereDate('created_at', '>=', $dateFrom->toDateString()));
@@ -436,7 +436,7 @@ class InventoryInquiryQueryService
             ->with(['lines', 'warehouse'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
             ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return', 'inventory_adjustment', 'stock_transfer'])
-            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
             ->when($dateFrom, fn ($q) => $q->where(function ($sub) use ($dateFrom) {
                 $sub->whereDate('entry_date', '>=', $dateFrom->toDateString())
                     ->orWhere(fn ($nullSub) => $nullSub->whereNull('entry_date')->whereDate('created_at', '>=', $dateFrom->toDateString()));
@@ -455,6 +455,12 @@ class InventoryInquiryQueryService
                 $qty = (float) ($line->quantity ?? 0);
                 if ($doc->document_type === 'sales_delivery' || $doc->document_type === 'sales_invoice' || $doc->document_type === 'purchase_return') {
                     $qty *= -1;
+                } elseif ($doc->document_type === 'inventory_adjustment') {
+                    $attributes = is_string($line->attributes) ? json_decode($line->attributes, true) : ($line->attributes ?? []);
+                    $adjType = $attributes['adjustment_type'] ?? 'Penambahan';
+                    if ($adjType === 'Pengurangan' && $qty > 0) {
+                        $qty *= -1;
+                    }
                 }
                 $whId = $line->warehouse_id ?? $doc->warehouse_id;
                 $wh = $whId ? $warehouses->get($whId) : $doc->warehouse;
@@ -534,7 +540,7 @@ class InventoryInquiryQueryService
             $priorInv = InventoryDocument::query()
                 ->with(['lines'])
                 ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
-                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
                 ->whereDate('document_date', '<', $dateFrom->toDateString())
                 ->get();
             foreach ($priorInv as $d) {
@@ -551,7 +557,7 @@ class InventoryInquiryQueryService
                 ->with(['lines'])
                 ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
                 ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
-                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
                 ->whereDate('entry_date', '<', $dateFrom->toDateString())
                 ->get();
             foreach ($priorOp as $d) {
@@ -594,18 +600,22 @@ class InventoryInquiryQueryService
 
     /**
      * @param  array<string, mixed>  $filters
-     * @return Collection<string, float>
+     * @return array<string, float>
      */
-    protected function buildStockMap(array $filters): Collection
+    protected function buildStockMap(array $filters): array
     {
-        $asOfDate = $this->resolveDateFilter($filters['as_of_date'] ?? null) ?? now();
         $warehouseFilter = filled($filters['warehouse_id'] ?? null) ? (int) $filters['warehouse_id'] : null;
         $productFilter = filled($filters['product_id'] ?? null) ? (int) $filters['product_id'] : null;
-        $stock = collect();
+        $asOfDate = $this->resolveDateFilter($filters['as_of_date'] ?? null) ?? now();
+
+        $stock = [];
 
         // 1. Initial Stock Batches
         $batches = \Illuminate\Support\Facades\DB::table('inventory_batches')
-            ->whereDate('entry_date', '<=', $asOfDate->toDateString())
+            ->where(function ($q) use ($asOfDate) {
+                $q->whereDate('entry_date', '<=', $asOfDate->toDateString())
+                  ->orWhere(fn ($sub) => $sub->whereNull('entry_date')->whereDate('created_at', '<=', $asOfDate->toDateString()));
+            })
             ->when($productFilter !== null, fn ($q) => $q->where('product_id', $productFilter))
             ->when($warehouseFilter !== null, fn ($q) => $q->where('warehouse_id', $warehouseFilter))
             ->get();
@@ -617,7 +627,7 @@ class InventoryInquiryQueryService
             $productId = (int) $batch->product_id;
             $warehouseId = (int) $batch->warehouse_id;
             $key = sprintf('%d:%d', $productId, $warehouseId);
-            $stock[$key] = (float) ($stock[$key] ?? 0) + (float) $batch->qty_received;
+            $stock[$key] = (float) (($stock[$key] ?? 0) + (float) $batch->qty_received);
         }
 
         // 2. Inventory Documents
@@ -627,7 +637,7 @@ class InventoryInquiryQueryService
                 $q->whereDate('document_date', '<=', $asOfDate->toDateString())
                   ->orWhere(fn ($sub) => $sub->whereNull('document_date')->whereDate('created_at', '<=', $asOfDate->toDateString()));
             })
-            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
             ->get();
 
         foreach ($inventoryDocuments as $document) {
@@ -644,7 +654,7 @@ class InventoryInquiryQueryService
                     }
 
                     $key = sprintf('%d:%d', $productId, $warehouseId);
-                    $stock[$key] = (float) ($stock[$key] ?? 0) + $quantity;
+                    $stock[$key] = (float) (($stock[$key] ?? 0) + $quantity);
                 }
             }
         }
@@ -657,7 +667,7 @@ class InventoryInquiryQueryService
                   ->orWhere(fn ($sub) => $sub->whereNull('entry_date')->whereDate('created_at', '<=', $asOfDate->toDateString()));
             })
             ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return', 'inventory_adjustment', 'stock_transfer'])
-            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
             ->get();
 
         foreach ($operationDocuments as $document) {
