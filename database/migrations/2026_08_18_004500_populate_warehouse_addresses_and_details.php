@@ -21,7 +21,7 @@ return new class extends Migration
                 'province' => 'Jawa Barat',
                 'country' => 'Indonesia',
                 'description' => 'Gudang Utama Toko (Display Depan)',
-                'responsible_person' => 'Sujono',
+                'responsible_person' => null,
                 'all_users' => true,
                 'updated_at' => now(),
             ]);
@@ -32,13 +32,13 @@ return new class extends Migration
             ->orWhere('name', 'like', '%Material%')
             ->orWhere('name', 'like', '%Pasir%')
             ->update([
-                'street' => 'Lahan Terbuka Belakang Toko (Jl. Raya Tuparev No. 102)',
+                'street' => 'Jl. Raya Tuparev No. 102',
                 'city' => 'Cirebon',
                 'postal_code' => '45151',
                 'province' => 'Jawa Barat',
                 'country' => 'Indonesia',
                 'description' => 'Gudang Terbuka Pasir & Batu Bata (Belakang Toko)',
-                'responsible_person' => 'Nur',
+                'responsible_person' => null,
                 'all_users' => true,
                 'updated_at' => now(),
             ]);
