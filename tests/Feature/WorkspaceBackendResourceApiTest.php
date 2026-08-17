@@ -293,7 +293,7 @@ class WorkspaceBackendResourceApiTest extends TestCase
 
         $response->assertOk();
 
-        $this->assertDatabaseHas('inventory_documents', [
+        $this->assertDatabaseHas('operation_documents', [
             'document_type' => 'inventory_adjustment',
             'warehouse_id' => $wh2->id,
         ]);
