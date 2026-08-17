@@ -20,19 +20,26 @@ import {
 } from './WarehouseSections';
 
 function entryToFormValues(entry) {
+    if (!entry) return {};
     return {
         name: entry.name ?? '',
         description: entry.description ?? '',
-        responsiblePerson: entry.responsiblePerson ?? '',
-        isDamagedWarehouse: Boolean(entry.isDamagedWarehouse),
-        inactive: Boolean(entry.inactive),
-        allUsers: entry.allUsers ?? true,
-        street: entry.street ?? '',
-        city: entry.city ?? '',
-        postalCode: entry.postalCode ?? '',
-        province: entry.province ?? '',
-        country: entry.country ?? '',
-        groupBranch: Array.isArray(entry.groupBranch) ? [...entry.groupBranch] : [],
+        responsiblePerson: entry.responsiblePerson ?? entry.responsible_person ?? '',
+        isDamagedWarehouse: Boolean(entry.isDamagedWarehouse || entry.warehouse_type === 'damaged'),
+        inactive: Boolean(entry.inactive || entry.is_active === false),
+        allUsers: entry.allUsers ?? (entry.all_users !== false),
+        street: entry.street ?? entry.branch?.street ?? '',
+        city: entry.city ?? entry.branch?.city ?? '',
+        postalCode: entry.postalCode ?? entry.postal_code ?? entry.branch?.postal_code ?? '',
+        province: entry.province ?? entry.branch?.province ?? '',
+        country: entry.country ?? entry.branch?.country ?? '',
+        groupBranch: Array.isArray(entry.groupBranch)
+            ? [...entry.groupBranch]
+            : Array.isArray(entry.group_branch)
+            ? [...entry.group_branch]
+            : entry.branch?.name
+            ? [entry.branch.name]
+            : [],
         users: Array.isArray(entry.users) ? [...entry.users] : [],
     };
 }
@@ -158,9 +165,9 @@ export default function WarehouseFormView({
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
                             detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                pageId: 'warehouse-master',
                                 tabId: activeLevel2Tab.id,
-                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
+                                label: record?.name ?? values?.name ?? '',
                             },
                         })
                     );
