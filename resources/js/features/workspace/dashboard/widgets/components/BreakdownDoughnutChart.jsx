@@ -63,15 +63,16 @@ export default function BreakdownDoughnutChart({ items = [], percentage = '0%', 
         },
     };
 
-    const primaryNonZeroItem = chartData.find((item) => item.value > 0);
+    const sortedNonZeroItems = [...chartData].filter((item) => item.value > 0).sort((a, b) => (b.value || 0) - (a.value || 0));
+    const primaryItem = sortedNonZeroItems[0];
     const rawPercentage = String(percentage || '');
     const isNegative = rawPercentage.startsWith('-');
-    const resolvedPercentage = (isNegative || percentage === '0%') && primaryNonZeroItem && primaryNonZeroItem.percentText
-        ? primaryNonZeroItem.percentText
+    const resolvedPercentage = (isNegative || percentage === '0%') && primaryItem && primaryItem.percentText
+        ? primaryItem.percentText
         : percentage;
 
-    const resolvedCenterLabel = (isNegative || percentage === '0%') && primaryNonZeroItem
-        ? 'Porsi Utama'
+    const resolvedCenterLabel = (centerLabel === 'Porsi Utama' || ((isNegative || percentage === '0%') && primaryItem))
+        ? (primaryItem ? primaryItem.label : centerLabel)
         : centerLabel;
 
     return (
@@ -80,7 +81,7 @@ export default function BreakdownDoughnutChart({ items = [], percentage = '0%', 
                 <Doughnut data={resolveChartObject(data)} options={resolveChartObject(options)} />
                 <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center transition-opacity duration-150 group-hover:opacity-0">
                     <span className="text-lg font-semibold leading-none text-brand-darker sm:text-xl md:text-2xl lg:text-2xl">{resolvedPercentage}</span>
-                    <span className="mt-0.5 text-xs text-slate-500 font-medium normal-case tracking-normal">{resolvedCenterLabel}</span>
+                    <span className="mt-1 px-1 line-clamp-1 max-w-[90%] text-xs text-slate-500 font-medium normal-case tracking-normal">{resolvedCenterLabel}</span>
                 </div>
             </div>
         </div>
