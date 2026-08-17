@@ -11,7 +11,6 @@ const itemTabs = [
     { id: 'sales-purchase', label: 'Penjualan / Pembelian' },
     { id: 'stock', label: 'Stok' },
     { id: 'group', label: 'Rincian Grup' },
-    { id: 'accounts', label: 'Akun' },
     { id: 'images', label: 'Gambar' },
     { id: 'other', label: 'Lain-lain' },
 ];
