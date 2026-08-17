@@ -62,38 +62,7 @@ class ItemUnitPage
                         'defaultHidden' => true,
                     ],
                 ],
-                'rows' => [
-                    [
-                        'id' => 'item-unit-box',
-                        'name' => 'Box',
-                        'tabLabel' => 'Box',
-                        'taxCode' => '',
-                    ],
-                    [
-                        'id' => 'item-unit-dus',
-                        'name' => 'Dus',
-                        'tabLabel' => 'Dus',
-                        'taxCode' => '',
-                    ],
-                    [
-                        'id' => 'item-unit-lusin',
-                        'name' => 'Lusin',
-                        'tabLabel' => 'Lusin',
-                        'taxCode' => '',
-                    ],
-                    [
-                        'id' => 'item-unit-pcs',
-                        'name' => 'PCS',
-                        'tabLabel' => 'PCS',
-                        'taxCode' => '',
-                    ],
-                    [
-                        'id' => 'item-unit-unit',
-                        'name' => 'Unit',
-                        'tabLabel' => 'Unit',
-                        'taxCode' => '',
-                    ],
-                ],
+                'rows' => [],
             ],
             'form' => [
                 'sectionLabel' => 'Satuan Barang',

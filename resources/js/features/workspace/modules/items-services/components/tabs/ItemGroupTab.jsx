@@ -25,7 +25,7 @@ export function ItemGroupTab({ values, onChange }) {
             code: option.code ?? '-',
             name: option.name ?? '-',
             quantity: 1,
-            unit: option.base_unit?.name ?? option.baseUnit?.name ?? option.unit ?? 'PCS',
+            unit: option.base_unit?.name ?? option.baseUnit?.name ?? (typeof option.unit === 'string' ? option.unit : (option.unit?.name ?? '-')),
             unit_id: option.base_unit_id ?? option.base_unit?.id ?? option.baseUnit?.id ?? null,
         };
 

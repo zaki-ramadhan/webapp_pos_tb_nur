@@ -110,7 +110,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                 name: matched?.name ?? `Barang tidak ditemukan (${rawCode})`,
                 code: matched?.code ?? rawCode,
                 quantity: String(parsedQty),
-                unit: matched?.base_unit?.name ?? matched?.sales_unit?.name ?? 'PCS',
+                unit: matched?.base_unit?.name ?? matched?.sales_unit?.name ?? (typeof matched?.unit === 'string' ? matched.unit : (matched?.unit?.name ?? '')) ?? '',
                 price: matched ? (parsedPrice || defaultPrice) : 0,
                 notes: rawNotes,
                 valid: !!matched && parsedQty > 0,

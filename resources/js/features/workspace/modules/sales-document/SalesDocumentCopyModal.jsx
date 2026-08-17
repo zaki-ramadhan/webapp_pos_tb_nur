@@ -348,7 +348,7 @@ export default function SalesDocumentCopyModal({
                     name: itemName,
                     code: itemCode,
                     quantity: String(qty),
-                    unit: typeof line.unit === 'object' ? (line.unit?.name ?? 'PCS') : (line.unit ?? 'PCS'),
+                    unit: typeof line.unit === 'object' ? (line.unit?.name ?? line.unit?.code ?? line.product?.base_unit?.name ?? '') : (line.unit ?? line.product?.base_unit?.name ?? ''),
                     price: unitPrice.toLocaleString('id-ID'),
                     discount: '0',
                     discountValue: String(disc),
@@ -636,7 +636,7 @@ export default function SalesDocumentCopyModal({
                                                                 {qtyNeeded}
                                                             </DataTableCell>
                                                             <DataTableCell className="text-slate-600 text-center">
-                                                                {typeof item.unit === 'object' ? (item.unit?.name ?? 'PCS') : (item.unit ?? 'PCS')}
+                                                                {typeof item.unit === 'object' ? (item.unit?.name ?? item.unit?.code ?? '-') : (item.unit ?? '-')}
                                                             </DataTableCell>
                                                         </>
                                                     ) : (

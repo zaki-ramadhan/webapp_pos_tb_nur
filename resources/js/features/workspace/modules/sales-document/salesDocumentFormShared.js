@@ -260,7 +260,7 @@ export async function promptItemEditor(item = null) {
             name: 'unit',
             label: 'Satuan',
             type: 'text',
-            defaultValue: item?.unit ?? 'PCS',
+            defaultValue: item?.unit ?? '',
             required: true,
         },
         {
@@ -290,7 +290,7 @@ export async function promptItemEditor(item = null) {
 
     const code = result.code ?? '';
     const quantity = result.quantity ?? '1';
-    const unit = result.unit ?? 'PCS';
+    const unit = result.unit ?? '';
     const price = result.price ?? '0';
     const discountValue = result.discountValue ?? '0';
 
@@ -305,7 +305,7 @@ export async function promptItemEditor(item = null) {
         name: trimmedName,
         code: code.trim(),
         quantity: String(quantityAmount || 0),
-        unit: unit.trim() || 'PCS',
+        unit: unit.trim() || item?.unit || '',
         price: formatCurrencyValue(unitPriceAmount),
         discount: formatCurrencyValue(discountAmount),
         discountValue: formatCurrencyValue(discountAmount),
