@@ -251,6 +251,9 @@ class WorkspaceBackendResourceApiTest extends TestCase
             ->assertJsonPath('data.0.product_code', 'ITM-001')
             ->assertJsonPath('data.0.warehouse', 'Gudang Utama');
 
+        $mutationResponse = $this->actingAs($user)->getJson('/api/backend/product-mutations?product_id='.$product->id);
+        $mutationResponse->assertOk();
+
         $minimumStockResponse
             ->assertOk()
             ->assertJsonPath('data.0.item_code', 'ITM-001')
