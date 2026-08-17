@@ -102,6 +102,12 @@ class BackendResourceIndexQuery
 
         if ($sortBy !== '' && Schema::hasColumn($tableName, $sortBy)) {
             $query->orderBy("{$tableName}.{$sortBy}", $sortDir);
+        } elseif (Schema::hasColumn($tableName, 'entry_date')) {
+            $query->orderByDesc("{$tableName}.entry_date")
+                  ->orderByDesc("{$tableName}.id");
+        } elseif (Schema::hasColumn($tableName, 'document_date')) {
+            $query->orderByDesc("{$tableName}.document_date")
+                  ->orderByDesc("{$tableName}.id");
         } elseif ($tableName === 'accounts') {
             $query->orderBy("{$tableName}.code", 'asc');
         } elseif (Schema::hasColumn($tableName, 'name')) {
