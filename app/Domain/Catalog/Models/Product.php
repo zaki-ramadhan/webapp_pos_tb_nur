@@ -4,12 +4,13 @@ namespace App\Domain\Catalog\Models;
 
 use App\Domain\Support\Models\DomainModel;
 use App\Domain\Support\Traits\HasAttachments;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends DomainModel
 {
-    use HasAttachments;
+    use HasAttachments, SoftDeletes;
     protected $fillable = [
         'category_id',
         'brand_id',
