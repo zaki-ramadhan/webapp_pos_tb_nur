@@ -20,7 +20,13 @@ import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export default function ItemStockTab({ config, values, onChange }) {
     const [modalOpen, setModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const perPage = 5;
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(values.openingStockRows || []);
+
+    const totalRows = sortedRows.length;
+    const totalPages = Math.max(1, Math.ceil(totalRows / perPage));
+    const paginatedRows = sortedRows.slice((currentPage - 1) * perPage, currentPage * perPage);
 
     function handleAddOpeningStock(data) {
         const newRow = {
@@ -82,19 +88,24 @@ export default function ItemStockTab({ config, values, onChange }) {
                         </tr>
                     </DataTableHeader>
                     <DataTableBody>
-                        {sortedRows.length ? (
-                            sortedRows.map((row) => (
-                                <DataTableRow key={row.id} className="border-ui-border-row bg-white">
-                                    {config.openingStockTable.columns.map((column) => (
-                                        <DataTableCell
-                                            key={column.id}
-                                            className="px-3 text-center text-[15px] text-text-workspace-dark"
-                                        >
-                                            {formatTableTextValue(row[column.id], column)}
-                                        </DataTableCell>
-                                    ))}
-                                </DataTableRow>
-                            ))
+                        {paginatedRows.length ? (
+                            paginatedRows.map((row, index) => {
+                                const rowNumber = (currentPage - 1) * perPage + index + 1;
+                                return (
+                                    <DataTableRow key={row.id} className="border-ui-border-row bg-white">
+                                        {config.openingStockTable.columns.map((column) => (
+                                            <DataTableCell
+                                                key={column.id}
+                                                className="px-3 text-center text-[15px] text-text-workspace-dark"
+                                            >
+                                                {column.id === 'number'
+                                                    ? rowNumber
+                                                    : formatTableTextValue(row[column.id], column)}
+                                            </DataTableCell>
+                                        ))}
+                                    </DataTableRow>
+                                );
+                            })
                         ) : (
                             <DataTableRow className="border-ui-border-row bg-white">
                                 <DataTableCell
@@ -107,6 +118,35 @@ export default function ItemStockTab({ config, values, onChange }) {
                         )}
                     </DataTableBody>
                 </DataTable>
+
+                {totalRows > perPage && (
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs text-text-inactive">
+                        <span>
+                            Menampilkan {((currentPage - 1) * perPage) + 1} - {Math.min(currentPage * perPage, totalRows)} dari {totalRows} data
+                        </span>
+                        <div className="flex items-center gap-1">
+                            <button
+                                type="button"
+                                disabled={currentPage <= 1}
+                                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                className="rounded border border-ui-border px-2 py-1 transition disabled:opacity-40 hover:bg-bg-workspace-light"
+                            >
+                                Sebelumnya
+                            </button>
+                            <span className="px-2 font-medium text-brand-dark">
+                                {currentPage} / {totalPages}
+                            </span>
+                            <button
+                                type="button"
+                                disabled={currentPage >= totalPages}
+                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                className="rounded border border-ui-border px-2 py-1 transition disabled:opacity-40 hover:bg-bg-workspace-light"
+                            >
+                                Selanjutnya
+                            </button>
+                        </div>
+                    </div>
+                )}
             </section>
 
             <section className="space-y-2">

@@ -49,11 +49,12 @@ const listColumns = [
 ];
 
 const stockOpeningColumns = [
+    { id: 'number', label: '#', widthClassName: 'w-[48px]', align: 'center', sortable: false },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[20%]', align: 'center' },
-    { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[20%]', align: 'center' },
-    { id: 'unit', label: 'Satuan', widthClassName: 'w-[20%]', align: 'center' },
+    { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[18%]', align: 'center' },
+    { id: 'unit', label: 'Satuan', widthClassName: 'w-[16%]', align: 'center' },
     { id: 'unitCost', label: 'Biaya Satuan', widthClassName: 'w-[20%]', align: 'center' },
-    { id: 'warehouse', label: 'Gudang', widthClassName: 'w-[20%]', align: 'center' },
+    { id: 'warehouse', label: 'Gudang', widthClassName: 'w-[22%]', align: 'center' },
 ];
 
 const itemsTableRows = [];
