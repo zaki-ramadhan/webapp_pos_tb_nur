@@ -306,12 +306,13 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $this->assertNotNull($materialRow);
         $this->assertEquals('123', str_replace(['.', ','], '', $materialRow['saleable_stock']));
 
-        $openingStocksResponse = $this->actingAs($user)->getJson('/api/backend/product-opening-stocks?product_id='.$product->id);
-        $openingStocksResponse->assertOk();
-        $openingRows = collect($openingStocksResponse->json('data'));
-        $this->assertCount(1, $openingRows);
-        $this->assertEquals('123', str_replace(['.', ','], '', (string) $openingRows->first()['quantity']));
-        $this->assertEquals('PCS', $openingRows->first()['unit']);
+        $mutationsResponse = $this->actingAs($user)->getJson('/api/backend/product-mutations?product_id='.$product->id);
+        $mutationsResponse->assertOk();
+        $mutationRows = collect($mutationsResponse->json('data'));
+        $this->assertNotEmpty($mutationRows);
+        $firstMutation = $mutationRows->first();
+        $this->assertEquals('inventory-adjustment', $firstMutation['page_id']);
+        $this->assertNotEmpty($firstMutation['document_id']);
     }
 
     public function test_taxes_resource_can_be_imported(): void

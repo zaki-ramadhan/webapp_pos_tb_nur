@@ -435,7 +435,7 @@ class InventoryInquiryQueryService
         $opDocs = OperationDocument::query()
             ->with(['lines', 'warehouse'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
-            ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
+            ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return', 'inventory_adjustment', 'stock_transfer'])
             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
             ->when($dateFrom, fn ($q) => $q->where(function ($sub) use ($dateFrom) {
                 $sub->whereDate('entry_date', '>=', $dateFrom->toDateString())
@@ -467,6 +467,8 @@ class InventoryInquiryQueryService
                     'sales_invoice' => 'sales-invoice',
                     'sales_return' => 'sales-return',
                     'purchase_return' => 'purchase-return',
+                    'inventory_adjustment' => 'inventory-adjustment',
+                    'stock_transfer' => 'stock-transfer',
                     default => str_replace('_', '-', $docTypeStr),
                 };
 
@@ -496,6 +498,8 @@ class InventoryInquiryQueryService
                         'sales_invoice' => 'Faktur Penjualan',
                         'sales_return' => 'Retur Penjualan',
                         'purchase_return' => 'Retur Pembelian',
+                        'inventory_adjustment' => 'Penyesuaian Persediaan',
+                        'stock_transfer' => 'Pemindahan Barang',
                         default => ucwords(str_replace('_', ' ', (string) $doc->document_type)),
                     },
                     'description' => $doc->notes ?? $line->description ?? '-',

@@ -38,7 +38,8 @@ import { buildGeneratedDocNumber } from '@/features/workspace/shared/documentNum
 function mapBackendStockRows(rows, detailRow) {
     return rows
         .map((r) => {
-            const qty = parseAmountInput(r.quantity ?? r.saleable_stock ?? r.stock_on_hand ?? 0);
+            const rawQty = r.raw_quantity ?? r.quantity ?? r.saleable_stock ?? r.stock_on_hand ?? 0;
+            const qty = typeof rawQty === 'number' ? rawQty : (parseAmountInput(rawQty) || 0);
             const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
             const unitName = (typeof r.unit === 'string' && r.unit)
                 ? r.unit
@@ -150,23 +151,25 @@ export default function ItemsServicesFormView({
         }
         let active = true;
 
-        listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() })
-            .then((response) => {
+        const loadStock = async () => {
+            try {
+                const response = await listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() });
                 if (!active) return;
                 const rows = extractBackendRows(response);
                 const stockRows = mapBackendStockRows(rows, detailRow);
 
                 setDbStockRows(stockRows);
                 updateDbBaseline((prev) => {
-                    const hasUserRows = (prev.openingStockRows ?? []).some((r) => !r.__fromDb);
-                    if (hasUserRows) return prev;
-                    return { ...prev, openingStockRows: stockRows };
+                    const userDraftRows = (prev.openingStockRows ?? []).filter((r) => !r.__fromDb);
+                    return { ...prev, openingStockRows: [...stockRows, ...userDraftRows] };
                 });
-            })
-            .catch(() => {});
+            } catch (_) {}
+        };
+
+        loadStock();
 
         return () => { active = false; };
-    }, [recordId, updateDbBaseline]);
+    }, [recordId, detailRow?.id, updateDbBaseline]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
