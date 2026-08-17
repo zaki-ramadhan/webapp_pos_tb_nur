@@ -137,7 +137,7 @@ class BackendResourceAccessService
         'units' => ['units', 'item-unit'],
         'brands' => ['brands', 'item-brand'],
         'product-categories' => ['product-categories', 'item-category'],
-        'item-location' => ['item-location', 'item-locations'],
+        'item-location' => ['item-location', 'item-locations', 'product-opening-stocks'],
         'minimum-stock' => ['minimum-stock', 'minimum-stocks'],
         'sales-invoices' => ['sales-invoices', 'sales-invoice'],
         'sales-receipts' => ['sales-receipts', 'sales-receipt'],
