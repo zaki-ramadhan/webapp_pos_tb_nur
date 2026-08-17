@@ -110,7 +110,6 @@ class CatalogBackendResources
                 with: [
                     'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'attachments',
                     'groupItems', 'groupItems.childProduct', 'groupItems.unit',
-                    'supplierPrices.supplier',
                 ],
                 storeRules: [
                     'category_id' => ['nullable', 'integer', 'exists:product_categories,id'],
