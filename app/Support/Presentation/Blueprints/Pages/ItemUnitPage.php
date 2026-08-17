@@ -79,15 +79,6 @@ class ItemUnitPage
                         'clearable' => true,
                         'containerClassName' => 'max-w-[420px]',
                     ],
-                    [
-                        'id' => 'taxCode',
-                        'type' => 'lookup',
-                        'label' => 'Ref Kode Pajak',
-                        'info' => true,
-                        'value' => '',
-                        'placeholder' => 'Cari/Pilih...',
-                        'containerClassName' => 'max-w-[420px]',
-                    ],
                 ],
             ],
         ]);

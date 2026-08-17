@@ -30,7 +30,6 @@ class CatalogBackendResources
                     'code' => ['nullable', 'string', 'max:50', 'unique:units,code'],
                     'name' => ['required', 'string', 'max:120'],
                     'precision' => ['nullable', 'integer', 'min:0', 'max:6'],
-                    'tax_reference_code' => ['nullable', 'string', 'max:100'],
                     'is_active' => ['sometimes', 'boolean'],
                 ],
                 updateRules: fn (Model $record) => [
@@ -38,7 +37,6 @@ class CatalogBackendResources
                     'code' => ['nullable', 'string', 'max:50', Rule::unique('units', 'code')->ignore($record)],
                     'name' => ['required', 'string', 'max:120'],
                     'precision' => ['nullable', 'integer', 'min:0', 'max:6'],
-                    'tax_reference_code' => ['nullable', 'string', 'max:100'],
                     'is_active' => ['sometimes', 'boolean'],
                 ],
             ),

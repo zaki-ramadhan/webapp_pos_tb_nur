@@ -38,7 +38,6 @@ export default function SimpleMasterView({ page, mode, activeLevel2Tab, level2Ta
                     if (page.id === 'item-unit') {
                         extraCols = [
                             { id: 'precision', label: 'Presisi Desimal', widthClassName: 'w-[140px]', align: 'center', defaultHidden: true },
-                            { id: 'taxCode', label: 'Kode Pajak', widthClassName: 'w-[140px]', align: 'left', defaultHidden: true },
                             { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
                         ];
                     } else if (page.id === 'sales-category') {
