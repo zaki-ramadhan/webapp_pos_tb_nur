@@ -138,6 +138,7 @@ export default function ItemsServicesFormView({
                         const cost = parseAmountInput(r.unit_cost ?? r.average_cost ?? detailRow?.purchasePrice ?? 0);
                         return {
                             id: `db-stock-${r.id ?? r.warehouse_id}`,
+                            warehouse_id: r.warehouse_id ? Number(r.warehouse_id) : null,
                             date: (r.date && r.date !== '-') ? r.date : (r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID') : '-'),
                             warehouse: warehouseName,
                             quantity: qty,

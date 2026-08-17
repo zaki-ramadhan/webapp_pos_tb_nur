@@ -28,8 +28,10 @@ export default function ItemStockTab({ config, values, onChange }) {
             date: data.date,
             quantity: Number(data.quantity),
             unit: data.unit,
+            unit_id: data.unit_id ?? null,
             unitCost: Number(data.unitCost),
             warehouse: data.warehouse,
+            warehouse_id: data.warehouse_id ?? null,
             serials: data.serials || [],
         };
         const currentRows = values.openingStockRows || [];
