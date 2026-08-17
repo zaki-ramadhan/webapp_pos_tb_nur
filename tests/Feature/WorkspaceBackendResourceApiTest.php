@@ -313,6 +313,27 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $firstMutation = $mutationRows->first();
         $this->assertEquals('inventory-adjustment', $firstMutation['page_id']);
         $this->assertNotEmpty($firstMutation['document_id']);
+
+        $adjDoc = new \App\Domain\Inventory\Models\InventoryDocument();
+        $adjDoc->id = 99999;
+        $adjDoc->document_type = 'inventory_adjustment';
+        $adjDoc->document_number = 'SA-TEST-99999';
+        $adjDoc->warehouse_id = $wh2->id;
+        $adjDoc->status = 'posted';
+        $adjDoc->document_date = now()->toDateString();
+        $adjDoc->save();
+
+        $adjDoc->lines()->create([
+            'product_id' => $product->id,
+            'unit_id' => $unit->id,
+            'quantity' => 50,
+            'warehouse_id' => $wh2->id,
+            'unit_cost' => 52000,
+        ]);
+
+        $showResponse = $this->actingAs($user)->getJson('/api/backend/inventory-adjustments/'.$adjDoc->id);
+        $showResponse->assertOk();
+        $this->assertEquals('SA-TEST-99999', $showResponse->json('data.document_number'));
     }
 
     public function test_taxes_resource_can_be_imported(): void

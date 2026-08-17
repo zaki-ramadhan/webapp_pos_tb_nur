@@ -182,9 +182,64 @@ class BackendResourceController extends Controller
     {
         $modelClass = $blueprint->modelClass();
 
-        return $modelClass::query()
+        $entity = $modelClass::query()
             ->with($blueprint->with)
-            ->findOrFail($record);
+            ->find($record);
+
+        if ($entity) {
+            return $entity;
+        }
+
+        // Fallback transparent adapter for inventory adjustments created in inventory_documents table
+        if ($blueprint->key === 'inventory-adjustments') {
+            $invDoc = \App\Domain\Inventory\Models\InventoryDocument::with([
+                'lines.product.baseUnit',
+                'lines.unit',
+                'lines.warehouse',
+                'warehouse',
+            ])->find($record);
+
+            if ($invDoc) {
+                $opDoc = new \App\Domain\Inventory\Models\InventoryAdjustment([
+                    'document_type' => 'inventory_adjustment',
+                    'document_number' => $invDoc->document_number,
+                    'status' => $invDoc->status ?? 'posted',
+                    'entry_date' => $invDoc->document_date ? \Carbon\Carbon::parse($invDoc->document_date)->toDateString() : now()->toDateString(),
+                    'notes' => $invDoc->notes,
+                    'warehouse_id' => $invDoc->warehouse_id,
+                ]);
+                $opDoc->exists = true;
+                $opDoc->id = $invDoc->id;
+
+                $opLines = $invDoc->lines->map(function ($l) {
+                    $attrs = (array) ($l->attributes ?? []);
+                    $unitPrice = (float) ($attrs['unit_price'] ?? $attrs['cost'] ?? $l->unit_cost ?? 0);
+                    $totalAmt = (float) ($attrs['total_amount'] ?? ($l->quantity * $unitPrice));
+
+                    $opLine = new \App\Domain\Support\Models\OperationDocumentLine([
+                        'id' => $l->id,
+                        'product_id' => $l->product_id,
+                        'unit_id' => $l->unit_id,
+                        'warehouse_id' => $l->warehouse_id,
+                        'quantity' => $l->quantity,
+                        'unit_price' => $unitPrice,
+                        'total_amount' => $totalAmt,
+                        'description' => $l->notes ?? $l->product?->name ?? 'Stok Awal',
+                        'attributes' => $attrs,
+                    ]);
+                    $opLine->setRelation('product', $l->product);
+                    $opLine->setRelation('unit', $l->unit ?? $l->product?->baseUnit);
+                    $opLine->setRelation('warehouse', $l->warehouse);
+                    return $opLine;
+                });
+
+                $opDoc->setRelation('lines', $opLines);
+                $opDoc->setRelation('warehouse', $invDoc->warehouse);
+                return $opDoc;
+            }
+        }
+
+        abort(404, "Data {$blueprint->label} #{$record} tidak ditemukan.");
     }
 
     public function syncCurrencies(Request $request): JsonResponse

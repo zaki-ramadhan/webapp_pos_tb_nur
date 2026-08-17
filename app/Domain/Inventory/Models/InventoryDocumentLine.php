@@ -54,4 +54,9 @@ class InventoryDocumentLine extends DomainModel
     {
         return $this->belongsTo(Department::class);
     }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Catalog\Models\Warehouse::class);
+    }
 }
