@@ -862,17 +862,16 @@ class InventoryInquiryQueryService
 
     protected function resolveWarehouseAddress(Warehouse $warehouse): string
     {
-        $branch = $warehouse->branch;
-
-        if ($branch === null) {
-            return '';
-        }
+        $street = $warehouse->street ?: $warehouse->branch?->street;
+        $city = $warehouse->city ?: $warehouse->branch?->city;
+        $province = $warehouse->province ?: $warehouse->branch?->province;
+        $country = $warehouse->country ?: $warehouse->branch?->country;
 
         return collect([
-            $branch->street,
-            $branch->city,
-            $branch->province,
-            $branch->country,
+            $street,
+            $city,
+            $province,
+            $country,
         ])->filter()->implode(', ');
     }
 

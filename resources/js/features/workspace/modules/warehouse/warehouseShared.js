@@ -57,21 +57,25 @@ export function buildWarehouseEntry(backendRecord, defaults) {
 
 /** Peta baris tabel (index list) — hanya field tampilan tabel */
 export function mapWarehouseTableRow(record) {
+    const fullAddress = [
+        record.street || record.branch?.street,
+        record.city || record.branch?.city,
+        record.province || record.branch?.province,
+        record.country || record.branch?.country,
+    ].filter(Boolean).join(', ') || '-';
+
     return {
         id: record.id,
         code: record.code ?? '',
         name: record.name ?? '',
         tabLabel: record.name ?? '',
-        address: record.street ?? '',
+        address: fullAddress,
         branchId: record.branch_id ?? record.branch?.id ?? null,
         inactiveValue: record.is_active === false ? 'yes' : 'no',
-        
-      // Pemetaan kolom baru untuk Settings
-
         description: record.description ?? '',
         responsiblePerson: record.responsible_person ?? record.responsiblePerson ?? '',
         isDamagedWarehouseText: record.warehouse_type === 'damaged' || record.isDamagedWarehouse ? 'Ya' : 'Tidak',
-        fullAddress: [record.street, record.city, record.province].filter(Boolean).join(', ') || '-',
+        fullAddress,
         allUsersText: record.all_users !== false ? 'Semua Pengguna' : 'Pengguna Tertentu',
         isActiveText: record.is_active === false ? 'Ya' : 'Tidak',
     };
