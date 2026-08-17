@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
 import SelectField from '@/components/ui/SelectField';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
@@ -56,9 +56,20 @@ export default function SalesReceiptTableView({
             return result;
         }, {}),
     );
+    const isFirstMount = useRef(true);
+    const prevKeywordRef = useRef(keyword);
 
     useEffect(() => {
         if (!isServerSearch) return;
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+        if (prevKeywordRef.current === keyword) {
+            return;
+        }
+        prevKeywordRef.current = keyword;
+
         const timer = setTimeout(() => {
             const onSearch = config.table.onSearch || config.table.pagination?.onSearch;
             onSearch?.(keyword);

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
     DataTable,
@@ -91,9 +91,20 @@ export default function TableListView({
 
     const [localPage, setLocalPage] = useState(1);
     const [localPerPage, setLocalPerPage] = useState(25);
+    const isFirstMount = useRef(true);
+    const prevKeywordRef = useRef(keyword);
 
     useEffect(() => {
         if (!isServerSearch) return;
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+        if (prevKeywordRef.current === keyword) {
+            return;
+        }
+        prevKeywordRef.current = keyword;
+
         const timer = setTimeout(() => {
             const onSearch = table.onSearch || table.pagination?.onSearch;
             onSearch?.(keyword);

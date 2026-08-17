@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 
 import {
@@ -62,7 +62,6 @@ function subscribeToLiveUpdates(callback) {
                 }
             } catch {
               // Abaikan kesalahan koneksi sementara
-
             }
         }, 10000);
     }
@@ -100,12 +99,18 @@ export default function useBackendIndexResource({
     const [sortBy, setSortByState] = useState('');
     const [sortDirection, setSortDirectionState] = useState('asc');
 
-    const setSearch = (nextSearch) => {
-        setSearchState(nextSearch ?? '');
-        setPage(1);
-    };
+    const setSearch = useCallback((nextSearch) => {
+        const clean = (nextSearch ?? '').trim();
+        setSearchState((prev) => {
+            if (prev.trim() !== clean) {
+                setPage(1);
+                return nextSearch ?? '';
+            }
+            return prev;
+        });
+    }, []);
 
-    const setSort = (columnId, direction) => {
+    const setSort = useCallback((columnId, direction) => {
         if (!columnId) {
             setSortByState('');
             setSortDirectionState('asc');
@@ -117,7 +122,16 @@ export default function useBackendIndexResource({
         } else {
             setSortDirectionState((prev) => (sortBy === columnId ? (prev === 'asc' ? 'desc' : 'asc') : 'asc'));
         }
-    };
+    }, [sortBy]);
+
+    const setPageCallback = useCallback((nextPage) => {
+        setPage(nextPage);
+    }, []);
+
+    const setPerPageCallback = useCallback((nextPerPage) => {
+        setPerPage(nextPerPage);
+        setPage(1);
+    }, []);
 
     const [loading, setLoading] = useState(() => {
         if (!enabled || !resource || isForbiddenInstantly) return false;
@@ -133,10 +147,20 @@ export default function useBackendIndexResource({
     const [error, setError] = useState(() => isForbiddenInstantly ? 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.' : '');
     const [reloadVersion, setReloadVersion] = useState(0);
     const [revalidateVersion, setRevalidateVersion] = useState(0);
-    const [payload, setPayload] = useState(null);
-    const [prevCacheKey, setPrevCacheKey] = useState('');
+    const [payload, setPayload] = useState(() => {
+        if (!enabled || !resource || isForbiddenInstantly) return null;
+        const initialFilters = {
+            ...sanitizeFilters(filters),
+            page: 1,
+            per_page: initialPerPage,
+        };
+        const key = getCacheKey(resource, initialFilters);
+        const cached = globalCache.get(key);
+        return cached ? cached.payload : null;
+    });
 
     const serializedFilters = JSON.stringify(filters ?? {});
+    const prevFiltersRef = useRef(serializedFilters);
     const normalizedFilters = useMemo(() => sanitizeFilters(filters), [serializedFilters]);
     const requestFilters = useMemo(() => {
         const base = {
@@ -159,18 +183,20 @@ export default function useBackendIndexResource({
 
     const cacheKey = useMemo(() => getCacheKey(resource, requestFilters), [resource, requestFilters]);
 
-  // Sinkronisasi state cacheKey jika berubah
-
-    if (cacheKey !== prevCacheKey) {
-        setPrevCacheKey(cacheKey);
-        const cached = globalCache.get(cacheKey);
-        setPayload(cached ? cached.payload : null);
-    }
-
-  // Reset ke halaman 1 jika filter berubah
-
+    // Sinkronisasi data cache jika key berubah
     useEffect(() => {
-        setPage(1);
+        const cached = globalCache.get(cacheKey);
+        if (cached) {
+            setPayload(cached.payload);
+        }
+    }, [cacheKey]);
+
+    // Reset ke halaman 1 jika filter berubah
+    useEffect(() => {
+        if (prevFiltersRef.current !== serializedFilters) {
+            prevFiltersRef.current = serializedFilters;
+            setPage(1);
+        }
     }, [serializedFilters]);
 
     useEffect(() => {
@@ -279,14 +305,14 @@ export default function useBackendIndexResource({
         lastPage: payload?.last_page ?? 1,
         from: payload?.from ?? 0,
         to: payload?.to ?? 0,
-        onPageChange: setPage,
-        onPerPageChange: setPerPage,
+        onPageChange: setPageCallback,
+        onPerPageChange: setPerPageCallback,
         search,
         onSearch: setSearch,
         sortBy,
         sortDirection,
         onSort: setSort,
-    }), [page, perPage, total, payload?.last_page, payload?.from, payload?.to, setPage, setPerPage, search, setSearch, sortBy, sortDirection, setSort]);
+    }), [page, perPage, total, payload?.last_page, payload?.from, payload?.to, setPageCallback, setPerPageCallback, search, setSearch, sortBy, sortDirection, setSort]);
 
     const serverTableProps = useMemo(() => ({
         search,

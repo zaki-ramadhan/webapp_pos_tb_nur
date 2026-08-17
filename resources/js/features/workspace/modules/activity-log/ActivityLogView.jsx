@@ -38,6 +38,8 @@ function matchesFilter(row, filter, selectedValue) {
 
 export default function ActivityLogView({ page }) {
     const [keyword, setKeyword] = useState('');
+    const isFirstMount = useRef(true);
+    const prevKeywordRef = useRef(keyword);
     const {
         rows: backendRows,
         total,
@@ -54,6 +56,15 @@ export default function ActivityLogView({ page }) {
     });
 
     useEffect(() => {
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+        if (prevKeywordRef.current === keyword) {
+            return;
+        }
+        prevKeywordRef.current = keyword;
+
         const timer = setTimeout(() => {
             serverTableProps.onSearch(keyword);
         }, 300);
