@@ -14,12 +14,12 @@ export default function ModuleFormTemplate({
     children,
     actionsSlot,
 }) {
-    useFormSaveShortcut(onSave, { disabled: Boolean(saveDisabled || saving) });
+    const formRef = useFormSaveShortcut(onSave, { disabled: Boolean(saveDisabled || saving) });
 
     const hasTabs = (form.tabs && form.tabs.length > 0) || (form.rightTabs && form.rightTabs.length > 0);
 
     return (
-        <div className="flex h-full min-h-0 flex-col overflow-hidden">
+        <div ref={formRef} className="flex h-full min-h-0 flex-col overflow-hidden">
             <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden">
                 <div className="flex flex-1 min-h-0 flex-col overflow-hidden">
                     {hasTabs ? (
