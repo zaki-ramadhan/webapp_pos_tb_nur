@@ -611,6 +611,9 @@ class InventoryInquiryQueryService
             ->get();
 
         foreach ($batches as $batch) {
+            if ($batch->source_id && \Illuminate\Support\Facades\DB::table('operation_documents')->where('id', $batch->source_id)->where('document_type', 'inventory_adjustment')->exists()) {
+                continue;
+            }
             $productId = (int) $batch->product_id;
             $warehouseId = (int) $batch->warehouse_id;
             $key = sprintf('%d:%d', $productId, $warehouseId);
