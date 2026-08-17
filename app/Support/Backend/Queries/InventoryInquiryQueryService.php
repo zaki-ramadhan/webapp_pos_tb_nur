@@ -455,7 +455,10 @@ class InventoryInquiryQueryService
         // 2. Inventory Documents
         $inventoryDocuments = InventoryDocument::query()
             ->with(['lines'])
-            ->whereDate('document_date', '<=', $asOfDate->toDateString())
+            ->where(function ($q) use ($asOfDate) {
+                $q->whereDate('document_date', '<=', $asOfDate->toDateString())
+                  ->orWhere(fn ($sub) => $sub->whereNull('document_date')->whereDate('created_at', '<=', $asOfDate->toDateString()));
+            })
             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
             ->get();
 
@@ -481,7 +484,10 @@ class InventoryInquiryQueryService
         // 3. Operation Documents (Purchases, Sales, Transfers, Adjustments, Returns)
         $operationDocuments = OperationDocument::query()
             ->with(['lines'])
-            ->whereDate('entry_date', '<=', $asOfDate->toDateString())
+            ->where(function ($q) use ($asOfDate) {
+                $q->whereDate('entry_date', '<=', $asOfDate->toDateString())
+                  ->orWhere(fn ($sub) => $sub->whereNull('entry_date')->whereDate('created_at', '<=', $asOfDate->toDateString()));
+            })
             ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return', 'inventory_adjustment', 'stock_transfer'])
             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
             ->get();

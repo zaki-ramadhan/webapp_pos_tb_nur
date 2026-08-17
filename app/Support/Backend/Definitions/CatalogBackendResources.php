@@ -212,15 +212,35 @@ class CatalogBackendResources
                             $qty = (float) ($stockRow['quantity'] ?? 0);
                             $cost = (float) ($stockRow['unit_cost'] ?? $stockRow['unitCost'] ?? $record->default_purchase_price ?? 0);
                             if ($qty > 0) {
-                                $warehouseId = $stockRow['warehouse_id'] ?? null;
+                                $warehouseId = !empty($stockRow['warehouse_id']) ? (int) $stockRow['warehouse_id'] : null;
                                 if (!$warehouseId && !empty($stockRow['warehouse'])) {
-                                    $warehouseId = \App\Domain\Catalog\Models\Warehouse::where('name', $stockRow['warehouse'])->value('id');
+                                    $warehouseName = trim((string) $stockRow['warehouse']);
+                                    $warehouseId = \App\Domain\Catalog\Models\Warehouse::where('name', $warehouseName)
+                                        ->orWhere('code', $warehouseName)
+                                        ->value('id');
                                 }
                                 if (!$warehouseId && !empty($stockRow['warehouse_name'])) {
-                                    $warehouseId = \App\Domain\Catalog\Models\Warehouse::where('name', $stockRow['warehouse_name'])->value('id');
+                                    $warehouseName = trim((string) $stockRow['warehouse_name']);
+                                    $warehouseId = \App\Domain\Catalog\Models\Warehouse::where('name', $warehouseName)
+                                        ->orWhere('code', $warehouseName)
+                                        ->value('id');
                                 }
                                 if (!$warehouseId) {
                                     $warehouseId = \App\Domain\Catalog\Models\Warehouse::where('is_active', true)->value('id') ?? 1;
+                                }
+
+                                $rawDate = $stockRow['date'] ?? null;
+                                $docDate = now()->toDateString();
+                                if (!empty($rawDate) && $rawDate !== '-') {
+                                    try {
+                                        if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', trim($rawDate))) {
+                                            $docDate = \Carbon\Carbon::createFromFormat('d/m/Y', trim($rawDate))->toDateString();
+                                        } else {
+                                            $docDate = \Carbon\Carbon::parse($rawDate)->toDateString();
+                                        }
+                                    } catch (\Throwable) {
+                                        $docDate = now()->toDateString();
+                                    }
                                 }
 
                                 $doc = \App\Domain\Inventory\Models\InventoryDocument::create([
@@ -228,7 +248,7 @@ class CatalogBackendResources
                                     'document_number' => 'SA-' . ($record->code ?? $record->id) . '-' . time() . '-' . rand(10, 99),
                                     'warehouse_id' => $warehouseId,
                                     'status' => 'posted',
-                                    'document_date' => (!empty($stockRow['date']) && $stockRow['date'] !== '-') ? $stockRow['date'] : now()->toDateString(),
+                                    'document_date' => $docDate,
                                     'notes' => 'Stok awal barang: ' . $record->name,
                                 ]);
 
@@ -236,10 +256,12 @@ class CatalogBackendResources
                                     'product_id' => $record->id,
                                     'unit_id' => $record->base_unit_id,
                                     'quantity' => $qty,
+                                    'warehouse_id' => $warehouseId,
                                     'notes' => 'Stok awal ' . $record->name,
                                     'attributes' => [
                                         'unit_price' => $cost,
                                         'total_amount' => $qty * $cost,
+                                        'adjustment_type' => 'Penambahan',
                                     ],
                                 ]);
                             }

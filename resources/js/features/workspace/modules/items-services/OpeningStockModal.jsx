@@ -37,11 +37,16 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
             return;
         }
 
+        const selectedWarehouse = warehouse[0];
+        const selectedUnit = unit[0];
+
         const data = {
-            warehouse: warehouse[0]?.name || '',
+            warehouse: selectedWarehouse?.name || selectedWarehouse?.label || '',
+            warehouse_id: selectedWarehouse?.id ? Number(selectedWarehouse.id) : null,
             date,
             quantity: String(qtyVal),
-            unit: unit[0]?.name || '',
+            unit: selectedUnit?.name || selectedUnit?.label || '',
+            unit_id: selectedUnit?.id ? Number(selectedUnit.id) : null,
             unitCost: String(costVal),
             serials: [],
         };
