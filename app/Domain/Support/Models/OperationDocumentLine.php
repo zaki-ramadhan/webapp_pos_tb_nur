@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class OperationDocumentLine extends DomainModel
 {
     protected $fillable = [
+        'operation_document_id',
         'line_type',
         'product_id',
         'fixed_asset_id',
@@ -62,7 +63,7 @@ class OperationDocumentLine extends DomainModel
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)->withTrashed();
     }
 
     public function fixedAsset(): BelongsTo
