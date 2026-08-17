@@ -13,9 +13,9 @@ import { TransactionDateInput } from '@/features/workspace/modules/shared/Transa
 import { extractBackendRows, listBackendResource, clearBackendCache } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
-function getThirtyDaysAgoDate() {
+function getDefaultDateFrom() {
     const d = new Date();
-    d.setDate(d.getDate() - 30);
+    d.setFullYear(d.getFullYear() - 1);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
@@ -31,7 +31,7 @@ function getTodayDate() {
 }
 
 export default function ItemMutationTab({ productId }) {
-    const [dateFrom, setDateFrom] = useState(getThirtyDaysAgoDate);
+    const [dateFrom, setDateFrom] = useState(getDefaultDateFrom);
     const [dateTo, setDateTo] = useState(getTodayDate);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -45,7 +45,7 @@ export default function ItemMutationTab({ productId }) {
     });
 
     useEffect(() => {
-        setDateFrom(getThirtyDaysAgoDate());
+        setDateFrom(getDefaultDateFrom());
         setDateTo(getTodayDate());
         setPage(1);
     }, [productId]);
