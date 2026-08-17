@@ -3,6 +3,7 @@ import {
     WORKSPACE_INACTIVE_BADGE_LABEL,
     WORKSPACE_INACTIVE_HINT,
 } from '@/features/workspace/shared/workspaceAvailability';
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 
 const itemTabs = [
@@ -265,8 +266,8 @@ function buildFallbackDetailRecord(row, config) {
     const baseUnitName = (typeof baseUnitObj === 'object' ? (baseUnitObj?.name ?? baseUnitObj?.code) : (typeof baseUnitObj === 'string' ? baseUnitObj : (row.unitName ?? row.unit ?? 'Pcs'))) ?? 'Pcs';
     const baseUnitId = (typeof baseUnitObj === 'object' ? baseUnitObj?.id : null) ?? row.base_unit_id ?? row.baseUnitId ?? null;
 
-    const purchaseUnitObj = row.purchase_unit ?? row.purchaseUnit;
-    const purchaseUnitName = (typeof purchaseUnitObj === 'object' ? (purchaseUnitObj?.name ?? purchaseUnitObj?.code) : (typeof purchaseUnitObj === 'string' ? purchaseUnitObj : (row.purchaseUnitName ?? ''))) ?? '';
+    const purchaseUnitObj = row.purchase_unit ?? (typeof row.purchaseUnit === 'object' ? row.purchaseUnit : null);
+    const purchaseUnitName = (typeof purchaseUnitObj === 'object' ? (purchaseUnitObj?.name ?? purchaseUnitObj?.code) : (typeof purchaseUnitObj === 'string' ? purchaseUnitObj : (row.purchaseUnitName ?? (typeof row.purchaseUnit === 'string' ? row.purchaseUnit : '')))) ?? '';
     const purchaseUnitId = (typeof purchaseUnitObj === 'object' ? purchaseUnitObj?.id : null) ?? row.purchase_unit_id ?? row.purchaseUnitId ?? null;
 
     const finalCategoryName = categoryName || inferCategory(row);
@@ -289,13 +290,13 @@ function buildFallbackDetailRecord(row, config) {
         mainSupplierId: supplierId,
         purchaseUnit: (purchaseUnitName && purchaseUnitName !== '-') ? [{ id: purchaseUnitId, name: purchaseUnitName }] : [],
         purchaseUnitId: purchaseUnitId,
-        purchasePrice: row.purchasePrice ?? row.default_purchase_price ?? row.purchase_price ?? '0',
-        sellPriceLevel1: row.salePrice ?? row.default_sale_price ?? row.selling_price ?? row.sale_price ?? '0',
+        purchasePrice: formatAmountInput(row.default_purchase_price ?? row.purchase_price ?? row.purchasePrice ?? '0'),
+        sellPriceLevel1: formatAmountInput(row.default_sale_price ?? row.selling_price ?? row.sale_price ?? row.salePrice ?? '0'),
         notes: row.notes ?? '',
         stockQuantity: row.stockAtWarehouse ?? '0',
         stockUnitValue: '0',
         stockCostOfGoods: '0',
-        minimumStock: row.saleableStock ?? '0',
+        minimumStock: formatAmountInput(row.minimum_stock ?? row.minimumStock ?? '0'),
         accounts: row.accounts ? cloneAccounts(row.accounts) : cloneAccounts(config.createDefaults.accounts),
         inventoryAccountId: row.inventoryAccountId ?? null,
         salesAccountId: row.salesAccountId ?? null,

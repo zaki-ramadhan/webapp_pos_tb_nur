@@ -575,7 +575,15 @@ class InventoryInquiryQueryService
 
     protected function resolveSupplierMap(array $productIds): Collection
     {
-        return collect();
+        if (empty($productIds)) {
+            return collect();
+        }
+
+        return \App\Domain\Catalog\Models\SupplierPrice::query()
+            ->with('supplier')
+            ->whereIn('product_id', $productIds)
+            ->get()
+            ->keyBy('product_id');
     }
 
     /**
