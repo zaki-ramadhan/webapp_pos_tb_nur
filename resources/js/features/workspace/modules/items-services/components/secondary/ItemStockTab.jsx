@@ -90,7 +90,7 @@ export default function ItemStockTab({ config, values, onChange }) {
                                             key={column.id}
                                             className="px-3 text-center text-[15px] text-text-workspace-dark"
                                         >
-                                            {formatTableTextValue(row[column.id])}
+                                            {formatTableTextValue(row[column.id], column)}
                                         </DataTableCell>
                                     ))}
                                 </DataTableRow>

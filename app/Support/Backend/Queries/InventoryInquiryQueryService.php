@@ -80,6 +80,23 @@ class InventoryInquiryQueryService
             ->get()
             ->keyBy(fn ($item) => sprintf('%d:%d', $item->product_id, $item->warehouse_id));
 
+        $batchCosts = \Illuminate\Support\Facades\DB::table('inventory_batches')
+            ->selectRaw('product_id, warehouse_id, unit_cost')
+            ->whereIn('product_id', $products->keys()->all())
+            ->where('unit_cost', '>', 0)
+            ->orderBy('id', 'desc')
+            ->get()
+            ->unique(fn ($item) => sprintf('%d:%d', $item->product_id, $item->warehouse_id))
+            ->keyBy(fn ($item) => sprintf('%d:%d', $item->product_id, $item->warehouse_id));
+
+        $docCosts = \Illuminate\Support\Facades\DB::table('inventory_document_lines')
+            ->join('inventory_documents', 'inventory_documents.id', '=', 'inventory_document_lines.inventory_document_id')
+            ->whereIn('inventory_document_lines.product_id', $products->keys()->all())
+            ->whereNotIn('inventory_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->select('inventory_document_lines.product_id', 'inventory_documents.warehouse_id', 'inventory_document_lines.unit_cost', 'inventory_document_lines.attributes')
+            ->orderBy('inventory_document_lines.id', 'desc')
+            ->get();
+
         foreach ($products as $product) {
             foreach ($warehouses as $warehouse) {
                 $compositeKey = sprintf('%d:%d', $product->id, $warehouse->id);
@@ -88,6 +105,18 @@ class InventoryInquiryQueryService
                 $formattedDate = $docDate
                     ? Carbon::parse($docDate)->format('d/m/Y')
                     : ($product->created_at ? Carbon::parse($product->created_at)->format('d/m/Y') : Carbon::now()->format('d/m/Y'));
+
+                $cost = (float) ($batchCosts->get($compositeKey)?->unit_cost ?? 0);
+                if ($cost <= 0) {
+                    $docLine = $docCosts->first(fn ($d) => sprintf('%d:%d', $d->product_id, $d->warehouse_id) === $compositeKey);
+                    if ($docLine) {
+                        $attrs = is_string($docLine->attributes) ? json_decode($docLine->attributes, true) : (array) ($docLine->attributes ?? []);
+                        $cost = (float) ($docLine->unit_cost ?: ($attrs['unit_price'] ?? $attrs['unit_cost'] ?? $attrs['cost'] ?? 0));
+                    }
+                }
+                if ($cost <= 0) {
+                    $cost = (float) ($product->default_purchase_price ?: $product->default_sale_price ?: 0);
+                }
 
                 $rows->push([
                     'id' => $compositeKey,
@@ -98,6 +127,8 @@ class InventoryInquiryQueryService
                     'warehouse' => $warehouse->name,
                     'multi_unit_quantity' => sprintf('%s %s', $this->formatNumber($quantity), $product->baseUnit?->name ?? ''),
                     'saleable_stock' => $this->formatNumber($quantity),
+                    'unit_cost' => $this->formatNumber($cost),
+                    'raw_unit_cost' => $cost,
                     'address' => $this->resolveWarehouseAddress($warehouse),
                     'date' => $formattedDate,
                 ]);
