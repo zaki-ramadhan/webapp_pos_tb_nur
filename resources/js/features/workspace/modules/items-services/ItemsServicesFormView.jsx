@@ -45,7 +45,7 @@ function mapBackendStockRows(rows, detailRow) {
             const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
             const unitName = (typeof r.unit === 'string' && r.unit)
                 ? r.unit
-                : (r.unit_name ?? r.unit?.name ?? detailRow?.primaryUnit?.[0]?.name ?? detailRow?.baseUnit?.name ?? detailRow?.base_unit?.name ?? detailRow?.unit ?? detailRow?.purchaseUnit?.[0]?.name ?? detailRow?.purchase_unit?.name ?? 'PCS');
+                : (r.unit_name ?? r.unit?.name ?? detailRow?.primaryUnit?.[0]?.name ?? detailRow?.baseUnit?.name ?? detailRow?.base_unit?.name ?? detailRow?.unit ?? detailRow?.purchaseUnit?.[0]?.name ?? detailRow?.purchase_unit?.name ?? '-');
             const cost = typeof r.raw_unit_cost === 'number' && r.raw_unit_cost > 0
                 ? r.raw_unit_cost
                 : parseAmountInput(r.unit_cost ?? r.average_cost ?? detailRow?.default_purchase_price ?? detailRow?.purchasePrice ?? detailRow?.default_sale_price ?? 0);

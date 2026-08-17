@@ -47,7 +47,7 @@ export default function SalesReturnFetchItemsModal({
                         name: item.name ?? item.item_name ?? item.product_name ?? 'Barang',
                         code: item.code ?? item.item_code ?? item.product_code ?? '',
                         quantity: qty,
-                        unit: item.unit ?? item.unit_name ?? 'Pcs',
+                        unit: typeof item.unit === 'object' ? (item.unit?.name ?? item.unit?.code ?? '') : (item.unit ?? item.unit_name ?? ''),
                         price: price,
                         discount: discount,
                         total: total,

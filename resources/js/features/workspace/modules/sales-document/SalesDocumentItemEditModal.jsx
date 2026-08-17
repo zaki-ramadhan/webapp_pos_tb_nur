@@ -249,7 +249,7 @@ function resolvePriceFromProduct(product, isPurchase = false) {
             ?? product.baseUnit?.name 
             ?? product.unit?.name 
             ?? (typeof product.unit === 'string' ? product.unit : null) 
-            ?? 'PCS';
+            ?? '';
         const unitId = preferredPrice.unit_id 
             ?? (isPurchase ? product.purchase_unit_id ?? product.purchase_unit?.id : product.sales_unit_id ?? product.sales_unit?.id)
             ?? product.base_unit_id 
@@ -266,7 +266,7 @@ function resolvePriceFromProduct(product, isPurchase = false) {
         ?? product.baseUnit?.name 
         ?? product.unit?.name 
         ?? (typeof product.unit === 'string' ? product.unit : null) 
-        ?? 'PCS';
+        ?? '';
     const defaultUnitId = (isPurchase ? product.purchase_unit_id ?? product.purchase_unit?.id : product.sales_unit_id ?? product.sales_unit?.id)
         ?? product.base_unit_id 
         ?? product.base_unit?.id 
@@ -289,7 +289,7 @@ function buildInitialForm(product, existingItem) {
             code: existingItem.code ?? '',
             canSell: existingItem.canSell ?? 0,
             quantity: existingItem.quantity ?? '1',
-            unit: existingItem.unit ?? 'PCS',
+            unit: existingItem.unit ?? '',
             __unitId: existingItem.__unitId ?? existingItem.unit_id ?? null,
             __productId: existingItem.__productId ?? existingItem.product_id ?? null,
             price: existingItem.price ?? '0',
@@ -333,7 +333,7 @@ function buildInitialForm(product, existingItem) {
         code: '',
         canSell: 0,
         quantity: '1',
-        unit: 'PCS',
+        unit: '',
         __unitId: null,
         __productId: null,
         price: '0',

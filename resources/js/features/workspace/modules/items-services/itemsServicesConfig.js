@@ -66,7 +66,7 @@ const createDefaults = {
     codeAuto: true,
     code: '',
     barcode: '',
-    primaryUnit: ['PCS'],
+    primaryUnit: [],
     unitConversions: [],
     brand: [],
     serialEnabled: false,
@@ -263,7 +263,7 @@ function buildFallbackDetailRecord(row, config) {
     const brandId = (typeof brandObj === 'object' ? brandObj?.id : null) ?? row.brand_id ?? row.brandId ?? null;
 
     const baseUnitObj = row.base_unit ?? row.baseUnit;
-    const baseUnitName = (typeof baseUnitObj === 'object' ? (baseUnitObj?.name ?? baseUnitObj?.code) : (typeof baseUnitObj === 'string' ? baseUnitObj : (row.unitName ?? row.unit ?? 'Pcs'))) ?? 'Pcs';
+    const baseUnitName = (typeof baseUnitObj === 'object' ? (baseUnitObj?.name ?? baseUnitObj?.code) : (typeof baseUnitObj === 'string' ? baseUnitObj : (row.unitName ?? row.unit ?? ''))) ?? '';
     const baseUnitId = (typeof baseUnitObj === 'object' ? baseUnitObj?.id : null) ?? row.base_unit_id ?? row.baseUnitId ?? null;
 
     const purchaseUnitObj = row.purchase_unit ?? (typeof row.purchaseUnit === 'object' ? row.purchaseUnit : null);
@@ -281,9 +281,9 @@ function buildFallbackDetailRecord(row, config) {
         codeAuto: false,
         code: row.code ?? '',
         barcode: row.barcode ?? buildBarcode(row.code),
-        primaryUnit: [{ id: baseUnitId, name: baseUnitName }],
+        primaryUnit: baseUnitName ? [{ id: baseUnitId, name: baseUnitName }] : [],
         baseUnitId: baseUnitId,
-        unitConversions: [{ id: `${row.id}-conv-1`, unit: ['Box'], quantity: '10', baseUnit: baseUnitName || 'PCS' }],
+        unitConversions: [],
         brand: (brandName && brandName !== '-') ? [{ id: brandId, name: brandName }] : [],
         brandId: brandId,
         mainSupplier: (supplierName && supplierName !== '-') ? [{ id: supplierId, name: supplierName }] : [],
@@ -315,7 +315,7 @@ function buildFallbackDetailRecord(row, config) {
             code: gi.child_product?.code ?? gi.code ?? '-',
             name: gi.child_product?.name ?? gi.name ?? '-',
             quantity: gi.quantity ?? 1,
-            unit: gi.unit?.name ?? gi.child_product?.base_unit?.name ?? gi.unit ?? 'PCS',
+            unit: gi.unit?.name ?? gi.child_product?.base_unit?.name ?? gi.unit ?? '',
             unit_id: gi.unit_id ?? gi.unit?.id ?? null,
         })),
         attachments: row.attachments ?? [],

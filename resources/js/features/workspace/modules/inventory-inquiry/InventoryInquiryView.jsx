@@ -282,7 +282,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                 const price = parseNumericInput(row.costPrice || row.price || 0);
                 const name = row.itemName || row.productName || row.name || '';
                 const code = row.itemCode || row.productCode || row.code || '';
-                const unit = row.unit || row.baseUnit || 'Pcs';
+                const unit = row.unit || row.baseUnit || '';
                 return {
                     id: String(row.productId || row.id),
                     name: name,

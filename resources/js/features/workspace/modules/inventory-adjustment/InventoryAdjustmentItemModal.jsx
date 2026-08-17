@@ -19,7 +19,7 @@ function buildInitialValues(item = {}) {
         || source.base_unit?.name 
         || source.baseUnit?.name 
         || (source.unitLookup && source.unitLookup[0]) 
-        || 'PCS';
+        || '';
 
     return {
         __productId: source.__productId ?? null,
@@ -104,14 +104,14 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
         const isAddition = values.adjustmentType === 'Penambahan';
         const unitCostNum = isAddition ? (parseFloat(String(values.unitCost ?? '0').replace(/\./g, '').replace(/,/g, '.')) || 0) : 0;
         const totalCostNum = isAddition ? (qty * unitCostNum) : 0;
-        const unitName = values.unitLookup?.[0] || item.unit || 'PCS';
+        const unitName = values.unitLookup?.[0] || item.unit || '';
 
         const updatedItem = {
             ...item,
             ...values,
             quantity: String(qty),
             unit: unitName,
-            unitLookup: values.unitLookup?.length ? values.unitLookup : [unitName],
+            unitLookup: values.unitLookup?.length ? values.unitLookup : (unitName ? [unitName] : []),
             unitCost: isAddition ? (unitCostNum ? unitCostNum.toLocaleString('id-ID') : '0') : '0',
             totalCost: isAddition ? (totalCostNum ? totalCostNum.toLocaleString('id-ID') : '0') : '0',
         };

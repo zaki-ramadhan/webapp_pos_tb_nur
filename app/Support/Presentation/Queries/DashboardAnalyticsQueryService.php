@@ -354,7 +354,7 @@ class DashboardAnalyticsQueryService
                 $unitsSold = (float) $tp->units_sold;
                 $formattedUnits = (floor($unitsSold) == $unitsSold
                     ? number_format($unitsSold, 0, ',', '.')
-                    : rtrim(rtrim(number_format($unitsSold, 2, ',', '.'), '0'), ',')) . ' ' . ($tp->unit_name ?? 'pcs');
+                    : rtrim(rtrim(number_format($unitsSold, 2, ',', '.'), '0'), ',')) . ($tp->unit_name ? (' ' . $tp->unit_name) : '');
 
                 $topProductsItems[] = [
                     'id' => $tp->product_id,

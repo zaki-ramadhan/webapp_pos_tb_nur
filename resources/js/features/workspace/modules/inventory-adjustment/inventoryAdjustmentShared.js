@@ -271,7 +271,7 @@ export async function promptInventoryAdjustmentItemEditor(item = null, pageId = 
         ?? product.purchase_unit?.name 
         ?? (typeof product.unit === 'string' ? product.unit : null) 
         ?? item?.unit 
-        ?? 'PCS';
+        ?? '';
     const unitId = product.base_unit?.id 
         ?? product.baseUnit?.id 
         ?? product.unit?.id 
@@ -290,7 +290,7 @@ export async function promptInventoryAdjustmentItemEditor(item = null, pageId = 
             name: product.name ?? '',
             code: product.code ?? '',
             unit: unitName,
-            unitLookup: [unitName],
+            unitLookup: unitName ? [unitName] : [],
             oldDiscount,
             minQty,
             newDiscount,
@@ -320,7 +320,7 @@ export async function promptInventoryAdjustmentItemEditor(item = null, pageId = 
         adjustmentType: adjustmentType.trim() || 'Penambahan',
         quantity: String(quantityAmount || 0),
         unit: unitName,
-        unitLookup: [unitName],
+        unitLookup: unitName ? [unitName] : [],
         unitCost: formatCurrencyValue(unitCostAmount),
         totalCost: formatCurrencyValue(quantityAmount * unitCostAmount),
         warehouse: item?.warehouse ?? [],
@@ -371,7 +371,7 @@ export function buildItemFromProduct(product, pageId = 'inventory-adjustment') {
         ?? product.sales_unit?.name 
         ?? product.purchase_unit?.name 
         ?? (typeof product.unit === 'string' && product.unit ? product.unit : null) 
-        ?? 'PCS';
+        ?? '';
         
     const unitId = product.base_unit?.id 
         ?? product.baseUnit?.id 
@@ -394,7 +394,7 @@ export function buildItemFromProduct(product, pageId = 'inventory-adjustment') {
         adjustmentType: 'Penambahan',
         quantity: isPrice ? '0' : '1',
         unit: unitName,
-        unitLookup: unitName ? [unitName] : ['PCS'],
+        unitLookup: unitName ? [unitName] : [],
         unitCost: formatCurrencyValue(price),
         totalCost: formatCurrencyValue(isPrice ? 0 : price),
         oldDiscount: '0',

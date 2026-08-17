@@ -45,7 +45,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
             ?? line.product?.base_unit?.name 
             ?? line.product?.unit?.name 
             ?? (typeof rawAttrs?.unit === 'string' ? rawAttrs.unit : '') 
-            ?? 'PCS';
+            ?? '';
 
         const itemQty = Number(line.quantity) || 0;
         const itemUnitPrice = Number(line.unit_price) || 0;
@@ -63,7 +63,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
             adjustmentType: rawAttrs?.adjustment_type ?? line.adjustment_type ?? 'Penambahan',
             quantity: String(line.quantity ?? 0),
             unit: unitName,
-            unitLookup: unitName ? [unitName] : ['PCS'],
+            unitLookup: unitName ? [unitName] : [],
             unitCost: formatCurrencyValue(itemUnitPrice),
             totalCost: formatCurrencyValue(itemTotalAmount),
             warehouse: line.warehouse?.name ? [line.warehouse.name] : [],

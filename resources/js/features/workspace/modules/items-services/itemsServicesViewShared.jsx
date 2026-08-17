@@ -37,7 +37,7 @@ export function buildItemsServicesFormValues(config, detailRow = null) {
             id: item.id ?? `conversion-${index + 1}`,
             unit: cloneList(item.unit),
             quantity: item.quantity ?? '',
-            baseUnit: item.baseUnit ?? source.primaryUnit?.[0] ?? 'PCS',
+            baseUnit: item.baseUnit ?? (source.primaryUnit?.[0]?.name ?? source.primaryUnit?.[0] ?? ''),
         })),
         openingStockRows: [...(source.openingStockRows ?? [])],
         images: [...(source.images ?? [])],
