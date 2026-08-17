@@ -183,25 +183,31 @@ class CatalogBackendResources
                                     }
                                 }
 
-                                $doc = \App\Domain\Inventory\Models\InventoryDocument::create([
+                                $docNumber = 'PS.' . now()->format('Y.m') . '.' . str_pad((string) (\App\Domain\Support\Models\OperationDocument::where('document_type', 'inventory_adjustment')->count() + 1), 5, '0', STR_PAD_LEFT);
+
+                                $opDoc = \App\Domain\Support\Models\OperationDocument::create([
                                     'document_type' => 'inventory_adjustment',
-                                    'document_number' => 'SA-' . ($record->code ?? $record->id) . '-' . time() . '-' . rand(10, 99),
+                                    'document_number' => $docNumber,
                                     'warehouse_id' => $warehouseId,
-                                    'status' => 'posted',
-                                    'document_date' => $docDate,
-                                    'notes' => 'Stok awal barang: ' . $record->name,
+                                    'entry_date' => $docDate,
+                                    'status' => 'Belum Ditutup',
+                                    'is_closed' => false,
+                                    'total_amount' => $qty * $cost,
+                                    'notes' => 'Stok awal ' . $record->name,
                                 ]);
 
-                                $doc->lines()->create([
+                                $opDoc->lines()->create([
                                     'product_id' => $record->id,
                                     'unit_id' => $record->base_unit_id,
-                                    'quantity' => $qty,
                                     'warehouse_id' => $warehouseId,
-                                    'notes' => 'Stok awal ' . $record->name,
+                                    'quantity' => $qty,
+                                    'unit_price' => $cost,
+                                    'total_amount' => $qty * $cost,
+                                    'description' => $record->name,
                                     'attributes' => [
-                                        'unit_price' => $cost,
-                                        'total_amount' => $qty * $cost,
                                         'adjustment_type' => 'Penambahan',
+                                        'unit_cost' => $cost,
+                                        'unit' => $record->baseUnit?->name ?? 'PCS',
                                     ],
                                 ]);
                             }
