@@ -35,6 +35,8 @@ import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { buildGeneratedDocNumber } from '@/features/workspace/shared/documentNumberUtils';
+import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+
 function mapBackendStockRows(rows, detailRow) {
     return rows
         .map((r) => {
