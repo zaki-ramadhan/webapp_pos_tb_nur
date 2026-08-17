@@ -135,7 +135,9 @@ export default function ItemsServicesFormView({
                         const qty = parseAmountInput(r.saleable_stock ?? r.stock_on_hand ?? r.quantity ?? 0);
                         const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
                         const unitName = typeof r.unit === 'string' ? r.unit : (r.unit_name ?? r.unit?.name ?? detailRow?.unit ?? detailRow?.baseUnit?.name ?? detailRow?.primaryUnit?.[0]?.name ?? 'PCS');
-                        const cost = parseAmountInput(r.unit_cost ?? r.average_cost ?? detailRow?.purchasePrice ?? 0);
+                        const cost = typeof r.raw_unit_cost === 'number' && r.raw_unit_cost > 0
+                            ? r.raw_unit_cost
+                            : parseAmountInput(r.unit_cost ?? r.average_cost ?? detailRow?.default_purchase_price ?? detailRow?.purchasePrice ?? detailRow?.default_sale_price ?? 0);
                         return {
                             id: `db-stock-${r.id ?? r.warehouse_id}`,
                             warehouse_id: r.warehouse_id ? Number(r.warehouse_id) : null,
