@@ -78,19 +78,29 @@ export default function InventoryInquiryView({ config, pageId }) {
 
     const cleanedColumns = useMemo(() => {
         const columns = config.table.columns ?? [];
-        return columns.map(col => {
-            if (col.id === 'warehouse' && values.itemType === 'warehouse') {
+        return columns
+            .filter(col => !(values.itemType === 'warehouse' && col.id === 'address'))
+            .map(col => {
+                if (col.id === 'warehouse') {
+                    if (values.itemType === 'warehouse') {
+                        return {
+                            ...col,
+                            id: 'productName',
+                            label: 'Barang',
+                            align: 'left',
+                        };
+                    }
+                    return {
+                        ...col,
+                        align: 'left',
+                        label: cleanHeaderLabel(col.label),
+                    };
+                }
                 return {
                     ...col,
-                    id: 'productName',
-                    label: 'Barang',
+                    label: cleanHeaderLabel(col.label),
                 };
-            }
-            return {
-                ...col,
-                label: cleanHeaderLabel(col.label)
-            };
-        });
+            });
     }, [config.table.columns, values.itemType]);
 
   // Pisahkan kolom checkbox dari kolom data
