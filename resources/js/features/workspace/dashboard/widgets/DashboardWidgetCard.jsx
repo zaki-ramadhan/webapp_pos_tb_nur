@@ -73,6 +73,8 @@ export default function DashboardWidgetCard({
                 { pageId: 'sales-invoice', label: 'Faktur Penjualan (Kas Masuk)' },
                 { pageId: 'expense-entry', label: 'Pencatatan Beban (Kas Keluar)' },
                 { pageId: 'payroll-entry', label: 'Pencatatan Gaji (Kas Keluar)' },
+                { pageId: 'cash-payment', label: 'Pembayaran Kas & Bank (Kas Keluar)' },
+                { pageId: 'purchase-payment', label: 'Pembayaran Pembelian ke Supplier (Kas Keluar)' },
             ]
         },
         'company-expense': {
@@ -89,17 +91,19 @@ export default function DashboardWidgetCard({
             title: 'Barang Paling Laku',
             description: 'Widget ini menghitung akumulasi kuantitas barang terlaris dari rincian transaksi penjualan:',
             sources: [
-                { pageId: 'sales-invoice', label: 'Faktur Penjualan (Sumber Transaksi Penjualan)' },
-                { pageId: 'items-services', label: 'Barang (Master Data Barang)' },
+                { pageId: 'sales-invoice', label: 'Faktur Penjualan' },
+                { pageId: 'sales-delivery', label: 'Pengiriman Barang' },
+                { pageId: 'cash-sale', label: 'Penjualan Tunai (Kasir)' },
+                { pageId: 'items-services', label: 'Barang (Master Data)' },
             ]
         },
         'cash-availability': {
             title: 'Ketersediaan Kas',
-            description: 'Widget ini menghitung estimasi saldo kas berjalan dari mutasi transaksi:',
+            description: 'Widget ini menghitung estimasi saldo kas kumulatif toko dari awal hingga tanggal yang dipilih. Saldo dihitung dari selisih penerimaan penjualan vs pengeluaran yang tercatat:',
             sources: [
-                { pageId: 'sales-invoice', label: 'Faktur Penjualan (Kas Masuk)' },
-                { pageId: 'expense-entry', label: 'Pencatatan Beban (Kas Keluar)' },
-                { pageId: 'payroll-entry', label: 'Pencatatan Gaji (Kas Keluar)' },
+                { pageId: 'sales-invoice', label: 'Faktur Penjualan (Kas Masuk Kumulatif)' },
+                { pageId: 'expense-entry', label: 'Pencatatan Beban (Kas Keluar Kumulatif)' },
+                { pageId: 'payroll-entry', label: 'Pencatatan Gaji (Kas Keluar Kumulatif)' },
             ]
         },
     };
