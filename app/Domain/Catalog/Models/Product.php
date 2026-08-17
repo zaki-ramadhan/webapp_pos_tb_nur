@@ -29,14 +29,6 @@ class Product extends DomainModel
         'print_group_details',
         'allow_edit_group_quantity',
         'use_group_price',
-        'inventory_account_id',
-        'sales_account_id',
-        'sales_return_account_id',
-        'sales_discount_account_id',
-        'delivered_goods_account_id',
-        'cogs_account_id',
-        'purchase_return_account_id',
-        'uninvoiced_purchase_account_id',
     ];
 
     protected array $searchable = ['code', 'barcode', 'name', 'product_type'];
@@ -45,29 +37,12 @@ class Product extends DomainModel
 
     public function getMainSupplierAttribute(): ?array
     {
-        $sp = $this->relationLoaded('supplierPrices')
-            ? $this->supplierPrices->first()
-            : $this->supplierPrices()->with('supplier')->first();
-
-        if ($sp && $sp->supplier) {
-            return ['id' => $sp->supplier->id, 'name' => $sp->supplier->name];
-        }
-
         return null;
     }
 
     public function getMainSupplierIdAttribute(): ?int
     {
-        $sp = $this->relationLoaded('supplierPrices')
-            ? $this->supplierPrices->first()
-            : $this->supplierPrices()->first();
-
-        return $sp?->supplier_id;
-    }
-
-    public function supplierPrices(): HasMany
-    {
-        return $this->hasMany(SupplierPrice::class, 'product_id');
+        return null;
     }
 
     protected static function boot()

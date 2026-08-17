@@ -207,21 +207,6 @@ class CatalogBackendResources
                         );
                     }
 
-                    if (array_key_exists('main_supplier_id', $payload) || array_key_exists('supplier_id', $payload)) {
-                        $supplierId = $payload['main_supplier_id'] ?? $payload['supplier_id'];
-                        if (filled($supplierId)) {
-                            \App\Domain\Catalog\Models\SupplierPrice::updateOrCreate(
-                                ['product_id' => $record->id],
-                                [
-                                    'supplier_id' => $supplierId,
-                                    'price' => $record->default_purchase_price ?? 0,
-                                    'effective_from' => now()->toDateString(),
-                                ]
-                            );
-                        } else {
-                            \App\Domain\Catalog\Models\SupplierPrice::where('product_id', $record->id)->delete();
-                        }
-                    }
 
                     if (array_key_exists('opening_stock_rows', $payload) && is_array($payload['opening_stock_rows'])) {
                         foreach ($payload['opening_stock_rows'] as $stockRow) {
