@@ -195,6 +195,9 @@ class InventoryInquiryQueryService
             ->get();
 
         foreach ($batches as $batch) {
+            if ($batch->source_id && \Illuminate\Support\Facades\DB::table('operation_documents')->where('id', $batch->source_id)->where('document_type', 'inventory_adjustment')->exists()) {
+                continue;
+            }
             $wh = $warehouses->get($batch->warehouse_id);
             $cost = (float) ($batch->unit_cost > 0 ? $batch->unit_cost : ($product->default_purchase_price ?: 0));
             $rows->push([
@@ -212,7 +215,50 @@ class InventoryInquiryQueryService
             ]);
         }
 
-        // 2. Inventory Adjustment Documents (Manual Opening Stock entries)
+        // 2. Operation Document Adjustments (Opening stock entries created as OperationDocument)
+        $opDocs = OperationDocument::query()
+            ->with(['lines.unit', 'warehouse'])
+            ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
+            ->where('document_type', 'inventory_adjustment')
+            ->where(function ($q) {
+                $q->where('notes', 'like', '%Stok awal%')
+                  ->orWhere('document_number', 'like', 'SA-%');
+            })
+            ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
+            ->orderBy('id', 'asc')
+            ->get();
+
+        foreach ($opDocs as $doc) {
+            foreach ($doc->lines as $line) {
+                if ((int) $line->product_id !== $productId) {
+                    continue;
+                }
+                $wh = $doc->warehouse ?? $warehouses->get($line->warehouse_id ?? $doc->warehouse_id);
+                $attrs = is_string($line->attributes) ? json_decode($line->attributes, true) : (array) ($line->attributes ?? []);
+                $cost = (float) ($line->unit_price ?? $attrs['unit_price'] ?? $attrs['unit_cost'] ?? $product->default_purchase_price ?? 0);
+                $qty = (float) ($line->quantity ?? 0);
+
+                if ($qty <= 0) {
+                    continue;
+                }
+
+                $rows->push([
+                    'id' => 'op-line-' . $line->id,
+                    'warehouse_id' => (int) ($line->warehouse_id ?? $doc->warehouse_id ?? 1),
+                    'warehouse' => $wh?->name ?? 'Gudang Utama',
+                    'date' => $doc->entry_date ? Carbon::parse($doc->entry_date)->format('d/m/Y') : ($doc->created_at ? Carbon::parse($doc->created_at)->format('d/m/Y') : Carbon::now()->format('d/m/Y')),
+                    'quantity' => $qty,
+                    'raw_quantity' => $qty,
+                    'unit' => $line->unit?->name ?? $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
+                    'unit_cost' => $cost,
+                    'raw_unit_cost' => $cost,
+                    'document_number' => $doc->document_number,
+                    'created_at' => $doc->created_at,
+                ]);
+            }
+        }
+
+        // 3. Inventory Adjustment Documents (Manual Opening Stock entries legacy)
         $documents = InventoryDocument::query()
             ->with(['lines.unit', 'warehouse'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
@@ -251,24 +297,24 @@ class InventoryInquiryQueryService
             }
         }
 
-        // 3. Fallback to location rows if no opening batch/adjustment entries exist
+        // 4. Fallback to location rows if no opening batch/adjustment entries exist
         if ($rows->isEmpty()) {
             $itemLocations = $this->paginateItemLocations(['product_id' => $productId, 'per_page' => 100]);
             foreach ($itemLocations->items() as $item) {
                 $qty = (float) ($item['raw_quantity'] ?? $item['quantity'] ?? 0);
                 if ($qty > 0) {
                     $rows->push([
-                        'id' => 'loc-' . $item['id'],
-                        'warehouse_id' => $item['warehouse_id'],
-                        'warehouse' => $item['warehouse'],
-                        'date' => $item['date'] ?? Carbon::now()->format('d/m/Y'),
+                        'id' => 'loc-' . ($item['id'] ?? $item['warehouse_id']),
+                        'warehouse_id' => (int) ($item['warehouse_id'] ?? 1),
+                        'warehouse' => $item['warehouse'] ?? 'Gudang Utama',
+                        'date' => Carbon::now()->format('d/m/Y'),
                         'quantity' => $qty,
                         'raw_quantity' => $qty,
-                        'unit' => $item['unit'] ?? $product->baseUnit?->name ?? 'PCS',
-                        'unit_cost' => (float) ($item['raw_unit_cost'] ?? 0),
-                        'raw_unit_cost' => (float) ($item['raw_unit_cost'] ?? 0),
+                        'unit' => $item['unit'] ?? ($product->baseUnit?->name ?? 'PCS'),
+                        'unit_cost' => (float) ($item['raw_unit_cost'] ?? $item['unit_cost'] ?? 0),
+                        'raw_unit_cost' => (float) ($item['raw_unit_cost'] ?? $item['unit_cost'] ?? 0),
                         'document_number' => 'SA-' . $product->code,
-                        'created_at' => null,
+                        'created_at' => Carbon::now(),
                     ]);
                 }
             }
@@ -282,62 +328,37 @@ class InventoryInquiryQueryService
      */
     public function paginateMinimumStocks(array $filters): LengthAwarePaginator
     {
-        $stockMap = $this->buildStockMap($filters);
-        $products = $this->queryProducts($filters)->keyBy('id');
-        $supplierMap = $this->resolveSupplierMap($products->keys()->all());
-        $requestedMap = $this->buildRequestedMap($filters);
-        $orderedMap = $this->buildOrderedMap($filters);
-        $rows = collect();
+        $rows = $this->queryProducts($filters)
+            ->map(function (Product $product) use ($filters): ?array {
+                $totals = $this->buildStockTotalsByProduct([$product->id], $filters)[$product->id] ?? [
+                    'stock_on_hand' => 0.0,
+                    'stock_available' => 0.0,
+                ];
 
-        foreach ($products as $product) {
-            $supplier = $supplierMap->get($product->id);
+                $currentStock = (float) $totals['stock_on_hand'];
+                $minimumStock = (float) ($product->minimum_stock ?? 0);
 
-            if (filled($filters['supplier_id'] ?? null) && (int) ($supplier?->supplier_id ?? 0) !== (int) $filters['supplier_id']) {
-                continue;
-            }
-
-            $availableStock = collect($stockMap)
-                ->filter(fn ($value, $key) => str_starts_with((string) $key, $product->id.':'))
-                ->sum();
-            $ordered = (float) ($orderedMap[$product->id] ?? 0);
-            $requested = (float) ($requestedMap[$product->id] ?? 0);
-            $minimum = (float) ($product->minimum_stock ?? 0);
-
-            if ($availableStock > $minimum) {
-                continue;
-            }
-
-            $rows->push([
-                'id' => (string) $product->id,
-                'supplier' => $supplier?->supplier?->name ?? '',
-                'supplier_id' => $supplier?->supplier_id,
-                'item_name' => $product->name,
-                'item_code' => $product->code,
-                'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? $product->salesUnit?->name ?? '',
-                'cost_price' => (float) ($product->default_purchase_price ?? $product->default_sale_price ?? 0),
-                'available_stock' => $this->formatNumber($availableStock),
-                'raw_available_stock' => (float) $availableStock,
-                'ordered' => $this->formatNumber($ordered),
-                'requested' => $this->formatNumber($requested),
-                'minimum_limit' => $this->formatNumber($minimum),
-                'raw_minimum_limit' => (float) $minimum,
-            ]);
-        }
-
-        $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
-        $rows = $rows
-            ->filter(function (array $row) use ($search): bool {
-                if ($search === '') {
-                    return true;
+                if ($currentStock > $minimumStock) {
+                    return null;
                 }
 
-                return collect([
-                    $row['supplier'],
-                    $row['item_name'],
-                    $row['item_code'],
-                    $row['unit'],
-                ])->contains(fn ($value) => str_contains(mb_strtolower((string) $value), $search));
+                $deficit = max(0.0, $minimumStock - $currentStock);
+
+                return [
+                    'id' => $product->id,
+                    'item_id' => $product->id,
+                    'item_code' => $product->code,
+                    'item_name' => $product->name,
+                    'supplier' => $product->preferredSupplier?->name ?? '-',
+                    'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
+                    'current_stock' => $this->formatNumber($currentStock),
+                    'minimum_stock' => $this->formatNumber($minimumStock),
+                    'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
+                    'raw_current_stock' => $currentStock,
+                    'raw_minimum_stock' => $minimumStock,
+                ];
             })
+            ->filter()
             ->sortBy([
                 ['supplier', 'asc'],
                 ['item_name', 'asc'],
@@ -518,25 +539,26 @@ class InventoryInquiryQueryService
             }
         }
 
-        // Hitung Saldo Awal (Opening Balance) sebelum periode transaksi yang difilter
-        $batchInitial = \Illuminate\Support\Facades\DB::table('inventory_batches')
-            ->where('product_id', $productId)
-            ->where(function ($q) {
-                $q->whereNull('source_type')
-                  ->orWhere('source_type', 'like', '%Product%')
-                  ->orWhere('source_type', 'like', '%Initial%');
-            })
-            ->sum('qty_received');
-
-        $invInitial = \Illuminate\Support\Facades\DB::table('inventory_document_lines')
-            ->join('inventory_documents', 'inventory_documents.id', '=', 'inventory_document_lines.inventory_document_id')
-            ->where('inventory_document_lines.product_id', $productId)
-            ->where('inventory_documents.notes', 'like', '%Stok awal%')
-            ->sum('inventory_document_lines.quantity');
-
-        $initialStock = max((float) $batchInitial, (float) $invInitial, 1000.0);
+        // Hitung Saldo Awal (Opening Balance) sebelum periode tanggal date_from yang difilter
+        $initialStock = 0.0;
 
         if ($dateFrom) {
+            // 1. Batches before dateFrom
+            $initialBatches = \Illuminate\Support\Facades\DB::table('inventory_batches')
+                ->where('product_id', $productId)
+                ->where(function ($q) use ($dateFrom) {
+                    $q->whereDate('entry_date', '<', $dateFrom->toDateString())
+                      ->orWhere(fn ($sub) => $sub->whereNull('entry_date')->whereDate('created_at', '<', $dateFrom->toDateString()));
+                })
+                ->get();
+            foreach ($initialBatches as $b) {
+                if ($b->source_id && \Illuminate\Support\Facades\DB::table('operation_documents')->where('id', $b->source_id)->where('document_type', 'inventory_adjustment')->exists()) {
+                    continue;
+                }
+                $initialStock += (float) $b->qty_received;
+            }
+
+            // 2. Inventory Documents before dateFrom
             $priorInv = InventoryDocument::query()
                 ->with(['lines'])
                 ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
@@ -553,10 +575,11 @@ class InventoryInquiryQueryService
                 }
             }
 
+            // 3. Operation Documents before dateFrom
             $priorOp = OperationDocument::query()
                 ->with(['lines'])
                 ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
-                ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
+                ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return', 'inventory_adjustment'])
                 ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
                 ->whereDate('entry_date', '<', $dateFrom->toDateString())
                 ->get();
@@ -566,6 +589,14 @@ class InventoryInquiryQueryService
                         $mQty = (float) ($l->quantity ?? 0);
                         if (in_array($d->document_type, ['sales_delivery', 'sales_invoice', 'purchase_return'], true)) {
                             $initialStock -= $mQty;
+                        } elseif ($d->document_type === 'inventory_adjustment') {
+                            $attributes = is_string($l->attributes) ? json_decode($l->attributes, true) : ($l->attributes ?? []);
+                            $adjType = $attributes['adjustment_type'] ?? 'Penambahan';
+                            if ($adjType === 'Pengurangan') {
+                                $initialStock -= $mQty;
+                            } else {
+                                $initialStock += $mQty;
+                            }
                         } else {
                             $initialStock += $mQty;
                         }
