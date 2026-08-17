@@ -177,6 +177,7 @@ class WorkspaceBackendResources
                 'as_of_date' => ['nullable', 'string'],
                 'date_from' => ['nullable', 'string'],
                 'date_to' => ['nullable', 'string'],
+                'require_target' => ['nullable'],
             ],
             indexUsing: $indexUsing,
             showUsing: self::unsupportedShow(),
