@@ -293,6 +293,42 @@ export default function ItemsServicesFormView({
             onSuccess: async (record) => {
                 await onRefresh?.();
                 markClean();
+                if (recordId) {
+                    listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() })
+                        .then((res) => {
+                            const rows = extractBackendRows(res);
+                            const stockRows = rows
+                                .map((r) => {
+                                    const qty = parseAmountInput(r.saleable_stock ?? r.stock_on_hand ?? r.quantity ?? 0);
+                                    const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
+                                    const unitName = (typeof r.unit === 'string' && r.unit)
+                                        ? r.unit
+                                        : (r.unit_name ?? r.unit?.name ?? detailRow?.primaryUnit?.[0]?.name ?? detailRow?.baseUnit?.name ?? detailRow?.base_unit?.name ?? detailRow?.unit ?? detailRow?.purchaseUnit?.[0]?.name ?? detailRow?.purchase_unit?.name ?? 'PCS');
+                                    const cost = typeof r.raw_unit_cost === 'number' && r.raw_unit_cost > 0
+                                        ? r.raw_unit_cost
+                                        : parseAmountInput(r.unit_cost ?? r.average_cost ?? detailRow?.default_purchase_price ?? detailRow?.purchasePrice ?? detailRow?.default_sale_price ?? 0);
+                                    return {
+                                        id: `db-stock-${r.id ?? r.warehouse_id}`,
+                                        warehouse_id: r.warehouse_id ? Number(r.warehouse_id) : null,
+                                        date: (r.date && r.date !== '-') ? r.date : (r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID') : '-'),
+                                        warehouse: warehouseName,
+                                        quantity: qty,
+                                        unit: unitName,
+                                        unitCost: cost,
+                                        serials: [],
+                                        __fromDb: true,
+                                    };
+                                })
+                                .filter((r) => r.quantity !== 0);
+
+                            setDbStockRows(stockRows);
+                            setValues((prev) => ({
+                                ...prev,
+                                openingStockRows: stockRows,
+                            }));
+                        })
+                        .catch(() => {});
+                }
                 if (isDetail && record && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
@@ -381,13 +417,16 @@ export default function ItemsServicesFormView({
                 ) : activeTabId === 'stock' ? (
                     (() => {
                         const openingStockRows = values.openingStockRows || [];
-                        const totalQty = openingStockRows.reduce((sum, r) => sum + (parseAmountInput(r.quantity) || 0), 0);
-                        const totalCost = openingStockRows.reduce((sum, r) => {
+                        const confirmedRows = openingStockRows.filter((r) => r.__fromDb);
+                        const totalQty = confirmedRows.reduce((sum, r) => sum + (parseAmountInput(r.quantity) || 0), 0);
+                        const totalCost = confirmedRows.reduce((sum, r) => {
                             const qty = parseAmountInput(r.quantity) || 0;
                             const cost = parseAmountInput(r.unitCost) || 0;
                             return sum + (qty * cost);
                         }, 0);
-                        const avgCost = totalQty > 0 ? (totalCost / totalQty) : 0;
+                        const avgCost = totalQty > 0
+                            ? (totalCost / totalQty)
+                            : (detailRow?.default_purchase_price ? Number(detailRow.default_purchase_price) : 0);
                         const stockValues = {
                             ...values,
                             stockQuantity: String(totalQty),
