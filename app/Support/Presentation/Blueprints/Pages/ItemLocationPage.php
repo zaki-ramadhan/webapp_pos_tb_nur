@@ -35,12 +35,6 @@ class ItemLocationPage
                         'className' => 'w-full sm:w-[320px]',
                     ],
                     [
-                        'id' => 'asOfDate',
-                        'type' => 'date',
-                        'value' => date('d/m/Y'),
-                        'className' => 'w-[260px]',
-                    ],
-                    [
                         'id' => 'refresh',
                         'type' => 'icon-button',
                         'icon' => 'refresh',
@@ -56,7 +50,7 @@ class ItemLocationPage
                 'table' => [
                     'tableClassName' => 'min-w-[1180px]',
                     'columns' => [
-                        ['id' => 'warehouse', 'label' => 'Gudang', 'widthClassName' => 'w-[300px]', 'align' => 'center'],
+                        ['id' => 'warehouse', 'label' => 'Gudang', 'widthClassName' => 'w-[300px]', 'align' => 'left'],
                         ['id' => 'multiUnitQuantity', 'label' => 'Kuantitas Multi Satuan', 'widthClassName' => 'w-[200px]', 'align' => 'center'],
                         ['id' => 'saleableStock', 'label' => 'Stok dapat dijual', 'widthClassName' => 'w-[200px]', 'align' => 'center'],
                         ['id' => 'address', 'label' => 'Alamat', 'align' => 'center'],
