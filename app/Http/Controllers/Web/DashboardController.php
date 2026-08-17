@@ -45,17 +45,15 @@ class DashboardController extends Controller
         return Inertia::render('DashboardPage', [
             ...$props,
             // 2. PROGRESSIVE DEFER: Only the heavy data mining algorithm (Apriori & ABC) is deferred
-            'analyticsWidget' => Inertia::defer(function () use ($analytics, $months, $forceRefresh) {
+            'analyticsWidget' => Inertia::defer(function () use ($sample, $analytics, $months, $forceRefresh, $asOfDate) {
                 if ($forceRefresh) {
                     \Illuminate\Support\Facades\Cache::forget('analytics_abc_' . ($months ?? 'all'));
                     \Illuminate\Support\Facades\Cache::forget('analytics_apriori_' . ($months ?? 'all') . '_5_40');
                 }
                 $abc = $analytics->getAbcAnalysis($months);
                 $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months);
-                return [
-                    'abc' => $abc,
-                    'apriori' => $apriori,
-                ];
+                $full = PosBlueprint::forDashboard($sample, $abc, $apriori, true, $asOfDate);
+                return collect($full['dashboard']['sampleDashboard']['widgets'] ?? [])->firstWhere('id', 'integrated-analysis');
             }),
         ]);
     }

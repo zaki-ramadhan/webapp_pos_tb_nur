@@ -63,82 +63,12 @@ export default function DashboardWidgetGrid({
 
     // Progressive update: as soon as heavy analytics arrive in background, update integrated-analysis seamlessly
     useEffect(() => {
-        if (!analyticsWidget) return;
-        const { abc, apriori } = analyticsWidget;
-        if (!abc && !apriori) return;
-
-        setDisplayWidgets((prevWidgets) => {
-            return prevWidgets.map((w) => {
-                if (w.id === 'integrated-analysis' || w.id.startsWith('integrated-analysis')) {
-                    const combinedMetrics = [];
-                    if (apriori?.metrics) {
-                        for (const m of apriori.metrics) {
-                            if (m.label === 'Transaksi' || m.label === 'Pasangan Laris Valid' || m.label === 'Rule Valid') {
-                                combinedMetrics.push({
-                                    ...m,
-                                    label: m.label === 'Rule Valid' ? 'Pasangan Laris Valid' : m.label,
-                                });
-                            }
-                        }
-                    }
-                    if (abc?.metrics) {
-                        for (const m of abc.metrics) {
-                            if (m.label === 'Item A' || m.label === 'Nilai Analisis') {
-                                combinedMetrics.push({
-                                    ...m,
-                                    label: m.label === 'Item A' ? 'Fokus Stok (Kat A)' : m.label,
-                                });
-                            }
-                        }
-                    }
-
-                    const formattedRules = [];
-                    if (apriori?.rules) {
-                        for (const rule of apriori.rules) {
-                            formattedRules.push({
-                                id: rule.id,
-                                segment: 'Pasangan Terlaris',
-                                transactionBase: 'Pasangan Laris Valid',
-                                antecedent: rule.antecedent,
-                                antecedentId: rule.antecedentId ?? null,
-                                consequent: rule.consequent,
-                                consequentId: rule.consequentId ?? null,
-                                antecedentAbc: rule.antecedentAbc ?? null,
-                                antecedentColor: rule.antecedentColor ?? null,
-                                consequentAbc: rule.consequentAbc ?? null,
-                                consequentColor: rule.consequentColor ?? null,
-                                support: rule.support,
-                                confidence: rule.confidence,
-                                lift: rule.lift,
-                                insight: `Pembelian ${rule.antecedent} [${rule.antecedentAbc ?? 'C'}] sering diikuti ${rule.consequent} [${rule.consequentAbc ?? 'C'}].`,
-                            });
-                        }
-                    }
-
-                    let insight = w.insight;
-                    if (abc && apriori && apriori.rules?.length && abc.topItems?.length) {
-                        const topRule = apriori.rules[0];
-                        const topItem = abc.topItems[0];
-                        insight = `Rekomendasi Utama: Pelanggan yang membeli ${topRule.antecedent} [Kat ${topRule.antecedentAbc}] memiliki tingkat kepastian ${topRule.confidence} untuk turut membeli ${topRule.consequent} [Kat ${topRule.consequentAbc}]. Kombinasikan dengan prioritas stok ${topItem.name} [Kat A] yang menyumbang ${topItem.share} omzet toko.`;
-                    } else if (apriori?.insight) {
-                        insight = apriori.insight;
-                    } else if (abc?.insight) {
-                        insight = abc.insight;
-                    }
-
-                    return {
-                        ...w,
-                        isDeferredLoading: false,
-                        metrics: combinedMetrics.length > 0 ? combinedMetrics : w.metrics,
-                        distribution: abc?.distribution ?? w.distribution,
-                        topItems: abc?.topItems ?? w.topItems,
-                        rules: formattedRules.length > 0 ? formattedRules : w.rules,
-                        insight,
-                    };
-                }
-                return w;
-            });
-        });
+        if (!analyticsWidget?.id) return;
+        setDisplayWidgets((prevWidgets) =>
+            prevWidgets.map((w) =>
+                w.id === analyticsWidget.id ? { ...w, ...analyticsWidget, isDeferredLoading: false } : w
+            )
+        );
     }, [analyticsWidget]);
 
     useEffect(() => {
