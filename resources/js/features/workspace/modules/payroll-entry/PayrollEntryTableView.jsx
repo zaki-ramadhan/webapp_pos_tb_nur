@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 import { tableRegistry } from '@/features/workspace/shared/columnVisibility';
 import Pagination from '@/components/ui/Pagination';
@@ -68,9 +68,20 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
             return result;
         }, {}),
     );
+    const isFirstMount = useRef(true);
+    const prevKeywordRef = useRef(keyword);
 
     useEffect(() => {
         if (!isServerSearch) return;
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+        if (prevKeywordRef.current === keyword) {
+            return;
+        }
+        prevKeywordRef.current = keyword;
+
         const timer = setTimeout(() => {
             const onSearch = config.table.onSearch || config.table.pagination?.onSearch;
             onSearch?.(keyword);

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Pagination from './Pagination';
 import SelectField from './SelectField';
 import {
@@ -40,9 +40,20 @@ export default function ModuleTableTemplate({
 
     const [keyword, setKeyword] = useState(table.search ?? table.pagination?.search ?? '');
     const [inactiveFilter, setInactiveFilter] = useState(table.filterOptions?.[0]?.value ?? 'all');
+    const isFirstMount = useRef(true);
+    const prevKeywordRef = useRef(keyword);
 
     useEffect(() => {
         if (!isServerSearch) return;
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+        if (prevKeywordRef.current === keyword) {
+            return;
+        }
+        prevKeywordRef.current = keyword;
+
         const timer = setTimeout(() => {
             const onSearch = table.onSearch || table.pagination?.onSearch;
             onSearch?.(keyword);

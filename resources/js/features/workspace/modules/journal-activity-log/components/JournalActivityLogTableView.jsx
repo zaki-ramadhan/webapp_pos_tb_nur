@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
     DataTable,
@@ -32,6 +32,8 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
     const isServerSort = Boolean(config.table.onSort || config.table.pagination?.onSort);
 
     const [keyword, setKeyword] = useState(config.table.search ?? config.table.pagination?.search ?? '');
+    const isFirstMount = useRef(true);
+    const prevKeywordRef = useRef(keyword);
 
     const filtersConfig = useMemo(() => buildActivityLogFilters(config.table.rows), [config.table.rows]);
     const [filters, setFilters] = useState(() =>
@@ -43,6 +45,15 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
 
     useEffect(() => {
         if (!isServerSearch) return;
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+        if (prevKeywordRef.current === keyword) {
+            return;
+        }
+        prevKeywordRef.current = keyword;
+
         const timer = setTimeout(() => {
             const onSearch = config.table.onSearch || config.table.pagination?.onSearch;
             onSearch?.(keyword);
