@@ -1,6 +1,6 @@
 {
-  "_AuthLayout-BGks53_s.js": {
-    "file": "assets/AuthLayout-BGks53_s.js",
+  "_AuthLayout-DEzSZKgS.js": {
+    "file": "assets/AuthLayout-DEzSZKgS.js",
     "name": "AuthLayout",
     "imports": [
       "_vendor-core-BEwXzJZP.js",
@@ -68,7 +68,7 @@
     ]
   },
   "resources/js/app/App.jsx": {
-    "file": "assets/App-g-WzMO3C.js",
+    "file": "assets/App-Nb7qpeWb.js",
     "name": "App",
     "src": "resources/js/app/App.jsx",
     "isEntry": true,
@@ -85,7 +85,7 @@
     ]
   },
   "resources/js/pages/DashboardPage.jsx": {
-    "file": "assets/DashboardPage-Dj7k7LSA.js",
+    "file": "assets/DashboardPage-C-Qe7khC.js",
     "name": "DashboardPage",
     "src": "resources/js/pages/DashboardPage.jsx",
     "isDynamicEntry": true,
@@ -100,7 +100,7 @@
     ]
   },
   "resources/js/pages/ErrorPage.jsx": {
-    "file": "assets/ErrorPage-BNliaAAs.js",
+    "file": "assets/ErrorPage-CEDgK-oZ.js",
     "name": "ErrorPage",
     "src": "resources/js/pages/ErrorPage.jsx",
     "isDynamicEntry": true,
@@ -111,13 +111,13 @@
     ]
   },
   "resources/js/pages/HomePage.jsx": {
-    "file": "assets/HomePage-BFryWvdl.js",
+    "file": "assets/HomePage-C2iq5L5m.js",
     "name": "HomePage",
     "src": "resources/js/pages/HomePage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-BEwXzJZP.js",
-      "_AuthLayout-BGks53_s.js",
+      "_AuthLayout-DEzSZKgS.js",
       "resources/js/app/App.jsx",
       "_Notice-DX30dnXX.js",
       "_GlobalBackgroundArt-YM1Gdl9u.js",
@@ -125,26 +125,26 @@
     ]
   },
   "resources/js/pages/RegisterPage.jsx": {
-    "file": "assets/RegisterPage-B3p0cNQQ.js",
+    "file": "assets/RegisterPage-Tqc-1yRH.js",
     "name": "RegisterPage",
     "src": "resources/js/pages/RegisterPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-BEwXzJZP.js",
-      "_AuthLayout-BGks53_s.js",
+      "_AuthLayout-DEzSZKgS.js",
       "resources/js/app/App.jsx",
       "_GlobalBackgroundArt-YM1Gdl9u.js",
       "_vendor-icons-CxUOw1h4.js"
     ]
   },
   "resources/js/pages/ResetPasswordPage.jsx": {
-    "file": "assets/ResetPasswordPage-DrbGy87-.js",
+    "file": "assets/ResetPasswordPage-Ds_MF7E_.js",
     "name": "ResetPasswordPage",
     "src": "resources/js/pages/ResetPasswordPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-BEwXzJZP.js",
-      "_AuthLayout-BGks53_s.js",
+      "_AuthLayout-DEzSZKgS.js",
       "resources/js/app/App.jsx",
       "_Notice-DX30dnXX.js",
       "_GlobalBackgroundArt-YM1Gdl9u.js",

@@ -19,32 +19,43 @@ class DashboardController extends Controller
         $asOfDateInput = $request->input('as_of_date');
         $asOfDate = ($asOfDateInput && $asOfDateInput <= $today) ? $asOfDateInput : $today;
 
-        $props = PosBlueprint::forDashboard($sample, null, null, false, $asOfDate);
+        $forceRefresh = $request->has('force_refresh');
+        $monthsParam = $request->input('months');
+        $months = $request->has('months') ? ($monthsParam === 'all' ? null : (int) $monthsParam) : 3;
+
+        // 1. FAST PATH: Compute the 8 Core Widgets immediately (<25ms)
+        $props = PosBlueprint::forDashboard($sample, null, null, true, $asOfDate);
 
         if ($user !== null) {
             $props['dashboard']['user'] = AuthenticatedUserPresenter::present($user);
         }
 
-        $forceRefresh = $request->has('force_refresh');
-        $monthsParam = $request->input('months');
-        $months = $request->has('months') ? ($monthsParam === 'all' ? null : (int) $monthsParam) : 3;
-        $cacheKey = 'dashboard_widgets_' . ($sample ?? 'retail') . '_' . ($months ?? 'all') . '_' . $asOfDate;
-
         $props['dashboard']['asOfDate'] = $asOfDate;
+
+        // Mark 'integrated-analysis' as waiting for deferred analytics payload
+        if (isset($props['dashboard']['sampleDashboard']['widgets'])) {
+            $props['dashboard']['sampleDashboard']['widgets'] = array_map(function ($widget) {
+                if ($widget['id'] === 'integrated-analysis') {
+                    $widget['isDeferredLoading'] = true;
+                }
+                return $widget;
+            }, $props['dashboard']['sampleDashboard']['widgets']);
+        }
 
         return Inertia::render('DashboardPage', [
             ...$props,
-            'widgets' => Inertia::defer(function () use ($sample, $analytics, $cacheKey, $forceRefresh, $months, $asOfDate) {
+            // 2. PROGRESSIVE DEFER: Only the heavy data mining algorithm (Apriori & ABC) is deferred
+            'analyticsWidget' => Inertia::defer(function () use ($analytics, $months, $forceRefresh) {
                 if ($forceRefresh) {
-                    \Illuminate\Support\Facades\Cache::forget($cacheKey);
+                    \Illuminate\Support\Facades\Cache::forget('analytics_abc_' . ($months ?? 'all'));
+                    \Illuminate\Support\Facades\Cache::forget('analytics_apriori_' . ($months ?? 'all') . '_5_40');
                 }
-
-                return \Illuminate\Support\Facades\Cache::remember($cacheKey, 1800, function () use ($sample, $analytics, $months, $asOfDate) {
-                    $abc = $analytics->getAbcAnalysis($months);
-                    $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months);
-                    $fullProps = PosBlueprint::forDashboard($sample, $abc, $apriori, true, $asOfDate);
-                    return $fullProps['dashboard']['sampleDashboard']['widgets'];
-                });
+                $abc = $analytics->getAbcAnalysis($months);
+                $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months);
+                return [
+                    'abc' => $abc,
+                    'apriori' => $apriori,
+                ];
             }),
         ]);
     }
