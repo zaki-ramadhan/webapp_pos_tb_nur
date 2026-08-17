@@ -222,8 +222,14 @@ class InventoryInquiryQueryService
             ->with(['lines'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-            ->when($dateFrom, fn ($q) => $q->whereDate('document_date', '>=', $dateFrom->toDateString()))
-            ->when($dateTo, fn ($q) => $q->whereDate('document_date', '<=', $dateTo->toDateString()))
+            ->when($dateFrom, fn ($q) => $q->where(function ($sub) use ($dateFrom) {
+                $sub->whereDate('document_date', '>=', $dateFrom->toDateString())
+                    ->orWhere(fn ($nullSub) => $nullSub->whereNull('document_date')->whereDate('created_at', '>=', $dateFrom->toDateString()));
+            }))
+            ->when($dateTo, fn ($q) => $q->where(function ($sub) use ($dateTo) {
+                $sub->whereDate('document_date', '<=', $dateTo->toDateString())
+                    ->orWhere(fn ($nullSub) => $nullSub->whereNull('document_date')->whereDate('created_at', '<=', $dateTo->toDateString()));
+            }))
             ->get();
 
         $warehouses = Warehouse::all()->keyBy('id');
@@ -257,8 +263,8 @@ class InventoryInquiryQueryService
                         'document_id' => $doc->id,
                         'raw_document_type' => $docTypeStr,
                         'page_id' => $pageId,
-                        'raw_date' => $doc->document_date ? Carbon::parse($doc->document_date)->timestamp : 0,
-                        'date' => $doc->document_date ? Carbon::parse($doc->document_date)->format('d/m/Y') : '-',
+                        'raw_date' => $doc->document_date ? Carbon::parse($doc->document_date)->timestamp : ($doc->created_at ? Carbon::parse($doc->created_at)->timestamp : 0),
+                        'date' => $doc->document_date ? Carbon::parse($doc->document_date)->format('d/m/Y') : ($doc->created_at ? Carbon::parse($doc->created_at)->format('d/m/Y') : '-'),
                         'document_number' => $doc->document_number ?? '-',
                         'document_type' => match ($doc->document_type) {
                             'stock_transfer' => 'Pemindahan Barang',
@@ -282,8 +288,14 @@ class InventoryInquiryQueryService
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
             ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-            ->when($dateFrom, fn ($q) => $q->whereDate('entry_date', '>=', $dateFrom->toDateString()))
-            ->when($dateTo, fn ($q) => $q->whereDate('entry_date', '<=', $dateTo->toDateString()))
+            ->when($dateFrom, fn ($q) => $q->where(function ($sub) use ($dateFrom) {
+                $sub->whereDate('entry_date', '>=', $dateFrom->toDateString())
+                    ->orWhere(fn ($nullSub) => $nullSub->whereNull('entry_date')->whereDate('created_at', '>=', $dateFrom->toDateString()));
+            }))
+            ->when($dateTo, fn ($q) => $q->where(function ($sub) use ($dateTo) {
+                $sub->whereDate('entry_date', '<=', $dateTo->toDateString())
+                    ->orWhere(fn ($nullSub) => $nullSub->whereNull('entry_date')->whereDate('created_at', '<=', $dateTo->toDateString()));
+            }))
             ->get();
 
         foreach ($opDocs as $doc) {
