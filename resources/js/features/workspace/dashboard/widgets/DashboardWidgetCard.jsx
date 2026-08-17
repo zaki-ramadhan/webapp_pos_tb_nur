@@ -99,11 +99,11 @@ export default function DashboardWidgetCard({
         },
         'cash-availability': {
             title: 'Ketersediaan Kas',
-            description: 'Widget ini menghitung estimasi saldo kas kumulatif toko dari awal hingga tanggal yang dipilih. Saldo dihitung dari selisih penerimaan penjualan vs pengeluaran yang tercatat:',
+            description: 'Widget ini menampilkan estimasi saldo kas toko yang terkumpul secara kumulatif. Saldo bertambah dari penjualan dan berkurang dari pengeluaran yang tercatat:',
             sources: [
-                { pageId: 'sales-invoice', label: 'Faktur Penjualan (Kas Masuk Kumulatif)' },
-                { pageId: 'expense-entry', label: 'Pencatatan Beban (Kas Keluar Kumulatif)' },
-                { pageId: 'payroll-entry', label: 'Pencatatan Gaji (Kas Keluar Kumulatif)' },
+                { pageId: 'sales-invoice', label: 'Faktur Penjualan (Penambah Saldo)' },
+                { pageId: 'expense-entry', label: 'Pencatatan Beban (Pengurang Saldo)' },
+                { pageId: 'payroll-entry', label: 'Pencatatan Gaji (Pengurang Saldo)' },
             ]
         },
     };
