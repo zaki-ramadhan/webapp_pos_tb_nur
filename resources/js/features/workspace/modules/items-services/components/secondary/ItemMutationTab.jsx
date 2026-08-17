@@ -10,7 +10,7 @@ import {
 import Pagination from '@/components/ui/Pagination';
 import { RefreshIcon } from '@/features/workspace/shared/Icons';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import { extractBackendRows, listBackendResource, clearBackendCache } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 function getThirtyDaysAgoDate() {
@@ -50,16 +50,20 @@ export default function ItemMutationTab({ productId }) {
         setPage(1);
     }, [productId]);
 
-    const fetchMutations = async () => {
+    const fetchMutations = async (force = false) => {
         if (!productId) return;
         setLoading(true);
         try {
+            if (force) {
+                clearBackendCache('product-mutations');
+            }
             const res = await listBackendResource('product-mutations', {
                 product_id: productId,
                 date_from: dateFrom,
                 date_to: dateTo,
                 page,
                 per_page: perPage,
+                ...(force ? { _refresh: Date.now() } : {}),
             });
             const extracted = extractBackendRows(res);
             setRows(extracted);
@@ -130,12 +134,13 @@ export default function ItemMutationTab({ productId }) {
                     type="button"
                     onClick={() => {
                         setPage(1);
-                        fetchMutations();
+                        fetchMutations(true);
                     }}
+                    disabled={loading}
                     title="Muat ulang"
-                    className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer"
+                    className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer disabled:opacity-60"
                 >
-                    <RefreshIcon className="h-4 w-4" />
+                    <RefreshIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                 </button>
             </div>
 

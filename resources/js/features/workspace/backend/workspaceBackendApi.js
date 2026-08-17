@@ -28,7 +28,6 @@ const STATIC_RESOURCES = new Set([
     'payment-terms',
     'taxes',
     'currencies',
-    'item-locations',
 ]);
 
 function getCacheKey(type, resource, params = {}) {

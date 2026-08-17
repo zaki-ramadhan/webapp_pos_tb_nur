@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/DataTable';
 import { RefreshIcon } from '@/features/workspace/shared/Icons';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import { extractBackendRows, listBackendResource, clearBackendCache } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 export default function ItemWarehouseTab({ productId }) {
@@ -18,14 +18,18 @@ export default function ItemWarehouseTab({ productId }) {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const fetchWarehouses = async () => {
+    const fetchWarehouses = async (force = false) => {
         if (!productId) return;
         setLoading(true);
         try {
+            if (force) {
+                clearBackendCache('item-locations');
+            }
             const res = await listBackendResource('item-locations', {
                 product_id: productId,
                 as_of_date: asOfDate,
                 per_page: 200,
+                ...(force ? { _refresh: Date.now() } : {}),
             });
             setRows(extractBackendRows(res));
         } catch {
@@ -52,11 +56,12 @@ export default function ItemWarehouseTab({ productId }) {
                 />
                 <button
                     type="button"
-                    onClick={fetchWarehouses}
+                    onClick={() => fetchWarehouses(true)}
+                    disabled={loading}
                     title="Muat ulang"
-                    className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer"
+                    className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer disabled:opacity-60"
                 >
-                    <RefreshIcon className="h-4 w-4" />
+                    <RefreshIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                 </button>
             </div>
 
