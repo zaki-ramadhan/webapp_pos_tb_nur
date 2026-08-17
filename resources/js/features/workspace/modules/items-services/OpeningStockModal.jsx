@@ -74,7 +74,7 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
         <WorkspaceDialog
             open={open}
             onClose={onClose}
-            title="Saldo Awal"
+            title="Stok Awal"
             maxWidthClassName="max-w-[500px]"
             footer={
                 <div className="flex justify-end">
