@@ -35,7 +35,31 @@ import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { buildGeneratedDocNumber } from '@/features/workspace/shared/documentNumberUtils';
-import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+function mapBackendStockRows(rows, detailRow) {
+    return rows
+        .map((r) => {
+            const qty = parseAmountInput(r.quantity ?? r.saleable_stock ?? r.stock_on_hand ?? 0);
+            const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
+            const unitName = (typeof r.unit === 'string' && r.unit)
+                ? r.unit
+                : (r.unit_name ?? r.unit?.name ?? detailRow?.primaryUnit?.[0]?.name ?? detailRow?.baseUnit?.name ?? detailRow?.base_unit?.name ?? detailRow?.unit ?? detailRow?.purchaseUnit?.[0]?.name ?? detailRow?.purchase_unit?.name ?? 'PCS');
+            const cost = typeof r.raw_unit_cost === 'number' && r.raw_unit_cost > 0
+                ? r.raw_unit_cost
+                : parseAmountInput(r.unit_cost ?? r.average_cost ?? detailRow?.default_purchase_price ?? detailRow?.purchasePrice ?? detailRow?.default_sale_price ?? 0);
+            return {
+                id: `db-stock-${r.id ?? r.warehouse_id}`,
+                warehouse_id: r.warehouse_id ? Number(r.warehouse_id) : null,
+                date: (r.date && r.date !== '-') ? r.date : (r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID') : '-'),
+                warehouse: warehouseName,
+                quantity: qty,
+                unit: unitName,
+                unitCost: cost,
+                serials: [],
+                __fromDb: true,
+            };
+        })
+        .filter((r) => r.quantity !== 0);
+}
 
 export default function ItemsServicesFormView({
     pageId,
@@ -130,29 +154,7 @@ export default function ItemsServicesFormView({
             .then((response) => {
                 if (!active) return;
                 const rows = extractBackendRows(response);
-                const stockRows = rows
-                    .map((r) => {
-                        const qty = parseAmountInput(r.quantity ?? r.saleable_stock ?? r.stock_on_hand ?? 0);
-                        const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
-                        const unitName = (typeof r.unit === 'string' && r.unit)
-                            ? r.unit
-                            : (r.unit_name ?? r.unit?.name ?? detailRow?.primaryUnit?.[0]?.name ?? detailRow?.baseUnit?.name ?? detailRow?.base_unit?.name ?? detailRow?.unit ?? detailRow?.purchaseUnit?.[0]?.name ?? detailRow?.purchase_unit?.name ?? 'PCS');
-                        const cost = typeof r.raw_unit_cost === 'number' && r.raw_unit_cost > 0
-                            ? r.raw_unit_cost
-                            : parseAmountInput(r.unit_cost ?? r.average_cost ?? detailRow?.default_purchase_price ?? detailRow?.purchasePrice ?? detailRow?.default_sale_price ?? 0);
-                        return {
-                            id: `db-stock-${r.id ?? r.warehouse_id}`,
-                            warehouse_id: r.warehouse_id ? Number(r.warehouse_id) : null,
-                            date: (r.date && r.date !== '-') ? r.date : (r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID') : '-'),
-                            warehouse: warehouseName,
-                            quantity: qty,
-                            unit: unitName,
-                            unitCost: cost,
-                            serials: [],
-                            __fromDb: true,
-                        };
-                    })
-                    .filter((r) => r.quantity !== 0);
+                const stockRows = mapBackendStockRows(rows, detailRow);
 
                 setDbStockRows(stockRows);
                 updateDbBaseline((prev) => {
@@ -297,29 +299,7 @@ export default function ItemsServicesFormView({
                     listBackendResource('product-opening-stocks', { product_id: recordId, per_page: 100, _refresh: Date.now() })
                         .then((res) => {
                             const rows = extractBackendRows(res);
-                            const stockRows = rows
-                                .map((r) => {
-                                    const qty = parseAmountInput(r.quantity ?? r.saleable_stock ?? r.stock_on_hand ?? 0);
-                                    const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
-                                    const unitName = (typeof r.unit === 'string' && r.unit)
-                                        ? r.unit
-                                        : (r.unit_name ?? r.unit?.name ?? detailRow?.primaryUnit?.[0]?.name ?? detailRow?.baseUnit?.name ?? detailRow?.base_unit?.name ?? detailRow?.unit ?? detailRow?.purchaseUnit?.[0]?.name ?? detailRow?.purchase_unit?.name ?? 'PCS');
-                                    const cost = typeof r.raw_unit_cost === 'number' && r.raw_unit_cost > 0
-                                        ? r.raw_unit_cost
-                                        : parseAmountInput(r.unit_cost ?? r.average_cost ?? detailRow?.default_purchase_price ?? detailRow?.purchasePrice ?? detailRow?.default_sale_price ?? 0);
-                                    return {
-                                        id: `db-stock-${r.id ?? r.warehouse_id}`,
-                                        warehouse_id: r.warehouse_id ? Number(r.warehouse_id) : null,
-                                        date: (r.date && r.date !== '-') ? r.date : (r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID') : '-'),
-                                        warehouse: warehouseName,
-                                        quantity: qty,
-                                        unit: unitName,
-                                        unitCost: cost,
-                                        serials: [],
-                                        __fromDb: true,
-                                    };
-                                })
-                                .filter((r) => r.quantity !== 0);
+                            const stockRows = mapBackendStockRows(rows, detailRow);
 
                             setDbStockRows(stockRows);
                             setValues((prev) => ({
