@@ -93,7 +93,7 @@ class InventoryInquiryQueryService
             ->join('inventory_documents', 'inventory_documents.id', '=', 'inventory_document_lines.inventory_document_id')
             ->whereIn('inventory_document_lines.product_id', $products->keys()->all())
             ->whereNotIn('inventory_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
-            ->select('inventory_document_lines.product_id', 'inventory_documents.warehouse_id', 'inventory_document_lines.unit_cost', 'inventory_document_lines.attributes')
+            ->select('inventory_document_lines.product_id', 'inventory_documents.warehouse_id', 'inventory_document_lines.attributes')
             ->orderBy('inventory_document_lines.id', 'desc')
             ->get();
 
@@ -111,7 +111,7 @@ class InventoryInquiryQueryService
                     $docLine = $docCosts->first(fn ($d) => sprintf('%d:%d', $d->product_id, $d->warehouse_id) === $compositeKey);
                     if ($docLine) {
                         $attrs = is_string($docLine->attributes) ? json_decode($docLine->attributes, true) : (array) ($docLine->attributes ?? []);
-                        $cost = (float) ($docLine->unit_cost ?: ($attrs['unit_price'] ?? $attrs['unit_cost'] ?? $attrs['cost'] ?? 0));
+                        $cost = (float) ($attrs['unit_price'] ?? $attrs['unit_cost'] ?? $attrs['cost'] ?? 0);
                     }
                 }
                 if ($cost <= 0) {
