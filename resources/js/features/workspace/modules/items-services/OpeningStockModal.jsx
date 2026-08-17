@@ -14,6 +14,11 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
     const [quantity, setQuantity] = useState('1');
     const [unit, setUnit] = useState(initialUnit);
     const [unitCost, setUnitCost] = useState(() => (initialUnitCost ? formatAmountInput(initialUnitCost) : '0'));
+    const [totalCost, setTotalCost] = useState(() => {
+        const q = parseFloat(String('1').replace(/\./g, '').replace(/,/g, '.')) || 0;
+        const c = parseFloat(String(initialUnitCost || '0').replace(/\./g, '').replace(/,/g, '.')) || 0;
+        return q * c;
+    });
 
     useEffect(() => {
         if (open) {
@@ -21,17 +26,27 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
             setDate(buildTodayDisplayDate());
             setQuantity('1');
             setUnit(initialUnit);
-            setUnitCost(initialUnitCost ? formatAmountInput(initialUnitCost) : '0');
+            const initialCost = initialUnitCost ? formatAmountInput(initialUnitCost) : '0';
+            setUnitCost(initialCost);
+            const q = 1;
+            const c = parseFloat(String(initialCost).replace(/\./g, '').replace(/,/g, '.')) || 0;
+            setTotalCost(q * c);
             setActiveTab('details');
         }
     }, [open, initialUnit, initialUnitCost]);
 
-    const qtyVal = parseFloat(String(quantity).replace(/\./g, '').replace(/,/g, '.')) || 0;
-    const costVal = parseFloat(String(unitCost).replace(/\./g, '').replace(/,/g, '.')) || 0;
-    const totalCost = qtyVal * costVal;
+    const calculateTotalCost = (qStr = quantity, cStr = unitCost) => {
+        const q = parseFloat(String(qStr).replace(/\./g, '').replace(/,/g, '.')) || 0;
+        const c = parseFloat(String(cStr).replace(/\./g, '').replace(/,/g, '.')) || 0;
+        setTotalCost(q * c);
+    };
+
     const formattedTotalCost = `Rp ${Number(totalCost).toLocaleString('id-ID')}`;
 
     function handleSave() {
+        const qtyVal = parseFloat(String(quantity).replace(/\./g, '').replace(/,/g, '.')) || 0;
+        const costVal = parseFloat(String(unitCost).replace(/\./g, '').replace(/,/g, '.')) || 0;
+
         if (!warehouse.length || !date || qtyVal <= 0 || costVal <= 0) {
             onClose();
             return;
@@ -112,6 +127,7 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                         <SimpleTextField
                             value={quantity}
                             onChange={(e) => setQuantity(formatAmountInput(e.target.value, { allowDecimal: false }))}
+                            onBlur={(e) => calculateTotalCost(e.target.value, unitCost)}
                             allowDecimal={false}
                             trailing={<CalculatorIcon className="h-4.5 w-4.5 text-slate-500" />}
                         />
@@ -132,6 +148,7 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                         <SimpleTextField
                             value={unitCost}
                             onChange={(e) => setUnitCost(formatAmountInput(e.target.value))}
+                            onBlur={(e) => calculateTotalCost(quantity, e.target.value)}
                             prefix="Rp"
                             trailing={<CalculatorIcon className="h-4.5 w-4.5 text-slate-500" />}
                         />
