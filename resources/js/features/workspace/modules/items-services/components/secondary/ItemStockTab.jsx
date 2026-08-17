@@ -154,6 +154,7 @@ export default function ItemStockTab({ config, values, onChange }) {
                 onClose={() => setModalOpen(false)}
                 onConfirm={handleAddOpeningStock}
                 initialUnit={values.primaryUnit}
+                initialUnitCost={values.purchasePrice || values.default_purchase_price || (values.stockUnitValue !== '0' ? values.stockUnitValue : '')}
             />
         </div>
     );

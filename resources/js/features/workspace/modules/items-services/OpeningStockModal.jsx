@@ -7,13 +7,13 @@ import { CalendarIcon, CalculatorIcon } from '@/features/workspace/shared/Icons'
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
-export default function OpeningStockModal({ open, onClose, onConfirm, initialUnit = [] }) {
+export default function OpeningStockModal({ open, onClose, onConfirm, initialUnit = [], initialUnitCost = '' }) {
     const [activeTab, setActiveTab] = useState('details');
     const [warehouse, setWarehouse] = useState([{ name: 'Utama' }]);
     const [date, setDate] = useState(buildTodayDisplayDate());
     const [quantity, setQuantity] = useState('1');
     const [unit, setUnit] = useState(initialUnit);
-    const [unitCost, setUnitCost] = useState('0');
+    const [unitCost, setUnitCost] = useState(() => (initialUnitCost ? formatAmountInput(initialUnitCost) : '0'));
 
     useEffect(() => {
         if (open) {
@@ -21,10 +21,10 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
             setDate(buildTodayDisplayDate());
             setQuantity('1');
             setUnit(initialUnit);
-            setUnitCost('0');
+            setUnitCost(initialUnitCost ? formatAmountInput(initialUnitCost) : '0');
             setActiveTab('details');
         }
-    }, [open, initialUnit]);
+    }, [open, initialUnit, initialUnitCost]);
 
     const qtyVal = parseFloat(String(quantity).replace(/\./g, '').replace(/,/g, '.')) || 0;
     const costVal = parseFloat(String(unitCost).replace(/\./g, '').replace(/,/g, '.')) || 0;
