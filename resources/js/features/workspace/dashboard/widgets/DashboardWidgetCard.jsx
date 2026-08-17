@@ -43,7 +43,7 @@ export default function DashboardWidgetCard({
         return () => window.removeEventListener('pos:widget-loading-state', handleLoadingState);
     }, [widget.id]);
 
-    const isWidgetLoading = isRefreshing || isInternalLoading;
+    const isWidgetLoading = isRefreshing || isInternalLoading || Boolean(widget?.isDeferredLoading);
 
     const WIDGET_SOURCE_PAGES = {
         'integrated-analysis': {
