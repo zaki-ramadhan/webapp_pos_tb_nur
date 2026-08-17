@@ -1,7 +1,6 @@
 import axios from 'axios';
 import '@/echo';
 import { clearWorkspaceClientState } from '@/features/workspace/dashboard/workspaceClientState';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { showSessionExpiredModal } from '@/components/ui/SessionExpiredModal';
 
 window.axios = axios;
@@ -37,12 +36,6 @@ window.axios.interceptors.response.use(
                     redirectToLogin();
                 });
             }
-        } else if (status === 404) {
-            showSystemErrorModal({
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                description: 'Silakan perbaiki permasalahan berikut ini:',
-                message: 'Data tidak ditemukan atau sudah dihapus',
-            });
         }
 
         return Promise.reject(error);
