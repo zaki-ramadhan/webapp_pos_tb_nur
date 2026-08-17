@@ -125,6 +125,8 @@ class InventoryInquiryQueryService
                     'product_name' => $product->name,
                     'warehouse_id' => $warehouse->id,
                     'warehouse' => $warehouse->name,
+                    'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
+                    'unit_name' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
                     'multi_unit_quantity' => sprintf('%s %s', $this->formatNumber($quantity), $product->baseUnit?->name ?? ''),
                     'saleable_stock' => $this->formatNumber($quantity),
                     'unit_cost' => $this->formatNumber($cost),
