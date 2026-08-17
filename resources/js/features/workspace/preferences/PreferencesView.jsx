@@ -6,6 +6,7 @@ import PreferenceSideItem from './components/PreferenceSideItem';
 import usePreferencesState from './hooks/usePreferencesState';
 import usePreferencesSave from './hooks/usePreferencesSave';
 import PreferencesSidebarContent from './PreferencesSidebarContent';
+import { useFormSaveShortcut } from '@/features/workspace/shared/hooks/useFormSaveShortcut';
 
 import { isOwnerUser } from '@/features/workspace/backend/adapters/generalAdapters';
 
@@ -32,6 +33,10 @@ export default function PreferencesView({ page }) {
         reload
     );
 
+    const formRef = useFormSaveShortcut(handleSave, {
+        disabled: !isSuperAdmin || state.saving || !state.isDirty,
+    });
+
     const companyRootItem = { id: 'company-root', label: workspace.topTab };
     const sideItems = [companyRootItem, ...workspace.sidebarItems];
 
@@ -49,7 +54,7 @@ export default function PreferencesView({ page }) {
     });
 
     return (
-        <div className="flex h-full flex-col overflow-hidden rounded-[4px] border border-tab-view-active-border-x bg-ui-bg-panel-lighter shadow-panel-subtle-alt">
+        <div ref={formRef} className="flex h-full flex-col overflow-hidden rounded-[4px] border border-tab-view-active-border-x bg-ui-bg-panel-lighter shadow-panel-subtle-alt">
             {!isSuperAdmin && (
                 <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs font-medium text-amber-800">
                     <svg className="h-4 w-4 shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

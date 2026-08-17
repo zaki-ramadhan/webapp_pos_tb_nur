@@ -14,9 +14,9 @@ export default function TransactionFormLayout({
     const saveAction = (dockActions || []).find((action) => action && action.id === 'save');
     const onSave = saveAction?.onClick || (saveAction?.items?.[0]?.onClick ? () => saveAction.items[0].onClick() : null) || saveAction?.onSelect;
 
-    useFormSaveShortcut(onSave, { disabled: Boolean(saveAction?.disabled) });
+    const formRef = useFormSaveShortcut(onSave, { disabled: Boolean(saveAction?.disabled) });
     return (
-        <div className="flex h-full min-h-0 flex-col gap-3">
+        <div ref={formRef} className="flex h-full min-h-0 flex-col gap-3">
             <div className="flex min-h-0 flex-1 flex-row gap-4">
                 <div className="min-w-0 flex-1 flex flex-col h-full min-h-0 gap-1.5">
                     {header ? (
