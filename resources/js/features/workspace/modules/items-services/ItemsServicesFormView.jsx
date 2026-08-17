@@ -126,13 +126,13 @@ export default function ItemsServicesFormView({
         }
         let active = true;
 
-        listBackendResource('item-locations', { product_id: recordId, per_page: 100 })
+        listBackendResource('product-opening-stocks', { product_id: recordId, per_page: 100, _refresh: Date.now() })
             .then((response) => {
                 if (!active) return;
                 const rows = extractBackendRows(response);
                 const stockRows = rows
                     .map((r) => {
-                        const qty = parseAmountInput(r.saleable_stock ?? r.stock_on_hand ?? r.quantity ?? 0);
+                        const qty = parseAmountInput(r.quantity ?? r.saleable_stock ?? r.stock_on_hand ?? 0);
                         const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
                         const unitName = (typeof r.unit === 'string' && r.unit)
                             ? r.unit
@@ -294,12 +294,12 @@ export default function ItemsServicesFormView({
                 await onRefresh?.();
                 markClean();
                 if (recordId) {
-                    listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() })
+                    listBackendResource('product-opening-stocks', { product_id: recordId, per_page: 100, _refresh: Date.now() })
                         .then((res) => {
                             const rows = extractBackendRows(res);
                             const stockRows = rows
                                 .map((r) => {
-                                    const qty = parseAmountInput(r.saleable_stock ?? r.stock_on_hand ?? r.quantity ?? 0);
+                                    const qty = parseAmountInput(r.quantity ?? r.saleable_stock ?? r.stock_on_hand ?? 0);
                                     const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
                                     const unitName = (typeof r.unit === 'string' && r.unit)
                                         ? r.unit

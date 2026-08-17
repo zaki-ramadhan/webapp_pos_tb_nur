@@ -70,6 +70,12 @@ class WorkspaceBackendResources
                 'item-location',
                 fn (array $filters) => app(InventoryInquiryQueryService::class)->paginateItemLocations($filters),
             ),
+            'product-opening-stocks' => self::inventoryInquiryResource(
+                'product-opening-stocks',
+                'Product Opening Stocks',
+                'item-location',
+                fn (array $filters) => app(InventoryInquiryQueryService::class)->paginateProductOpeningStocks($filters),
+            ),
             'minimum-stocks' => self::inventoryInquiryResource(
                 'minimum-stocks',
                 'Minimum Stocks',

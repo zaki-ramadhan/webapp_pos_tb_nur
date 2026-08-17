@@ -164,6 +164,110 @@ class InventoryInquiryQueryService
     /**
      * @param  array<string, mixed>  $filters
      */
+    public function paginateProductOpeningStocks(array $filters): LengthAwarePaginator
+    {
+        $productId = filled($filters['product_id'] ?? null) ? (int) $filters['product_id'] : null;
+        if ($productId === null) {
+            return $this->paginateRows(collect(), $filters);
+        }
+
+        $product = Product::query()->with(['baseUnit', 'purchaseUnit'])->find($productId);
+        if (!$product) {
+            return $this->paginateRows(collect(), $filters);
+        }
+
+        $warehouses = Warehouse::query()->get()->keyBy('id');
+        $rows = collect();
+
+        // 1. Initial batches
+        $batches = \Illuminate\Support\Facades\DB::table('inventory_batches')
+            ->where('product_id', $productId)
+            ->where(function ($q) {
+                $q->where('source_type', 'opening_balance')
+                  ->orWhereNull('source_type')
+                  ->orWhere('source_type', 'like', '%Initial%');
+            })
+            ->orderBy('id', 'asc')
+            ->get();
+
+        foreach ($batches as $batch) {
+            $wh = $warehouses->get($batch->warehouse_id);
+            $rows->push([
+                'id' => 'batch-' . $batch->id,
+                'warehouse_id' => (int) $batch->warehouse_id,
+                'warehouse' => $wh?->name ?? 'Gudang Utama',
+                'date' => $batch->entry_date ? Carbon::parse($batch->entry_date)->format('d/m/Y') : Carbon::now()->format('d/m/Y'),
+                'quantity' => (float) $batch->qty_received,
+                'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
+                'unit_cost' => (float) $batch->unit_cost,
+                'raw_unit_cost' => (float) $batch->unit_cost,
+                'document_number' => 'SA-' . $product->code,
+                'created_at' => $batch->created_at ?? $batch->entry_date,
+            ]);
+        }
+
+        // 2. Inventory Adjustment Documents (Manual Opening Stock entries)
+        $documents = InventoryDocument::query()
+            ->with(['lines.unit', 'warehouse'])
+            ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
+            ->where('document_type', 'inventory_adjustment')
+            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->orderBy('id', 'asc')
+            ->get();
+
+        foreach ($documents as $doc) {
+            foreach ($doc->lines as $line) {
+                if ((int) $line->product_id !== $productId) {
+                    continue;
+                }
+                $wh = $doc->warehouse ?? $warehouses->get($line->warehouse_id ?? $doc->warehouse_id);
+                $attrs = is_string($line->attributes) ? json_decode($line->attributes, true) : (array) ($line->attributes ?? []);
+                $cost = (float) ($attrs['unit_price'] ?? $attrs['unit_cost'] ?? $product->default_purchase_price ?? 0);
+                $qty = (float) ($line->quantity ?? 0);
+
+                $rows->push([
+                    'id' => 'doc-line-' . $line->id,
+                    'warehouse_id' => (int) ($doc->warehouse_id ?? $line->warehouse_id ?? 1),
+                    'warehouse' => $wh?->name ?? 'Gudang Utama',
+                    'date' => $doc->document_date ? Carbon::parse($doc->document_date)->format('d/m/Y') : ($doc->created_at ? Carbon::parse($doc->created_at)->format('d/m/Y') : Carbon::now()->format('d/m/Y')),
+                    'quantity' => $qty,
+                    'unit' => $line->unit?->name ?? $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
+                    'unit_cost' => $cost,
+                    'raw_unit_cost' => $cost,
+                    'document_number' => $doc->document_number,
+                    'created_at' => $doc->created_at,
+                ]);
+            }
+        }
+
+        // If no batches or documents exist, fallback to item-locations rows if any stock exists
+        if ($rows->isEmpty()) {
+            $itemLocations = $this->paginateItemLocations(['product_id' => $productId, 'per_page' => 100]);
+            foreach ($itemLocations->items() as $item) {
+                $qty = (float) str_replace(['.', ','], '', (string) ($item['saleable_stock'] ?? 0));
+                if ($qty > 0) {
+                    $rows->push([
+                        'id' => 'loc-' . $item['id'],
+                        'warehouse_id' => $item['warehouse_id'],
+                        'warehouse' => $item['warehouse'],
+                        'date' => $item['date'] ?? Carbon::now()->format('d/m/Y'),
+                        'quantity' => $qty,
+                        'unit' => $item['unit'] ?? $product->baseUnit?->name ?? 'PCS',
+                        'unit_cost' => (float) ($item['raw_unit_cost'] ?? 0),
+                        'raw_unit_cost' => (float) ($item['raw_unit_cost'] ?? 0),
+                        'document_number' => 'SA-' . $product->code,
+                        'created_at' => null,
+                    ]);
+                }
+            }
+        }
+
+        return $this->paginateRows($rows->values(), $filters);
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     */
     public function paginateMinimumStocks(array $filters): LengthAwarePaginator
     {
         $stockMap = $this->buildStockMap($filters);
