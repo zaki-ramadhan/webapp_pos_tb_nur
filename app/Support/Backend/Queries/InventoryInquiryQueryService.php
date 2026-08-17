@@ -395,8 +395,8 @@ class InventoryInquiryQueryService
                     $pageId = match ($docTypeStr) {
                         'stock_transfer' => 'stock-transfer',
                         'stock_opname_result' => 'stock-opname-result',
-                        'inventory_adjustment' => 'inventory-adjustment',
-                        default => str_replace('_', '-', $docTypeStr),
+                        'inventory_adjustment' => null,
+                        default => null,
                     };
 
                     $lineCost = (float) (
