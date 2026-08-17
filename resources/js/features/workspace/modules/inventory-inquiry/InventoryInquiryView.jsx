@@ -53,6 +53,12 @@ export default function InventoryInquiryView({ config, pageId }) {
     const [filters, setFilters] = useState(() => buildInventoryFilters(pageId, {}));
     const [selectedIds, setSelectedIds] = useState(() => new Set());
 
+    const isItemLocation = pageId === 'item-location';
+    const isWarehouseMode = values.itemType === 'warehouse';
+    const hasTarget = isWarehouseMode
+        ? Boolean(values.warehouseSearchId || (values.warehouseSearch && values.warehouseSearch.trim()))
+        : Boolean(values.itemSearchId || (values.itemSearch && values.itemSearch.trim()));
+
     const {
         rows: rawRows,
         loading,
@@ -339,12 +345,6 @@ export default function InventoryInquiryView({ config, pageId }) {
         setValues(nextValues);
         setFilters(buildInventoryFilters(pageId, nextValues));
     }
-
-    const isItemLocation = pageId === 'item-location';
-    const isWarehouseMode = values.itemType === 'warehouse';
-    const hasTarget = isWarehouseMode
-        ? Boolean(values.warehouseSearchId || (values.warehouseSearch && values.warehouseSearch.trim()))
-        : Boolean(values.itemSearchId || (values.itemSearch && values.itemSearch.trim()));
 
     const emptyMessage = useMemo(() => {
         if (loading) return 'Memuat data...';
