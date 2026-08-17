@@ -8,6 +8,20 @@ export const BACKEND_INVENTORY_RESOURCES = {
 export function buildInventoryFilters(pageId, values) {
     if (pageId === 'item-location') {
         const isWarehouseMode = values.itemType === 'warehouse';
+        const hasTarget = isWarehouseMode
+            ? Boolean(values.warehouseSearchId || (values.warehouseSearch && values.warehouseSearch.trim()))
+            : Boolean(values.itemSearchId || (values.itemSearch && values.itemSearch.trim()));
+
+        if (!hasTarget) {
+            return {
+                require_target: true,
+                product_id: -1,
+                warehouse_id: -1,
+                as_of_date: normalizeDisplayDate(values.asOfDate),
+                per_page: 100,
+            };
+        }
+
         return {
             product_id: isWarehouseMode ? null : (values.itemSearchId ?? null),
             warehouse_id: isWarehouseMode ? (values.warehouseSearchId ?? null) : null,

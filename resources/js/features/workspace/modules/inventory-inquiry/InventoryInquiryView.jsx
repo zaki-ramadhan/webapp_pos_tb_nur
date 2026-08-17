@@ -373,7 +373,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                     </div>
 
                     {config.search ? (
-                        <div className="w-full shrink-0 sm:w-auto">
+                        <div className="flex items-center gap-2">
                             <TextInput
                                 value={keyword}
                                 onChange={(event) => setKeyword(event.target.value)}
@@ -474,9 +474,9 @@ export default function InventoryInquiryView({ config, pageId }) {
                                 {firstColumnIsCheckbox ? <DataTableCell className="px-2.5 py-2 text-black" /> : null}
                                 <DataTableCell
                                     colSpan={dataColumns.length + 1}
-                                    className="px-2.5 py-2 text-center text-base text-black"
+                                    className="px-2.5 py-8 text-center text-base text-text-muted italic"
                                 >
-                                    {loading ? 'Memuat data...' : (error || config.table.emptyLabel || 'Tidak ada data')}
+                                    {emptyMessage}
                                 </DataTableCell>
                             </DataTableRow>
                         )}
