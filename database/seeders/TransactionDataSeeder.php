@@ -77,22 +77,67 @@ class TransactionDataSeeder extends Seeder
         $userAdminId = $usersMap['piscokpiscok2610@gmail.com'] ?? 1;
         $userKasirId = $usersMap['ahmad.fauzi.tb@gmail.com'] ?? $userAdminId;
 
-        // 1. Seed Inventory Batches FIFO for all products (Beginning from early 2025)
+        // 1. Seed Inventory Batches FIFO for all products (Realistic Proportional Opening Balances)
         DB::table('inventory_batches')->truncate();
         $allProducts = DB::table('products')->get();
+        
+        $openingQtyMap = [
+            'BTA-001' => 35000,
+            'BTK-001' => 8000,
+            'SMN-050' => 1200, // High turnover PPC 50kg -> Stok ~2300 (Aman)
+            'SMN-040' => 260,  // Critical: Stok ~20 sak (Batas Min: 40) -> Stok Minimum
+            'PSR-001' => 90,   // Critical: Stok ~6 pick up (Batas Min: 10) -> Stok Minimum
+            'PSR-002' => 140,
+            'SPL-001' => 90,
+            'BES-008' => 600,
+            'BES-010' => 550,
+            'BES-012' => 450,
+            'BJA-075' => 500,
+            'RNG-045' => 500,
+            'WMH-006' => 120,
+            'SNG-020' => 350,
+            'SPD-030' => 250,
+            'ASB-180' => 280,
+            'GYP-009' => 300,
+            'TPL-009' => 250,
+            'TPL-012' => 180,
+            'PIP-001' => 400,
+            'PIP-002' => 350,
+            'PIP-003' => 320,
+            'PIP-004' => 200,
+            'KRN-001' => 180,
+            'STP-001' => 160,
+            'LEM-045' => 350,
+            'TRN-550' => 2,    // Critical: Stok ~1 toren (Batas Min: 2) -> Stok Minimum
+            'CAT-005' => 220,
+            'CAT-DLX' => 10,   // Critical: Stok ~10 galon (Batas Min: 10) -> Stok Minimum
+            'CAT-KYU' => 200,
+            'AQP-004' => 140,
+            'THN-001' => 250,
+            'KUS-002' => 280,
+            'KUS-003' => 260,
+            'ROL-CAT' => 180,
+            'PAK-050' => 35,   // Critical: Stok ~18 kg (Batas Min: 20) -> Stok Minimum
+            'PAK-SNG' => 150,
+            'PAK-BTN' => 140,
+            'KBL-002' => 5,    // Critical: Stok ~3 roll (Batas Min: 5) -> Stok Minimum
+            'MTR-005' => 120,
+            'SKP-001' => 100,
+            'CGK-001' => 100,
+            'MTR-300' => 250,
+            'KRM-404' => 300,
+            'KWT-001' => 250,
+        ];
+
         foreach ($allProducts as $p) {
-            $remaining = 4500;
-            if ($p->code === 'BTA-001') {
-                $remaining = 1500;
-            } elseif ($p->code === 'KBL-002') {
-                $remaining = 50;
-            }
+            $received = $openingQtyMap[$p->code] ?? 250;
+            $remaining = (int) round($received * 0.45);
 
             DB::table('inventory_batches')->insert([
                 'product_id' => $p->id,
                 'warehouse_id' => $warehouseId,
                 'entry_date' => '2025-01-02 08:00:00',
-                'qty_received' => 15000,
+                'qty_received' => $received,
                 'qty_remaining' => $remaining,
                 'unit_cost' => $p->default_purchase_price,
                 'source_type' => 'opening_balance',
