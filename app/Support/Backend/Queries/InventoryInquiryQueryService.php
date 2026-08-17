@@ -129,6 +129,8 @@ class InventoryInquiryQueryService
                     'unit_name' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
                     'multi_unit_quantity' => sprintf('%s %s', $this->formatNumber($quantity), $product->baseUnit?->name ?? ''),
                     'saleable_stock' => $this->formatNumber($quantity),
+                    'quantity' => (float) $quantity,
+                    'raw_quantity' => (float) $quantity,
                     'unit_cost' => $this->formatNumber($cost),
                     'raw_unit_cost' => $cost,
                     'address' => $this->resolveWarehouseAddress($warehouse),
@@ -145,11 +147,11 @@ class InventoryInquiryQueryService
                 }
 
                 return collect([
-                    $row['product_code'],
                     $row['product_name'],
+                    $row['product_code'],
                     $row['warehouse'],
                     $row['address'],
-                    $row['multi_unit_quantity'],
+                    $row['unit'],
                 ])->contains(fn ($value) => str_contains(mb_strtolower((string) $value), $search));
             })
             ->sortBy([
@@ -185,22 +187,26 @@ class InventoryInquiryQueryService
             ->where(function ($q) {
                 $q->where('source_type', 'opening_balance')
                   ->orWhereNull('source_type')
-                  ->orWhere('source_type', 'like', '%Initial%');
+                  ->orWhere('source_type', 'like', '%Initial%')
+                  ->orWhere('source_type', 'like', '%opening%');
             })
+            ->where('qty_received', '>', 0)
             ->orderBy('id', 'asc')
             ->get();
 
         foreach ($batches as $batch) {
             $wh = $warehouses->get($batch->warehouse_id);
+            $cost = (float) ($batch->unit_cost > 0 ? $batch->unit_cost : ($product->default_purchase_price ?: 0));
             $rows->push([
                 'id' => 'batch-' . $batch->id,
                 'warehouse_id' => (int) $batch->warehouse_id,
                 'warehouse' => $wh?->name ?? 'Gudang Utama',
                 'date' => $batch->entry_date ? Carbon::parse($batch->entry_date)->format('d/m/Y') : Carbon::now()->format('d/m/Y'),
                 'quantity' => (float) $batch->qty_received,
+                'raw_quantity' => (float) $batch->qty_received,
                 'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
-                'unit_cost' => (float) $batch->unit_cost,
-                'raw_unit_cost' => (float) $batch->unit_cost,
+                'unit_cost' => $cost,
+                'raw_unit_cost' => $cost,
                 'document_number' => 'SA-' . $product->code,
                 'created_at' => $batch->created_at ?? $batch->entry_date,
             ]);
@@ -225,12 +231,17 @@ class InventoryInquiryQueryService
                 $cost = (float) ($attrs['unit_price'] ?? $attrs['unit_cost'] ?? $product->default_purchase_price ?? 0);
                 $qty = (float) ($line->quantity ?? 0);
 
+                if ($qty <= 0) {
+                    continue;
+                }
+
                 $rows->push([
                     'id' => 'doc-line-' . $line->id,
                     'warehouse_id' => (int) ($doc->warehouse_id ?? $line->warehouse_id ?? 1),
                     'warehouse' => $wh?->name ?? 'Gudang Utama',
                     'date' => $doc->document_date ? Carbon::parse($doc->document_date)->format('d/m/Y') : ($doc->created_at ? Carbon::parse($doc->created_at)->format('d/m/Y') : Carbon::now()->format('d/m/Y')),
                     'quantity' => $qty,
+                    'raw_quantity' => $qty,
                     'unit' => $line->unit?->name ?? $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? 'PCS',
                     'unit_cost' => $cost,
                     'raw_unit_cost' => $cost,
@@ -240,11 +251,11 @@ class InventoryInquiryQueryService
             }
         }
 
-        // If no batches or documents exist, fallback to item-locations rows if any stock exists
+        // 3. Fallback to location rows if no opening batch/adjustment entries exist
         if ($rows->isEmpty()) {
             $itemLocations = $this->paginateItemLocations(['product_id' => $productId, 'per_page' => 100]);
             foreach ($itemLocations->items() as $item) {
-                $qty = (float) str_replace(['.', ','], '', (string) ($item['saleable_stock'] ?? 0));
+                $qty = (float) ($item['raw_quantity'] ?? $item['quantity'] ?? 0);
                 if ($qty > 0) {
                     $rows->push([
                         'id' => 'loc-' . $item['id'],
@@ -252,6 +263,7 @@ class InventoryInquiryQueryService
                         'warehouse' => $item['warehouse'],
                         'date' => $item['date'] ?? Carbon::now()->format('d/m/Y'),
                         'quantity' => $qty,
+                        'raw_quantity' => $qty,
                         'unit' => $item['unit'] ?? $product->baseUnit?->name ?? 'PCS',
                         'unit_cost' => (float) ($item['raw_unit_cost'] ?? 0),
                         'raw_unit_cost' => (float) ($item['raw_unit_cost'] ?? 0),

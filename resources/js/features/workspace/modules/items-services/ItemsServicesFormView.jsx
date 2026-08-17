@@ -150,23 +150,41 @@ export default function ItemsServicesFormView({
         }
         let active = true;
 
-        listBackendResource('product-opening-stocks', { product_id: recordId, per_page: 100, _refresh: Date.now() })
-            .then((response) => {
+        const loadStock = async () => {
+            try {
+                let response = await listBackendResource('product-opening-stocks', { product_id: recordId, per_page: 100, _refresh: Date.now() });
+                let rows = extractBackendRows(response);
+                if (!rows || rows.length === 0) {
+                    response = await listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() });
+                    rows = extractBackendRows(response);
+                }
                 if (!active) return;
-                const rows = extractBackendRows(response);
                 const stockRows = mapBackendStockRows(rows, detailRow);
 
                 setDbStockRows(stockRows);
-                updateDbBaseline((prev) => {
-                    const hasUserRows = (prev.openingStockRows ?? []).some((r) => !r.__fromDb);
-                    if (hasUserRows) return prev;
-                    return { ...prev, openingStockRows: stockRows };
+                setValues((prev) => {
+                    const userDraftRows = (prev.openingStockRows ?? []).filter((r) => !r.__fromDb);
+                    return { ...prev, openingStockRows: [...stockRows, ...userDraftRows] };
                 });
-            })
-            .catch(() => {});
+            } catch (_) {
+                try {
+                    const response = await listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() });
+                    if (!active) return;
+                    const rows = extractBackendRows(response);
+                    const stockRows = mapBackendStockRows(rows, detailRow);
+                    setDbStockRows(stockRows);
+                    setValues((prev) => {
+                        const userDraftRows = (prev.openingStockRows ?? []).filter((r) => !r.__fromDb);
+                        return { ...prev, openingStockRows: [...stockRows, ...userDraftRows] };
+                    });
+                } catch (_) {}
+            }
+        };
+
+        loadStock();
 
         return () => { active = false; };
-    }, [recordId, updateDbBaseline]);
+    }, [recordId, detailRow?.id]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -297,8 +315,12 @@ export default function ItemsServicesFormView({
                 markClean();
                 if (recordId) {
                     listBackendResource('product-opening-stocks', { product_id: recordId, per_page: 100, _refresh: Date.now() })
-                        .then((res) => {
-                            const rows = extractBackendRows(res);
+                        .then(async (res) => {
+                            let rows = extractBackendRows(res);
+                            if (!rows || rows.length === 0) {
+                                const locRes = await listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() });
+                                rows = extractBackendRows(locRes);
+                            }
                             const stockRows = mapBackendStockRows(rows, detailRow);
 
                             setDbStockRows(stockRows);
@@ -307,7 +329,15 @@ export default function ItemsServicesFormView({
                                 openingStockRows: stockRows,
                             }));
                         })
-                        .catch(() => {});
+                        .catch(async () => {
+                            try {
+                                const locRes = await listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() });
+                                const rows = extractBackendRows(locRes);
+                                const stockRows = mapBackendStockRows(rows, detailRow);
+                                setDbStockRows(stockRows);
+                                setValues((prev) => ({ ...prev, openingStockRows: stockRows }));
+                            } catch (_) {}
+                        });
                 }
                 if (isDetail && record && activeLevel2Tab?.id) {
                     window.dispatchEvent(
