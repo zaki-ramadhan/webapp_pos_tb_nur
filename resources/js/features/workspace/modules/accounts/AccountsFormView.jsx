@@ -207,15 +207,13 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
                             detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                pageId: pageId ?? 'accounts',
                                 tabId: activeLevel2Tab.id,
                                 label: savedRecord?.name ?? savedRecord?.full_name ?? savedRecord?.countryName ?? savedRecord?.country_name ?? savedRecord?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
                             },
                         })
                     );
                 }
-
-                setLastSavedAt(Date.now());
 
                 if (!isDetail && savedRecord?.id) {
                     onOpenDetail?.({
