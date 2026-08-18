@@ -20,7 +20,9 @@ class AbcAnalysisService
             ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
             ->leftJoin('units', 'products.base_unit_id', '=', 'units.id')
             ->where('operation_documents.document_type', 'sales_invoice')
-            ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas']);
+            ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
+            ->whereNull('products.deleted_at')
+            ->where('products.is_active', true);
 
         if ($months !== null && $months > 0) {
             $query->where('operation_documents.entry_date', '>=', now()->subMonths($months)->startOfDay()->toDateTimeString());
