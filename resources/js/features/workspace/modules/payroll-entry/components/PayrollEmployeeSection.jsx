@@ -7,6 +7,11 @@ import { SortIcon } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 
 export function PayrollEmployeeSection({ config, values, setValues, onTake, handlers = {} }) {
+    const employeeRowsCount = (config.employeeTable?.rows ?? []).length;
+    const titleWithCount = employeeRowsCount > 0
+        ? `${config.employeeSectionTitle} (${employeeRowsCount})`
+        : config.employeeSectionTitle;
+
     return (
         <div className="flex flex-col min-h-0">
             <div className="flex flex-col gap-3 pb-1.5 sm:flex-row sm:items-center sm:justify-between">
@@ -47,8 +52,8 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake, hand
                     />
                 </div>
 
-                <div className="text-right text-2xl font-normal text-brand-dark">
-                    {config.employeeSectionTitle} <span className="text-tab-active-border-t">*</span>
+                <div className="text-left text-base sm:text-lg md:text-xl font-normal text-brand-dark sm:text-right inline-flex items-center gap-1 whitespace-nowrap">
+                    <span>{titleWithCount}</span> <span className="text-tab-active-border-t">*</span>
                 </div>
             </div>
 
