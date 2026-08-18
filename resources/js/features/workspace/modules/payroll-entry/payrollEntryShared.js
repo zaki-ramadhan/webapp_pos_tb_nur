@@ -1,19 +1,36 @@
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 
-export function buildDefaultValues(config) {
+const INDONESIAN_MONTHS = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
+
+export function getCurrentDynamicMonth() {
+    const monthIndex = new Date().getMonth();
+    return INDONESIAN_MONTHS[monthIndex] ?? 'Januari';
+}
+
+export function getCurrentDynamicYear() {
+    return String(new Date().getFullYear());
+}
+
+export function buildDefaultValues(config = {}) {
+    const currentMonth = getCurrentDynamicMonth();
+    const currentYear = getCurrentDynamicYear();
+
     return {
-        paymentType: config.defaults?.paymentType ?? config.paymentTypeOptions?.[0] ?? '',
-        branches: [...(config.defaults?.branches ?? [])],
-        month: config.defaults?.month ?? config.monthOptions?.[0] ?? '',
-        year: config.defaults?.year ?? config.yearOptions?.[0] ?? '',
-        autoNumber: config.defaults?.autoNumber ?? true,
-        numberingType: config.defaults?.numberingType ?? config.numberingOptions?.[0] ?? '',
-        entryDate: config.defaults?.entryDate ?? '',
-        dueDate: config.defaults?.dueDate ?? '',
-        employeeLookup: config.defaults?.employeeLookup ?? '',
-        liabilityAccounts: [...(config.defaults?.liabilityAccounts ?? [])],
+        paymentType: config?.defaults?.paymentType ?? config?.paymentTypeOptions?.[0] ?? 'Bulanan',
+        branches: [...(config?.defaults?.branches ?? [])],
+        month: currentMonth,
+        year: currentYear,
+        autoNumber: config?.defaults?.autoNumber ?? true,
+        numberingType: config?.defaults?.numberingType ?? config?.numberingOptions?.[0] ?? 'Pencatatan Gaji',
+        entryDate: config?.defaults?.entryDate ?? '',
+        dueDate: config?.defaults?.dueDate ?? '',
+        employeeLookup: config?.defaults?.employeeLookup ?? '',
+        liabilityAccounts: [...(config?.defaults?.liabilityAccounts ?? [])],
         __liabilityAccountId: null,
-        notes: config.defaults?.notes ?? '',
+        notes: config?.defaults?.notes ?? '',
     };
 }
 
