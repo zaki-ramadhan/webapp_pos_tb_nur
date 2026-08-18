@@ -164,6 +164,7 @@ export default function GeneralJournalTableView({
                     <TransactionDataTable
                         columns={config.table.columns}
                         rows={sortedRows}
+                        pagination={config.table.pagination}
                         emptyLabel={loading ? 'Memuat data...' : (error || 'Tidak ada data')}
                         minWidthClassName="min-w-[1100px]"
                         onRowClick={(row) =>

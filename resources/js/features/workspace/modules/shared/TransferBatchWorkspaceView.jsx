@@ -168,7 +168,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                         className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                     >
                                         <DataTableCell className="px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
-                                            {index + 1}
+                                            {config.table.pagination?.from ? (config.table.pagination.from + index) : (index + 1)}
                                         </DataTableCell>
                                         {config.table.columns.map((column) => (
                                             <DataTableCell

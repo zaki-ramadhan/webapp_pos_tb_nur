@@ -160,6 +160,7 @@ export default function CashPaymentTableView({
                 <TransactionDataTable
                     columns={config.table.columns}
                     rows={sortedRows}
+                    pagination={config.table.pagination}
                     emptyLabel={loading ? 'Memuat data...' : (error || 'Tidak ada data')}
                     minWidthClassName="min-w-[1380px]"
                     onRowClick={(row) =>
