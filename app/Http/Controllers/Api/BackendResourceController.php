@@ -102,6 +102,39 @@ class BackendResourceController extends Controller
             throw new AuthorizationException('Anda tidak memiliki hak akses untuk melihat data ini.');
         }
 
+        if (in_array($resource, ['payroll-entries', 'expense-entries'], true) && $entity instanceof \App\Domain\Support\Models\OperationDocument) {
+            $paid = (float) \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'cash_payment')
+                ->where('related_document_id', $entity->id)
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->sum('total_amount');
+
+            $docTotal = (float) $entity->total_amount;
+            $outstanding = max(0.00, round($docTotal - $paid, 2));
+
+            if ($paid <= 0.00) {
+                $computedStatus = 'Sedang diproses';
+            } elseif ($outstanding <= 0.01) {
+                $computedStatus = 'Terbayar';
+            } else {
+                $computedStatus = 'Sebagian dibayar';
+            }
+
+            if ($entity->status !== $computedStatus || (float) $entity->paid_amount !== $paid) {
+                \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->where('id', $entity->id)
+                    ->update([
+                        'paid_amount' => $paid,
+                        'outstanding_amount' => $outstanding,
+                        'status' => $computedStatus,
+                    ]);
+            }
+
+            $entity->setAttribute('paid_amount', $paid);
+            $entity->setAttribute('outstanding_amount', $outstanding);
+            $entity->setAttribute('status', $computedStatus);
+        }
+
         $customRecord = $blueprint->runShow($record);
 
         return response()->json([
