@@ -321,8 +321,10 @@ class DashboardAnalyticsQueryService
                 ->where('entry_date', '<=', $latestSalesInvoiceDate);
             $fakturLunasSales = (float) (clone $salesInvoiceQuery)->sum('paid_amount');
             $fakturBelumLunasSales = (float) (clone $salesInvoiceQuery)->sum('outstanding_amount');
-            $belumJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
-            $lewatJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where('due_date', '<', $latestSalesInvoiceDate)->sum('outstanding_amount');
+            $belumJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where(function ($q) use ($latestSalesInvoiceDate) {
+                $q->where('due_date', '>=', $latestSalesInvoiceDate)->orWhereNull('due_date');
+            })->sum('outstanding_amount');
+            $lewatJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where('due_date', '<', $latestSalesInvoiceDate)->whereNotNull('due_date')->sum('outstanding_amount');
             $hariIniSales = (float) (clone $salesInvoiceQuery)->where('entry_date', $latestSalesInvoiceDate)->sum('total_amount');
 
             $purchaseInvoiceQuery = DB::table('operation_documents')
@@ -332,8 +334,10 @@ class DashboardAnalyticsQueryService
                 ->where('entry_date', '<=', $latestSalesInvoiceDate);
             $fakturLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('paid_amount');
             $fakturBelumLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('outstanding_amount');
-            $belumJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
-            $lewatJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '<', $latestSalesInvoiceDate)->sum('outstanding_amount');
+            $belumJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where(function ($q) use ($latestSalesInvoiceDate) {
+                $q->where('due_date', '>=', $latestSalesInvoiceDate)->orWhereNull('due_date');
+            })->sum('outstanding_amount');
+            $lewatJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '<', $latestSalesInvoiceDate)->whereNotNull('due_date')->sum('outstanding_amount');
             $hariIniPurchase = (float) (clone $purchaseInvoiceQuery)->where('entry_date', $latestSalesInvoiceDate)->sum('total_amount');
 
             $dbTopProducts = DB::table('operation_document_lines')
@@ -384,6 +388,18 @@ class DashboardAnalyticsQueryService
                 ];
             }
 
+            $initialCash = (float) DB::table('accounts')
+                ->where(function ($q) {
+                    $q->where('code', 'like', '1101%')
+                      ->orWhere('classification', 'Kas/Bank')
+                      ->orWhere('classification', 'Cash/Bank');
+                })
+                ->sum('opening_balance');
+
+            if ($initialCash <= 0) {
+                $initialCash = 150000000;
+            }
+
             $cashAvailabilityLabels = [];
             $cashAvailabilitySeries = [];
             for ($i = 6; $i >= 0; $i--) {
@@ -431,7 +447,7 @@ class DashboardAnalyticsQueryService
                         });
                     })
                     ->sum('total_amount');
-                $cashAvailabilitySeries[] = 45000000 + ($inUpToDate - $outUpToDate);
+                $cashAvailabilitySeries[] = $initialCash + ($inUpToDate - $outUpToDate);
             }
 
             $totalSalesOrders = DB::table('operation_documents')
