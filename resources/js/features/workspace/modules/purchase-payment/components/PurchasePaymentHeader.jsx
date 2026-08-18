@@ -47,6 +47,7 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                             value={values.bankAccounts?.[0] ?? ''}
                             placeholder={config.bankPlaceholder}
                             searchLabel="Cari bank"
+                            queryParams={{ account_type: 'Cash/Bank' }}
                             onRemove={() =>
                                 setValues((current) => ({
                                     ...current,

@@ -102,6 +102,7 @@ export default function SalesReceiptFormView({
                                         value={values.bankAccounts?.[0] ?? ''}
                                         placeholder="Cari/Pilih..."
                                         searchLabel="Cari bank"
+                                        queryParams={{ account_type: 'Cash/Bank' }}
                                         onRemove={() =>
                                             setValues((current) => ({
                                                 ...current,

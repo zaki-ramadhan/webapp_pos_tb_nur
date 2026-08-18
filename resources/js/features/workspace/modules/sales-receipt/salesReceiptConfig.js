@@ -72,7 +72,7 @@ const salesReceiptDraft = {
     bankAccounts: [],
     entryDate: todayDisplayDate,
     autoNumber: true,
-    numberingType: 'Bank BCA IDR Jakarta (069-773-3993)',
+    numberingType: 'Nomor Bukti Kas (Tunai)',
     documentNumber: '',
     currency: '',
     paymentAmount: '0',
