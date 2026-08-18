@@ -15,23 +15,22 @@ const INDONESIAN_MONTHS = [
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
 ];
 
-const YEAR_OPTIONS = ['2027', '2026', '2025', '2024', '2023', '2022', '2021'];
+const currentYearNum = new Date().getFullYear();
+const YEAR_OPTIONS = Array.from({ length: 7 }, (_, i) => String(currentYearNum + 1 - i));
 
 export default function TakePayrollEntryModal({ open, onClose, onApply }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedType, setSelectedType] = useState('all');
     
-  // Default to "all" to show all records initially
-
-    const [selectedMonth, setSelectedMonth] = useState('all');
-    const [selectedYear, setSelectedYear] = useState('all');
+    // Default to current month and current year dynamically
+    const [selectedMonth, setSelectedMonth] = useState(() => INDONESIAN_MONTHS[new Date().getMonth()]);
+    const [selectedYear, setSelectedYear] = useState(() => String(new Date().getFullYear()));
     
     const [loading, setLoading] = useState(false);
     const [records, setRecords] = useState([]);
     const [selectedIds, setSelectedIds] = useState(new Set());
 
-  // Fetch records on open or search query change
-
+    // Fetch records on open or search query change
     useEffect(() => {
         if (!open) return;
 
@@ -66,14 +65,13 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
         };
     }, [open, searchQuery]);
 
-  // Reset selection and filters when modal closes
-
+    // Reset selection and set filters to current date when modal opens
     useEffect(() => {
-        if (!open) {
+        if (open) {
             setSearchQuery('');
             setSelectedType('all');
-            setSelectedMonth('all');
-            setSelectedYear('all');
+            setSelectedMonth(INDONESIAN_MONTHS[new Date().getMonth()]);
+            setSelectedYear(String(new Date().getFullYear()));
             setSelectedIds(new Set());
         }
     }, [open]);
@@ -155,11 +153,11 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
 
     const columns = useMemo(() => [
         { id: 'checkbox', label: '', widthClassName: 'w-px', align: 'center' },
-        { id: 'document_number', label: 'No. Beban' },
-        { id: 'parsedPeriod', label: 'Periode', widthClassName: 'w-[160px]' },
+        { id: 'document_number', label: 'No. Gaji' },
+        { id: 'parsedPeriod', label: 'Periode', widthClassName: 'w-[150px]' },
         { id: 'due_date', label: 'Jatuh Tempo', widthClassName: 'w-[120px]' },
-        { id: 'total_amount', label: 'Total', widthClassName: 'w-[140px]', align: 'right' },
-        { id: 'parsedType', label: 'Tipe', widthClassName: 'w-[120px]' },
+        { id: 'total_amount', label: 'Total', widthClassName: 'w-[150px]', align: 'right' },
+        { id: 'parsedType', label: 'Tipe', widthClassName: 'w-[110px]' },
     ], []);
 
     const allChecked =
@@ -172,7 +170,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
             onClose={onClose}
             title="Pencatatan Gaji"
             headerIcon={() => null}
-            maxWidthClassName="!max-w-[760px] w-full"
+            maxWidthClassName="!max-w-[860px] w-full"
             contentClassName="bg-white px-4 py-3 flex flex-col gap-3 min-h-[320px] max-h-[60vh] overflow-y-auto"
             footer={
                 <div className="flex justify-between items-center w-full">
@@ -196,44 +194,46 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
             }
         >
             {/* Filter controls */}
-            <div className="flex flex-wrap items-center gap-2">
-                <div className="w-full sm:max-w-[180px]">
-                    <TextInput
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Cari..."
-                        trailing={
-                            loading ? (
-                                <LoadingIcon className="h-4.5 w-4.5 animate-spin text-slate-400" />
-                            ) : (
-                                <SearchIcon className="h-4.5 w-4.5 text-slate-400" />
-                            )
-                        }
-                        className="h-[36px] rounded-[4px] border-ui-border"
-                        inputClassName="text-xs sm:text-sm text-brand-dark"
-                    />
+            <div className="flex flex-wrap items-center justify-between gap-2.5">
+                <div className="flex flex-wrap items-center gap-2">
+                    <div className="w-full sm:w-[170px]">
+                        <TextInput
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Cari..."
+                            trailing={
+                                loading ? (
+                                    <LoadingIcon className="h-4.5 w-4.5 animate-spin text-slate-400" />
+                                ) : (
+                                    <SearchIcon className="h-4.5 w-4.5 text-slate-400" />
+                                )
+                            }
+                            className="h-[36px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
+                    </div>
+
+                    <div className="min-w-[130px]">
+                        <SelectField
+                            value={selectedType}
+                            onChange={(e) => setSelectedType(e.target.value)}
+                            className="h-[36px] rounded-[4px] border-ui-border bg-white"
+                            selectClassName="text-xs sm:text-sm text-brand-dark pl-2.5 pr-7"
+                        >
+                            <option value="all">Semua Tipe</option>
+                            <option value="Bulanan">Bulanan</option>
+                        </SelectField>
+                    </div>
                 </div>
 
-                <div className="w-[120px]">
-                    <SelectField
-                        value={selectedType}
-                        onChange={(e) => setSelectedType(e.target.value)}
-                        className="h-[36px] rounded-[4px] border-ui-border bg-white"
-                        selectClassName="text-xs sm:text-sm text-brand-dark px-2"
-                    >
-                        <option value="all">Semua Tipe</option>
-                        <option value="Bulanan">Bulanan</option>
-                    </SelectField>
-                </div>
-
-                <div className="flex items-center gap-1.5 text-xs sm:text-sm text-brand-dark font-normal ml-auto">
-                    <span>Periode:</span>
-                    <div className="w-[120px]">
+                <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-brand-dark font-normal ml-auto">
+                    <span className="whitespace-nowrap">Periode:</span>
+                    <div className="min-w-[140px]">
                         <SelectField
                             value={selectedMonth}
                             onChange={(e) => setSelectedMonth(e.target.value)}
                             className="h-[36px] rounded-[4px] border-ui-border bg-white"
-                            selectClassName="text-xs sm:text-sm text-brand-dark px-2"
+                            selectClassName="text-xs sm:text-sm text-brand-dark pl-2.5 pr-7"
                         >
                             <option value="all">Semua Bulan</option>
                             {INDONESIAN_MONTHS.map((month) => (
@@ -241,12 +241,12 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
                             ))}
                         </SelectField>
                     </div>
-                    <div className="w-[90px]">
+                    <div className="min-w-[125px]">
                         <SelectField
                             value={selectedYear}
                             onChange={(e) => setSelectedYear(e.target.value)}
                             className="h-[36px] rounded-[4px] border-ui-border bg-white"
-                            selectClassName="text-xs sm:text-sm text-brand-dark px-2"
+                            selectClassName="text-xs sm:text-sm text-brand-dark pl-2.5 pr-7"
                         >
                             <option value="all">Semua Tahun</option>
                             {YEAR_OPTIONS.map((year) => (
