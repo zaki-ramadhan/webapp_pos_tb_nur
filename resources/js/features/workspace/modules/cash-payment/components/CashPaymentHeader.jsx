@@ -10,7 +10,7 @@ import {
     TransactionFieldLabel,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
-export default function CashPaymentHeader({ config, values, setValues, activeRecordId, handlers = {} }) {
+export default function CashPaymentHeader({ config, values, setValues, activeRecordId, isDetail = Boolean(activeRecordId || values?.__backendRecordId), handlers = {} }) {
     const [openAmbil, setOpenAmbil] = useState(false);
     const ambilButtonRef = useRef(null);
 

@@ -30,7 +30,7 @@ const RESOURCE_LOOKUP_MAP = {
     'inventory-adjustment': 'inventory-adjustments',
 };
 
-export default function GeneralJournalHeader({ config, values, setValues, activeRecordId, handlers = {} }) {
+export default function GeneralJournalHeader({ config, values, setValues, activeRecordId, isDetail = Boolean(activeRecordId || values?.__backendRecordId), handlers = {} }) {
     const [lookupLoading, setLookupLoading] = useState(false);
 
     async function openSourceTransaction() {

@@ -337,6 +337,7 @@ export default function CashPaymentFormView({
                         values={values}
                         setValues={setValues}
                         activeRecordId={activeRecordId}
+                        isDetail={isDetail}
                         handlers={handlers}
                     />
                 }
