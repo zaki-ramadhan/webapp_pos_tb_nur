@@ -163,6 +163,7 @@ export default function ExpenseEntryTableView({
                     <TransactionDataTable
                         columns={config.table.columns}
                         rows={sortedRows}
+                        pagination={config.table.pagination}
                         emptyLabel={loading ? 'Memuat data...' : (error || config.table.emptyLabel)}
                         minWidthClassName="min-w-[1180px]"
                         onRowClick={(row) =>

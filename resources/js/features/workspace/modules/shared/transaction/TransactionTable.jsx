@@ -38,7 +38,10 @@ export function TransactionDataTable({
     sortKey = null,
     sortDir = null,
     onSort = null,
+    pagination = null,
+    from = null,
 }) {
+    const rowOffset = (pagination?.from && pagination.from > 0) ? pagination.from : (from && from > 0 ? from : 1);
     const cleanedColumns = useMemo(() => {
         return (columns ?? []).map(col => ({
             ...col,
@@ -162,7 +165,7 @@ export function TransactionDataTable({
                                             className={`w-[48px] min-w-[48px] max-w-[48px] px-2.5 text-center text-base text-table-row-number whitespace-nowrap ${cellClassName}`.trim()}
                                             style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
                                         >
-                                            {index + 1}
+                                            {rowOffset + index}
                                         </DataTableCell>
                                     )}
                                     {visibleColumns.map((column) => {

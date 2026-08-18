@@ -128,6 +128,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                 <TransactionDataTable
                     columns={config.table.columns}
                     rows={sortedRows}
+                    pagination={config.table.pagination}
                     minWidthClassName="min-w-[1380px]"
                     onRowClick={(row) =>
                         onOpenDetail?.({
