@@ -102,7 +102,7 @@ class DashboardAnalyticsQueryService
                 $salesTrendLabels[] = $dayLabel;
                 $totalSales = DB::table('operation_documents')
                     ->where('document_type', 'sales_invoice')
-                    ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+                    ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                     ->where('entry_date', $date)
                     ->sum('total_amount');
                 $salesTrendData[] = (float) $totalSales;
@@ -114,7 +114,7 @@ class DashboardAnalyticsQueryService
 
             $totalSalesVal = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereYear('entry_date', $resolvedYear)
                 ->where('entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum('total_amount');
@@ -123,7 +123,7 @@ class DashboardAnalyticsQueryService
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
                 ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
                 ->where('operation_documents.document_type', 'sales_invoice')
-                ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereYear('operation_documents.entry_date', $resolvedYear)
                 ->where('operation_documents.entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
@@ -159,7 +159,7 @@ class DashboardAnalyticsQueryService
 
             $prevSalesVal = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereYear('entry_date', $prevYear)
                 ->where('entry_date', '<=', $prevSalesInvoiceDate)
                 ->sum('total_amount');
@@ -167,7 +167,7 @@ class DashboardAnalyticsQueryService
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
                 ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
                 ->where('operation_documents.document_type', 'sales_invoice')
-                ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereYear('operation_documents.entry_date', $prevYear)
                 ->where('operation_documents.entry_date', '<=', $prevSalesInvoiceDate)
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
@@ -316,7 +316,7 @@ class DashboardAnalyticsQueryService
 
             $salesInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->where('entry_date', '>=', $monthStart)
                 ->where('entry_date', '<=', $latestSalesInvoiceDate);
             $fakturLunasSales = (float) (clone $salesInvoiceQuery)->sum('paid_amount');
@@ -327,7 +327,7 @@ class DashboardAnalyticsQueryService
 
             $purchaseInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'purchase_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->where('entry_date', '>=', $monthStart)
                 ->where('entry_date', '<=', $latestSalesInvoiceDate);
             $fakturLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('paid_amount');
