@@ -228,9 +228,27 @@ class DashboardAnalyticsQueryService
                 }
                 $cashFlowLabels[] = $formattedDate;
                 $inflow = DB::table('operation_documents')
-                    ->where('document_type', 'sales_invoice')
-                    ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                     ->where('entry_date', $date)
+                    ->where(function ($q) {
+                        $q->where(function ($sub) {
+                            $sub->where('document_type', 'sales_receipt')
+                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'cash_receipt')
+                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'sales_invoice')
+                                ->whereIn('status', ['Lunas', 'Paid', 'lunas'])
+                                ->where('paid_amount', '>', 0)
+                                ->whereNotExists(function ($ex) {
+                                    $ex->select(DB::raw(1))
+                                        ->from('operation_document_lines')
+                                        ->join('operation_documents as r', 'operation_document_lines.operation_document_id', '=', 'r.id')
+                                        ->where('r.document_type', 'sales_receipt')
+                                        ->whereColumn('operation_document_lines.reference_code', 'operation_documents.document_number');
+                                });
+                        });
+                    })
                     ->sum('total_amount');
                 $outflow = DB::table('operation_documents')
                     ->where('entry_date', $date)
@@ -373,19 +391,43 @@ class DashboardAnalyticsQueryService
                 $formattedDate = self::dateId($date, false);
                 $cashAvailabilityLabels[] = $formattedDate;
                 $inUpToDate = DB::table('operation_documents')
-                    ->where('document_type', 'sales_invoice')
-                    ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                     ->where('entry_date', '<=', $date)
+                    ->where(function ($q) {
+                        $q->where(function ($sub) {
+                            $sub->where('document_type', 'sales_receipt')
+                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'cash_receipt')
+                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'sales_invoice')
+                                ->whereIn('status', ['Lunas', 'Paid', 'lunas'])
+                                ->where('paid_amount', '>', 0)
+                                ->whereNotExists(function ($ex) {
+                                    $ex->select(DB::raw(1))
+                                        ->from('operation_document_lines')
+                                        ->join('operation_documents as r', 'operation_document_lines.operation_document_id', '=', 'r.id')
+                                        ->where('r.document_type', 'sales_receipt')
+                                        ->whereColumn('operation_document_lines.reference_code', 'operation_documents.document_number');
+                                });
+                        });
+                    })
                     ->sum('total_amount');
                 $outUpToDate = DB::table('operation_documents')
                     ->where('entry_date', '<=', $date)
                     ->where(function ($q) {
                         $q->where(function ($sub) {
                             $sub->where('document_type', 'payroll_entry')
-                                ->where('status', 'Posted');
+                                ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar']);
                         })->orWhere(function ($sub) {
                             $sub->where('document_type', 'expense_entry')
-                                ->whereIn('status', ['Sedang diproses', 'Terbayar']);
+                                ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas']);
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'cash_payment')
+                                ->whereIn('status', ['Posted', 'Lunas', 'Terbayar']);
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'purchase_payment')
+                                ->whereIn('status', ['Posted', 'Lunas', 'Terbayar']);
                         });
                     })
                     ->sum('total_amount');

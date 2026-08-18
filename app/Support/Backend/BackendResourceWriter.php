@@ -619,9 +619,7 @@ class BackendResourceWriter
      */
     protected function invalidateDashboardCache(): void
     {
-        \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_retail');
-        \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_trade-portal');
-        \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_manufacture');
+        \Illuminate\Support\Facades\Cache::flush();
     }
 
     /**

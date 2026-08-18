@@ -56,30 +56,14 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
             return;
         }
 
-      // 1. Check in-memory cache first (survives HMR, not page refresh)
-
-        if (window.__savedRecordsCache?.[normalizedRecordId] && window.__savedRecordsCache[normalizedRecordId]?.dockActions?.length) {
-            setLocalRecord(window.__savedRecordsCache[normalizedRecordId]);
-            return;
-        }
-
-      // 2. Check if config has it in rowMap (opening from view data page)
-
+        // 1. Initial optimistic paint from rowMap or cache
         const row = configRef.current?.rowMap?.[normalizedRecordId];
-        if (row?.__backendRecord) {
-            const parsed = buildRecordRef.current
-                ? buildRecordRef.current(row.__backendRecord, configRef.current)
-                : row.__backendRecord;
-            setLocalRecord(parsed);
-            return;
-        }
-
-      // 3. Check if config has it in detailRecords
-
-        const detailRecord = configRef.current?.detailRecords?.[normalizedRecordId];
-        if (detailRecord) {
-            setLocalRecord(detailRecord);
-            return;
+        if (row?.__backendRecord && buildRecordRef.current) {
+            setLocalRecord(buildRecordRef.current(row.__backendRecord, configRef.current));
+        } else if (window.__savedRecordsCache?.[normalizedRecordId] && window.__savedRecordsCache[normalizedRecordId]?.dockActions?.length) {
+            setLocalRecord(window.__savedRecordsCache[normalizedRecordId]);
+        } else if (configRef.current?.detailRecords?.[normalizedRecordId]) {
+            setLocalRecord(configRef.current.detailRecords[normalizedRecordId]);
         }
 
         let active = true;
