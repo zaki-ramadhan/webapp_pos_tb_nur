@@ -391,8 +391,8 @@ class DashboardAnalyticsQueryService
             $initialCash = (float) DB::table('accounts')
                 ->where(function ($q) {
                     $q->where('code', 'like', '1101%')
-                      ->orWhere('classification', 'Kas/Bank')
-                      ->orWhere('classification', 'Cash/Bank');
+                      ->orWhere('account_type', 'like', '%Kas%')
+                      ->orWhere('account_type', 'like', '%Cash%');
                 })
                 ->sum('opening_balance');
 
