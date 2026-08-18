@@ -33,15 +33,17 @@ export default function PayrollEntryEmployeeModal({
         notes: '',
     });
 
+    const targetEmployeeId = selectedEmployeeRow?.employeeId || selectedEmployeeRow?.id;
+
     useEffect(() => {
         let isMounted = true;
-        if (open && selectedEmployeeRow?.employeeId) {
+        if (open && targetEmployeeId) {
             window.axios
-                .get(`/api/backend/employees/${selectedEmployeeRow.employeeId}/last-payroll-line`)
+                .get(`/api/backend/employees/${targetEmployeeId}/last-payroll-line`)
                 .then((res) => {
                     if (!isMounted) return;
                     const data = res?.data?.data;
-                    setHasLastPayroll(Boolean(data && data.attributes));
+                    setHasLastPayroll(Boolean(data && (data.attributes || data.gross_income > 0)));
                 })
                 .catch(() => {
                     if (isMounted) setHasLastPayroll(false);
@@ -52,13 +54,13 @@ export default function PayrollEntryEmployeeModal({
         return () => {
             isMounted = false;
         };
-    }, [open, selectedEmployeeRow?.employeeId]);
+    }, [open, targetEmployeeId]);
 
     useEffect(() => {
         if (open && selectedEmployeeRow) {
             setActiveTab('rincian-gaji');
             setEmployeeModalValues({
-                employeeId: selectedEmployeeRow.employeeId ?? '',
+                employeeId: targetEmployeeId ?? '',
                 employeeCode: selectedEmployeeRow.employeeCode ?? '',
                 employeeName: selectedEmployeeRow.employeeName ?? '',
                 basicSalary: formatNum(selectedEmployeeRow.basicSalary),
@@ -71,7 +73,7 @@ export default function PayrollEntryEmployeeModal({
                 notes: selectedEmployeeRow.notes ?? '',
             });
         }
-    }, [open, selectedEmployeeRow]);
+    }, [open, selectedEmployeeRow, targetEmployeeId]);
 
     const {
         basicSalary,
@@ -87,16 +89,16 @@ export default function PayrollEntryEmployeeModal({
     } = calculatePayrollTotals(employeeModalValues);
 
     const handleFetchLastSalary = async () => {
-        if (!selectedEmployeeRow?.employeeId) return;
+        if (!targetEmployeeId) return;
         setFetchingLast(true);
         try {
-            const response = await window.axios.get(`/api/backend/employees/${selectedEmployeeRow.employeeId}/last-payroll-line`);
+            const response = await window.axios.get(`/api/backend/employees/${targetEmployeeId}/last-payroll-line`);
             const data = response?.data?.data;
-            if (data && data.attributes) {
-                const attr = data.attributes;
+            if (data && (data.attributes || data.gross_income > 0)) {
+                const attr = data.attributes || {};
                 setEmployeeModalValues(prev => ({
                     ...prev,
-                    basicSalary: formatNum(attr.basicSalary),
+                    basicSalary: formatNum(attr.basicSalary ?? data.gross_income),
                     mealAllowance: formatNum(attr.mealAllowance),
                     transportAllowance: formatNum(attr.transportAllowance),
                     overtimeAllowance: formatNum(attr.overtimeAllowance),
@@ -107,10 +109,10 @@ export default function PayrollEntryEmployeeModal({
                 }));
                 showSuccessToast({ message: 'Rincian gaji bulan lalu berhasil disalin.' });
             } else {
-                showErrorToast({ message: 'Tidak ditemukan rincian gaji sebelumnya untuk karyawan ini.' });
+                showErrorToast({ message: 'Tidak ditemukan riwayat gaji sebelumnya untuk karyawan ini.' });
             }
         } catch (e) {
-            showErrorToast({ message: 'Gagal mengambil rincian gaji bulan lalu.' });
+            showErrorToast({ message: 'Gagal mengambil riwayat gaji bulan lalu.' });
         } finally {
             setFetchingLast(false);
         }
