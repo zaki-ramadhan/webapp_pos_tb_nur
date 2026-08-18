@@ -94,7 +94,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 2. Piutang Usaha (Induk 1102, Detail minimal 3 anak)
+        // 2. Piutang Usaha (Induk 1102)
         $parentReceivable = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '1102',
@@ -109,7 +109,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentReceivable,
                 'currency_id' => $currencyId,
                 'code' => '110201',
-                'name' => 'Piutang Dagang Rupiah',
+                'name' => 'Piutang Dagang Pelanggan',
                 'account_type' => 'Receivable',
                 'is_active' => true,
                 'created_at' => now(),
@@ -119,7 +119,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentReceivable,
                 'currency_id' => $currencyId,
                 'code' => '110202',
-                'name' => 'Piutang Karyawan Toko',
+                'name' => 'Kasbon / Piutang Karyawan',
                 'account_type' => 'Receivable',
                 'is_active' => true,
                 'created_at' => now(),
@@ -129,7 +129,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentReceivable,
                 'currency_id' => $currencyId,
                 'code' => '110203',
-                'name' => 'Uang Muka Pembelian',
+                'name' => 'Uang Muka Pembelian ke Pemasok',
                 'account_type' => 'Receivable',
                 'is_active' => true,
                 'created_at' => now(),
@@ -152,27 +152,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentInventory,
                 'currency_id' => $currencyId,
                 'code' => '110301',
-                'name' => 'Persediaan Semen, Besi & Baja',
-                'account_type' => 'Inventory',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentInventory,
-                'currency_id' => $currencyId,
-                'code' => '110302',
-                'name' => 'Persediaan Cat, Keramik & Sanitari',
-                'account_type' => 'Inventory',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentInventory,
-                'currency_id' => $currencyId,
-                'code' => '110303',
-                'name' => 'Persediaan Material & Alat Bangunan',
+                'name' => 'Persediaan Barang Dagang',
                 'account_type' => 'Inventory',
                 'is_active' => true,
                 'created_at' => now(),
@@ -180,8 +160,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-
-        // 5. Aset Tetap (Induk 1201)
+        // 4. Aset Tetap (Induk 1201)
         $parentAsset = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '1201',
@@ -216,7 +195,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentAsset,
                 'currency_id' => $currencyId,
                 'code' => '120103',
-                'name' => 'Peralatan & Komputer POS Kasir',
+                'name' => 'Peralatan Toko & Komputer Kasir',
                 'account_type' => 'Fixed Asset',
                 'is_active' => true,
                 'created_at' => now(),
@@ -224,7 +203,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 6. Akumulasi Penyusutan (Induk 1202)
+        // 5. Akumulasi Penyusutan (Induk 1202)
         $parentDepr = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '1202',
@@ -259,7 +238,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentDepr,
                 'currency_id' => $currencyId,
                 'code' => '120203',
-                'name' => 'Akm. Peny. Peralatan & Komputer POS',
+                'name' => 'Akm. Peny. Peralatan Toko & Komputer Kasir',
                 'account_type' => 'Accumulated Depreciation',
                 'is_active' => true,
                 'created_at' => now(),
@@ -391,7 +370,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentRevenue,
                 'currency_id' => $currencyId,
                 'code' => '410101',
-                'name' => 'Pendapatan Penjualan Material',
+                'name' => 'Pendapatan Penjualan Barang Dagang',
                 'account_type' => 'Revenue',
                 'is_active' => true,
                 'created_at' => now(),
@@ -401,7 +380,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentRevenue,
                 'currency_id' => $currencyId,
                 'code' => '410102',
-                'name' => 'Pendapatan Ongkos Kirim Material',
+                'name' => 'Pendapatan Ongkos Kirim Barang',
                 'account_type' => 'Revenue',
                 'is_active' => true,
                 'created_at' => now(),
@@ -434,7 +413,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentCos,
                 'currency_id' => $currencyId,
                 'code' => '510101',
-                'name' => 'HPP Bahan Bangunan & Material',
+                'name' => 'HPP Barang Dagang',
                 'account_type' => 'Cost of Sales',
                 'is_active' => true,
                 'created_at' => now(),
@@ -444,7 +423,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentCos,
                 'currency_id' => $currencyId,
                 'code' => '510102',
-                'name' => 'Biaya Angkut Pembelian Material',
+                'name' => 'Biaya Angkut Pembelian Barang',
                 'account_type' => 'Cost of Sales',
                 'is_active' => true,
                 'created_at' => now(),
@@ -530,7 +509,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentPeny,
                 'currency_id' => $currencyId,
                 'code' => '610203',
-                'name' => 'Beban Penyusutan Perlengkapan & Komputer POS',
+                'name' => 'Beban Penyusutan Peralatan Toko & Komputer Kasir',
                 'account_type' => 'Expense',
                 'is_active' => true,
                 'created_at' => now(),

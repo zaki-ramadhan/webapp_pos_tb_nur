@@ -24,46 +24,59 @@ return new class extends Migration
             ->whereIn('name', ['Bank BCA', 'Bank Mandiri'])
             ->update(['name' => 'Bank BRI']);
 
-        // 2. Standardize Bangunan Toko & Gudang
+        // 2. Standardize Piutang (No "Rupiah")
         DB::table('accounts')
-            ->where('name', 'like', '%Gedung Toko%')
-            ->where('account_type', 'Fixed Asset')
-            ->update(['name' => 'Bangunan Toko & Gudang']);
+            ->where('name', 'like', '%Piutang Dagang%')
+            ->update(['name' => 'Piutang Dagang Pelanggan']);
 
-        // 3. Standardize Akumulasi Penyusutan & Beban Penyusutan
+        DB::table('accounts')
+            ->where('name', 'like', '%Piutang Karyawan%')
+            ->update(['name' => 'Kasbon / Piutang Karyawan']);
+
+        DB::table('accounts')
+            ->where('name', 'Uang Muka Pembelian')
+            ->update(['name' => 'Uang Muka Pembelian ke Pemasok']);
+
+        // 3. Standardize Persediaan (Single universal Barang Dagang)
+        DB::table('accounts')
+            ->where('name', 'like', '%Persediaan%')
+            ->where('account_type', 'Inventory')
+            ->whereNotNull('parent_id')
+            ->update(['name' => 'Persediaan Barang Dagang']);
+
+        // 4. Standardize Aset Tetap, Akm. Penyusutan & Beban Penyusutan (No "POS", No "Kantor")
         DB::table('accounts')
             ->where('name', 'like', '%Gedung%')
             ->where('account_type', 'Fixed Asset')
             ->update(['name' => 'Bangunan Toko & Gudang']);
 
         DB::table('accounts')
-            ->where('name', 'like', '%Kantor%')
+            ->where('name', 'like', '%Peralatan%')
+            ->orWhere('name', 'like', '%Kantor%')
             ->where('account_type', 'Fixed Asset')
-            ->update(['name' => 'Peralatan & Komputer POS Kasir']);
+            ->update(['name' => 'Peralatan Toko & Komputer Kasir']);
 
         DB::table('accounts')
-            ->where('name', 'like', '%Akm. Peny. Gedung%')
+            ->where('name', 'like', '%Akm%Gedung%')
             ->update(['name' => 'Akm. Peny. Bangunan Toko & Gudang']);
 
         DB::table('accounts')
-            ->where('name', 'like', '%Akm. Peny. Peralatan%')
+            ->where('name', 'like', '%Akm%Peralatan%')
             ->orWhere('name', 'like', '%Akm%Kantor%')
-            ->update(['name' => 'Akm. Peny. Perlengkapan & Komputer POS']);
+            ->orWhere('name', 'like', '%Akm%POS%')
+            ->update(['name' => 'Akm. Peny. Peralatan Toko & Komputer Kasir']);
 
         DB::table('accounts')
-            ->where('name', 'like', '%Beban Penyusutan Gedung%')
+            ->where('name', 'like', '%Beban Penyusutan%Gedung%')
             ->update(['name' => 'Beban Penyusutan Bangunan Toko & Gudang']);
 
         DB::table('accounts')
-            ->where('name', 'like', '%Beban Penyusutan Peralatan%')
+            ->where('name', 'like', '%Beban Penyusutan%Peralatan%')
             ->orWhere('name', 'like', '%Beban Penyusutan%Kantor%')
-            ->update(['name' => 'Beban Penyusutan Perlengkapan & Komputer POS']);
+            ->orWhere('name', 'like', '%Beban Penyusutan%POS%')
+            ->update(['name' => 'Beban Penyusutan Peralatan Toko & Komputer Kasir']);
 
-        DB::table('accounts')
-            ->where('name', 'like', '%Beban Gaji%Admin%')
-            ->update(['name' => 'Beban Gaji Karyawan & Supir']);
-
-        // 4. Standardize Ekuitas & Modal (No TB Nur mention, Prive -> Ambil Uang Pribadi)
+        // 5. Standardize Ekuitas & Modal (No TB Nur mention, Prive -> Ambil Uang Pribadi)
         DB::table('accounts')
             ->where('name', 'like', '%Modal Saham%')
             ->orWhere('name', 'like', '%Modal Usaha%')
@@ -73,18 +86,37 @@ return new class extends Migration
             ->where('name', 'like', '%Prive%')
             ->update(['name' => 'Ambil Uang Pribadi (Owner)']);
 
-        // 5. Standardize HPP / Freight In -> Biaya Angkut Pembelian Material
+        // 6. Standardize Pendapatan & HPP (Universal Barang Dagang)
+        DB::table('accounts')
+            ->where('name', 'like', '%Pendapatan Penjualan%')
+            ->update(['name' => 'Pendapatan Penjualan Barang Dagang']);
+
+        DB::table('accounts')
+            ->where('name', 'like', '%Pendapatan Ongkos Kirim%')
+            ->update(['name' => 'Pendapatan Ongkos Kirim Barang']);
+
+        DB::table('accounts')
+            ->where('name', 'like', '%Diskon Penjualan%')
+            ->update(['name' => 'Potongan / Diskon Penjualan']);
+
+        DB::table('accounts')
+            ->where('name', 'like', '%HPP%')
+            ->update(['name' => 'HPP Barang Dagang']);
+
         DB::table('accounts')
             ->where('name', 'like', '%Freight In%')
             ->orWhere('name', 'like', '%Beban Angkut Pembelian%')
-            ->update(['name' => 'Biaya Angkut Pembelian Material']);
+            ->orWhere('name', 'like', '%Biaya Angkut Pembelian%')
+            ->update(['name' => 'Biaya Angkut Pembelian Barang']);
 
-        // 6. Delete all rent, leasing, PPN, loan, and non-operational dummy accounts
+        // 7. Delete all rent, leasing, PPN, loan, and non-operational dummy accounts
         $unwantedAccountNames = [
             'Goodwill',
             'Lisensi Sistem POS & Software',
             'Persediaan Barang Dalam Proses',
             'Persediaan Terkirim',
+            'Persediaan Cat, Keramik & Sanitari',
+            'Persediaan Material & Alat Bangunan',
             'Asuransi Dibayar Dimuka',
             'Sewa Dibayar Dimuka',
             'Sewa Ruko/Gudang Dibayar Dimuka',
