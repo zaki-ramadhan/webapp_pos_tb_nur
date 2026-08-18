@@ -215,7 +215,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentOca,
                 'currency_id' => $currencyId,
                 'code' => '110402',
-                'name' => 'Sewa Ruko/Gudang Dibayar Dimuka',
+                'name' => 'Uang Muka Operasional Toko',
                 'account_type' => 'Other Current Asset',
                 'is_active' => true,
                 'created_at' => now(),
@@ -223,11 +223,11 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 5. Aset Tetap (Induk 1201, Detail minimal 3 anak)
+        // 5. Aset Tetap (Induk 1201)
         $parentAsset = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '1201',
-            'name' => 'Aset Tetap - Peralatan & Perlengkapan',
+            'name' => 'Aset Tetap Operasional',
             'account_type' => 'Fixed Asset',
             'is_active' => true,
             'created_at' => now(),
@@ -238,7 +238,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentAsset,
                 'currency_id' => $currencyId,
                 'code' => '120101',
-                'name' => 'Peralatan & Perlengkapan Kantor',
+                'name' => 'Bangunan Toko & Gudang',
                 'account_type' => 'Fixed Asset',
                 'is_active' => true,
                 'created_at' => now(),
@@ -248,7 +248,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentAsset,
                 'currency_id' => $currencyId,
                 'code' => '120102',
-                'name' => 'Kendaraan Operasional Toko',
+                'name' => 'Kendaraan Operasional (Truk / Pick-up)',
                 'account_type' => 'Fixed Asset',
                 'is_active' => true,
                 'created_at' => now(),
@@ -258,7 +258,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentAsset,
                 'currency_id' => $currencyId,
                 'code' => '120103',
-                'name' => 'Bangunan Toko',
+                'name' => 'Peralatan & Komputer POS Kasir',
                 'account_type' => 'Fixed Asset',
                 'is_active' => true,
                 'created_at' => now(),
@@ -266,7 +266,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 6. Akumulasi Penyusutan (Induk 1202, Detail minimal 3 anak)
+        // 6. Akumulasi Penyusutan (Induk 1202)
         $parentDepr = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '1202',
@@ -281,7 +281,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentDepr,
                 'currency_id' => $currencyId,
                 'code' => '120201',
-                'name' => 'Akm. Peny. Peralatan & Perlengkapan',
+                'name' => 'Akm. Peny. Bangunan Toko & Gudang',
                 'account_type' => 'Accumulated Depreciation',
                 'is_active' => true,
                 'created_at' => now(),
@@ -301,7 +301,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentDepr,
                 'currency_id' => $currencyId,
                 'code' => '120203',
-                'name' => 'Akm. Peny. Bangunan Toko',
+                'name' => 'Akm. Peny. Peralatan & Komputer POS',
                 'account_type' => 'Accumulated Depreciation',
                 'is_active' => true,
                 'created_at' => now(),
@@ -309,30 +309,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 7. Aset Lainnya (Induk 1301)
-        $parentOtherAsset = DB::table('accounts')->insertGetId([
-            'currency_id' => $currencyId,
-            'code' => '1301',
-            'name' => 'Aset Lainnya',
-            'account_type' => 'Other Asset',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentOtherAsset,
-                'currency_id' => $currencyId,
-                'code' => '130101',
-                'name' => 'Deposit & Jaminan Sewa Tempat/Gudang',
-                'account_type' => 'Other Asset',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 8. Utang Usaha (Induk 2101)
+        // 7. Utang Usaha (Induk 2101)
         $parentPayable = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '2101',
@@ -365,7 +342,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 9. Liabilitas Jangka Pendek (Induk 2102)
+        // 8. Liabilitas Jangka Pendek (Induk 2102)
         $parentOcl = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '2102',
@@ -408,7 +385,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 10. Liabilitas Jangka Panjang (Induk 2201)
+        // 9. Liabilitas Jangka Panjang (Induk 2201)
         $parentLtl = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '2201',
@@ -424,16 +401,6 @@ class FinancialEntitySeeder extends Seeder
                 'currency_id' => $currencyId,
                 'code' => '220101',
                 'name' => 'Pinjaman Bank / Modal Kerja (KUR)',
-                'account_type' => 'Long Term Liability',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentLtl,
-                'currency_id' => $currencyId,
-                'code' => '220102',
-                'name' => 'Utang Pembiayaan Kendaraan (Leasing Truk)',
                 'account_type' => 'Long Term Liability',
                 'is_active' => true,
                 'created_at' => now(),
