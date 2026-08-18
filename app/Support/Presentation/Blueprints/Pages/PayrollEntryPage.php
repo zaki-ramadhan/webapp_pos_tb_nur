@@ -6,6 +6,23 @@ class PayrollEntryPage
 {
     public static function get(): array
     {
+        $indonesianMonths = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ];
+        $currentMonth = $indonesianMonths[(int) date('n')] ?? 'Januari';
+        $currentYear = (string) date('Y');
+
         return [
             'id' => 'payroll-entry',
             'label' => 'Pencatatan Gaji',
@@ -105,8 +122,8 @@ class PayrollEntryPage
                     'paymentType' => 'Bulanan',
                     'branches' => ['TOKO UTAMA'],
                     '__branchId' => 1,
-                    'month' => 'April',
-                    'year' => '2026',
+                    'month' => $currentMonth,
+                    'year' => $currentYear,
                     'autoNumber' => true,
                     'numberingType' => 'Pencatatan Gaji',
                     'entryDate' => date('d/m/Y'),
