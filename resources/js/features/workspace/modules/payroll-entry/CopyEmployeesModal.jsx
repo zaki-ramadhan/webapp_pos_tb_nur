@@ -204,10 +204,10 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
                                 </DataTableRow>
                             ) : filteredEmployees.length === 0 ? (
                                 <DataTableRow>
-                                    <DataTableCell colSpan={3} className="text-center py-4 text-slate-500 text-sm">
+                                    <DataTableCell colSpan={3} className="text-center py-2 text-xs sm:text-sm font-normal text-black">
                                         {allEmployees.length > 0 && unselectedEmployees.length === 0
-                                            ? 'Semua karyawan telah dimasukkan ke rincian gaji.'
-                                            : 'Tidak ada data Karyawan'}
+                                            ? 'Semua karyawan sudah ditambahkan'
+                                            : 'Tidak ada data'}
                                     </DataTableCell>
                                 </DataTableRow>
                             ) : (
