@@ -47,11 +47,10 @@ class DashboardController extends Controller
             // 2. PROGRESSIVE DEFER: Only the heavy data mining algorithm (Apriori & ABC) is deferred
             'analyticsWidget' => Inertia::defer(function () use ($sample, $analytics, $months, $forceRefresh, $asOfDate) {
                 if ($forceRefresh) {
-                    \Illuminate\Support\Facades\Cache::forget('analytics_abc_' . ($months ?? 'all'));
-                    \Illuminate\Support\Facades\Cache::forget('analytics_apriori_' . ($months ?? 'all') . '_5_40');
+                    \Illuminate\Support\Facades\Cache::flush();
                 }
-                $abc = $analytics->getAbcAnalysis($months);
-                $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months);
+                $abc = $analytics->getAbcAnalysis($months, $forceRefresh);
+                $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months, $forceRefresh);
                 $full = PosBlueprint::forDashboard($sample, $abc, $apriori, true, $asOfDate);
                 return collect($full['dashboard']['sampleDashboard']['widgets'] ?? [])->firstWhere('id', 'integrated-analysis');
             }),
@@ -69,22 +68,16 @@ class DashboardController extends Controller
 
         $cacheKey = 'dashboard_widgets_' . $sample . '_' . ($months ?? 'all') . '_' . $asOfDate;
 
-        if ($request->has('force_refresh')) {
+        $forceRefresh = $request->has('force_refresh');
+        if ($forceRefresh) {
             \Illuminate\Support\Facades\Cache::flush();
-            $analytics = app(\App\Support\Analytics\AnalyticsService::class);
-            $abc = $analytics->getAbcAnalysis($months);
-            $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months);
-            $fullProps = PosBlueprint::forDashboard($sample, $abc, $apriori, true, $asOfDate);
-            $widgets = $fullProps['dashboard']['sampleDashboard']['widgets'] ?? [];
-        } else {
-            $widgets = \Illuminate\Support\Facades\Cache::remember($cacheKey, 1800, function () use ($sample, $months, $asOfDate) {
-                $analytics = app(\App\Support\Analytics\AnalyticsService::class);
-                $abc = $analytics->getAbcAnalysis($months);
-                $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months);
-                $fullProps = PosBlueprint::forDashboard($sample, $abc, $apriori, true, $asOfDate);
-                return $fullProps['dashboard']['sampleDashboard']['widgets'] ?? [];
-            });
         }
+
+        $analytics = app(\App\Support\Analytics\AnalyticsService::class);
+        $abc = $analytics->getAbcAnalysis($months, $forceRefresh);
+        $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months, $forceRefresh);
+        $fullProps = PosBlueprint::forDashboard($sample, $abc, $apriori, true, $asOfDate);
+        $widgets = $fullProps['dashboard']['sampleDashboard']['widgets'] ?? [];
 
         return response()->json([
             'widgets' => $widgets,
@@ -102,24 +95,16 @@ class DashboardController extends Controller
         $months = $request->has('months') ? ($monthsParam === 'all' ? null : (int) $monthsParam) : 3;
         $sample = $request->input('sample', 'retail');
 
-        $cacheKey = 'dashboard_widgets_' . $sample . '_' . ($months ?? 'all') . '_' . $asOfDate;
-
-        if ($request->has('force_refresh')) {
+        $forceRefresh = $request->has('force_refresh');
+        if ($forceRefresh) {
             \Illuminate\Support\Facades\Cache::flush();
-            $analytics = app(\App\Support\Analytics\AnalyticsService::class);
-            $abc = $analytics->getAbcAnalysis($months);
-            $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months);
-            $fullProps = PosBlueprint::forDashboard($sample, $abc, $apriori, true, $asOfDate);
-            $widgets = $fullProps['dashboard']['sampleDashboard']['widgets'] ?? [];
-        } else {
-            $widgets = \Illuminate\Support\Facades\Cache::remember($cacheKey, 1800, function () use ($sample, $months, $asOfDate) {
-                $analytics = app(\App\Support\Analytics\AnalyticsService::class);
-                $abc = $analytics->getAbcAnalysis($months);
-                $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months);
-                $fullProps = PosBlueprint::forDashboard($sample, $abc, $apriori, true, $asOfDate);
-                return $fullProps['dashboard']['sampleDashboard']['widgets'] ?? [];
-            });
         }
+
+        $analytics = app(\App\Support\Analytics\AnalyticsService::class);
+        $abc = $analytics->getAbcAnalysis($months, $forceRefresh);
+        $apriori = $analytics->getAprioriAnalysis(0.05, 0.40, $months, $forceRefresh);
+        $fullProps = PosBlueprint::forDashboard($sample, $abc, $apriori, true, $asOfDate);
+        $widgets = $fullProps['dashboard']['sampleDashboard']['widgets'] ?? [];
 
         $targetWidget = collect($widgets)->firstWhere('id', $widgetId);
 
