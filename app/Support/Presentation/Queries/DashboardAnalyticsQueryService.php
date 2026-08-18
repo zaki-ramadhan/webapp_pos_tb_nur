@@ -274,17 +274,21 @@ class DashboardAnalyticsQueryService
                     ->where('entry_date', $date)
                     ->where(function ($q) {
                         $q->where(function ($sub) {
-                            $sub->where('document_type', 'payroll_entry')
-                                ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar']);
-                        })->orWhere(function ($sub) {
-                            $sub->where('document_type', 'expense_entry')
-                                ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas']);
-                        })->orWhere(function ($sub) {
                             $sub->where('document_type', 'cash_payment')
-                                ->whereIn('status', ['Posted', 'Lunas', 'Terbayar']);
+                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
                         })->orWhere(function ($sub) {
                             $sub->where('document_type', 'purchase_payment')
-                                ->whereIn('status', ['Posted', 'Lunas', 'Terbayar']);
+                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                        })->orWhere(function ($sub) {
+                            $sub->whereIn('document_type', ['payroll_entry', 'expense_entry'])
+                                ->whereIn('status', ['Terbayar', 'Lunas', 'Paid'])
+                                ->whereNotExists(function ($ex) {
+                                    $ex->select(DB::raw(1))
+                                        ->from('operation_documents as cp')
+                                        ->where('cp.document_type', 'cash_payment')
+                                        ->whereColumn('cp.related_document_id', 'operation_documents.id')
+                                        ->whereNotIn('cp.status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                                });
                         });
                     })
                     ->sum('total_amount');
@@ -453,17 +457,21 @@ class DashboardAnalyticsQueryService
                     ->where('entry_date', '<=', $date)
                     ->where(function ($q) {
                         $q->where(function ($sub) {
-                            $sub->where('document_type', 'payroll_entry')
-                                ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar']);
-                        })->orWhere(function ($sub) {
-                            $sub->where('document_type', 'expense_entry')
-                                ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas']);
-                        })->orWhere(function ($sub) {
                             $sub->where('document_type', 'cash_payment')
-                                ->whereIn('status', ['Posted', 'Lunas', 'Terbayar']);
+                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
                         })->orWhere(function ($sub) {
                             $sub->where('document_type', 'purchase_payment')
-                                ->whereIn('status', ['Posted', 'Lunas', 'Terbayar']);
+                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                        })->orWhere(function ($sub) {
+                            $sub->whereIn('document_type', ['payroll_entry', 'expense_entry'])
+                                ->whereIn('status', ['Terbayar', 'Lunas', 'Paid'])
+                                ->whereNotExists(function ($ex) {
+                                    $ex->select(DB::raw(1))
+                                        ->from('operation_documents as cp')
+                                        ->where('cp.document_type', 'cash_payment')
+                                        ->whereColumn('cp.related_document_id', 'operation_documents.id')
+                                        ->whereNotIn('cp.status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                                });
                         });
                     })
                     ->sum('total_amount');
