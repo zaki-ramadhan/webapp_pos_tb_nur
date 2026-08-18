@@ -9,6 +9,7 @@ import {
 import TextInput from '@/components/ui/TextInput';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { SearchIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
+import { Trash2 } from 'lucide-react';
 
 function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
@@ -97,6 +98,7 @@ export function SearchableTableSection({
     leadingAction = null,
     onTitleClick,
     onRowClick,
+    onDeleteRow = null,
     extraActions = null,
 }) {
     const titleContent = (
@@ -189,13 +191,21 @@ export function SearchableTableSection({
                         <DataTableBody>
                             {rows.length ? (
                                 rows.map((row) => {
-                                    const rowClickable = Boolean(onRowClick);
+                                    const isRowUnavailable = Boolean(row.__isUnavailable || row.__isProductDeleted);
+                                    const rowClickable = Boolean(onRowClick) && !isRowUnavailable;
 
                                     return (
                                         <DataTableRow
                                             key={row.id}
-                                            className={`border-ui-border-row bg-white ${rowClickable ? 'cursor-pointer hover:bg-workspace-hover-bg' : ''}`.trim()}
+                                            className={`border-ui-border-row ${
+                                                isRowUnavailable
+                                                    ? 'bg-rose-50/50 hover:bg-rose-100/60 cursor-not-allowed transition'
+                                                    : rowClickable
+                                                    ? 'cursor-pointer hover:bg-workspace-hover-bg bg-white'
+                                                    : 'bg-white'
+                                            }`.trim()}
                                             onClick={rowClickable ? () => onRowClick(row) : undefined}
+                                            title={isRowUnavailable ? 'Barang ini telah dihapus dari master data sehingga rinciannya tidak dapat diedit.' : undefined}
                                         >
                                             {columns.map((column) => (
                                                 <DataTableCell
@@ -203,9 +213,32 @@ export function SearchableTableSection({
                                                     className={`px-3 text-base text-text-workspace-dark ${resolveCellAlignClassName(column.align)}`.trim()}
                                                 >
                                                     {column.kind === 'spacer' ? (
-                                                        <span className="inline-flex items-center justify-center text-text-workspace-inactive">
-                                                            <TableActionIcon className="h-4 w-4" />
-                                                        </span>
+                                                        onDeleteRow ? (
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    onDeleteRow(row);
+                                                                }}
+                                                                className="inline-flex items-center justify-center p-1 text-slate-400 hover:text-rose-600 transition rounded hover:bg-rose-100"
+                                                                title="Hapus baris item ini"
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </button>
+                                                        ) : (
+                                                            <span className="inline-flex items-center justify-center text-text-workspace-inactive">
+                                                                <TableActionIcon className="h-4 w-4" />
+                                                            </span>
+                                                        )
+                                                    ) : (column.id === 'name' || column.id === 'product_name') ? (
+                                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                                            <span>{formatTableTextValue(row[column.id], column)}</span>
+                                                            {isRowUnavailable && (
+                                                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-rose-100 text-rose-700 border border-rose-200 whitespace-nowrap">
+                                                                    {row.__isProductDeleted ? 'Barang Dihapus' : 'Non-Aktif'}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     ) : (
                                                         formatTableTextValue(row[column.id], column)
                                                     )}

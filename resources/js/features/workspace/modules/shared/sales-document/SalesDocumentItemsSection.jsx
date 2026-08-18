@@ -75,6 +75,7 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
             extraActions={importButton}
             onTitleClick={itemTitleClick}
             onRowClick={itemRowClick}
+            onDeleteRow={!isDetail ? handlers?.onDeleteItem : null}
         />
     );
 }

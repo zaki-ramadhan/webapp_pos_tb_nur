@@ -141,13 +141,21 @@ export function TransactionDataTable({
                     {rows.length ? (
                         rows.map((row, index) => {
                             const customRowClassName = getRowClassName?.(row, index) ?? '';
-                            const clickable = typeof onRowClick === 'function';
+                            const isRowUnavailable = Boolean(row.__isUnavailable || row.__isProductDeleted);
+                            const clickable = typeof onRowClick === 'function' && !isRowUnavailable;
 
                             return (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${customRowClassName}`.trim()}
+                                    className={`border-ui-border-row ${
+                                        isRowUnavailable
+                                            ? 'bg-rose-50/40 hover:bg-rose-100/50 cursor-not-allowed text-rose-900'
+                                            : index % 2 === 1
+                                            ? 'bg-ui-bg-hover'
+                                            : 'bg-white'
+                                    } ${customRowClassName}`.trim()}
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
+                                    title={isRowUnavailable ? 'Barang/Akun ini telah dihapus dari master data sehingga tidak dapat diedit.' : undefined}
                                 >
                                     {activeShowNumbering && (
                                         <DataTableCell
@@ -166,9 +174,18 @@ export function TransactionDataTable({
                                                 style={getCellStyle(column.id, isCheckbox ? { minWidth: '0px', width: '1px' } : {})}
                                                 onResizeStart={(e) => handleResizeStart(e, column.id)}
                                             >
-                                                {renderCell
-                                                    ? renderCell({ row, column, index })
-                                                    : formatTableTextValue(row[column.id], column)}
+                                                {renderCell ? (
+                                                    renderCell({ row, column, index })
+                                                ) : (column.id === 'name' || column.id === 'product_name') && isRowUnavailable ? (
+                                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                                        <span>{formatTableTextValue(row[column.id], column)}</span>
+                                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-rose-100 text-rose-700 border border-rose-200 whitespace-nowrap">
+                                                            {row.__isProductDeleted ? 'Dihapus' : 'Non-Aktif'}
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    formatTableTextValue(row[column.id], column)
+                                                )}
                                             </DataTableCell>
                                         );
                                     })}
