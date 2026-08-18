@@ -461,7 +461,7 @@ class OperationBackendResources
             'lines' => $requireLines ? ['sometimes', 'array', 'min:1'] : ['sometimes', 'array'],
             'lines.*.id' => ['sometimes', 'integer', 'exists:operation_document_lines,id'],
             'lines.*.line_type' => ['nullable', 'string', 'max:60'],
-            'lines.*.product_id' => ['nullable', 'integer', 'exists:products,id'],
+            'lines.*.product_id' => ['nullable', 'integer', Rule::exists('products', 'id')->whereNull('deleted_at')],
             'lines.*.fixed_asset_id' => ['nullable', 'integer', 'exists:fixed_assets,id'],
             'lines.*.account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'lines.*.unit_id' => ['nullable', 'integer', 'exists:units,id'],

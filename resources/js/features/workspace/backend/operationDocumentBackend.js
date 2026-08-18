@@ -151,21 +151,30 @@ export function buildOperationDocumentRecord(record, config, pageId) {
     const taxValue = Number(record.tax_total ?? 0) > 0 ? formatCurrencyValue(record.tax_total) : '';
     const subtotalValue = Number(record.subtotal ?? 0) > 0 ? record.subtotal : record.total_amount ?? 0;
     const totalValue = record.total_amount ?? record.subtotal ?? 0;
-    const lines = (record.lines ?? []).map((line, index) => ({
-        id: String(line.id ?? `line-${index}`),
-        __lineId: line.id ?? null,
-        name: line.description ?? line.product?.name ?? line.reference_code ?? `Baris ${index + 1}`,
-        code: line.reference_code ?? line.product?.code ?? '',
-        quantity: String(line.quantity ?? ''),
-        unit: line.unit?.name ?? '',
-        __unitId: line.unit_id ?? null,
-        __productId: line.product_id ?? null,
-        __warehouseId: line.warehouse_id ?? null,
-        price: formatCurrencyValue(line.unit_price ?? 0),
-        discount: formatCurrencyValue(line.discount_amount ?? 0),
-        discountValue: formatCurrencyValue(line.discount_amount ?? 0),
-        total: formatCurrencyValue(line.total_amount ?? 0),
-    }));
+    const lines = (record.lines ?? []).map((line, index) => {
+        const isProductDeleted = Boolean(line.product?.deleted_at);
+        const isProductInactive = line.product?.is_active === false;
+        const isUnavailable = isProductDeleted || isProductInactive;
+
+        return {
+            id: String(line.id ?? `line-${index}`),
+            __lineId: line.id ?? null,
+            name: line.description ?? line.product?.name ?? line.reference_code ?? `Baris ${index + 1}`,
+            code: line.reference_code ?? line.product?.code ?? '',
+            quantity: String(line.quantity ?? ''),
+            unit: line.unit?.name ?? '',
+            __unitId: line.unit_id ?? null,
+            __productId: line.product_id ?? null,
+            __warehouseId: line.warehouse_id ?? null,
+            __isProductDeleted: isProductDeleted,
+            __isProductInactive: isProductInactive,
+            __isUnavailable: isUnavailable,
+            price: formatCurrencyValue(line.unit_price ?? 0),
+            discount: formatCurrencyValue(line.discount_amount ?? 0),
+            discountValue: formatCurrencyValue(line.discount_amount ?? 0),
+            total: formatCurrencyValue(line.total_amount ?? 0),
+        };
+    });
 
     const totalQty = lines.reduce((sum, line) => sum + parseNumericInput(line.quantity), 0);
     const formattedQty = Number(totalQty.toFixed(2)).toLocaleString('id-ID', { maximumFractionDigits: 2 });

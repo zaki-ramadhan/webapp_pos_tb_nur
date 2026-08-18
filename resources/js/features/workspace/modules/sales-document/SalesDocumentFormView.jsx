@@ -234,6 +234,12 @@ export default function SalesDocumentFormView({
     }
 
     function handleEditItem(item) {
+        if (item?.__isUnavailable || item?.__isProductDeleted) {
+            showErrorToast({
+                message: `Barang '${item.name}' telah dihapus dari master data sehingga tidak dapat diedit. Silakan hapus baris item ini jika ingin menggantinya.`,
+            });
+            return;
+        }
         setEditingProduct(null);
         setEditingItem(item);
         setEditItemOpen(true);
@@ -362,6 +368,7 @@ export default function SalesDocumentFormView({
             openItemModal: () => setItemModalOpen(true),
             onCreateItem: handleCreateItem,
             onEditItem: handleEditItem,
+            onDeleteItem: handleItemDelete,
             onImportClick: () => setImportModalOpen(true),
             onImportItems: (importedItems) => {
                 updateItems((existingItems) => {
