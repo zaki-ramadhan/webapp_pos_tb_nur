@@ -556,6 +556,7 @@ export default function PayrollEntryFormView({
                 open={copyModalOpen}
                 onClose={() => setCopyModalOpen(false)}
                 onConfirm={handleCopyEmployees}
+                existingEmployeeIds={employeeRows.map((r) => r.employeeId || r.id)}
             />
             <ConfirmationModal
                 open={deleteConfirmationOpen}

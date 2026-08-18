@@ -22,7 +22,7 @@ const STATUS_OPTIONS = [
     { value: 'karyawan-kontrak', label: 'Karyawan Kontrak' },
 ];
 
-export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
+export default function CopyEmployeesModal({ open, onClose, onConfirm, existingEmployeeIds = [] }) {
     const [selectedStatus, setSelectedStatus] = useState('all');
     const [allEmployees, setAllEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -47,7 +47,10 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
         }
     }, [open]);
 
-    const filteredEmployees = allEmployees.filter((emp) => {
+    const existingSet = new Set((existingEmployeeIds || []).map((id) => String(id)));
+    const unselectedEmployees = allEmployees.filter((emp) => !existingSet.has(String(emp.id)));
+
+    const filteredEmployees = unselectedEmployees.filter((emp) => {
         if (selectedStatus === 'all') {
             return true;
         }
@@ -201,8 +204,10 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                 </DataTableRow>
                             ) : filteredEmployees.length === 0 ? (
                                 <DataTableRow>
-                                    <DataTableCell colSpan={3} className="text-center py-2 text-black">
-                                        Tidak ada data Karyawan
+                                    <DataTableCell colSpan={3} className="text-center py-4 text-slate-500 text-sm">
+                                        {allEmployees.length > 0 && unselectedEmployees.length === 0
+                                            ? 'Semua karyawan telah dimasukkan ke rincian gaji.'
+                                            : 'Tidak ada data Karyawan'}
                                     </DataTableCell>
                                 </DataTableRow>
                             ) : (
