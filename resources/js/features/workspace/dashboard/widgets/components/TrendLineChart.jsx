@@ -36,13 +36,11 @@ export default function TrendLineChart({
         const rawStep = span / targetDivisions;
         const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
         const ratio = rawStep / magnitude;
-        let niceStep;
-        if (ratio <= 1.0) niceStep = 1;
-        else if (ratio <= 2.0) niceStep = 2;
-        else if (ratio <= 2.5) niceStep = 2.5;
-        else if (ratio <= 5.0) niceStep = 5;
-        else niceStep = 10;
-        return niceStep * magnitude;
+        if (ratio <= 1.0) return 1.0 * magnitude;
+        if (ratio <= 2.0) return 2.0 * magnitude;
+        if (ratio <= 2.5) return 2.5 * magnitude;
+        if (ratio <= 5.0) return 5.0 * magnitude;
+        return 10.0 * magnitude;
     };
 
     let yMin = 0;
