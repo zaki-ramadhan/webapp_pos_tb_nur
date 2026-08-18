@@ -68,19 +68,36 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
     Route::get('/employees/{employee}/last-payroll-line', function ($employeeId) {
         $line = \App\Domain\Support\Models\OperationDocumentLine::query()
             ->whereHas('document', function ($query) {
-                $query->where('document_type', 'payroll_entry');
+                $query->where('document_type', 'payroll_entry')
+                    ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
             })
-            ->where('attributes->employee_id', $employeeId)
+            ->where(function ($q) use ($employeeId) {
+                $q->where('attributes->employee_id', $employeeId)
+                  ->orWhere('attributes->employee_id', (int) $employeeId)
+                  ->orWhere('attributes->employee_id', (string) $employeeId)
+                  ->orWhere('attributes->employeeId', $employeeId)
+                  ->orWhere('attributes->employeeId', (int) $employeeId)
+                  ->orWhere('attributes->employeeId', (string) $employeeId);
+            })
             ->latest('id')
             ->first();
 
+        if (!$line) {
+            return response()->json(['data' => null]);
+        }
+
+        $attributes = (array) ($line->attributes ?? []);
+        if (empty($attributes['basicSalary']) && (float) $line->unit_price > 0) {
+            $attributes['basicSalary'] = (float) $line->unit_price;
+        }
+
         return response()->json([
-            'data' => $line ? [
-                'gross_income' => (float)$line->unit_price,
-                'tax_amount' => (float)$line->tax_amount,
-                'total_amount' => (float)$line->total_amount,
-                'attributes' => $line->attributes,
-            ] : null
+            'data' => [
+                'gross_income' => (float) $line->unit_price,
+                'tax_amount' => (float) $line->tax_amount,
+                'total_amount' => (float) $line->total_amount,
+                'attributes' => $attributes,
+            ]
         ]);
     });
     Route::post('/bank-reconciliations/reconcile', [BackendResourceController::class, 'reconcileDocuments']);
