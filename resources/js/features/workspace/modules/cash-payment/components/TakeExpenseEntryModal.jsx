@@ -69,6 +69,9 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
 
     const filteredRecords = useMemo(() => {
         return records.filter((record) => {
+            const rawStatus = String(record.status ?? '').toLowerCase();
+            const isFullyPaid = rawStatus === 'terbayar' || rawStatus === 'lunas' || (record.outstanding_amount !== undefined && Number(record.outstanding_amount) <= 0.01 && Number(record.paid_amount) > 0);
+            if (isFullyPaid) return false;
             const due = record.due_date;
             if (startDate && due && due < startDate) return false;
             if (endDate && due && due > endDate) return false;
@@ -237,7 +240,21 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                             return row[column.id] ? formatIsoDate(row[column.id]) : '-';
                         }
                         if (column.id === 'total_amount') {
-                            return formatCurrencyValue(row[column.id] ?? 0);
+                            const total = Number(row.total_amount ?? 0);
+                            const outstanding = row.outstanding_amount !== undefined ? Number(row.outstanding_amount) : total;
+                            if (outstanding < total && outstanding > 0) {
+                                return (
+                                    <div className="flex flex-col items-end gap-0.5 leading-snug">
+                                        <span className="font-normal text-text-darkest text-xs sm:text-sm">
+                                            Sisa: Rp {outstanding.toLocaleString('id-ID')}
+                                        </span>
+                                        <span className="text-xs text-text-muted line-through">
+                                            Total: Rp {total.toLocaleString('id-ID')}
+                                        </span>
+                                    </div>
+                                );
+                            }
+                            return formatCurrencyValue(total);
                         }
                         return row[column.id] || '-';
                     }}
