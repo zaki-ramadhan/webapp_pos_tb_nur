@@ -76,7 +76,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentKas,
                 'currency_id' => $currencyId,
                 'code' => '110101',
-                'name' => 'Kas Kecil',
+                'name' => 'Kas Tunai / Kasir',
                 'account_type' => 'Cash/Bank',
                 'is_active' => true,
                 'created_at' => now(),
@@ -86,17 +86,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentKas,
                 'currency_id' => $currencyId,
                 'code' => '110102',
-                'name' => 'Bank BCA',
-                'account_type' => 'Cash/Bank',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentKas,
-                'currency_id' => $currencyId,
-                'code' => '110103',
-                'name' => 'Bank Mandiri',
+                'name' => 'Bank BRI',
                 'account_type' => 'Cash/Bank',
                 'is_active' => true,
                 'created_at' => now(),
@@ -190,38 +180,6 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 4. Aset Lancar Lainnya (Induk 1104)
-        $parentOca = DB::table('accounts')->insertGetId([
-            'currency_id' => $currencyId,
-            'code' => '1104',
-            'name' => 'Aset Lancar Lainnya',
-            'account_type' => 'Other Current Asset',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentOca,
-                'currency_id' => $currencyId,
-                'code' => '110401',
-                'name' => 'PPN Masukan',
-                'account_type' => 'Other Current Asset',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentOca,
-                'currency_id' => $currencyId,
-                'code' => '110402',
-                'name' => 'Uang Muka Operasional Toko',
-                'account_type' => 'Other Current Asset',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
 
         // 5. Aset Tetap (Induk 1201)
         $parentAsset = DB::table('accounts')->insertGetId([
@@ -372,43 +330,10 @@ class FinancialEntitySeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentOcl,
-                'currency_id' => $currencyId,
-                'code' => '210203',
-                'name' => 'PPN Keluaran',
-                'account_type' => 'Other Current Liability',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ]
         ]);
 
-        // 9. Liabilitas Jangka Panjang (Induk 2201)
-        $parentLtl = DB::table('accounts')->insertGetId([
-            'currency_id' => $currencyId,
-            'code' => '2201',
-            'name' => 'Liabilitas Jangka Panjang',
-            'account_type' => 'Long Term Liability',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentLtl,
-                'currency_id' => $currencyId,
-                'code' => '220101',
-                'name' => 'Pinjaman Bank / Modal Kerja (KUR)',
-                'account_type' => 'Long Term Liability',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 11. Modal (Induk 3101)
+        // 9. Ekuitas & Modal (Induk 3101)
         $parentEquity = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '3101',
@@ -423,7 +348,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentEquity,
                 'currency_id' => $currencyId,
                 'code' => '310101',
-                'name' => 'Modal Usaha (TB Nur)',
+                'name' => 'Modal Usaha / Pemilik',
                 'account_type' => 'Equity',
                 'is_active' => true,
                 'created_at' => now(),
@@ -443,7 +368,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentEquity,
                 'currency_id' => $currencyId,
                 'code' => '310103',
-                'name' => 'Prive Pemilik (Penarikan Modal)',
+                'name' => 'Ambil Uang Pribadi (Owner)',
                 'account_type' => 'Equity',
                 'is_active' => true,
                 'created_at' => now(),
@@ -451,7 +376,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 12. Pendapatan (Induk 4101, Detail minimal 3 anak)
+        // 10. Pendapatan Usaha (Induk 4101)
         $parentRevenue = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '4101',
@@ -466,7 +391,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentRevenue,
                 'currency_id' => $currencyId,
                 'code' => '410101',
-                'name' => 'Pendapatan Penjualan Semen/Besi',
+                'name' => 'Pendapatan Penjualan Material',
                 'account_type' => 'Revenue',
                 'is_active' => true,
                 'created_at' => now(),
@@ -476,7 +401,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentRevenue,
                 'currency_id' => $currencyId,
                 'code' => '410102',
-                'name' => 'Pendapatan Ongkos Kirim / Pengiriman',
+                'name' => 'Pendapatan Ongkos Kirim Material',
                 'account_type' => 'Revenue',
                 'is_active' => true,
                 'created_at' => now(),
@@ -486,7 +411,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentRevenue,
                 'currency_id' => $currencyId,
                 'code' => '410103',
-                'name' => 'Diskon Penjualan Barang',
+                'name' => 'Potongan / Diskon Penjualan',
                 'account_type' => 'Revenue',
                 'is_active' => true,
                 'created_at' => now(),
@@ -494,7 +419,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 13. Beban Pokok Penjualan (Induk 5101, Detail minimal 3 anak)
+        // 11. Beban Pokok Penjualan (Induk 5101)
         $parentCos = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '5101',
@@ -509,7 +434,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentCos,
                 'currency_id' => $currencyId,
                 'code' => '510101',
-                'name' => 'HPP Semen & Besi',
+                'name' => 'HPP Bahan Bangunan & Material',
                 'account_type' => 'Cost of Sales',
                 'is_active' => true,
                 'created_at' => now(),
@@ -519,17 +444,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentCos,
                 'currency_id' => $currencyId,
                 'code' => '510102',
-                'name' => 'HPP Bahan Bangunan Lainnya',
-                'account_type' => 'Cost of Sales',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentCos,
-                'currency_id' => $currencyId,
-                'code' => '510103',
-                'name' => 'Beban Angkut Pembelian (Freight In)',
+                'name' => 'Biaya Angkut Pembelian Material',
                 'account_type' => 'Cost of Sales',
                 'is_active' => true,
                 'created_at' => now(),
@@ -537,11 +452,11 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 14. Beban (Induk 6101, Detail minimal 3 anak)
+        // 12. Beban Operasional (Induk 6101)
         $parentGaji = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '6101',
-            'name' => 'Beban Gaji',
+            'name' => 'Beban Operasional & Gaji',
             'account_type' => 'Expense',
             'is_active' => true,
             'created_at' => now(),
@@ -552,7 +467,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentGaji,
                 'currency_id' => $currencyId,
                 'code' => '610101',
-                'name' => 'Beban Gaji Umum & Admin',
+                'name' => 'Beban Gaji Karyawan & Supir',
                 'account_type' => 'Expense',
                 'is_active' => true,
                 'created_at' => now(),
@@ -562,7 +477,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentGaji,
                 'currency_id' => $currencyId,
                 'code' => '610102',
-                'name' => 'Beban Gaji Karyawan Toko',
+                'name' => 'Beban Listrik, Air & Internet Toko',
                 'account_type' => 'Expense',
                 'is_active' => true,
                 'created_at' => now(),
@@ -572,7 +487,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentGaji,
                 'currency_id' => $currencyId,
                 'code' => '610103',
-                'name' => 'Beban Gaji Supir & Pengirim',
+                'name' => 'Beban Bahan Bakar & Perawatan Truk',
                 'account_type' => 'Expense',
                 'is_active' => true,
                 'created_at' => now(),
@@ -580,7 +495,50 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 15. Beban Non-Operasional (Induk 7101)
+        // 13. Beban Penyusutan (Induk 6102)
+        $parentPeny = DB::table('accounts')->insertGetId([
+            'currency_id' => $currencyId,
+            'code' => '6102',
+            'name' => 'Beban Penyusutan',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('accounts')->insert([
+            [
+                'parent_id' => $parentPeny,
+                'currency_id' => $currencyId,
+                'code' => '610201',
+                'name' => 'Beban Penyusutan Bangunan Toko & Gudang',
+                'account_type' => 'Expense',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'parent_id' => $parentPeny,
+                'currency_id' => $currencyId,
+                'code' => '610202',
+                'name' => 'Beban Penyusutan Kendaraan Operasional',
+                'account_type' => 'Expense',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'parent_id' => $parentPeny,
+                'currency_id' => $currencyId,
+                'code' => '610203',
+                'name' => 'Beban Penyusutan Perlengkapan & Komputer POS',
+                'account_type' => 'Expense',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ]);
+
+        // 14. Beban Lainnya (Induk 7101)
         $parentOtherExpense = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '7101',
@@ -595,7 +553,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentOtherExpense,
                 'currency_id' => $currencyId,
                 'code' => '710101',
-                'name' => 'Beban Administrasi Bank',
+                'name' => 'Biaya Administrasi Bank',
                 'account_type' => 'Other Expense',
                 'is_active' => true,
                 'created_at' => now(),
@@ -605,7 +563,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentOtherExpense,
                 'currency_id' => $currencyId,
                 'code' => '710102',
-                'name' => 'Beban Bunga Pinjaman Bank',
+                'name' => 'Biaya Lain-lain',
                 'account_type' => 'Other Expense',
                 'is_active' => true,
                 'created_at' => now(),
@@ -613,7 +571,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 16. Pendapatan Non-Operasional (Induk 8101)
+        // 15. Pendapatan Lainnya (Induk 8101)
         $parentOtherRevenue = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '8101',
@@ -638,51 +596,8 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentOtherRevenue,
                 'currency_id' => $currencyId,
                 'code' => '810102',
-                'name' => 'Pendapatan Non-Operasional Lainnya',
+                'name' => 'Pendapatan Lain-lain',
                 'account_type' => 'Other Revenue',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 17. Beban Penyusutan (Induk 6102, Detail minimal 3 anak)
-        $parentPeny = DB::table('accounts')->insertGetId([
-            'currency_id' => $currencyId,
-            'code' => '6102',
-            'name' => 'Beban Penyusutan',
-            'account_type' => 'Expense',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentPeny,
-                'currency_id' => $currencyId,
-                'code' => '610201',
-                'name' => 'Beban Penyusutan Peralatan & Perlengkapan Kantor',
-                'account_type' => 'Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentPeny,
-                'currency_id' => $currencyId,
-                'code' => '610202',
-                'name' => 'Beban Penyusutan Kendaraan',
-                'account_type' => 'Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentPeny,
-                'currency_id' => $currencyId,
-                'code' => '610203',
-                'name' => 'Beban Penyusutan Bangunan Toko',
-                'account_type' => 'Expense',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
