@@ -37,8 +37,29 @@ class AbcAnalysisService
                 'units.name as unit_name'
             )
             ->groupBy('products.id', 'products.name', 'products.code', 'units.name')
-            ->orderByDesc('revenue')
             ->get();
+
+        $returnsMap = DB::table('operation_document_lines')
+            ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
+            ->where('operation_documents.document_type', 'sales_return')
+            ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->when($months !== null && $months > 0, fn ($q) => $q->where('operation_documents.entry_date', '>=', now()->subMonths($months)->format('Y-m-d')))
+            ->select(
+                'operation_document_lines.product_id',
+                DB::raw('SUM(operation_document_lines.total_amount) as return_revenue'),
+                DB::raw('SUM(operation_document_lines.quantity) as return_qty')
+            )
+            ->groupBy('operation_document_lines.product_id')
+            ->get()
+            ->keyBy('product_id');
+
+        $salesData = $salesData->map(function ($row) use ($returnsMap) {
+            $retRev = (float) ($returnsMap[$row->product_id]->return_revenue ?? 0);
+            $retQty = (float) ($returnsMap[$row->product_id]->return_qty ?? 0);
+            $row->revenue = max(0, (float) $row->revenue - $retRev);
+            $row->units_sold = max(0, (float) $row->units_sold - $retQty);
+            return $row;
+        })->filter(fn ($row) => $row->revenue > 0)->sortByDesc('revenue')->values();
 
         $totalRevenue = $salesData->sum('revenue');
 
