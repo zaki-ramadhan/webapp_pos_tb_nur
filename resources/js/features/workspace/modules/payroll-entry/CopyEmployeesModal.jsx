@@ -56,10 +56,10 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
         }
         const status = String(emp.employment_status || '').toLowerCase();
         if (selectedStatus === 'karyawan-tetap') {
-            return status === 'permanent' || status === 'tetap';
+            return (status.includes('tetap') && !status.includes('tidak tetap')) || status.includes('permanent');
         }
         if (selectedStatus === 'karyawan-kontrak') {
-            return status === 'contract' || status === 'tidak tetap' || status === 'temporary' || status === 'kontrak';
+            return status.includes('kontrak') || status.includes('tidak tetap') || status.includes('contract') || status.includes('temporary');
         }
         return false;
     });
