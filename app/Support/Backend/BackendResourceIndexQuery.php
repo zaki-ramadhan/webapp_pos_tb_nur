@@ -137,6 +137,49 @@ class BackendResourceIndexQuery
             }
         }
 
+        if (in_array($blueprint->key, ['payroll-entries', 'expense-entries'], true)) {
+            $items = $paginator->items();
+            $docIds = collect($items)->pluck('id')->all();
+            if (count($docIds) > 0) {
+                $payments = \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->where('document_type', 'cash_payment')
+                    ->whereIn('related_document_id', $docIds)
+                    ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                    ->groupBy('related_document_id')
+                    ->select('related_document_id', \Illuminate\Support\Facades\DB::raw('SUM(total_amount) as total_paid'))
+                    ->pluck('total_paid', 'related_document_id')
+                    ->all();
+
+                foreach ($items as $doc) {
+                    $paid = (float) ($payments[$doc->id] ?? 0.0);
+                    $docTotal = (float) $doc->total_amount;
+                    $outstanding = max(0.00, round($docTotal - $paid, 2));
+
+                    if ($paid <= 0.00) {
+                        $computedStatus = 'Sedang diproses';
+                    } elseif ($outstanding <= 0.01) {
+                        $computedStatus = 'Terbayar';
+                    } else {
+                        $computedStatus = 'Sebagian dibayar';
+                    }
+
+                    if ($doc->status !== $computedStatus || (float) $doc->paid_amount !== $paid) {
+                        \Illuminate\Support\Facades\DB::table('operation_documents')
+                            ->where('id', $doc->id)
+                            ->update([
+                                'paid_amount' => $paid,
+                                'outstanding_amount' => $outstanding,
+                                'status' => $computedStatus,
+                            ]);
+                    }
+
+                    $doc->setAttribute('paid_amount', $paid);
+                    $doc->setAttribute('outstanding_amount', $outstanding);
+                    $doc->setAttribute('status', $computedStatus);
+                }
+            }
+        }
+
         return $paginator;
     }
 
