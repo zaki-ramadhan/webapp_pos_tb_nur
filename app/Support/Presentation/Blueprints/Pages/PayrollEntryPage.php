@@ -201,8 +201,9 @@ class PayrollEntryPage
                             'rowKey' => 'statusValue',
                             'options' => [
                                 ['value' => 'all', 'label' => 'Status: Semua'],
-                                ['value' => 'paid', 'label' => 'Status: Terbayar'],
+                                ['value' => 'draft', 'label' => 'Status: Sedang diproses'],
                                 ['value' => 'partial', 'label' => 'Status: Sebagian dibayar'],
+                                ['value' => 'paid', 'label' => 'Status: Terbayar'],
                             ],
                         ],
                         [
