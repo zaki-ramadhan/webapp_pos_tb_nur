@@ -99,27 +99,38 @@ class DashboardAnalyticsQueryService
                 } else {
                     $dayLabel = self::dateId($date, false);
                 }
-                $salesTrendLabels[] = $dayLabel;
-                $totalSales = DB::table('operation_documents')
+                $salesTrendLabels[] = $dayLabel;                $totalSales = DB::table('operation_documents')
                     ->where('document_type', 'sales_invoice')
                     ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                     ->where('entry_date', $date)
                     ->sum('total_amount');
-                $salesTrendData[] = (float) $totalSales;
+                $totalReturns = DB::table('operation_documents')
+                    ->where('document_type', 'sales_return')
+                    ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                    ->where('entry_date', $date)
+                    ->sum('total_amount');
+                $salesTrendData[] = (float) max(0, $totalSales - $totalReturns);
             }
 
             $jan1ThisYear = date('Y-01-01', strtotime($latestSalesInvoiceDate));
             $jan1LastYear = date('Y-01-01', strtotime($latestSalesInvoiceDate . ' -1 year'));
-            $monthStart = date('Y-m-01', strtotime($latestSalesInvoiceDate));
+            $monthStart = date('Y-01-01', strtotime($latestSalesInvoiceDate));
 
-            $totalSalesVal = DB::table('operation_documents')
+            $totalSalesInvoices = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereYear('entry_date', $resolvedYear)
                 ->where('entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum('total_amount');
+            $totalSalesReturns = DB::table('operation_documents')
+                ->where('document_type', 'sales_return')
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->whereYear('entry_date', $resolvedYear)
+                ->where('entry_date', '<=', $latestSalesInvoiceDate)
+                ->sum('total_amount');
+            $totalSalesVal = (float) max(0, $totalSalesInvoices - $totalSalesReturns);
 
-            $totalHppVal = DB::table('operation_document_lines')
+            $totalHppInvoices = (float) DB::table('operation_document_lines')
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
                 ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
                 ->where('operation_documents.document_type', 'sales_invoice')
@@ -127,6 +138,15 @@ class DashboardAnalyticsQueryService
                 ->whereYear('operation_documents.entry_date', $resolvedYear)
                 ->where('operation_documents.entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
+            $totalHppReturns = (float) DB::table('operation_document_lines')
+                ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
+                ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
+                ->where('operation_documents.document_type', 'sales_return')
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->whereYear('operation_documents.entry_date', $resolvedYear)
+                ->where('operation_documents.entry_date', '<=', $latestSalesInvoiceDate)
+                ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
+            $totalHppVal = (float) max(0, $totalHppInvoices - $totalHppReturns);
 
             $totalExpensesVal = DB::table('operation_documents')
                 ->where(function ($q) {

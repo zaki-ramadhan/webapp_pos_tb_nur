@@ -947,7 +947,7 @@ class BackendResourceWriter
      */
     protected function reconcilePayments(BackendResourceBlueprint $blueprint, Model $record, ?array $oldDocs = null): void
     {
-        if (!in_array($blueprint->key, ['sales-receipts', 'purchase-payments'], true)) {
+        if (!in_array($blueprint->key, ['sales-receipts', 'purchase-payments', 'sales-returns', 'purchase-returns'], true)) {
             return;
         }
 
@@ -969,15 +969,11 @@ class BackendResourceWriter
                 continue;
             }
 
-          // Sum up active payments for this document number
-
             $totalPaid = (float) DB::table('operation_document_lines')
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
                 ->where('operation_document_lines.reference_code', $docNum)
-                ->where(function ($q) {
-                    $q->whereNull('operation_documents.status')
-                      ->orWhereNotIn('operation_documents.status', ['Void', 'Cancelled']);
-                })
+                ->whereIn('operation_documents.document_type', ['sales_receipt', 'purchase_payment', 'sales_return', 'purchase_return'])
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->sum('operation_document_lines.total_amount');
 
             $advanceTotal = 0.0;
