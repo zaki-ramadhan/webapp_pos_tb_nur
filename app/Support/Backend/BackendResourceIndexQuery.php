@@ -21,7 +21,8 @@ class BackendResourceIndexQuery
 
         $modelClass = $blueprint->modelClass();
         $search = trim((string) ($filters['search'] ?? ''));
-        $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 100));
+        $page = max(1, (int) ($filters['page'] ?? request()->input('page', 1)));
+        $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 1000));
         $query = $modelClass::query()->with($blueprint->with);
 
         $user = auth()->user();
@@ -48,7 +49,7 @@ class BackendResourceIndexQuery
         $modelInstance = new $modelClass();
         $tableName = $modelInstance->getTable();
         foreach ($filters as $key => $value) {
-            if (in_array($key, ['search', 'per_page', 'page', 'only_available', 'sort_by', 'sort_direction', 'sort_dir'], true)) {
+            if (in_array($key, ['search', 'per_page', 'page', 'only_available', 'sort_by', 'sort_direction', 'sort_dir', '_refresh', '_'], true)) {
                 continue;
             }
             if ($key === 'exclude_type' && Schema::hasColumn($tableName, 'account_type')) {
@@ -118,7 +119,7 @@ class BackendResourceIndexQuery
         }
 
         $paginator = $query
-            ->paginate($perPage)
+            ->paginate($perPage, ['*'], 'page', $page)
             ->withQueryString();
 
         if ($blueprint->key === 'products') {
