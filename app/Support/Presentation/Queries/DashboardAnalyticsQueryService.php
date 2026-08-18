@@ -152,10 +152,10 @@ class DashboardAnalyticsQueryService
                 ->where(function ($q) {
                     $q->where(function ($sub) {
                         $sub->where('document_type', 'payroll_entry')
-                            ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar']);
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
                     })->orWhere(function ($sub) {
                         $sub->where('document_type', 'expense_entry')
-                            ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas']);
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
                     });
                 })
                 ->whereYear('entry_date', $resolvedYear)
@@ -195,10 +195,10 @@ class DashboardAnalyticsQueryService
                 ->where(function ($q) {
                     $q->where(function ($sub) {
                         $sub->where('document_type', 'payroll_entry')
-                            ->where('status', 'Posted');
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
                     })->orWhere(function ($sub) {
                         $sub->where('document_type', 'expense_entry')
-                            ->whereIn('status', ['Sedang diproses', 'Terbayar']);
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
                     });
                 })
                 ->whereYear('entry_date', $prevYear)
@@ -294,13 +294,13 @@ class DashboardAnalyticsQueryService
  
             $totalGaji = DB::table('operation_documents')
                 ->where('document_type', 'payroll_entry')
-                ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereYear('entry_date', $resolvedYear)
                 ->where('entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum('total_amount');
             $totalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
-                ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereYear('entry_date', $resolvedYear)
                 ->where('entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum('total_amount');
@@ -310,13 +310,13 @@ class DashboardAnalyticsQueryService
 
             $prevTotalGaji = DB::table('operation_documents')
                 ->where('document_type', 'payroll_entry')
-                ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereYear('entry_date', $prevYear)
                 ->where('entry_date', '<=', $prevSalesInvoiceDate)
                 ->sum('total_amount');
             $prevTotalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
-                ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->whereYear('entry_date', $prevYear)
                 ->where('entry_date', '<=', $prevSalesInvoiceDate)
                 ->sum('total_amount');
