@@ -109,6 +109,17 @@ return new class extends Migration
             ->orWhere('name', 'like', '%Biaya Angkut Pembelian%')
             ->update(['name' => 'Biaya Angkut Pembelian Barang']);
 
+        // 7. Standardize Beban Gaji & Utang Gaji (Single consolidated salary account)
+        DB::table('accounts')
+            ->where('name', 'like', '%Gaji%')
+            ->where('account_type', 'Expense')
+            ->update(['name' => 'Beban Gaji & Upah Karyawan']);
+
+        DB::table('accounts')
+            ->where('name', 'like', '%Gaji%')
+            ->where('account_type', 'Other Current Liability')
+            ->update(['name' => 'Utang Gaji & Upah Karyawan']);
+
         // 7. Delete all rent, leasing, PPN, loan, and non-operational dummy accounts
         $unwantedAccountNames = [
             'Goodwill',
