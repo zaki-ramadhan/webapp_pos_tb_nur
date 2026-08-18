@@ -164,7 +164,7 @@ class FinancialEntitySeeder extends Seeder
         $parentAsset = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '1201',
-            'name' => 'Aset Tetap Operasional',
+            'name' => 'Aset Tetap',
             'account_type' => 'Fixed Asset',
             'is_active' => true,
             'created_at' => now(),
