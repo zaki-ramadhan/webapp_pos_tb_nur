@@ -110,6 +110,9 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
 
     const filteredRecords = useMemo(() => {
         return parsedRecords.filter((record) => {
+            const rawStatus = String(record.status ?? '').toLowerCase();
+            const isFullyPaid = rawStatus === 'terbayar' || rawStatus === 'lunas' || (record.outstanding_amount !== undefined && Number(record.outstanding_amount) <= 0.01 && Number(record.paid_amount) > 0);
+            if (isFullyPaid) return false;
             if (selectedType !== 'all' && record.parsedType !== selectedType) return false;
             if (selectedMonth !== 'all' && record.parsedMonth !== selectedMonth) return false;
             if (selectedYear !== 'all' && record.parsedYear !== selectedYear) return false;
@@ -305,7 +308,17 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
                             return row.due_date ? formatIsoDate(row.due_date) : '-';
                         }
                         if (column.id === 'total_amount') {
-                            return formatCurrencyValue(row.total_amount ?? 0);
+                            const total = Number(row.total_amount ?? 0);
+                            const outstanding = row.outstanding_amount !== undefined ? Number(row.outstanding_amount) : total;
+                            if (outstanding < total && outstanding > 0) {
+                                return (
+                                    <div className="flex flex-col items-end leading-tight">
+                                        <span className="font-semibold text-brand-dark">Sisa: Rp {outstanding.toLocaleString('id-ID')}</span>
+                                        <span className="text-[10px] text-text-muted line-through">Total: Rp {total.toLocaleString('id-ID')}</span>
+                                    </div>
+                                );
+                            }
+                            return formatCurrencyValue(total);
                         }
                         if (column.id === 'parsedType') {
                             return row.parsedType;

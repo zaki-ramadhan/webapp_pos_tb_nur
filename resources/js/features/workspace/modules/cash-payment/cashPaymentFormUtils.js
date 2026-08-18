@@ -1,7 +1,6 @@
 import { getBackendResource, listBackendResource, extractBackendRows } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 import { applyCashPaymentLineItems } from './cashPaymentShared';
-import { showLoadingToast, updateToastToSuccess, updateToastToError } from '@/components/feedback/toast';
 
 export async function processExpenseEntriesImport(selectedRecords, setValues, setStatus) {
     try {
@@ -12,16 +11,21 @@ export async function processExpenseEntriesImport(selectedRecords, setValues, se
             const fullRecord = (record.lines && record.lines.length > 0)
                 ? record
                 : await getBackendResource('expense-entries', record.id);
-            
+
             if (!fullRecord) continue;
             const liabilityAccount = fullRecord.primary_account;
+
+            const remainingExpenseAmount = fullRecord.outstanding_amount !== undefined && Number(fullRecord.outstanding_amount) > 0
+                ? Number(fullRecord.outstanding_amount)
+                : (fullRecord.total_amount ?? 0);
+
             const importedLine = {
                 id: `imported-expense-line-${fullRecord.id}-${Date.now()}-${Math.random()}`,
                 __lineId: null,
                 __accountId: liabilityAccount?.id ?? fullRecord.primary_account_id ?? null,
                 accountCode: liabilityAccount?.code ?? '',
                 accountName: liabilityAccount?.name ?? 'Utang Beban',
-                amount: formatCurrencyValue(fullRecord.total_amount ?? 0),
+                amount: formatCurrencyValue(remainingExpenseAmount),
             };
 
             allImportedLines.push(importedLine);
@@ -42,7 +46,7 @@ export async function processExpenseEntriesImport(selectedRecords, setValues, se
             const combinedNotes = [current.notes?.trim(), ...appendedNotes]
                 .filter(Boolean)
                 .join('\n');
-            
+
             return applyCashPaymentLineItems(
                 {
                     ...current,
@@ -75,9 +79,9 @@ export async function processPayrollEntriesImport(selectedRecords, setValues, se
             const fullRecord = (record.primary_account)
                 ? record
                 : await getBackendResource('payroll-entries', record.id);
-            
+
             if (!fullRecord) continue;
-            
+
             const liabilityAccount = fullRecord.primary_account;
             const metadata = fullRecord.metadata ?? {};
             const label = metadata.liability_accounts?.[0] ?? '';
@@ -94,7 +98,7 @@ export async function processPayrollEntriesImport(selectedRecords, setValues, se
                 try {
                     const accountsData = await listBackendResource('accounts', { search: accountCode });
                     const accounts = extractBackendRows(accountsData);
-                    const foundAccount = accounts.find(acc => acc.code === accountCode);
+                    const foundAccount = accounts.find((acc) => acc.code === accountCode);
                     if (foundAccount) {
                         accountId = foundAccount.id;
                     }
@@ -103,13 +107,17 @@ export async function processPayrollEntriesImport(selectedRecords, setValues, se
                 }
             }
 
+            const remainingPayrollAmount = fullRecord.outstanding_amount !== undefined && Number(fullRecord.outstanding_amount) > 0
+                ? Number(fullRecord.outstanding_amount)
+                : (fullRecord.total_amount ?? 0);
+
             const importedLine = {
                 id: `imported-payroll-line-${fullRecord.id}-${Date.now()}-${Math.random()}`,
                 __lineId: null,
                 __accountId: accountId,
                 accountCode: liabilityAccount?.code ?? accountCode,
                 accountName: liabilityAccount?.name ?? accountName,
-                amount: formatCurrencyValue(fullRecord.total_amount ?? 0),
+                amount: formatCurrencyValue(remainingPayrollAmount),
             };
 
             allImportedLines.push(importedLine);
