@@ -360,7 +360,7 @@ export default function PayrollEntryFormView({
                 },
             ],
         };
-    }, [config, employeeRows, totalGross, totalPaid, totalHealthPremi, totalPensionJkkJkm, totalIncomeTax]);
+    }, [config, employeeRows, totalGross, totalPaid, totalIncomeTax]);
 
     const addEmployeeToRows = useCallback((emp) => {
         setEmployeeRows((prev) => {
