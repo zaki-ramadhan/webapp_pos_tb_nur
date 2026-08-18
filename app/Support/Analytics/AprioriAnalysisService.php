@@ -51,9 +51,15 @@ class AprioriAnalysisService
         if ($transactions->isNotEmpty()) {
             $transactionIds = $transactions->pluck('id')->toArray();
 
+            $activeProductIds = DB::table('products')
+                ->whereNull('deleted_at')
+                ->where('is_active', true)
+                ->pluck('id')
+                ->toArray();
+
             $linesGrouped = DB::table('operation_document_lines')
                 ->whereIn('operation_document_id', $transactionIds)
-                ->whereNotNull('product_id')
+                ->whereIn('product_id', $activeProductIds)
                 ->select('operation_document_id', 'product_id')
                 ->get()
                 ->groupBy('operation_document_id');
@@ -126,8 +132,11 @@ class AprioriAnalysisService
 
         $abcSalesData = DB::table('operation_document_lines')
             ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
+            ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
             ->where('operation_documents.document_type', 'sales_invoice')
             ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
+            ->whereNull('products.deleted_at')
+            ->where('products.is_active', true)
             ->select(
                 'operation_document_lines.product_id',
                 DB::raw('SUM(operation_document_lines.total_amount) as revenue')
@@ -164,9 +173,11 @@ class AprioriAnalysisService
             ];
         }
 
-      // Ambil nama produk
+      // Ambil nama produk aktif
 
         $productNames = DB::table('products')
+            ->whereNull('deleted_at')
+            ->where('is_active', true)
             ->pluck('name', 'id')
             ->toArray();
 
