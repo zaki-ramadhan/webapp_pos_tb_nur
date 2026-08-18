@@ -77,6 +77,47 @@ const DashboardView = forwardRef(function DashboardView(
         });
     }, [openPages, pageLevel2ContentTabs, activeLevel2Tabs]);
 
+    const handleRefreshWidget = useCallback(async (widget) => {
+        try {
+            const response = await fetch(`/api/workspace/dashboard/widget-data?widget_id=${encodeURIComponent(widget.id)}&force_refresh=1`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data?.widget) {
+                    window.dispatchEvent(new CustomEvent('pos:update-single-widget', {
+                        detail: { widgetId: widget.id, widget: data.widget }
+                    }));
+                }
+            }
+        } catch (e) {
+            console.error('Failed to refresh widget:', e);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (isDashboardPageActive) {
+            fetch('/api/workspace/dashboard/widgets-data?force_refresh=1', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (Array.isArray(data?.widgets) && data.widgets.length > 0) {
+                    window.dispatchEvent(new CustomEvent('pos:update-dashboard-widgets', {
+                        detail: { widgets: data.widgets }
+                    }));
+                }
+            })
+            .catch(() => {});
+        }
+    }, [isDashboardPageActive]);
+
     return (
         <WorkspaceDraftStateProvider value={draftStateValue}>
             <section className="flex h-full min-w-0 flex-1 flex-col lg:flex-row lg:items-stretch">
@@ -115,6 +156,7 @@ const DashboardView = forwardRef(function DashboardView(
                         widgets={widgets ?? dashboard?.widgets}
                         analyticsWidget={analyticsWidget}
                         isLoading={false}
+                        handleRefreshWidget={handleRefreshWidget}
                         renderedPages={renderedPages}
                         activePageId={activePageId}
                         detailTabOpeners={detailTabOpeners}
