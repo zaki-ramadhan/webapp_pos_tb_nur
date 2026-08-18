@@ -229,7 +229,7 @@ export default function PayrollEntryFormView({
         });
     }, []);
 
-    const { totalGross, totalPaid, totalHealthPremi, totalPensionJkkJkm, totalIncomeTax } = useMemo(() => calculatePayrollTotals(employeeRows), [employeeRows]);
+    const { totalGross, totalPaid, totalIncomeTax } = useMemo(() => calculatePayrollTotals(employeeRows), [employeeRows]);
 
     const onDelete = useCallback(async () => {
         if (!values.__backendRecordId) {
@@ -344,29 +344,11 @@ export default function PayrollEntryFormView({
                     label: 'Pendapatan Bruto',
                     value: `Rp ${totalGross.toLocaleString('id-ID')}`,
                 },
-                ...(totalHealthPremi > 0
-                    ? [
-                          {
-                              id: 'health-premi',
-                              label: 'Premi Kesehatan',
-                              value: `Rp ${totalHealthPremi.toLocaleString('id-ID')}`,
-                          },
-                      ]
-                    : []),
-                ...(totalPensionJkkJkm > 0
-                    ? [
-                          {
-                              id: 'pension-jkk-jkm',
-                              label: 'Pensiun/JKK/JKM',
-                              value: `Rp ${totalPensionJkkJkm.toLocaleString('id-ID')}`,
-                          },
-                      ]
-                    : []),
                 ...(totalIncomeTax > 0
                     ? [
                           {
                               id: 'income-tax',
-                              label: 'Pajak Penghasilan',
+                              label: 'Pajak Penghasilan (PPh 21)',
                               value: `Rp ${totalIncomeTax.toLocaleString('id-ID')}`,
                           },
                       ]

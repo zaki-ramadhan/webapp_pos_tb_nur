@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Calculator } from 'lucide-react';
 
 import Button from '@/components/ui/Button';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import { TransactionHeaderButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
-import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { PencilIcon } from '@/features/workspace/shared/Icons';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
-import { formatNum, parse, calculatePayrollTotals, calculateSingleField, calculateGrossUpTaxAllowance, calculatePph21 } from './payrollEntryEmployeeModalUtils';
+import { formatNum, parse, calculatePayrollTotals } from './payrollEntryEmployeeModalUtils';
 
 export default function PayrollEntryEmployeeModal({
     open,
@@ -25,22 +23,12 @@ export default function PayrollEntryEmployeeModal({
         employeeId: '',
         employeeCode: '',
         employeeName: '',
-        pensionAllowance: '',
         basicSalary: '',
-        taxAllowance: '',
-        positionAllowance: '',
         mealAllowance: '',
         transportAllowance: '',
-        telecommunicationAllowance: '',
         overtimeAllowance: '',
-        healthPremiAllowance: '',
-        jkkAllowance: '',
-        jkmAllowance: '',
-        salaryReduction: '',
-        monthlyDeduction: '',
         installmentDeduction: '',
-        pensionDeduction: '',
-        healthPremiDeduction: '',
+        salaryReduction: '',
         incomeTax: '',
         notes: '',
     });
@@ -73,22 +61,12 @@ export default function PayrollEntryEmployeeModal({
                 employeeId: selectedEmployeeRow.employeeId ?? '',
                 employeeCode: selectedEmployeeRow.employeeCode ?? '',
                 employeeName: selectedEmployeeRow.employeeName ?? '',
-                pensionAllowance: formatNum(selectedEmployeeRow.pensionAllowance),
                 basicSalary: formatNum(selectedEmployeeRow.basicSalary),
-                taxAllowance: formatNum(selectedEmployeeRow.taxAllowance),
-                positionAllowance: formatNum(selectedEmployeeRow.positionAllowance),
                 mealAllowance: formatNum(selectedEmployeeRow.mealAllowance),
                 transportAllowance: formatNum(selectedEmployeeRow.transportAllowance),
-                telecommunicationAllowance: formatNum(selectedEmployeeRow.telecommunicationAllowance),
                 overtimeAllowance: formatNum(selectedEmployeeRow.overtimeAllowance),
-                healthPremiAllowance: formatNum(selectedEmployeeRow.healthPremiAllowance),
-                jkkAllowance: formatNum(selectedEmployeeRow.jkkAllowance),
-                jkmAllowance: formatNum(selectedEmployeeRow.jkmAllowance),
-                salaryReduction: formatNum(selectedEmployeeRow.salaryReduction),
-                monthlyDeduction: formatNum(selectedEmployeeRow.monthlyDeduction),
                 installmentDeduction: formatNum(selectedEmployeeRow.installmentDeduction),
-                pensionDeduction: formatNum(selectedEmployeeRow.pensionDeduction),
-                healthPremiDeduction: formatNum(selectedEmployeeRow.healthPremiDeduction),
+                salaryReduction: formatNum(selectedEmployeeRow.salaryReduction),
                 incomeTax: formatNum(selectedEmployeeRow.incomeTaxRaw ?? selectedEmployeeRow.incomeTax),
                 notes: selectedEmployeeRow.notes ?? '',
             });
@@ -97,51 +75,16 @@ export default function PayrollEntryEmployeeModal({
 
     const {
         basicSalary,
-        taxAllowance = 0,
-        positionAllowance = 0,
         mealAllowance = 0,
         transportAllowance = 0,
         overtimeAllowance = 0,
-        healthPremiAllowance = 0,
-        jkkAllowance = 0,
-        jkmAllowance = 0,
         grossIncome,
+        installmentDeduction = 0,
+        salaryReduction = 0,
+        incomeTax = 0,
         totalDeductions,
         paidSalary,
-        incomeTax,
-        salaryReduction = 0,
-        monthlyDeduction = 0,
-        installmentDeduction = 0,
-        pensionDeduction = 0,
-        healthPremiDeduction = 0,
     } = calculatePayrollTotals(employeeModalValues);
-
-    const handleCalculate = (fieldName) => {
-        const basic = parse(employeeModalValues.basicSalary);
-        if (basic <= 0) {
-            showErrorToast({ message: 'Isi Gaji Pokok terlebih dahulu sebelum menghitung persentase otomatis.' });
-            return;
-        }
-
-        if (fieldName === 'taxAllowance') {
-            const taxVal = calculateGrossUpTaxAllowance(employeeModalValues);
-            const formatted = taxVal > 0 ? taxVal.toLocaleString('id-ID') : '0';
-            setEmployeeModalValues(prev => ({
-                ...prev,
-                taxAllowance: formatted,
-                incomeTax: formatted,
-            }));
-            showSuccessToast({ message: 'Tunjangan & Pajak PPh 21 berhasil dihitung.' });
-            return;
-        }
-
-        const val = calculateSingleField(fieldName, employeeModalValues);
-        setEmployeeModalValues(prev => ({
-            ...prev,
-            [fieldName]: val,
-        }));
-        showSuccessToast({ message: 'Nilai otomatis berhasil dihitung dari Gaji Pokok.' });
-    };
 
     const handleFetchLastSalary = async () => {
         if (!selectedEmployeeRow?.employeeId) return;
@@ -153,22 +96,12 @@ export default function PayrollEntryEmployeeModal({
                 const attr = data.attributes;
                 setEmployeeModalValues(prev => ({
                     ...prev,
-                    pensionAllowance: formatNum(attr.pensionAllowance),
                     basicSalary: formatNum(attr.basicSalary),
-                    taxAllowance: formatNum(attr.taxAllowance),
-                    positionAllowance: formatNum(attr.positionAllowance),
                     mealAllowance: formatNum(attr.mealAllowance),
                     transportAllowance: formatNum(attr.transportAllowance),
-                    telecommunicationAllowance: formatNum(attr.telecommunicationAllowance),
                     overtimeAllowance: formatNum(attr.overtimeAllowance),
-                    healthPremiAllowance: formatNum(attr.healthPremiAllowance),
-                    jkkAllowance: formatNum(attr.jkkAllowance),
-                    jkmAllowance: formatNum(attr.jkmAllowance),
-                    salaryReduction: formatNum(attr.salaryReduction),
-                    monthlyDeduction: formatNum(attr.monthlyDeduction),
                     installmentDeduction: formatNum(attr.installmentDeduction),
-                    pensionDeduction: formatNum(attr.pensionDeduction),
-                    healthPremiDeduction: formatNum(attr.healthPremiDeduction),
+                    salaryReduction: formatNum(attr.salaryReduction),
                     incomeTax: formatNum(data.tax_amount),
                     notes: attr.notes ?? '',
                 }));
@@ -194,22 +127,12 @@ export default function PayrollEntryEmployeeModal({
         }
 
         const breakdown = {
-            pensionAllowance: parse(employeeModalValues.pensionAllowance),
             basicSalary: basicSalary,
-            taxAllowance: taxAllowance,
-            positionAllowance: positionAllowance,
             mealAllowance: mealAllowance,
             transportAllowance: transportAllowance,
-            telecommunicationAllowance: parse(employeeModalValues.telecommunicationAllowance),
             overtimeAllowance: overtimeAllowance,
-            healthPremiAllowance: healthPremiAllowance,
-            jkkAllowance: jkkAllowance,
-            jkmAllowance: jkmAllowance,
-            salaryReduction: salaryReduction,
-            monthlyDeduction: monthlyDeduction,
             installmentDeduction: installmentDeduction,
-            pensionDeduction: pensionDeduction,
-            healthPremiDeduction: healthPremiDeduction,
+            salaryReduction: salaryReduction,
             notes: employeeModalValues.notes,
         };
 
@@ -234,9 +157,9 @@ export default function PayrollEntryEmployeeModal({
         <WorkspaceDialog
             open={open}
             onClose={onClose}
-            title="Rincian Karyawan"
+            title="Rincian Gaji Karyawan"
             headerIcon={PencilIcon}
-            maxWidthClassName="max-w-[550px]"
+            maxWidthClassName="max-w-[540px]"
             contentClassName="bg-white px-4 py-0 flex flex-col pt-3 pb-3"
             footerClassName="border-t border-ui-border-medium bg-white px-4 py-2.5"
             footer={
@@ -246,7 +169,8 @@ export default function PayrollEntryEmployeeModal({
                         size="md"
                         onClick={handleEmployeeModalDelete}
                         className="!border-[#2353a0] !text-[#2353a0] hover:!bg-[#2353a0]/5 font-normal"
-                    >                        {selectedEmployeeRow?.isNewRow ? 'Batal' : 'Hapus'}
+                    >
+                        {selectedEmployeeRow?.isNewRow ? 'Batal' : 'Hapus'}
                     </Button>
                     <Button
                         variant="brand-blue"
@@ -288,7 +212,7 @@ export default function PayrollEntryEmployeeModal({
                 <div className="flex-1 overflow-y-auto max-h-[385px] pr-2 space-y-4">
                     <div className="flex justify-between items-center mb-3 pb-3 border-b border-zinc-200">
                         <span className="text-sm text-black font-normal italic">
-                            {employeeModalValues.employeeName} [{employeeModalValues.employeeId}]
+                            {employeeModalValues.employeeName} [{employeeModalValues.employeeCode || employeeModalValues.employeeId}]
                         </span>
                         {hasLastPayroll && (
                             <TransactionHeaderButton
@@ -302,75 +226,34 @@ export default function PayrollEntryEmployeeModal({
 
                     <div className="space-y-2.5 pt-2">
                         <h3 className="text-sm font-normal text-black border-b border-zinc-200 pb-1.5">
-                            Pendapatan Bruto
+                            Pendapatan / Penghasilan
                         </h3>
                         <InputRow
-                            label="Gaji Pokok"
+                            label="Gaji / Upah Pokok"
                             id="basicSalary"
                             value={employeeModalValues.basicSalary}
                             onChange={(e) => formatFieldChange('basicSalary', e.target.value)}
                             indent
                         />
                         <InputRow
-                            label="Tunjangan PPh"
-                            id="taxAllowance"
-                            value={employeeModalValues.taxAllowance}
-                            onChange={(e) => formatFieldChange('taxAllowance', e.target.value)}
-                            indent
-                        />
-                        <InputRow
-                            label="Tunjangan Jabatan"
-                            id="positionAllowance"
-                            value={employeeModalValues.positionAllowance}
-                            onChange={(e) => formatFieldChange('positionAllowance', e.target.value)}
-                            indent
-                        />
-                        <InputRow
-                            label="Tunjangan Makan"
+                            label="Uang Makan"
                             id="mealAllowance"
                             value={employeeModalValues.mealAllowance}
                             onChange={(e) => formatFieldChange('mealAllowance', e.target.value)}
                             indent
                         />
                         <InputRow
-                            label="Tunjangan Transportasi"
+                            label="Uang Transport / Bensin"
                             id="transportAllowance"
                             value={employeeModalValues.transportAllowance}
                             onChange={(e) => formatFieldChange('transportAllowance', e.target.value)}
                             indent
                         />
                         <InputRow
-                            label="Tunjangan Lembur"
+                            label="Upah Lembur / Bongkar Muat"
                             id="overtimeAllowance"
                             value={employeeModalValues.overtimeAllowance}
                             onChange={(e) => formatFieldChange('overtimeAllowance', e.target.value)}
-                            indent
-                        />
-                        <InputRow
-                            label="Tunjangan Premi Kesehatan"
-                            id="healthPremiAllowance"
-                            value={employeeModalValues.healthPremiAllowance}
-                            onChange={(e) => formatFieldChange('healthPremiAllowance', e.target.value)}
-                            showCalc
-                            onCalc={() => handleCalculate('healthPremiAllowance')}
-                            indent
-                        />
-                        <InputRow
-                            label="Tunjangan Program JKK"
-                            id="jkkAllowance"
-                            value={employeeModalValues.jkkAllowance}
-                            onChange={(e) => formatFieldChange('jkkAllowance', e.target.value)}
-                            showCalc
-                            onCalc={() => handleCalculate('jkkAllowance')}
-                            indent
-                        />
-                        <InputRow
-                            label="Tunjangan Program JKM"
-                            id="jkmAllowance"
-                            value={employeeModalValues.jkmAllowance}
-                            onChange={(e) => formatFieldChange('jkmAllowance', e.target.value)}
-                            showCalc
-                            onCalc={() => handleCalculate('jkmAllowance')}
                             indent
                         />
                     </div>
@@ -380,42 +263,23 @@ export default function PayrollEntryEmployeeModal({
                             Potongan
                         </h3>
                         <InputRow
-                            label="Pengurangan Gaji"
-                            id="salaryReduction"
-                            value={employeeModalValues.salaryReduction}
-                            onChange={(e) => formatFieldChange('salaryReduction', e.target.value)}
-                            indent
-                        />
-                        <InputRow
-                            label="Potongan Cicilan"
+                            label="Potongan Kasbon / Pinjaman"
                             id="installmentDeduction"
                             value={employeeModalValues.installmentDeduction}
                             onChange={(e) => formatFieldChange('installmentDeduction', e.target.value)}
                             indent
                         />
                         <InputRow
-                            label="Iuran Pensiun/THT/JHT"
-                            id="pensionDeduction"
-                            value={employeeModalValues.pensionDeduction}
-                            onChange={(e) => formatFieldChange('pensionDeduction', e.target.value)}
-                            showCalc
-                            onCalc={() => handleCalculate('pensionDeduction')}
+                            label="Potongan Absen / Potong Gaji"
+                            id="salaryReduction"
+                            value={employeeModalValues.salaryReduction}
+                            onChange={(e) => formatFieldChange('salaryReduction', e.target.value)}
                             indent
                         />
                         <InputRow
-                            label="Potongan Premi Kesehatan"
-                            id="healthPremiDeduction"
-                            value={employeeModalValues.healthPremiDeduction}
-                            onChange={(e) => formatFieldChange('healthPremiDeduction', e.target.value)}
-                            showCalc
-                            onCalc={() => handleCalculate('healthPremiDeduction')}
-                            indent
-                        />
-                        <InputRow
-                            label="Pajak Penghasilan"
+                            label="Pajak Penghasilan (PPh 21)"
                             id="incomeTax"
-                            value={employeeModalValues.incomeTax}
-                            onChange={(e) => formatFieldChange('incomeTax', e.target.value)}
+                            value={incomeTax > 0 ? incomeTax.toLocaleString('id-ID') : '0'}
                             indent
                             disabled
                         />
@@ -451,7 +315,7 @@ export default function PayrollEntryEmployeeModal({
                             value={employeeModalValues.notes}
                             onChange={(e) => formatFieldChange('notes', e.target.value)}
                             rows={6}
-                            placeholder="Tulis catatan di sini..."
+                            placeholder="Tulis catatan rincian khusus di sini..."
                             className="w-full rounded-[4px] border border-ui-border p-3 text-sm text-black font-normal focus:border-input-focus focus:ring-1 focus:ring-input-focus-ring outline-none transition"
                         />
                     </div>
@@ -461,7 +325,7 @@ export default function PayrollEntryEmployeeModal({
     );
 }
 
-function InputRow({ label, value, onChange, id, showCalc, onCalc, indent = false, disabled = false }) {
+function InputRow({ label, value, onChange, id, indent = false, disabled = false }) {
     return (
         <div className="grid grid-cols-[210px_minmax(0,1fr)] items-center gap-2">
             <span className={`text-sm text-black font-normal truncate ${indent ? 'pl-6' : ''}`} title={label}>
@@ -484,21 +348,6 @@ function InputRow({ label, value, onChange, id, showCalc, onCalc, indent = false
                         inputClassName="text-black text-right text-sm font-normal"
                     />
                 </div>
-                {showCalc && (
-                    <button
-                        type="button"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            onCalc?.(e);
-                        }}
-                        disabled={disabled}
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] border border-[#2353a0] bg-white text-[#2353a0] hover:bg-[#2353a0]/5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Hitung BPJS / standar otomatis"
-                    >
-                        <Calculator className="h-4.5 w-4.5" />
-                    </button>
-                )}
             </div>
         </div>
     );

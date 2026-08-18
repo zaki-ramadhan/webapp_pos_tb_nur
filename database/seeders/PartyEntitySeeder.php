@@ -18,10 +18,9 @@ class PartyEntitySeeder extends Seeder
 
         // Seed salary allowances
         DB::table('salary_allowances')->insert([
-            ['code' => 'ALL-TJ', 'name' => 'Tunjangan Jabatan', 'allowance_type' => 'Tunjangan Jabatan & Operasional', 'account_id' => $accBebanGajiId, 'notes' => 'Tunjangan struktural jabatan', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['code' => 'ALL-TR', 'name' => 'Tunjangan Transportasi', 'allowance_type' => 'Tunjangan Makan & Transport', 'account_id' => $accBebanGajiId, 'notes' => 'Tunjangan transportasi harian', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['code' => 'ALL-MK', 'name' => 'Tunjangan Uang Makan', 'allowance_type' => 'Tunjangan Makan & Transport', 'account_id' => $accBebanGajiId, 'notes' => 'Tunjangan makan siang karyawan', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['code' => 'ALL-BPJS', 'name' => 'Tunjangan BPJS Kesehatan', 'allowance_type' => 'Tunjangan Jabatan & Operasional', 'account_id' => $accBebanGajiId, 'notes' => 'Subsidi kesehatan BPJS', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'ALL-MK', 'name' => 'Uang Makan', 'allowance_type' => 'Tunjangan Makan & Transport', 'account_id' => $accBebanGajiId, 'notes' => 'Uang makan harian karyawan', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'ALL-TR', 'name' => 'Uang Transport / Bensin', 'allowance_type' => 'Tunjangan Makan & Transport', 'account_id' => $accBebanGajiId, 'notes' => 'Uang transportasi dan bensin pengiriman', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'ALL-LB', 'name' => 'Upah Lembur / Bongkar Muat', 'allowance_type' => 'Tunjangan Operasional', 'account_id' => $accBebanGajiId, 'notes' => 'Upah lembur dan bongkar muat barang', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // Seed employees
