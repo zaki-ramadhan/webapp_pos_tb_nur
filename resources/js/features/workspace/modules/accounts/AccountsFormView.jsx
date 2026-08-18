@@ -7,7 +7,7 @@ import {
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { useWorkspaceFormDraftState } from '@/features/workspace/shared/hooks/useWorkspaceFormDraftState';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import { buildAccountDetailRecord } from './accountsConfig';
@@ -63,6 +63,23 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             : config.createValues),
         [backendRecord, config, isDetail, recordId],
     );
+
+    const [activeTabId, setActiveTabId] = useState('general');
+    const [status, setStatus] = useState({ tone: '', message: '' });
+    const [saving, setSaving] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const initialValues = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
+    const {
+        values,
+        setValues,
+        isDirty: hasChanges,
+        markClean,
+    } = useWorkspaceFormDraftState({
+        initialValues,
+        recordId: sourceRecord?.id ?? null,
+        pageId: 'accounts',
+        tabId: activeLevel2Tab?.id,
+    });
     
     const { leftTabs, rightTabs } = useMemo(() => {
         const isSub = isDetail
@@ -109,23 +126,6 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             rightTabs: [],
         };
     }, [isDetail, backendRecord, values.isSubAccount, values.parentId, values.type]);
-
-    const [activeTabId, setActiveTabId] = useState('general');
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const initialValues = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
-    const {
-        values,
-        setValues,
-        isDirty: hasChanges,
-        markClean,
-    } = useWorkspaceFormDraftState({
-        initialValues,
-        recordId: sourceRecord?.id ?? null,
-        pageId: 'accounts',
-        tabId: activeLevel2Tab?.id,
-    });
 
     const activeTabInstanceId = activeLevel2Tab?.id;
 
