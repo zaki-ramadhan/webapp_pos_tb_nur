@@ -15,42 +15,55 @@ return new class extends Migration
             return;
         }
 
-        // 1. Standardize Bangunan Toko & Gudang
+        // 1. Standardize Kas & Bank
+        DB::table('accounts')
+            ->where('name', 'Kas Kecil')
+            ->update(['name' => 'Kas Tunai / Kasir']);
+
+        DB::table('accounts')
+            ->whereIn('name', ['Bank BCA', 'Bank Mandiri'])
+            ->update(['name' => 'Bank BRI']);
+
+        // 2. Standardize Bangunan Toko & Gudang
         DB::table('accounts')
             ->where('name', 'like', '%Gedung Toko%')
             ->where('account_type', 'Fixed Asset')
             ->update(['name' => 'Bangunan Toko & Gudang']);
 
-        // 2. Standardize Akumulasi Penyusutan
+        // 3. Standardize Akumulasi Penyusutan & Beban Penyusutan
         DB::table('accounts')
             ->where('name', 'like', '%Akm. Peny. Gedung Toko%')
             ->update(['name' => 'Akm. Peny. Bangunan Toko & Gudang']);
 
         DB::table('accounts')
             ->where('name', 'like', '%Akm. Peny. Peralatan%')
-            ->update(['name' => 'Akm. Peny. Peralatan & Komputer POS']);
+            ->update(['name' => 'Akm. Peny. Perlengkapan & Komputer POS']);
 
-        // 3. Standardize Beban Penyusutan
         DB::table('accounts')
             ->where('name', 'like', '%Beban Penyusutan Gedung%')
             ->update(['name' => 'Beban Penyusutan Bangunan Toko & Gudang']);
 
         DB::table('accounts')
             ->where('name', 'like', '%Beban Penyusutan Peralatan%')
-            ->update(['name' => 'Beban Penyusutan Peralatan & Komputer POS']);
+            ->update(['name' => 'Beban Penyusutan Perlengkapan & Komputer POS']);
 
-        // 4. Standardize Modal Usaha (TB Nur)
+        // 4. Standardize Ekuitas & Modal (No TB Nur mention, Prive -> Ambil Uang Pribadi)
         DB::table('accounts')
             ->where('name', 'like', '%Modal Saham%')
-            ->update(['name' => 'Modal Usaha (TB Nur)']);
+            ->orWhere('name', 'like', '%Modal Usaha%')
+            ->update(['name' => 'Modal Usaha / Pemilik']);
 
-        // 5. Standardize Pinjaman Modal Kerja
         DB::table('accounts')
-            ->where('name', 'like', '%Utang Obligasi%')
-            ->orWhere('name', 'Utang Bank Mandiri')
-            ->update(['name' => 'Pinjaman Bank / Modal Kerja (KUR)']);
+            ->where('name', 'like', '%Prive%')
+            ->update(['name' => 'Ambil Uang Pribadi (Owner)']);
 
-        // 6. Delete all rent, leasing, unwanted dummy accounts
+        // 5. Standardize HPP / Freight In -> Biaya Angkut Pembelian Material
+        DB::table('accounts')
+            ->where('name', 'like', '%Freight In%')
+            ->orWhere('name', 'like', '%Beban Angkut Pembelian%')
+            ->update(['name' => 'Biaya Angkut Pembelian Material']);
+
+        // 6. Delete all rent, leasing, PPN, loan, and non-operational dummy accounts
         $unwantedAccountNames = [
             'Goodwill',
             'Lisensi Sistem POS & Software',
@@ -70,7 +83,17 @@ return new class extends Migration
             'Beban Kerugian Selisih Kurs',
             'Pendapatan Bunga Deposito',
             'Pendapatan Keuntungan Kurs',
+            'PPN Masukan',
+            'PPN Keluaran',
+            'Uang Muka Operasional Toko',
+            'Aset Lancar Lainnya', // Header 1104
             'Aset Lainnya', // Header 1301
+            'Liabilitas Jangka Panjang', // Header 2201
+            'Utang Obligasi',
+            'Pinjaman Bank / Modal Kerja (KUR)',
+            'Pinjaman Modal Kerja / KUR',
+            'Beban Bunga Bank',
+            'Beban Bunga Pinjaman Bank',
         ];
 
         foreach ($unwantedAccountNames as $name) {
