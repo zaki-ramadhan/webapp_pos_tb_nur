@@ -19,7 +19,7 @@ return new class extends Migration
         DB::table('accounts')
             ->where('name', 'like', '%Gedung Toko%')
             ->where('account_type', 'Fixed Asset')
-            ->update(['name' => 'Bangunan Toko']);
+            ->update(['name' => 'Bangunan Toko & Gudang']);
 
         // 2. Rename Akm. Peny. Gedung Toko -> Akm. Peny. Bangunan Toko
         DB::table('accounts')
@@ -31,22 +31,27 @@ return new class extends Migration
             ->where('name', 'like', '%Beban Penyusutan Gedung%')
             ->update(['name' => 'Beban Penyusutan Bangunan Toko']);
 
-        // 4. Clean up / Rename Utang Obligasi -> Pinjaman Modal Kerja / KUR
+        // 4. Rename Modal Saham Toko Nur -> Modal Usaha (TB Nur)
+        DB::table('accounts')
+            ->where('name', 'like', '%Modal Saham%')
+            ->update(['name' => 'Modal Usaha (TB Nur)']);
+
+        // 5. Clean up / Rename Utang Obligasi & Utang Bank Mandiri -> Pinjaman Bank / Modal Kerja (KUR)
         DB::table('accounts')
             ->where('name', 'like', '%Utang Obligasi%')
-            ->update(['name' => 'Pinjaman Modal Kerja / KUR']);
+            ->update(['name' => 'Pinjaman Bank / Modal Kerja (KUR)']);
 
-        // 5. Clean up Aset Tetap Tidak Digunakan -> Deposit Listrik & Utilitas (PLN/PDAM)
         DB::table('accounts')
-            ->where('name', 'like', '%Aset Tetap Tidak Digunakan%')
-            ->update(['name' => 'Deposit Listrik & Utilitas (PLN/PDAM)']);
+            ->where('name', 'Utang Bank Mandiri')
+            ->update(['name' => 'Pinjaman Bank / Modal Kerja (KUR)']);
 
-        // 6. Rename Uang Jaminan Sewa -> Uang Jaminan Sewa Tempat / Gudang
+        // 6. Rename Deposit & Sewa
         DB::table('accounts')
             ->where('name', 'Uang Jaminan Sewa')
-            ->update(['name' => 'Uang Jaminan Sewa Tempat / Gudang']);
+            ->orWhere('name', 'like', '%Uang Jaminan Sewa%')
+            ->update(['name' => 'Deposit & Jaminan Sewa Tempat/Gudang']);
 
-        // 7. Delete truly unused / irrelevant accounts (kurs, manufaktur, goodwill) if they have no transaction lines
+        // 7. Delete truly unused / irrelevant accounts (kurs, manufaktur, goodwill, retur terpisah)
         $unwantedAccountNames = [
             'Goodwill',
             'Lisensi Sistem POS & Software',
@@ -56,6 +61,8 @@ return new class extends Migration
             'Beban Kerugian Selisih Kurs',
             'Pendapatan Bunga Deposito',
             'Pendapatan Keuntungan Kurs',
+            'Utang Retur Pembelian',
+            'Aset Tetap Tidak Digunakan',
         ];
 
         foreach ($unwantedAccountNames as $name) {

@@ -309,7 +309,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 7. Aset Lainnya (Induk 1301, Detail minimal 3 anak)
+        // 7. Aset Lainnya (Induk 1301)
         $parentOtherAsset = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '1301',
@@ -324,17 +324,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentOtherAsset,
                 'currency_id' => $currencyId,
                 'code' => '130101',
-                'name' => 'Uang Jaminan Sewa Tempat / Gudang',
-                'account_type' => 'Other Asset',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentOtherAsset,
-                'currency_id' => $currencyId,
-                'code' => '130102',
-                'name' => 'Deposit Listrik & Utilitas (PLN/PDAM)',
+                'name' => 'Deposit & Jaminan Sewa Tempat/Gudang',
                 'account_type' => 'Other Asset',
                 'is_active' => true,
                 'created_at' => now(),
@@ -342,7 +332,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 8. Utang Usaha (Induk 2101, Detail minimal 3 anak)
+        // 8. Utang Usaha (Induk 2101)
         $parentPayable = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '2101',
@@ -367,16 +357,6 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentPayable,
                 'currency_id' => $currencyId,
                 'code' => '210102',
-                'name' => 'Utang Retur Pembelian',
-                'account_type' => 'Payable',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentPayable,
-                'currency_id' => $currencyId,
-                'code' => '210103',
                 'name' => 'Uang Muka Penjualan Pelanggan',
                 'account_type' => 'Payable',
                 'is_active' => true,
@@ -385,7 +365,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 9. Liabilitas Jangka Pendek (Induk 2102, Detail minimal 3 anak)
+        // 9. Liabilitas Jangka Pendek (Induk 2102)
         $parentOcl = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '2102',
@@ -428,7 +408,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 10. Liabilitas Jangka Panjang (Induk 2201, Detail minimal 3 anak)
+        // 10. Liabilitas Jangka Panjang (Induk 2201)
         $parentLtl = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '2201',
@@ -443,7 +423,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentLtl,
                 'currency_id' => $currencyId,
                 'code' => '220101',
-                'name' => 'Utang Bank Mandiri',
+                'name' => 'Pinjaman Bank / Modal Kerja (KUR)',
                 'account_type' => 'Long Term Liability',
                 'is_active' => true,
                 'created_at' => now(),
@@ -453,17 +433,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentLtl,
                 'currency_id' => $currencyId,
                 'code' => '220102',
-                'name' => 'Utang Pembiayaan Kendaraan (Leasing)',
-                'account_type' => 'Long Term Liability',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentLtl,
-                'currency_id' => $currencyId,
-                'code' => '220103',
-                'name' => 'Pinjaman Modal Kerja / KUR',
+                'name' => 'Utang Pembiayaan Kendaraan (Leasing Truk)',
                 'account_type' => 'Long Term Liability',
                 'is_active' => true,
                 'created_at' => now(),
@@ -471,7 +441,7 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 11. Modal (Induk 3101, Detail minimal 3 anak)
+        // 11. Modal (Induk 3101)
         $parentEquity = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '3101',
@@ -486,7 +456,7 @@ class FinancialEntitySeeder extends Seeder
                 'parent_id' => $parentEquity,
                 'currency_id' => $currencyId,
                 'code' => '310101',
-                'name' => 'Modal Saham Toko Nur',
+                'name' => 'Modal Usaha (TB Nur)',
                 'account_type' => 'Equity',
                 'is_active' => true,
                 'created_at' => now(),
