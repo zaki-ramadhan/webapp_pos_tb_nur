@@ -32,11 +32,22 @@ return new class extends Migration
 
         // 3. Standardize Akumulasi Penyusutan & Beban Penyusutan
         DB::table('accounts')
-            ->where('name', 'like', '%Akm. Peny. Gedung Toko%')
+            ->where('name', 'like', '%Gedung%')
+            ->where('account_type', 'Fixed Asset')
+            ->update(['name' => 'Bangunan Toko & Gudang']);
+
+        DB::table('accounts')
+            ->where('name', 'like', '%Kantor%')
+            ->where('account_type', 'Fixed Asset')
+            ->update(['name' => 'Peralatan & Komputer POS Kasir']);
+
+        DB::table('accounts')
+            ->where('name', 'like', '%Akm. Peny. Gedung%')
             ->update(['name' => 'Akm. Peny. Bangunan Toko & Gudang']);
 
         DB::table('accounts')
             ->where('name', 'like', '%Akm. Peny. Peralatan%')
+            ->orWhere('name', 'like', '%Akm%Kantor%')
             ->update(['name' => 'Akm. Peny. Perlengkapan & Komputer POS']);
 
         DB::table('accounts')
@@ -45,7 +56,12 @@ return new class extends Migration
 
         DB::table('accounts')
             ->where('name', 'like', '%Beban Penyusutan Peralatan%')
+            ->orWhere('name', 'like', '%Beban Penyusutan%Kantor%')
             ->update(['name' => 'Beban Penyusutan Perlengkapan & Komputer POS']);
+
+        DB::table('accounts')
+            ->where('name', 'like', '%Beban Gaji%Admin%')
+            ->update(['name' => 'Beban Gaji Karyawan & Supir']);
 
         // 4. Standardize Ekuitas & Modal (No TB Nur mention, Prive -> Ambil Uang Pribadi)
         DB::table('accounts')
