@@ -115,13 +115,11 @@ class BackendResourceWriter
                 null,
             );
 
-          // Invalidate dashboard caches on mutation
-
-            $this->invalidateDashboardCache();
-
-          // Reconcile payment status on delete
-
+            // Reconcile payment status on delete
             $this->reconcilePayments($blueprint, $record, $oldDocs);
+
+            // Invalidate dashboard caches on mutation
+            $this->invalidateDashboardCache();
 
             $this->notifyResourceChanged($blueprint->key, 'deleted', $record->id ?? null);
         });
@@ -554,17 +552,14 @@ class BackendResourceWriter
                 $this->activityLogger->snapshot($freshRecord),
             );
 
-          // Invalidate dashboard caches on mutation
-
-            $this->invalidateDashboardCache();
-
-          // Post to Jurnal Umum
-
+            // Post to Jurnal Umum
             $this->postToGeneralJournal($freshRecord);
 
-          // Reconcile payment status
-
+            // Reconcile payment status
             $this->reconcilePayments($blueprint, $freshRecord, $oldDocs);
+
+            // Invalidate dashboard caches on mutation
+            $this->invalidateDashboardCache();
 
             return $freshRecord;
         });
