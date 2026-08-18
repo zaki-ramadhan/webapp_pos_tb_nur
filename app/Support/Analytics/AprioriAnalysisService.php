@@ -19,10 +19,10 @@ class AprioriAnalysisService
       // Ambil invoice penjualan dengan filter rentang waktu
         $query = DB::table('operation_documents')
             ->where('document_type', 'sales_invoice')
-            ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas']);
+            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
 
         if ($months !== null && $months > 0) {
-            $query->where('entry_date', '>=', now()->subMonths($months)->startOfDay()->toDateTimeString());
+            $query->where('entry_date', '>=', now()->subMonths($months)->format('Y-m-d'));
         }
 
         $transactions = $query->select('id')->get();
