@@ -11,7 +11,7 @@ import {
     TransactionFieldLabel,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
-export default function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSwitch, handlers = {} }) {
+export default function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSwitch, isDetail = Boolean(values?.__backendRecordId), handlers = {} }) {
     const processAnchorRef = useRef(null);
     const [processOpen, setProcessOpen] = useState(false);
 

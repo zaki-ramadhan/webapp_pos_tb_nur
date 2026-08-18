@@ -268,7 +268,7 @@ export default function GeneralJournalFormView({
             <TransactionFormLayout
             isLoading={isLoading}
             validationMessage={validationMessage}
-                header={<GeneralJournalHeader config={config} values={values} setValues={setValues} activeRecordId={activeRecordId} handlers={handlers} />}
+                header={<GeneralJournalHeader config={config} values={values} setValues={setValues} activeRecordId={activeRecordId} isDetail={isDetail} handlers={handlers} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}

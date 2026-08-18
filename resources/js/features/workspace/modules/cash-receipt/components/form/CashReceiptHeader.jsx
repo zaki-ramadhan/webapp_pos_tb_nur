@@ -6,7 +6,7 @@ import {
     TransactionDateInput,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
-export function CashReceiptHeader({ config, values, setValues, handlers = {} }) {
+export function CashReceiptHeader({ config, values, setValues, isDetail = Boolean(values?.__backendRecordId), handlers = {} }) {
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
             <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">

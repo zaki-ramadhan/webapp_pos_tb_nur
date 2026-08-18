@@ -262,6 +262,7 @@ export default function CashReceiptFormView({
                         config={config}
                         values={values}
                         setValues={setValues}
+                        isDetail={isDetail}
                         handlers={handlers}
                     />
                 }

@@ -267,6 +267,7 @@ export default function ExpenseEntryFormView({
                         values={values}
                         setValues={setValues}
                         showAutoNumberSwitch={showAutoNumberSwitch}
+                        isDetail={isDetail}
                         handlers={handlers}
                     />
                 }
