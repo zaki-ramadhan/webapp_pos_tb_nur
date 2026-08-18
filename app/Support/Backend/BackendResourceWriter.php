@@ -71,14 +71,9 @@ class BackendResourceWriter
 
             $before = $this->activityLogger->snapshot($record);
 
+            $deletedRelatedDocId = null;
             if ($blueprint->key === 'cash-payments' && $record->related_document_id) {
-                $relatedDoc = \App\Domain\Support\Models\OperationDocument::find($record->related_document_id);
-                if ($relatedDoc) {
-                    $relatedDoc->update([
-                        'status' => 'Sedang diproses',
-                        'paid_amount' => 0.00,
-                    ]);
-                }
+                $deletedRelatedDocId = (int) $record->related_document_id;
             }
 
           // Hapus jurnal otomatis terkait jika ada
@@ -114,6 +109,10 @@ class BackendResourceWriter
                 $before,
                 null,
             );
+
+            if ($deletedRelatedDocId) {
+                $this->reconcileExpenseOrPayrollPayment($deletedRelatedDocId);
+            }
 
             // Reconcile payment status on delete
             $this->reconcilePayments($blueprint, $record, $oldDocs);
@@ -491,28 +490,14 @@ class BackendResourceWriter
             }
 
             if ($blueprint->key === 'cash-payments') {
-                if ($wasExisting) {
-                    $originalRelatedId = $record->getOriginal('related_document_id');
-                    $currentRelatedId = $record->related_document_id;
-                    if ($originalRelatedId && $originalRelatedId != $currentRelatedId) {
-                        $oldDoc = \App\Domain\Support\Models\OperationDocument::find($originalRelatedId);
-                        if ($oldDoc) {
-                            $oldDoc->update([
-                                'status' => 'Sedang diproses',
-                                'paid_amount' => 0.00,
-                            ]);
-                        }
-                    }
-                }
+                $originalRelatedId = $wasExisting ? $record->getOriginal('related_document_id') : null;
+                $currentRelatedId = $record->related_document_id;
 
-                if ($record->related_document_id) {
-                    $relatedDoc = \App\Domain\Support\Models\OperationDocument::find($record->related_document_id);
-                    if ($relatedDoc) {
-                        $relatedDoc->update([
-                            'status' => 'Terbayar',
-                            'paid_amount' => $relatedDoc->total_amount,
-                        ]);
-                    }
+                if ($originalRelatedId && $originalRelatedId != $currentRelatedId) {
+                    $this->reconcileExpenseOrPayrollPayment((int) $originalRelatedId);
+                }
+                if ($currentRelatedId) {
+                    $this->reconcileExpenseOrPayrollPayment((int) $currentRelatedId);
                 }
             }
 
@@ -1061,6 +1046,44 @@ class BackendResourceWriter
                 'outstanding_amount' => $outstanding,
             ]);
         }
+    }
+
+    /**
+     * Reconcile payment status and outstanding amount for payroll entries and expense entries.
+     */
+    protected function reconcileExpenseOrPayrollPayment(?int $relatedDocumentId): void
+    {
+        if (!$relatedDocumentId) {
+            return;
+        }
+
+        $relatedDoc = \App\Domain\Support\Models\OperationDocument::find($relatedDocumentId);
+        if (!$relatedDoc || !in_array($relatedDoc->document_type, ['expense_entry', 'payroll_entry'], true)) {
+            return;
+        }
+
+        $totalPaid = (float) \App\Domain\Support\Models\OperationDocument::query()
+            ->where('document_type', 'cash_payment')
+            ->where('related_document_id', $relatedDocumentId)
+            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->sum('total_amount');
+
+        $docTotal = (float) $relatedDoc->total_amount;
+        $outstanding = max(0.00, round($docTotal - $totalPaid, 2));
+
+        if ($totalPaid <= 0.00) {
+            $status = 'Sedang diproses';
+        } elseif ($outstanding <= 0.01) {
+            $status = 'Terbayar';
+        } else {
+            $status = 'Sebagian dibayar';
+        }
+
+        $relatedDoc->update([
+            'paid_amount' => $totalPaid,
+            'outstanding_amount' => $outstanding,
+            'status' => $status,
+        ]);
     }
 
     protected function notifyResourceChanged(string $resourceKey, string $action, mixed $recordId): void

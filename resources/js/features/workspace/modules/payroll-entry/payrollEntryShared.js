@@ -42,10 +42,10 @@ export function mapPayrollEntryRow(record) {
     const rawStatus = String(record.status ?? 'Draft').toLowerCase();
     let statusText = 'Sedang diproses';
     let statusVal = 'draft';
-    if (rawStatus === 'posted' || rawStatus === 'paid' || rawStatus === 'terbayar') {
+    if (rawStatus === 'posted' || rawStatus === 'paid' || rawStatus === 'terbayar' || rawStatus === 'lunas') {
         statusText = 'Terbayar';
         statusVal = 'paid';
-    } else if (rawStatus === 'partial' || rawStatus === 'sebagian dibayar') {
+    } else if (rawStatus === 'partial' || rawStatus.includes('sebagian') || rawStatus === 'partially paid') {
         statusText = 'Sebagian dibayar';
         statusVal = 'partial';
     }
