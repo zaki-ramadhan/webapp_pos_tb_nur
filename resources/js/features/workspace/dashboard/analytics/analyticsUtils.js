@@ -56,56 +56,65 @@ export function getProductImageUrl(name, size = 120) {
 export function getBuildingStoreLayoutRecommendation(itemA = '', itemB = '') {
     const text = (itemA + ' ' + itemB).toLowerCase();
 
-    if (/semen|pasir|besi|batu|bata|cor|beton|material|pondasi|mortar|koral|split/i.test(text)) {
-        return `Tempatkan pasir/batu di pekarangan samping luar & tumpukan semen di atas palet kering area depan muat barang agar kuli/armada toko cepat bongkar muat.`;
+    if (/keramik|granit|tile|nat|perekat keramik/i.test(text)) {
+        return `Simpan tumpukan dus keramik di gudang belakang rumah (area kering), dan sediakan kepingan sampel motif serta semen nat di rak display kios depan dekat kasir.`;
+    }
+    if (/pasir|batu|bata|batako|cor|split|koral|pondasi/i.test(text)) {
+        return `Tempatkan pasir dan batu di halaman luar jalur mobil pick-up agar muat armada cepat, dan simpan semen/alat cor pada akses terdekat.`;
     }
     if (/kayu|kaso|balok|reng|papan|bambu/i.test(text)) {
-        return `Susun kayu secara horizontal di rak gudang samping, dan gantung aksesoris (paku kayu, gergaji, meteran) di tiang penyangga rak.`;
+        return `Susun kayu rapi di gudang samping rumah, dan sediakan paku kayu serta gergaji/meteran di akses pintu gudang samping atau meja kasir.`;
     }
     if (/pipa|pvc|seng|baja|hollow|atap|asbes|triplek|alumunium|talang/i.test(text)) {
-        return `Taruh material panjang pada rak besi bertingkat area samping, dan pasang keranjang gantung aksesoris (lem PVC, paku seng, klem) di ujung rak.`;
+        return `Taruh material panjang di rak besi gudang samping rumah, dan gantung keranjang aksesoris (lem PVC, paku seng, sekrup) pada tiang raknya.`;
     }
-    if (/cat|kuas|thinner|amplas|lakban|rol|compound|dempul|plamir/i.test(text)) {
-        return `Pajang kaleng cat di rak display utama toko, dan gantungkan aksesoris (kuas, roll cat, bak cat, amplas, thinner) tepat di samping kaleng cat setinggi pandangan mata.`;
+    if (/semen|mortar|kompon|plamir/i.test(text)) {
+        return `Susun zak semen di atas palet kayu gudang belakang rumah agar terhindar dari lembap dan dekat dengan jalur muat mobil.`;
+    }
+    if (/cat|kuas|thinner|amplas|lakban|rol|dempul/i.test(text)) {
+        return `Pajang kaleng cat di rak display kios depan, dan gantungkan aksesoris (kuas, roll cat, bak cat, amplas, thinner) tepat di samping kaleng cat.`;
     }
     if (/kran|keran|lem|fitting|keni|tee|stop|seal|flange/i.test(text)) {
-        return `Pajang kran dan fitting di etalase perlengkapan pipa dekat kasir, dan gantungkan seal tape serta lem PVC di rak samping etalase.`;
+        return `Pajang kran dan fitting di etalase kaca kios depan dekat kasir, serta gantungkan seal tape dan lem pipa di sisi etalase.`;
     }
     if (/kawat|paku|engsel|gembok|baut|sekrup|tang|palu|gergaji|meteran|cangkul|sekop/i.test(text)) {
-        return `Taruh paku/baut dalam kotak sekat di bawah meja kasir, dan gantung perkakas pada papan pegboard dinding toko.`;
+        return `Simpan paku/baut dalam kotak sekat di bawah meja kasir kios depan, dan gantung perkakas pada papan display dinding kios.`;
     }
     if (/listrik|kabel|saklar|isolatip|stop kontak|fitting lampu|lampu/i.test(text)) {
-        return `Pajang di etalase alat listrik depan kasir, dan posisikan produk pelengkap/isolatip di gantungannya.`;
+        return `Pajang di etalase alat listrik kios depan, dan posisikan produk pelengkap/isolatip di gantungannya.`;
     }
 
-    return `Posisikan kedua barang berdampingan setinggi pandangan mata di rak display toko.`;
+    return `Posisikan kedua barang berdampingan di rak display kios depan agar mudah dijangkau pembeli.`;
 }
 
 export function getBuildingStoreCashierRecommendation(itemA = '', itemB = '', antecedentAbc = 'A', consequentAbc = 'C') {
     const text = (itemA + ' ' + itemB).toLowerCase();
 
-    if (/semen|pasir|besi|batu|bata|cor|beton|material|pondasi|mortar|koral|split/i.test(text)) {
-        return `Tawarkan 'Paket Proyek Cor/Pondasi' langsung saat pembeli memesan armada muatan (Pick Up) atau zak semen di faktur kasir.`;
+    if (/keramik|granit|tile/i.test(text)) {
+        return `Tawarkan semen nat keramik warna senada atau semen perekat langsung saat pelanggan memilih motif di kios kasir.`;
+    }
+    if (/pasir|batu|bata|batako|cor|pondasi/i.test(text)) {
+        return `Tawarkan 'Paket Proyek Cor/Pondasi' (Pasir + Semen + Kawat) langsung saat nota muatan pick-up dibuat di kasir kios.`;
     }
     if (/kayu|kaso|balok|reng|papan/i.test(text)) {
-        return `Tawarkan paku kayu, paku reng, atau gergaji potong saat pembeli memesan kayu kaso/balok.`;
+        return `Tawarkan paku kayu, paku reng, atau mata gergaji saat pembeli memesan kayu di gudang samping.`;
     }
     if (/pipa|pvc|talang/i.test(text)) {
-        return `Tawarkan lem pipa PVC, seal tape, atau sambungan keni/tee saat pelanggan memesan pipa air.`;
+        return `Tawarkan lem pipa PVC, seal tape, atau sambungan keni/tee saat pembeli memesan pipa di kasir.`;
     }
     if (/cat|kuas|thinner|amplas|lakban|rol/i.test(text)) {
-        return `Tawarkan 'Paket Pengecatan Hemat' (Cat + Roll + Bak Cat/Thinner) dengan potongan diskon langsung di kasir.`;
+        return `Tawarkan 'Paket Pengecatan Hemat' (Cat + Roll + Thinner) dengan potongan diskon langsung di meja kasir.`;
     }
     if (/kran|keran/i.test(text)) {
-        return `Tawarkan seal tape atau klem pipa otomatis saat konsumen membeli kran air.`;
+        return `Tawarkan seal tape atau klem pipa otomatis saat konsumen membeli kran air di etalase kasir.`;
     }
     if (/kawat|paku|baut|sekrup/i.test(text)) {
-        return `Tawarkan kawat bendrat atau paku tambahan sebelum transaksi difinalisasi di kasir.`;
+        return `Tawarkan kawat bendrat atau paku tambahan sebelum transaksi kasir difinalisasi.`;
     }
 
     if (antecedentAbc === 'A' && consequentAbc === 'A') {
         return `Berikan penawaran diskon potongan langsung jika kedua produk utama dibeli secara bersamaan.`;
     }
 
-    return `Tawarkan produk pelengkap ini sebagai opsi hemat saat pelanggan membayar di kasir.`;
+    return `Tawarkan produk pelengkap ini sebagai opsi hemat saat pelanggan membayar di meja kasir kios depan.`;
 }
