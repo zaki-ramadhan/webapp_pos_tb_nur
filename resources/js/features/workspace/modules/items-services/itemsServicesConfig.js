@@ -61,7 +61,8 @@ const itemsTableRows = [];
 
 const createDefaults = {
     name: '',
-    category: ['Umum'],
+    category: [],
+    categoryId: null,
     kind: 'Persediaan',
     codeAuto: true,
     code: '',
@@ -224,21 +225,14 @@ function cloneAccounts(accounts = {}) {
 }
 
 function inferCategory(row) {
-    const name = String(row.name ?? '').toLowerCase();
-
-    if (name.includes('semen') || name.includes('pasir') || name.includes('bata') || name.includes('split')) {
-        return 'Bahan Bangunan Utama';
+    const categoryObj = row.category;
+    if (typeof categoryObj === 'object' && categoryObj?.name) {
+        return categoryObj.name;
     }
-
-    if (name.includes('besi') || name.includes('baja') || name.includes('wiremesh') || name.includes('hollow')) {
-        return 'Besi & Struktur Baja';
+    if (typeof categoryObj === 'string' && categoryObj.trim()) {
+        return categoryObj;
     }
-
-    if (name.includes('cat') || name.includes('thinner') || name.includes('kuas')) {
-        return 'Cat & Perlengkapan';
-    }
-
-    return 'Umum';
+    return row.categoryName ?? row.categoryFilter ?? '';
 }
 
 function buildBarcode(code) {
@@ -271,11 +265,12 @@ function buildFallbackDetailRecord(row, config) {
     const purchaseUnitId = (typeof purchaseUnitObj === 'object' ? purchaseUnitObj?.id : null) ?? row.purchase_unit_id ?? row.purchaseUnitId ?? null;
 
     const finalCategoryName = categoryName || inferCategory(row);
+    const categoryList = (finalCategoryName && finalCategoryName !== '-') ? [{ id: categoryId, name: finalCategoryName }] : [];
 
     return {
         ...config.createDefaults,
         name: row.name ?? '',
-        category: [{ id: categoryId, name: finalCategoryName }],
+        category: categoryList,
         categoryId: categoryId,
         kind: row.kind ?? config.createDefaults.kind,
         codeAuto: false,
