@@ -15,7 +15,9 @@ import {
     formatCurrencyLabel,
     formatCurrencyValue,
     buildSalesReceiptTotal,
+    buildSalesReceiptTotalOutstanding,
     applySalesReceiptInvoices,
+    distributePaymentToInvoices,
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 import {
     TransactionDateInput,
@@ -131,18 +133,45 @@ export default function SalesReceiptFormView({
                                             value={values.paymentAmount}
                                             onChange={(event) => {
                                                 const nextVal = event.target.value;
-                                                setValues((current) => ({
-                                                    ...current,
-                                                    paymentAmount: nextVal,
-                                                    paymentAmountDisplay: nextVal,
-                                                }));
+                                                const numericNextVal = parseNumericInput(nextVal);
+                                                setValues((current) => {
+                                                    if ((current.invoices ?? []).length === 1) {
+                                                        const updatedInvoices = distributePaymentToInvoices(current.invoices, numericNextVal);
+                                                        return {
+                                                            ...current,
+                                                            paymentAmount: nextVal,
+                                                            paymentAmountDisplay: nextVal,
+                                                            paymentAmountForSummary: nextVal,
+                                                            invoices: updatedInvoices,
+                                                        };
+                                                    }
+                                                    return {
+                                                        ...current,
+                                                        paymentAmount: nextVal,
+                                                        paymentAmountDisplay: nextVal,
+                                                        paymentAmountForSummary: nextVal,
+                                                    };
+                                                });
                                             }}
                                             onBlur={(event) => {
                                                 const val = event.target.value;
-                                                setValues((current) => ({
-                                                    ...current,
-                                                    paymentAmountForSummary: val,
-                                                }));
+                                                const numericVal = parseNumericInput(val);
+                                                setValues((current) => {
+                                                    if ((current.invoices ?? []).length > 0 && numericVal > 0) {
+                                                        const updatedInvoices = distributePaymentToInvoices(current.invoices, numericVal);
+                                                        return {
+                                                            ...current,
+                                                            paymentAmount: val,
+                                                            paymentAmountDisplay: val,
+                                                            paymentAmountForSummary: val,
+                                                            invoices: updatedInvoices,
+                                                        };
+                                                    }
+                                                    return {
+                                                        ...current,
+                                                        paymentAmountForSummary: val,
+                                                    };
+                                                });
                                             }}
                                             maxLength={11}
                                             prefix="Rp"
@@ -157,20 +186,25 @@ export default function SalesReceiptFormView({
                                                 <ReceiptAmountActionButton
                                                     key={buttonType}
                                                     type={buttonType}
-                                                    onClick={
-                                                        buttonType === 'refresh'
-                                                            ? () => {
-                                                                  const total = buildSalesReceiptTotal(values.invoices ?? []);
-                                                                  const formatted = formatCurrencyValue(total);
-                                                                  setValues((current) => ({
-                                                                      ...current,
-                                                                      paymentAmount: formatted,
-                                                                      paymentAmountDisplay: formatted,
-                                                                      paymentAmountForSummary: formatted,
-                                                                  }));
-                                                              }
-                                                            : undefined
-                                                    }
+                                                    onClick={() => {
+                                                        setValues((current) => {
+                                                            const currentHeaderAmount = parseNumericInput(current.paymentAmount);
+                                                            const totalOutstanding = buildSalesReceiptTotalOutstanding(current.invoices ?? []);
+                                                            const targetAmount = (currentHeaderAmount > 0 && currentHeaderAmount !== buildSalesReceiptTotal(current.invoices ?? []))
+                                                                ? currentHeaderAmount
+                                                                : totalOutstanding;
+                                                            const updatedInvoices = distributePaymentToInvoices(current.invoices ?? [], targetAmount);
+                                                            const finalTotal = buildSalesReceiptTotal(updatedInvoices);
+                                                            const formatted = formatCurrencyValue(finalTotal);
+                                                            return {
+                                                                ...current,
+                                                                paymentAmount: formatted,
+                                                                paymentAmountDisplay: formatted,
+                                                                paymentAmountForSummary: formatted,
+                                                                invoices: updatedInvoices,
+                                                            };
+                                                        });
+                                                    }}
                                                 />
                                         ))}
                                     </div>
