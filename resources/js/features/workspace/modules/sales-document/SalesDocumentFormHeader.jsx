@@ -81,34 +81,38 @@ export default function SalesDocumentFormHeader({
                         ? (isPurchase ? 'Cari uang muka pembelian' : 'Cari uang muka penjualan')
                         : (config.headerSelectLookupField.searchLabel ?? 'Cari faktur');
 
+                    const showDropdown = (config.headerSelectLookupField.options ?? []).length > 1;
+
                     return (
                         <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                             <TransactionFieldLabel label={config.headerSelectLookupField.label} required={config.headerSelectLookupField.required} />
-                            <div className="w-full flex items-center gap-x-2">
-                                <div className="w-auto min-w-[138px] shrink-0">
-                                    <SelectField
-                                        value={selectedSource}
-                                        onChange={(event) => {
-                                            const nextSource = event.target.value;
-                                            setValues((current) => ({
-                                                ...current,
-                                                [config.headerSelectLookupField.selectValueKey]: nextSource,
-                                                __relatedDocumentId: null,
-                                                [config.headerSelectLookupField.valueKey]: [],
-                                            }));
-                                        }}
-                                        className="h-[40px] rounded-[4px] border-ui-border w-full"
-                                        selectClassName="text-xs sm:text-sm text-brand-dark"
-                                    >
-                                        {config.headerSelectLookupField.options.map((option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        ))}
-                                    </SelectField>
-                                </div>
+                            <div className={showDropdown ? "w-full flex items-center gap-x-2" : "max-w-[320px] w-full"}>
+                                {showDropdown && (
+                                    <div className="w-auto min-w-[138px] shrink-0">
+                                        <SelectField
+                                            value={selectedSource}
+                                            onChange={(event) => {
+                                                const nextSource = event.target.value;
+                                                setValues((current) => ({
+                                                    ...current,
+                                                    [config.headerSelectLookupField.selectValueKey]: nextSource,
+                                                    __relatedDocumentId: null,
+                                                    [config.headerSelectLookupField.valueKey]: [],
+                                                }));
+                                            }}
+                                            className="h-[40px] rounded-[4px] border-ui-border w-full"
+                                            selectClassName="text-xs sm:text-sm text-brand-dark"
+                                        >
+                                            {config.headerSelectLookupField.options.map((option) => (
+                                                <option key={option} value={option}>
+                                                    {option}
+                                                </option>
+                                            ))}
+                                        </SelectField>
+                                    </div>
+                                )}
                                 {!isWithoutInvoice && (
-                                    <div className="flex-1 min-w-0 w-full">
+                                    <div className={showDropdown ? "flex-1 min-w-0 w-full" : "w-full"}>
                                         <AccountLookupTextInput
                                             id={config.headerSelectLookupField.valueKey}
                                             resource={resolvedResource}
