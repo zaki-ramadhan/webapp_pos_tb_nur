@@ -443,16 +443,32 @@ export default function SalesDocumentFormView({
                 setEditCostOpen(true);
             },
             onProcessPembayaran: (formValues) => {
-                if (!formValues.__backendRecordId) return;
-                window.__pendingImportSalesInvoice = { id: formValues.__backendRecordId };
-                window.dispatchEvent(
-                    new CustomEvent('workspace:open-page', {
-                        detail: {
-                            pageId: 'sales-receipt',
-                            targetTabId: 'sales-receipt-create',
-                        },
-                    })
-                );
+                const recordId = formValues.__backendRecordId || formValues.id;
+                if (!recordId) return;
+
+                if (pageId === 'purchase-invoice') {
+                    window.__pendingImportPurchaseInvoice = { id: recordId };
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:open-page', {
+                            detail: {
+                                pageId: 'purchase-payment',
+                                targetTabId: 'purchase-payment-create',
+                                openForm: true,
+                            },
+                        })
+                    );
+                } else {
+                    window.__pendingImportSalesInvoice = { id: recordId };
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:open-page', {
+                            detail: {
+                                pageId: 'sales-receipt',
+                                targetTabId: 'sales-receipt-create',
+                                openForm: true,
+                            },
+                        })
+                    );
+                }
             },
         }),
         [updateItems, setStatus],

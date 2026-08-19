@@ -5,6 +5,7 @@ import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
     createBackendResource,
     deleteBackendResource,
+    getBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
@@ -69,6 +70,33 @@ export default function PurchasePaymentFormView({
     useEffect(() => {
         setActiveSectionId((isDetail ? config.detailSectionTabs : config.sectionTabs)?.[0]?.id ?? 'details');
     }, [activeRecordId]);
+
+    useEffect(() => {
+        if (!isDetail && window.__pendingImportPurchaseInvoice) {
+            const pending = window.__pendingImportPurchaseInvoice;
+            window.__pendingImportPurchaseInvoice = null;
+            if (pending.id) {
+                getBackendResource('purchase-invoices', pending.id).then((res) => {
+                    const invoiceRecord = res?.data;
+                    if (invoiceRecord) {
+                        const supplierName = invoiceRecord.contact?.name || invoiceRecord.supplier?.name || invoiceRecord.supplier_name;
+                        const supplierId = invoiceRecord.contact_id || invoiceRecord.supplier_id;
+                        setValues((current) => {
+                            const updated = applyPurchasePaymentInvoices(current, [
+                                ...(current.invoices ?? []),
+                                buildPurchasePaymentInvoiceFromRecord(invoiceRecord),
+                            ]);
+                            return {
+                                ...updated,
+                                __supplierId: supplierId ?? updated.__supplierId,
+                                suppliers: supplierName ? [supplierName] : updated.suppliers,
+                            };
+                        });
+                    }
+                }).catch(() => null);
+            }
+        }
+    }, [isDetail, setValues]);
 
     const validationMessage = useMemo(() => validatePurchasePaymentValues(values, config), [config, values]);
 
