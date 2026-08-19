@@ -72,31 +72,48 @@ export default function PurchasePaymentFormView({
     }, [activeRecordId]);
 
     useEffect(() => {
-        if (!isDetail && window.__pendingImportPurchaseInvoice) {
+        function applyInvoiceImport(pendingId) {
+            if (!pendingId || isDetail) return;
+            getBackendResource('purchase-invoices', pendingId).then((res) => {
+                const invoiceRecord = res?.data;
+                if (invoiceRecord) {
+                    const supplierName = invoiceRecord.supplier?.name || invoiceRecord.customer?.name || invoiceRecord.contact?.name || invoiceRecord.supplier_name;
+                    const supplierId = invoiceRecord.supplier_id || invoiceRecord.customer_id || invoiceRecord.contact_id;
+                    setValues((current) => {
+                        const existingInvoices = current.invoices ?? [];
+                        const withoutCurrent = existingInvoices.filter((inv) => String(inv.id) !== String(invoiceRecord.id) && String(inv.__relatedDocumentId) !== String(invoiceRecord.id));
+                        const updated = applyPurchasePaymentInvoices(current, [
+                            ...withoutCurrent,
+                            buildPurchasePaymentInvoiceFromRecord(invoiceRecord),
+                        ]);
+                        return {
+                            ...updated,
+                            __supplierId: supplierId ?? updated.__supplierId,
+                            payee: supplierName ? [supplierName] : updated.payee,
+                        };
+                    });
+                }
+            }).catch(() => null);
+        }
+
+        if (!isDetail && typeof window !== 'undefined' && window.__pendingImportPurchaseInvoice) {
             const pending = window.__pendingImportPurchaseInvoice;
             window.__pendingImportPurchaseInvoice = null;
-            if (pending.id) {
-                getBackendResource('purchase-invoices', pending.id).then((res) => {
-                    const invoiceRecord = res?.data;
-                    if (invoiceRecord) {
-                        const supplierName = invoiceRecord.contact?.name || invoiceRecord.supplier?.name || invoiceRecord.supplier_name;
-                        const supplierId = invoiceRecord.contact_id || invoiceRecord.supplier_id;
-                        setValues((current) => {
-                            const updated = applyPurchasePaymentInvoices(current, [
-                                ...(current.invoices ?? []),
-                                buildPurchasePaymentInvoiceFromRecord(invoiceRecord),
-                            ]);
-                            return {
-                                ...updated,
-                                __supplierId: supplierId ?? updated.__supplierId,
-                                suppliers: supplierName ? [supplierName] : updated.suppliers,
-                            };
-                        });
-                    }
-                }).catch(() => null);
+            if (pending?.id) {
+                applyInvoiceImport(pending.id);
             }
         }
-    }, [isDetail, setValues]);
+
+        function handleImportEvent(e) {
+            const pendingId = e.detail?.id;
+            if (pendingId) {
+                applyInvoiceImport(pendingId);
+            }
+        }
+
+        window.addEventListener('workspace:import-purchase-invoice', handleImportEvent);
+        return () => window.removeEventListener('workspace:import-purchase-invoice', handleImportEvent);
+    }, [isDetail, setValues, activeLevel2Tab]);
 
     const validationMessage = useMemo(() => validatePurchasePaymentValues(values, config), [config, values]);
 
