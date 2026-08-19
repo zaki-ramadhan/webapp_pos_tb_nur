@@ -269,7 +269,7 @@ export default function IntegratedAnalysisWidget({
                                                 {itemAData && (
                                                     <span className="inline-flex items-center gap-1">
                                                         <span className="font-medium text-slate-800">{rule.antecedent}:</span>
-                                                        <span className="font-bold text-blue-700">{itemAData.revenue}</span>
+                                                        <span className="font-bold text-blue-700">{(itemAData.revenue || '').replace(/,00$/, '')}</span>
                                                         <span className="text-slate-500">({itemAData.share})</span>
                                                     </span>
                                                 )}
@@ -277,7 +277,7 @@ export default function IntegratedAnalysisWidget({
                                                 {itemBData && (
                                                     <span className="inline-flex items-center gap-1">
                                                         <span className="font-medium text-slate-800">{rule.consequent}:</span>
-                                                        <span className="font-bold text-emerald-700">{itemBData.revenue}</span>
+                                                        <span className="font-bold text-emerald-700">{(itemBData.revenue || '').replace(/,00$/, '')}</span>
                                                         <span className="text-slate-500">({itemBData.share})</span>
                                                     </span>
                                                 )}
@@ -289,30 +289,14 @@ export default function IntegratedAnalysisWidget({
                                                 <MapPin className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                                                 <div className="min-w-0 flex-1">
                                                     <span className="font-bold text-emerald-950">Penataan di Rak:</span>{" "}
-                                                    <span className="leading-relaxed block sm:inline">
-                                                        <HighlightProductText
-                                                            text={tactic.actionDisplay}
-                                                            itemA={rule.antecedent}
-                                                            itemAId={rule.antecedentId}
-                                                            itemB={rule.consequent}
-                                                            itemBId={rule.consequentId}
-                                                        />
-                                                    </span>
+                                                    <span className="leading-relaxed block sm:inline">{tactic.actionDisplay}</span>
                                                 </div>
                                             </div>
                                             <div className="flex items-start gap-2 border-t border-emerald-100/40 pt-2">
                                                 <Package className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                                                 <div className="min-w-0 flex-1">
                                                     <span className="font-bold text-emerald-950">Rekomendasi Bundling:</span>{" "}
-                                                    <span className="leading-relaxed block sm:inline">
-                                                        <HighlightProductText
-                                                            text={tactic.actionCashier}
-                                                            itemA={rule.antecedent}
-                                                            itemAId={rule.antecedentId}
-                                                            itemB={rule.consequent}
-                                                            itemBId={rule.consequentId}
-                                                        />
-                                                    </span>
+                                                    <span className="leading-relaxed block sm:inline">{tactic.actionCashier}</span>
                                                 </div>
                                             </div>
                                         </div>
