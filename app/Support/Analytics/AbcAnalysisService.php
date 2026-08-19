@@ -121,7 +121,7 @@ class AbcAnalysisService
                 'name' => $row->product_name,
                 'code' => $row->product_code,
                 'unitsSold' => number_format($row->units_sold, 0, ',', '.') . ($row->unit_name ? (' ' . $row->unit_name) : ''),
-                'revenue' => 'Rp ' . number_format($revenue, 0, ',', '.') . ',00',
+                'revenue' => 'Rp ' . number_format($revenue, 0, ',', '.'),
                 'share' => number_format($sharePct, 1, ',', '.') . '%',
                 'category' => $category,
                 'categoryColor' => $color,
