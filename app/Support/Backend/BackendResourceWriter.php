@@ -182,6 +182,13 @@ class BackendResourceWriter
                     $taxTotal = 0.0;
 
                     foreach ($payload['lines'] as &$line) {
+                        if (empty($line['unit_id']) && !empty($line['product_id'])) {
+                            $prod = \App\Domain\Catalog\Models\Product::find($line['product_id']);
+                            if ($prod) {
+                                $line['unit_id'] = $prod->purchase_unit_id ?? $prod->base_unit_id;
+                            }
+                        }
+
                         $qty = (float)($line['quantity'] ?? 0.0);
                         $price = (float)($line['unit_price'] ?? 0.0);
                         $discount = (float)($line['discount_amount'] ?? 0.0);

@@ -180,8 +180,8 @@ export function buildOperationDocumentRecord(record, config, pageId) {
             name: line.description ?? line.product?.name ?? line.reference_code ?? `Baris ${index + 1}`,
             code: line.reference_code ?? line.product?.code ?? '',
             quantity: String(line.quantity ?? ''),
-            unit: line.unit?.name ?? '',
-            __unitId: line.unit_id ?? null,
+            unit: line.unit?.name ?? line.product?.purchaseUnit?.name ?? line.product?.purchase_unit?.name ?? line.product?.baseUnit?.name ?? line.product?.base_unit?.name ?? line.attributes?.unit_name ?? '',
+            __unitId: line.unit_id ?? line.product?.purchase_unit_id ?? line.product?.base_unit_id ?? null,
             __productId: line.product_id ?? null,
             __warehouseId: line.warehouse_id ?? null,
             __isProductDeleted: isProductDeleted,
@@ -343,19 +343,29 @@ export function buildGeneratedDocumentNumber(pageId) {
 
 export function buildOperationDocumentPayload(values, pageId, backendConfig) {
     const lines = (values.items ?? [])
-        .map((item, index) => ({
-            id: item.__lineId ?? undefined,
-            description: item.name?.trim() ?? '',
-            reference_code: item.code?.trim() ?? '',
-            quantity: parseNumericInput(item.quantity),
-            unit_price: parseNumericInput(item.price),
-            discount_amount: parseNumericInput(item.discountValue ?? item.discount),
-            total_amount: parseNumericInput(item.total),
-            sort_order: index,
-            product_id: item.__productId ?? null,
-            unit_id: item.__unitId ?? null,
-            warehouse_id: item.__warehouseId ?? null,
-        }))
+        .map((item, index) => {
+            const rawProdId = item.__productId ?? item.productId ?? item.id;
+            const parsedProdId = rawProdId && !isNaN(Number(rawProdId)) ? Number(rawProdId) : null;
+            const rawUnitId = item.__unitId ?? item.unitId ?? item.unit_id;
+            const parsedUnitId = rawUnitId && !isNaN(Number(rawUnitId)) ? Number(rawUnitId) : null;
+
+            return {
+                id: item.__lineId ?? undefined,
+                description: item.name?.trim() ?? '',
+                reference_code: item.code?.trim() ?? '',
+                quantity: parseNumericInput(item.quantity),
+                unit_price: parseNumericInput(item.price),
+                discount_amount: parseNumericInput(item.discountValue ?? item.discount),
+                total_amount: parseNumericInput(item.total),
+                sort_order: index,
+                product_id: parsedProdId,
+                unit_id: parsedUnitId,
+                warehouse_id: item.__warehouseId ?? null,
+                attributes: {
+                    unit_name: item.unit || null,
+                },
+            };
+        })
         .filter((item) => item.description || item.reference_code || item.quantity > 0 || item.total_amount > 0);
     const subtotalAmount = lines.reduce((sum, line) => sum + Number(line.total_amount ?? 0), 0);
     const subtotalCosts = (values.additionalCosts ?? []).reduce((sum, cost) => sum + parseNumericInput(cost.amount), 0);

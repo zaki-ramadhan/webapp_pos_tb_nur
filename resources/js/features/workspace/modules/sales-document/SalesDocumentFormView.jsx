@@ -457,6 +457,11 @@ export default function SalesDocumentFormView({
                             },
                         })
                     );
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:import-purchase-invoice', {
+                            detail: { id: recordId },
+                        })
+                    );
                 } else {
                     window.__pendingImportSalesInvoice = { id: recordId };
                     window.dispatchEvent(
