@@ -275,7 +275,15 @@ export default function InventoryInquiryView({ config, pageId }) {
                 const currentStock = parseNumericInput(row.rawAvailableStock ?? row.availableStock ?? 0);
                 const qtyNeeded = Math.max(1, minLimit - currentStock);
 
-                const price = parseNumericInput(row.costPrice || row.price || row.default_purchase_price || 0);
+                const price = parseNumericInput(
+                    row.default_purchase_price ??
+                    row.defaultPurchasePrice ??
+                    row.raw_cost_price ??
+                    row.costPrice ??
+                    row.price ??
+                    (products.find((p) => String(p.id) === String(row.productId || row.itemId || row.id))?.default_purchase_price) ??
+                    0
+                );
                 const name = row.itemName || row.productName || row.name || '';
                 const code = row.itemCode || row.productCode || row.code || '';
                 const unit = row.unit || row.baseUnit || '';
