@@ -19,20 +19,25 @@ class InventoryInquiryQueryService
     use HasQueryHelpers;
     /**
      * @param  array<int, int>  $productIds
+     * @param  array<string, mixed>  $filters
      * @return array<int, array{stock_on_hand: float, stock_available: float}>
      */
-    public function buildStockTotalsByProduct(array $productIds = []): array
+    public function buildStockTotalsByProduct(array $productIds = [], array $filters = []): array
     {
-        $filters = [];
+        $mergedFilters = $filters;
         if (count($productIds) === 1) {
-            $filters['product_id'] = $productIds[0];
+            $mergedFilters['product_id'] = $productIds[0];
         }
-        $compositeStockMap = $this->buildStockMap($filters);
+        $compositeStockMap = $this->buildStockMap($mergedFilters);
         
         $onHandTotals = [];
         foreach ($compositeStockMap as $compositeKey => $qty) {
             $parts = explode(':', $compositeKey);
             $pid = (int) ($parts[0] ?? 0);
+            $wid = (int) ($parts[1] ?? 0);
+            if (!empty($filters['warehouse_id']) && $wid !== (int) $filters['warehouse_id']) {
+                continue;
+            }
             if ($pid > 0 && (empty($productIds) || in_array($pid, $productIds, true))) {
                 $onHandTotals[$pid] = (float) ($onHandTotals[$pid] ?? 0.0) + (float) $qty;
             }
@@ -358,7 +363,8 @@ class InventoryInquiryQueryService
                     'item_id' => $product->id,
                     'item_code' => $product->code,
                     'item_name' => $product->name,
-                    'supplier' => $product->preferredSupplier?->name ?? '-',
+                    'supplier' => $product->mainSupplier?->name ?? $product->preferredSupplier?->name ?? '-',
+                    'supplier_id' => $product->main_supplier_id,
                     'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
                     'current_stock' => $this->formatNumber($currentStock),
                     'available_stock' => $this->formatNumber($currentStock),
@@ -795,8 +801,9 @@ class InventoryInquiryQueryService
     protected function queryProducts(array $filters): Collection
     {
         return Product::query()
-            ->with(['baseUnit', 'purchaseUnit', 'salesUnit'])
+            ->with(['baseUnit', 'purchaseUnit', 'salesUnit', 'mainSupplier'])
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
+            ->when(filled($filters['supplier_id'] ?? null), fn ($query) => $query->where('main_supplier_id', (int) $filters['supplier_id']))
             ->where('is_active', true)
             ->get();
     }
