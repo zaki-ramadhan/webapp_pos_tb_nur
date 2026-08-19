@@ -348,7 +348,7 @@ class InventoryInquiryQueryService
             $allStockTotals = !empty($productIds) ? $this->buildStockTotalsByProduct($productIds, $filters) : [];
 
             $rows = $products
-                ->map(function (Product $product) use ($allStockTotals): ?array {
+                ->map(function (Product $product) use ($allStockTotals): array {
                     $totals = $allStockTotals[$product->id] ?? [
                         'stock_on_hand' => 0.0,
                         'stock_available' => 0.0,
@@ -356,11 +356,6 @@ class InventoryInquiryQueryService
 
                     $currentStock = (float) $totals['stock_on_hand'];
                     $minimumStock = (float) ($product->minimum_stock ?? 0);
-
-                    if ($currentStock > $minimumStock) {
-                        return null;
-                    }
-
                     $deficit = max(0.0, $minimumStock - $currentStock);
 
                     return [
@@ -382,7 +377,6 @@ class InventoryInquiryQueryService
                         'raw_minimum_limit' => $minimumStock,
                     ];
                 })
-                ->filter()
                 ->sortBy([
                     ['supplier', 'asc'],
                     ['item_name', 'asc'],
@@ -819,6 +813,14 @@ class InventoryInquiryQueryService
             ->with($withRelations)
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
             ->when(filled($filters['supplier_id'] ?? null) && $hasMainSupplierCol, fn ($query) => $query->where('main_supplier_id', (int) $filters['supplier_id']))
+            ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('code', 'like', "%{$search}%")
+                      ->orWhere('barcode', 'like', "%{$search}%");
+                });
+            })
             ->where(fn ($q) => $q->whereNull('is_active')->orWhere('is_active', true))
             ->get();
     }
