@@ -88,8 +88,20 @@ export function getBuildingStoreLayoutRecommendation(itemA = '', itemB = '') {
 }
 
 export function getBuildingStoreCashierRecommendation(itemA = '', itemB = '', antecedentAbc = 'A', consequentAbc = 'C') {
+    const textA = (itemA || '').toLowerCase();
+    const textB = (itemB || '').toLowerCase();
     const text = (itemA + ' ' + itemB).toLowerCase();
 
+    // Cross-category pairs first
+    if ((/semen|mortar/i.test(textA) && /kuas|cat|thinner/i.test(textB)) || (/kuas|cat|thinner/i.test(textA) && /semen|mortar/i.test(textB))) {
+        return `Tawarkan kuas cat atau alat finishing sebagai pelengkap persiapan plesteran dan pengecatan saat pembeli memesan semen di kasir.`;
+    }
+    if ((/semen|cor|pasir/i.test(textA) && /kawat|paku|besi/i.test(textB)) || (/kawat|paku|besi/i.test(textA) && /semen|cor|pasir/i.test(textB))) {
+        return `Tawarkan kawat bendrat atau paku cor saat pembeli memesan semen/pasir untuk pekerjaan struktur.`;
+    }
+    if (/cat/i.test(text) && /kuas|rol|thinner|amplas/i.test(text)) {
+        return `Tawarkan 'Paket Pengecatan Hemat' (${itemA} + ${itemB}) dengan potongan diskon langsung di meja kasir.`;
+    }
     if (/keramik|granit|tile/i.test(text)) {
         return `Tawarkan semen nat keramik warna senada atau semen perekat langsung saat pelanggan memilih motif di kios kasir.`;
     }
@@ -102,9 +114,6 @@ export function getBuildingStoreCashierRecommendation(itemA = '', itemB = '', an
     if (/pipa|pvc|talang/i.test(text)) {
         return `Tawarkan lem pipa PVC, seal tape, atau sambungan keni/tee saat pembeli memesan pipa di kasir.`;
     }
-    if (/cat|kuas|thinner|amplas|lakban|rol/i.test(text)) {
-        return `Tawarkan 'Paket Pengecatan Hemat' (Cat + Roll + Thinner) dengan potongan diskon langsung di meja kasir.`;
-    }
     if (/kran|keran/i.test(text)) {
         return `Tawarkan seal tape atau klem pipa otomatis saat konsumen membeli kran air di etalase kasir.`;
     }
@@ -116,5 +125,5 @@ export function getBuildingStoreCashierRecommendation(itemA = '', itemB = '', an
         return `Berikan penawaran diskon potongan langsung jika kedua produk utama dibeli secara bersamaan.`;
     }
 
-    return `Tawarkan produk pelengkap ini sebagai opsi hemat saat pelanggan membayar di meja kasir kios depan.`;
+    return `Tawarkan ${itemB || 'produk pelengkap ini'} sebagai opsi hemat saat pelanggan membayar ${itemA || 'pesanan'} di meja kasir kios depan.`;
 }

@@ -263,6 +263,27 @@ export default function IntegratedAnalysisWidget({
                                             </div>
                                         </div>
 
+                                        {(itemAData || itemBData) && (
+                                            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 rounded bg-slate-50/90 px-2.5 py-1.5 text-xs text-slate-600 border border-slate-200/70">
+                                                <span className="font-semibold text-slate-700">Omzet Produk (Kas):</span>
+                                                {itemAData && (
+                                                    <span className="inline-flex items-center gap-1">
+                                                        <span className="font-medium text-slate-800">{rule.antecedent}:</span>
+                                                        <span className="font-bold text-blue-700">{itemAData.revenue}</span>
+                                                        <span className="text-slate-500">({itemAData.share})</span>
+                                                    </span>
+                                                )}
+                                                {itemAData && itemBData && <span className="text-slate-300">•</span>}
+                                                {itemBData && (
+                                                    <span className="inline-flex items-center gap-1">
+                                                        <span className="font-medium text-slate-800">{rule.consequent}:</span>
+                                                        <span className="font-bold text-emerald-700">{itemBData.revenue}</span>
+                                                        <span className="text-slate-500">({itemBData.share})</span>
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+
                                         <div className="mt-2.5 border-t border-slate-100 pt-2.5 flex flex-col gap-2.5 text-sm text-slate-700 bg-emerald-50/15 rounded-md p-2.5 border border-emerald-100/50">
                                             <div className="flex items-start gap-2">
                                                 <MapPin className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
