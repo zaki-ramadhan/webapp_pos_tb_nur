@@ -148,13 +148,17 @@ class BackendResourceController extends Controller
                 $computedStatus = 'Belum Lunas';
             }
 
-            if ($entity->status !== $computedStatus || (float) $entity->outstanding_amount !== $outstanding) {
-                \Illuminate\Support\Facades\DB::table('operation_documents')
-                    ->where('id', $entity->id)
-                    ->update([
-                        'outstanding_amount' => $outstanding,
-                        'status' => $computedStatus,
-                    ]);
+            if ($entity->status !== $computedStatus || (float) ($entity->outstanding_amount ?? 0.0) !== $outstanding) {
+                try {
+                    \Illuminate\Support\Facades\DB::table('operation_documents')
+                        ->where('id', $entity->id)
+                        ->update([
+                            'outstanding_amount' => $outstanding,
+                            'status' => $computedStatus,
+                        ]);
+                } catch (\Throwable) {
+                    // Ignore write error on read request
+                }
                 $entity->setAttribute('outstanding_amount', $outstanding);
                 $entity->setAttribute('status', $computedStatus);
             }
