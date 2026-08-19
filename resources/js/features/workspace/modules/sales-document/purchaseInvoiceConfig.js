@@ -50,8 +50,8 @@ export function buildPurchaseInvoiceConfig(pageConfig = {}) {
     };
 }
 
-export function buildPurchaseInvoiceRecord(row = {}, config) {
-    const record = buildSalesDocumentRecord(row, config.draft, config.detailRecords, {
+export function buildPurchaseInvoiceRecord(row = {}, config = {}) {
+    const record = buildSalesDocumentRecord(row, config.draft ?? defaultPurchaseInvoiceConfig.draft, config.detailRecords ?? {}, {
         customerPrefix: '[VJKT-0002]',
         includeAdvanceSummary: false,
         includePrintedSummary: false,
@@ -62,29 +62,42 @@ export function buildPurchaseInvoiceRecord(row = {}, config) {
         processedBy: null,
     });
 
-    const currency = record.currency || row.currency || 'USD';
+    const currency = record.currency || row.currency || 'IDR';
     const currencyPrefix = currency === 'USD' ? '$' : 'Rp';
     const totalValue = row.total ? `${currencyPrefix} ${row.total}` : (record.total || `${currencyPrefix} 0`);
 
-    const resolvedStatus = row.status ?? row.__backendRecord?.status ?? record.status ?? record.rawStatus;
-    const isLunas = resolvedStatus === 'Lunas' || (record.outstandingAmount !== undefined && Number(record.outstandingAmount) <= 0 && Number(record.total_amount ?? record.totalAmount ?? 0) > 0);
+    const rawStatus = row.rawStatus ?? row.status ?? row.__backendRecord?.status ?? record.status ?? record.rawStatus;
+    const normalizedStatus = String(rawStatus ?? '').trim().toLowerCase();
+    const total = parseNumericInput(row.total ?? row.total_amount ?? record.total ?? record.total_amount);
+    const paid = parseNumericInput(row.paid_amount ?? row.paidAmount ?? record.paid_amount ?? record.paidAmount);
+    const outstanding = row.outstanding_amount !== undefined && row.outstanding_amount !== null
+        ? parseNumericInput(row.outstanding_amount)
+        : (row.outstandingAmount !== undefined && row.outstandingAmount !== null
+            ? parseNumericInput(row.outstandingAmount)
+            : (record.outstandingAmount !== undefined && record.outstandingAmount !== null
+                ? parseNumericInput(record.outstandingAmount)
+                : Math.max(0, total - paid)));
+
+    const isLunas = normalizedStatus === 'lunas' || normalizedStatus === 'paid' || (total > 0 && outstanding <= 0.01);
 
     return {
         ...record,
-        status: isLunas ? 'Lunas' : (record.status ?? 'Belum Lunas'),
-        rawStatus: resolvedStatus,
+        status: isLunas ? 'Lunas' : (paid > 0 && outstanding > 0.01 ? 'Sebagian' : 'Belum Lunas'),
+        rawStatus: rawStatus ?? (isLunas ? 'Lunas' : 'Belum Lunas'),
+        paidAmount: paid,
+        outstandingAmount: outstanding,
         purchaseOrderNumber: row.billNumber ?? record.purchaseOrderNumber ?? '',
         summary: buildPurchaseInvoiceSummary(row, {
             ...record,
             total: totalValue,
         }),
-        summaryStatusTone: isLunas ? 'success' : (record.summaryStatusTone ?? 'warning'),
+        summaryStatusTone: isLunas ? 'success' : 'warning',
         showSecondaryHeaderAction: false,
         showProcessButton: true,
         showProcessButtonOnCreate: false,
         processDisabled: isLunas,
-            processStamp: isLunas ? 'LUNAS' : 'BELUM\nLUNAS',
-            processStampTone: isLunas ? 'green' : 'gray',
+        processStamp: isLunas ? 'LUNAS' : 'BELUM\nLUNAS',
+        processStampTone: isLunas ? 'green' : 'gray',
         subtotal: record.subtotal || totalValue,
         discountPrefix: record.discountPrefix || currencyPrefix,
         total: record.total || totalValue,
