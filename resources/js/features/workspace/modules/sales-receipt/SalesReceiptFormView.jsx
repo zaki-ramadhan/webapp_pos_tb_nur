@@ -15,6 +15,7 @@ import {
     formatCurrencyLabel,
     formatCurrencyValue,
     buildSalesReceiptTotal,
+    applySalesReceiptInvoices,
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 import {
     TransactionDateInput,
@@ -282,8 +283,11 @@ export default function SalesReceiptFormView({
                 onClose={() => setActiveInvoiceModal(null)}
                 onSave={(updatedModalValues) => {
                     setValues((current) => {
+                        const targetId = String(activeInvoiceModal?.id ?? activeInvoiceModal?.invoiceNumber ?? '');
                         const updatedInvoices = (current.invoices ?? []).map((inv) => {
-                            if (inv.id === activeInvoiceModal.id) {
+                            const currentId = String(inv.id ?? '');
+                            const currentNum = String(inv.invoiceNumber ?? '');
+                            if (currentId === targetId || currentNum === targetId || (activeInvoiceModal?.id && currentId === String(activeInvoiceModal.id))) {
                                 const parsedPayment = parseNumericInput(updatedModalValues.payment);
                                 const paymentAmountValue = formatCurrencyLabel(parsedPayment);
                                 return {
@@ -293,24 +297,27 @@ export default function SalesReceiptFormView({
                                     modal: {
                                         ...inv.modal,
                                         ...updatedModalValues,
+                                        id: inv.id,
                                         payment: formatCurrencyValue(parsedPayment),
                                     }
                                 };
                             }
                             return inv;
                         });
-                        return {
-                            ...current,
-                            invoices: updatedInvoices,
-                        };
+                        return applySalesReceiptInvoices(current, updatedInvoices);
                     });
                     setActiveInvoiceModal(null);
                 }}
                 onDelete={() => {
-                    setValues((current) => ({
-                        ...current,
-                        invoices: (current.invoices ?? []).filter((inv) => inv.id !== activeInvoiceModal.id),
-                    }));
+                    setValues((current) => {
+                        const targetId = String(activeInvoiceModal?.id ?? activeInvoiceModal?.invoiceNumber ?? '');
+                        const remainingInvoices = (current.invoices ?? []).filter((inv) => {
+                            const currentId = String(inv.id ?? '');
+                            const currentNum = String(inv.invoiceNumber ?? '');
+                            return currentId !== targetId && currentNum !== targetId;
+                        });
+                        return applySalesReceiptInvoices(current, remainingInvoices);
+                    });
                     setActiveInvoiceModal(null);
                 }}
             />

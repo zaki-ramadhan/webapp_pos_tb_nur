@@ -121,6 +121,7 @@ export function buildSalesReceiptInvoiceFromRecord(record) {
         discount: 'Rp 0',
         payment: formatCurrencyLabel(paidAmount),
         modal: {
+            id: String(record?.id ?? ''),
             invoiceNumber,
             invoiceDate,
             outstanding: formatCurrencyLabel(outstandingAmount),
@@ -160,6 +161,7 @@ export function buildSalesReceiptRecord(record = {}, config) {
             discount: formatCurrencyLabel(discountAmount),
             payment: formatCurrencyLabel(amount),
             modal: {
+                id: String(line.id ?? `invoice-${index + 1}`),
                 invoiceNumber,
                 invoiceDate,
                 outstanding: formatCurrencyLabel(outstandingAmount),

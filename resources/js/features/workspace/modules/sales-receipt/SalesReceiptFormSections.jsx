@@ -141,7 +141,11 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                                     }`.trim()}
                                     onClick={() => {
                                         if (invoice.modal) {
-                                            onOpenInvoiceModal?.(invoice.modal);
+                                            onOpenInvoiceModal?.({
+                                                ...invoice.modal,
+                                                id: invoice.id,
+                                                invoiceNumber: invoice.invoiceNumber,
+                                            });
                                         }
                                     }}
                                 >
