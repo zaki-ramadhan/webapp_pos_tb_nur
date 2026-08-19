@@ -10,6 +10,10 @@ import {
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
+import { getBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import { applyComputedTotals } from '@/features/workspace/modules/sales-document/salesDocumentFormShared';
+import { showSuccessToast } from '@/components/feedback/toast';
+import { formatCurrencyValue } from '@/features/workspace/shared/amountFormatting';
 
 export default function SalesDocumentFormHeader({
     pageId,
@@ -134,12 +138,70 @@ export default function SalesDocumentFormHeader({
                                                 }
                                                 return true;
                                             }}
-                                            onSelectAccount={(record, label) => {
-                                                setValues((current) => ({
-                                                    ...current,
-                                                    __relatedDocumentId: record ? record.id : null,
-                                                    [config.headerSelectLookupField.valueKey]: label ? [label] : [],
-                                                }));
+                                            onSelectAccount={async (record, label) => {
+                                                let populatedItems = [];
+                                                if (record) {
+                                                    try {
+                                                        let doc = record;
+                                                        if ((!doc.lines || doc.lines.length === 0) && (!doc.items || doc.items.length === 0) && record.id) {
+                                                            const isPurchase = String(pageId || '').toLowerCase().includes('purchase');
+                                                            const resourceName = isPurchase ? 'purchase-invoices' : 'sales-invoices';
+                                                            const fetched = await getBackendResource(resourceName, record.id);
+                                                            if (fetched) {
+                                                                doc = fetched;
+                                                            }
+                                                        }
+                                                        const rawLines = doc?.lines ?? doc?.items ?? doc?.details ?? doc?.attributes?.items ?? [];
+                                                        if (Array.isArray(rawLines) && rawLines.length > 0) {
+                                                            populatedItems = rawLines.map((line, idx) => {
+                                                                const qty = parseFloat(line.quantity ?? line.qty ?? 1) || 1;
+                                                                const price = parseFloat(String(line.unit_price ?? line.price ?? 0).replace(/[^\d.-]/g, '')) || 0;
+                                                                const discount = parseFloat(String(line.discount_amount ?? line.discount ?? 0).replace(/[^\d.-]/g, '')) || 0;
+                                                                const total = Math.max(0, qty * price - discount);
+                                                                const prodName = line.description ?? line.product?.name ?? line.name ?? line.item_name ?? line.product_name ?? 'Barang';
+                                                                const prodCode = line.reference_code ?? line.product?.code ?? line.code ?? line.item_code ?? line.product_code ?? '';
+                                                                const unitName = typeof line.unit === 'object' ? (line.unit?.name ?? line.unit?.code ?? '') : (line.unit ?? line.unit_name ?? line.product?.base_unit?.name ?? '');
+                                                                const prodId = line.product_id ?? line.productId ?? line.product?.id ?? null;
+
+                                                                return {
+                                                                    id: `return-item-${Date.now()}-${idx}-${Math.random()}`,
+                                                                    name: prodName,
+                                                                    item: prodName,
+                                                                    code: prodCode,
+                                                                    itemCode: prodCode,
+                                                                    quantity: qty,
+                                                                    unit: unitName,
+                                                                    price: formatCurrencyValue(price),
+                                                                    discount: formatCurrencyValue(discount),
+                                                                    discountValue: formatCurrencyValue(discount),
+                                                                    total: formatCurrencyValue(total),
+                                                                    productId: prodId,
+                                                                    __productId: prodId ? Number(prodId) : null,
+                                                                    __unitId: line.unit_id ?? null,
+                                                                };
+                                                            });
+                                                        }
+                                                    } catch (err) {
+                                                        console.error('Failed to load related invoice items:', err);
+                                                    }
+                                                }
+
+                                                setValues((current) => {
+                                                    const nextState = {
+                                                        ...current,
+                                                        __relatedDocumentId: record ? record.id : null,
+                                                        __relatedDocumentRecord: record,
+                                                        [config.headerSelectLookupField.valueKey]: label ? [label] : [],
+                                                    };
+                                                    if (populatedItems.length > 0) {
+                                                        return applyComputedTotals(nextState, populatedItems);
+                                                    }
+                                                    return nextState;
+                                                });
+
+                                                if (populatedItems.length > 0) {
+                                                    showSuccessToast({ message: `${populatedItems.length} barang dari faktur [${label}] berhasil dimuat.` });
+                                                }
                                             }}
                                         />
                                     </div>

@@ -141,8 +141,8 @@ const defaultSalesReturnConfig = {
     itemSearchPlaceholder: 'Cari/Pilih Barang...',
     itemSearchResource: 'products',
     itemSectionTitle: 'Rincian Barang',
-    itemSectionLeadingAction: { label: 'Ambil' },
-    itemSectionLeadingActionDetailOnly: true,
+    itemSectionLeadingAction: null,
+    itemSectionLeadingActionDetailOnly: false,
     showItemTitleSearchButton: false,
     hideItemSearchField: true,
     itemTable: {
