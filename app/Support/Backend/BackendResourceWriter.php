@@ -182,6 +182,12 @@ class BackendResourceWriter
                     $taxTotal = 0.0;
 
                     foreach ($payload['lines'] as &$line) {
+                        if (empty($line['product_id']) && !empty($line['reference_code'])) {
+                            $line['product_id'] = \App\Domain\Catalog\Models\Product::where('code', $line['reference_code'])->value('id');
+                        }
+                        if (empty($line['product_id']) && !empty($line['description'])) {
+                            $line['product_id'] = \App\Domain\Catalog\Models\Product::where('name', $line['description'])->value('id');
+                        }
                         if (empty($line['unit_id']) && !empty($line['product_id'])) {
                             $prod = \App\Domain\Catalog\Models\Product::find($line['product_id']);
                             if ($prod) {
