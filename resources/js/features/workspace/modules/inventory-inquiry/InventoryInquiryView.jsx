@@ -262,7 +262,13 @@ export default function InventoryInquiryView({ config, pageId }) {
             }
 
             const selectedRows = tableRows.filter((row) => selectedIds.has(row.id));
-            const targetPageId = controlId === 'order' ? 'purchase-order' : 'item-request';
+            const targetPageId = controlId === 'order'
+                ? (pageProps.pages?.['purchase-order'] ? 'purchase-order' : 'purchase-invoice')
+                : (pageProps.pages?.['item-request'] ? 'item-request' : 'purchase-invoice');
+
+            const targetLabel = targetPageId === 'purchase-order'
+                ? 'Pesanan Pembelian'
+                : (targetPageId === 'purchase-invoice' ? 'Faktur Pembelian' : 'Permintaan Barang');
 
             const lineItems = selectedRows.map((row) => {
                 const minLimit = parseNumericInput(row.rawMinimumLimit ?? row.minimumLimit ?? row.minimumStock ?? 1);
@@ -325,7 +331,7 @@ export default function InventoryInquiryView({ config, pageId }) {
 
             showSuccessToast({
                 title: 'Berhasil',
-                message: `Berhasil membuka formulir ${controlId === 'order' ? 'Pesanan Pembelian' : 'Permintaan Barang'} dengan ${selectedRows.length} barang.`,
+                message: `Berhasil membuka formulir ${targetLabel} dengan ${selectedRows.length} barang.`,
             });
         }
     }
