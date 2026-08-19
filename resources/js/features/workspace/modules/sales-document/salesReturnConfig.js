@@ -144,6 +144,8 @@ const defaultSalesReturnConfig = {
     itemSectionLeadingAction: null,
     itemSectionLeadingActionDetailOnly: false,
     showItemTitleSearchButton: false,
+    hideAddItemButton: true,
+    hideItemImportButton: true,
     hideItemSearchField: true,
     itemTable: {
         columns: salesReturnItemColumns,
