@@ -119,7 +119,7 @@ export default function SalesDocumentFormHeader({
                                             value={values[config.headerSelectLookupField.valueKey]?.[0] ?? ''}
                                             placeholder={resolvedPlaceholder}
                                             searchLabel={resolvedSearchLabel}
-                                            queryParams={values.__partnerId ? { customer_id: values.__partnerId, partner_id: values.__partnerId } : {}}
+                                            queryParams={values.__partnerId ? { [isPurchase ? 'supplier_id' : 'customer_id']: values.__partnerId } : {}}
                                              onBeforeOpen={() => {
                                                 if (!values.__partnerId) {
                                                     const partnerLabel = config.labels?.customer || 'Pelanggan';
