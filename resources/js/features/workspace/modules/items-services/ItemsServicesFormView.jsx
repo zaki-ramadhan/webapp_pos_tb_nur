@@ -235,7 +235,7 @@ export default function ItemsServicesFormView({
             setStatus,
             execute: async () => {
                 const payload = {
-                    code: isDetail ? values.code?.trim() : buildGeneratedDocNumber('BRG'),
+                    code: values.code?.trim() ? values.code.trim() : undefined,
                     barcode: values.barcode?.trim() || null,
                     name: values.name?.trim(),
                     product_type: values.kind || 'Persediaan',
