@@ -32,6 +32,26 @@ export function buildSalesReceiptTotalOutstanding(invoices = []) {
     return invoices.reduce((sum, invoice) => sum + parseNumericInput(invoice.outstanding ?? invoice.invoiceTotal), 0);
 }
 
+export function distributePaymentToInvoices(invoices = [], targetAmount = 0) {
+    let remaining = Number(targetAmount);
+    return invoices.map((inv) => {
+        const outstanding = parseNumericInput(inv.outstanding ?? inv.invoiceTotal);
+        const allocated = Math.min(Math.max(0, remaining), outstanding);
+        remaining = Math.max(0, remaining - allocated);
+        const formattedAllocated = formatCurrencyLabel(allocated);
+        return {
+            ...inv,
+            paid: formattedAllocated,
+            payment: formattedAllocated,
+            modal: {
+                ...inv.modal,
+                id: inv.id,
+                payment: formatCurrencyValue(allocated),
+            },
+        };
+    });
+}
+
 export function applySalesReceiptInvoices(values, invoices) {
     const totalAmount = buildSalesReceiptTotal(invoices);
 
