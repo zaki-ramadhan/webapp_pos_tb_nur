@@ -14,6 +14,7 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import Pagination from '@/components/ui/Pagination';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
+import { showSuccessToast } from '@/components/feedback/toast';
 import Checkbox from '@/components/ui/Checkbox';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
@@ -255,23 +256,12 @@ export default function InventoryInquiryView({ config, pageId }) {
                 showSystemErrorModal({
                     title: 'Terjadi Permasalahan pada Pemrosesan',
                     description: 'Silakan perbaiki permasalahan berikut ini:',
-                    message: 'Barang belum ada yang dicentang',
+                    message: 'Barang belum ada yang dicentang. Silakan centang barang yang ingin dipesan terlebih dahulu.',
                 });
                 return;
             }
 
             const selectedRows = tableRows.filter((row) => selectedIds.has(row.id));
-            const hasMissingSupplier = selectedRows.some((row) => !row.supplier || !String(row.supplier).trim());
-
-            if (hasMissingSupplier) {
-                showSystemErrorModal({
-                    title: 'Terjadi Permasalahan pada Pemrosesan',
-                    description: 'Silakan perbaiki permasalahan berikut ini:',
-                    message: 'Belum ada pemasok',
-                });
-                return;
-            }
-
             const targetPageId = controlId === 'order' ? 'purchase-order' : 'item-request';
 
             const lineItems = selectedRows.map((row) => {
@@ -279,14 +269,18 @@ export default function InventoryInquiryView({ config, pageId }) {
                 const currentStock = parseNumericInput(row.rawAvailableStock ?? row.availableStock ?? 0);
                 const qtyNeeded = Math.max(1, minLimit - currentStock);
 
-                const price = parseNumericInput(row.costPrice || row.price || 0);
+                const price = parseNumericInput(row.costPrice || row.price || row.default_purchase_price || 0);
                 const name = row.itemName || row.productName || row.name || '';
                 const code = row.itemCode || row.productCode || row.code || '';
                 const unit = row.unit || row.baseUnit || '';
+                const itemId = String(row.productId || row.itemId || row.id);
                 return {
-                    id: String(row.productId || row.id),
+                    id: itemId,
+                    productId: itemId,
                     name: name,
+                    item: name,
                     code: code,
+                    itemCode: code,
                     quantity: qtyNeeded,
                     unit: unit,
                     price: price,
@@ -297,7 +291,7 @@ export default function InventoryInquiryView({ config, pageId }) {
             });
 
             const firstRow = selectedRows[0];
-            const supplierName = firstRow?.supplier || '';
+            const supplierName = firstRow?.supplier && firstRow.supplier !== '-' ? firstRow.supplier : '';
             const supplierId = firstRow?.supplierId || firstRow?.supplier_id || null;
 
             const matchingSupplier = suppliers.find((s) =>
@@ -323,6 +317,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                     detail: {
                         pageId: targetPageId,
                         mode: 'form',
+                        openForm: true,
                         initialValues,
                     },
                 }),
@@ -330,7 +325,7 @@ export default function InventoryInquiryView({ config, pageId }) {
 
             showSuccessToast({
                 title: 'Berhasil',
-                message: `Berhasil memuat ${selectedIds.size} barang ke formulir ${controlId === 'order' ? 'Pesanan Pembelian' : 'Permintaan Barang'}.`,
+                message: `Berhasil membuka formulir ${controlId === 'order' ? 'Pesanan Pembelian' : 'Permintaan Barang'} dengan ${selectedRows.length} barang.`,
             });
         }
     }
