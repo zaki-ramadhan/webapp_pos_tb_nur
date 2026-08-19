@@ -353,6 +353,8 @@ class InventoryInquiryQueryService
 
                 $deficit = max(0.0, $minimumStock - $currentStock);
 
+                $purchasePrice = (float) ($product->default_purchase_price ?? 0);
+
                 return [
                     'id' => $product->id,
                     'item_id' => $product->id,
@@ -360,11 +362,15 @@ class InventoryInquiryQueryService
                     'item_name' => $product->name,
                     'supplier' => $product->preferredSupplier?->name ?? '-',
                     'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
+                    'cost_price' => $this->formatNumber($purchasePrice),
+                    'default_purchase_price' => $purchasePrice,
+                    'price' => $purchasePrice,
                     'current_stock' => $this->formatNumber($currentStock),
                     'available_stock' => $this->formatNumber($currentStock),
                     'minimum_stock' => $this->formatNumber($minimumStock),
                     'minimum_limit' => $this->formatNumber($minimumStock),
                     'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
+                    'raw_cost_price' => $purchasePrice,
                     'raw_current_stock' => $currentStock,
                     'raw_available_stock' => $currentStock,
                     'raw_minimum_stock' => $minimumStock,
