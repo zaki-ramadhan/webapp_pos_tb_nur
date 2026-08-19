@@ -342,9 +342,13 @@ class InventoryInquiryQueryService
      */
     public function paginateMinimumStocks(array $filters): LengthAwarePaginator
     {
-        $rows = $this->queryProducts($filters)
-            ->map(function (Product $product) use ($filters): ?array {
-                $totals = $this->buildStockTotalsByProduct([$product->id], $filters)[$product->id] ?? [
+        $products = $this->queryProducts($filters);
+        $productIds = $products->pluck('id')->all();
+        $allStockTotals = !empty($productIds) ? $this->buildStockTotalsByProduct($productIds, $filters) : [];
+
+        $rows = $products
+            ->map(function (Product $product) use ($allStockTotals): ?array {
+                $totals = $allStockTotals[$product->id] ?? [
                     'stock_on_hand' => 0.0,
                     'stock_available' => 0.0,
                 ];
