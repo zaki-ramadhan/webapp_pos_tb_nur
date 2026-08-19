@@ -723,6 +723,13 @@ class InventoryInquiryQueryService
         foreach ($operationDocuments as $document) {
             foreach ($document->lines as $line) {
                 $productId = $line->product_id ? (int) $line->product_id : null;
+                if ($productId === null && !empty($line->reference_code)) {
+                    $productId = Product::where('code', $line->reference_code)->value('id');
+                }
+                if ($productId === null && !empty($line->description)) {
+                    $productId = Product::where('name', $line->description)->value('id');
+                }
+
                 $warehouseId = $line->warehouse_id ? (int) $line->warehouse_id : ($document->warehouse_id ? (int) $document->warehouse_id : 1);
 
                 if ($productId === null) {

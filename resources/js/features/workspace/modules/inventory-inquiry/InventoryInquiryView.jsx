@@ -288,9 +288,12 @@ export default function InventoryInquiryView({ config, pageId }) {
                 const code = row.itemCode || row.productCode || row.code || '';
                 const unit = row.unit || row.baseUnit || '';
                 const itemId = String(row.productId || row.itemId || row.id);
+                const parsedProdId = !isNaN(Number(itemId)) ? Number(itemId) : null;
                 return {
                     id: itemId,
                     productId: itemId,
+                    __productId: parsedProdId,
+                    __unitId: row.unitId || row.unit_id || null,
                     name: name,
                     item: name,
                     code: code,
