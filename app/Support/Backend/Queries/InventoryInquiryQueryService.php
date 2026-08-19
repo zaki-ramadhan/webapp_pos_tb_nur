@@ -19,25 +19,20 @@ class InventoryInquiryQueryService
     use HasQueryHelpers;
     /**
      * @param  array<int, int>  $productIds
-     * @param  array<string, mixed>  $filters
      * @return array<int, array{stock_on_hand: float, stock_available: float}>
      */
-    public function buildStockTotalsByProduct(array $productIds = [], array $filters = []): array
+    public function buildStockTotalsByProduct(array $productIds = []): array
     {
-        $mergedFilters = $filters;
+        $filters = [];
         if (count($productIds) === 1) {
-            $mergedFilters['product_id'] = $productIds[0];
+            $filters['product_id'] = $productIds[0];
         }
-        $compositeStockMap = $this->buildStockMap($mergedFilters);
+        $compositeStockMap = $this->buildStockMap($filters);
         
         $onHandTotals = [];
         foreach ($compositeStockMap as $compositeKey => $qty) {
             $parts = explode(':', $compositeKey);
             $pid = (int) ($parts[0] ?? 0);
-            $wid = (int) ($parts[1] ?? 0);
-            if (!empty($filters['warehouse_id']) && $wid !== (int) $filters['warehouse_id']) {
-                continue;
-            }
             if ($pid > 0 && (empty($productIds) || in_array($pid, $productIds, true))) {
                 $onHandTotals[$pid] = (float) ($onHandTotals[$pid] ?? 0.0) + (float) $qty;
             }
@@ -342,52 +337,48 @@ class InventoryInquiryQueryService
      */
     public function paginateMinimumStocks(array $filters): LengthAwarePaginator
     {
-        try {
-            $products = $this->queryProducts($filters);
-            $productIds = $products->pluck('id')->all();
-            $allStockTotals = !empty($productIds) ? $this->buildStockTotalsByProduct($productIds, $filters) : [];
+        $rows = $this->queryProducts($filters)
+            ->map(function (Product $product) use ($filters): ?array {
+                $totals = $this->buildStockTotalsByProduct([$product->id], $filters)[$product->id] ?? [
+                    'stock_on_hand' => 0.0,
+                    'stock_available' => 0.0,
+                ];
 
-            $rows = $products
-                ->map(function (Product $product) use ($allStockTotals): array {
-                    $totals = $allStockTotals[$product->id] ?? [
-                        'stock_on_hand' => 0.0,
-                        'stock_available' => 0.0,
-                    ];
+                $currentStock = (float) $totals['stock_on_hand'];
+                $minimumStock = (float) ($product->minimum_stock ?? 0);
 
-                    $currentStock = (float) $totals['stock_on_hand'];
-                    $minimumStock = (float) ($product->minimum_stock ?? 0);
-                    $deficit = max(0.0, $minimumStock - $currentStock);
+                if ($currentStock > $minimumStock) {
+                    return null;
+                }
 
-                    return [
-                        'id' => $product->id,
-                        'item_id' => $product->id,
-                        'item_code' => $product->code,
-                        'item_name' => $product->name,
-                        'supplier' => ($product->relationLoaded('mainSupplier') && $product->mainSupplier) ? $product->mainSupplier->name : '-',
-                        'supplier_id' => $product->attributes['main_supplier_id'] ?? null,
-                        'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
-                        'current_stock' => $this->formatNumber($currentStock),
-                        'available_stock' => $this->formatNumber($currentStock),
-                        'minimum_stock' => $this->formatNumber($minimumStock),
-                        'minimum_limit' => $this->formatNumber($minimumStock),
-                        'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
-                        'raw_current_stock' => $currentStock,
-                        'raw_available_stock' => $currentStock,
-                        'raw_minimum_stock' => $minimumStock,
-                        'raw_minimum_limit' => $minimumStock,
-                    ];
-                })
-                ->sortBy([
-                    ['supplier', 'asc'],
-                    ['item_name', 'asc'],
-                ])
-                ->values();
+                $deficit = max(0.0, $minimumStock - $currentStock);
 
-            return $this->paginateRows($rows, $filters);
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('paginateMinimumStocks error: ' . $e->getMessage(), ['exception' => $e]);
-            return $this->paginateRows(collect(), $filters);
-        }
+                return [
+                    'id' => $product->id,
+                    'item_id' => $product->id,
+                    'item_code' => $product->code,
+                    'item_name' => $product->name,
+                    'supplier' => $product->preferredSupplier?->name ?? '-',
+                    'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
+                    'current_stock' => $this->formatNumber($currentStock),
+                    'available_stock' => $this->formatNumber($currentStock),
+                    'minimum_stock' => $this->formatNumber($minimumStock),
+                    'minimum_limit' => $this->formatNumber($minimumStock),
+                    'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
+                    'raw_current_stock' => $currentStock,
+                    'raw_available_stock' => $currentStock,
+                    'raw_minimum_stock' => $minimumStock,
+                    'raw_minimum_limit' => $minimumStock,
+                ];
+            })
+            ->filter()
+            ->sortBy([
+                ['supplier', 'asc'],
+                ['item_name', 'asc'],
+            ])
+            ->values();
+
+        return $this->paginateRows($rows, $filters);
     }
 
     /**
@@ -803,25 +794,10 @@ class InventoryInquiryQueryService
      */
     protected function queryProducts(array $filters): Collection
     {
-        $hasMainSupplierCol = \Illuminate\Support\Facades\Schema::hasColumn('products', 'main_supplier_id');
-        $withRelations = ['baseUnit', 'purchaseUnit', 'salesUnit'];
-        if ($hasMainSupplierCol) {
-            $withRelations[] = 'mainSupplier';
-        }
-
         return Product::query()
-            ->with($withRelations)
+            ->with(['baseUnit', 'purchaseUnit', 'salesUnit'])
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
-            ->when(filled($filters['supplier_id'] ?? null) && $hasMainSupplierCol, fn ($query) => $query->where('main_supplier_id', (int) $filters['supplier_id']))
-            ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
-                $search = trim((string) $filters['search']);
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('code', 'like', "%{$search}%")
-                      ->orWhere('barcode', 'like', "%{$search}%");
-                });
-            })
-            ->where(fn ($q) => $q->whereNull('is_active')->orWhere('is_active', true))
+            ->where('is_active', true)
             ->get();
     }
 
