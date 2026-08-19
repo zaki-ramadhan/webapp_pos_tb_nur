@@ -95,6 +95,24 @@ export function buildOperationDocumentTableRows(pageId, records) {
         const isDelivered = shipDate <= todayIso;
         const shippingStatusLabel = isDelivered ? 'Terkirim' : 'Belum Dikirim';
 
+        let invoiceStatus = mapDocumentStatus(record.status ?? 'Draft');
+        if (pageId === 'sales-invoice' || pageId === 'purchase-invoice') {
+            const raw = String(record.status ?? '').trim().toLowerCase();
+            const totalNum = Number(record.total_amount ?? record.subtotal ?? 0);
+            const paidNum = Number(record.paid_amount ?? 0);
+            const outstandingNum = record.outstanding_amount !== undefined && record.outstanding_amount !== null
+                ? Number(record.outstanding_amount)
+                : Math.max(0, totalNum - paidNum);
+
+            if (raw === 'lunas' || raw === 'paid' || (totalNum > 0 && outstandingNum <= 0.01)) {
+                invoiceStatus = 'Lunas';
+            } else if (paidNum > 0 && outstandingNum > 0.01) {
+                invoiceStatus = 'Sebagian';
+            } else {
+                invoiceStatus = 'Belum Lunas';
+            }
+        }
+
         return {
             id: String(record.id),
             __backendRecord: record,
@@ -107,19 +125,19 @@ export function buildOperationDocumentTableRows(pageId, records) {
             customerShort: truncateText(partnerName),
             shipping: record.shipping_method ?? '',
             shippingShort: truncateText(record.shipping_method ?? ''),
-            status: mapDocumentStatus(record.status ?? 'Draft'),
+            status: invoiceStatus,
             requiredIdType: record.metadata?.required_id_type ?? (record.customer?.tax_number ? (String(record.customer.tax_number).length >= 16 ? 'NIK' : 'NPWP') : '-'),
             shippingStatusLabel,
             age: ageDays,
             total: totalText,
-            statusTone: String(record.status ?? '').toLowerCase().includes('lunas') || String(record.status ?? '').toLowerCase().includes('proses')
+            statusTone: invoiceStatus === 'Lunas' || String(record.status ?? '').toLowerCase().includes('proses')
                 ? 'processed'
-                : String(record.status ?? '').toLowerCase().includes('sebagian')
+                : invoiceStatus === 'Sebagian'
                   ? 'partial'
                   : 'pending',
             dateFilter: formatIsoDate(record.entry_date),
             partnerFilter: partnerName,
-            statusFilter: mapDocumentStatus(record.status ?? 'Draft'),
+            statusFilter: invoiceStatus,
             printedStatus: record.metadata?.printed_status === 'Printed' ? 'printed' : 'unprinted',
             returnType: record.metadata?.return_source ?? 'Faktur',
             pageId,
@@ -216,13 +234,39 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         costSearch: '',
         additionalCosts: metadata.additional_costs ?? [],
         advancePayments: metadata.advance_payments ?? [],
-        status: mapDocumentStatus(record.status ?? 'Draft'),
+        status: (() => {
+            if (pageId === 'sales-invoice' || pageId === 'purchase-invoice') {
+                const raw = String(record.status ?? '').trim().toLowerCase();
+                const tot = Number(record.total_amount ?? record.subtotal ?? 0);
+                const pd = Number(record.paid_amount ?? 0);
+                const out = record.outstanding_amount !== undefined && record.outstanding_amount !== null
+                    ? Number(record.outstanding_amount)
+                    : Math.max(0, tot - pd);
+                if (raw === 'lunas' || raw === 'paid' || (tot > 0 && out <= 0.01)) return 'Lunas';
+                if (pd > 0 && out > 0.01) return 'Sebagian';
+                return 'Belum Lunas';
+            }
+            return mapDocumentStatus(record.status ?? 'Draft');
+        })(),
         rawStatus: record.status ?? 'Draft',
-        paidAmount: record.paid_amount ?? 0,
-        outstandingAmount: record.outstanding_amount ?? 0,
+        paidAmount: Number(record.paid_amount ?? 0),
+        outstandingAmount: Number(record.outstanding_amount ?? Math.max(0, (record.total_amount ?? 0) - (record.paid_amount ?? 0))),
         summary: [
             ['Total', `Rp ${formatCurrencyValue(totalValue)}`],
-            ['Status', mapDocumentStatus(record.status ?? 'Draft')],
+            ['Status', (() => {
+                if (pageId === 'sales-invoice' || pageId === 'purchase-invoice') {
+                    const raw = String(record.status ?? '').trim().toLowerCase();
+                    const tot = Number(record.total_amount ?? record.subtotal ?? 0);
+                    const pd = Number(record.paid_amount ?? 0);
+                    const out = record.outstanding_amount !== undefined && record.outstanding_amount !== null
+                        ? Number(record.outstanding_amount)
+                        : Math.max(0, tot - pd);
+                    if (raw === 'lunas' || raw === 'paid' || (tot > 0 && out <= 0.01)) return 'Lunas';
+                    if (pd > 0 && out > 0.01) return 'Sebagian';
+                    return 'Belum Lunas';
+                }
+                return mapDocumentStatus(record.status ?? 'Draft');
+            })()],
         ],
         processedBy: record.related_document?.document_number
             ? {
@@ -231,9 +275,32 @@ export function buildOperationDocumentRecord(record, config, pageId) {
               }
             : null,
         approvalStamp: '',
-        processStamp: record.status ? String(mapDocumentStatus(record.status)).toUpperCase() : '',
+        processStamp: (() => {
+            if (pageId === 'sales-invoice' || pageId === 'purchase-invoice') {
+                const raw = String(record.status ?? '').trim().toLowerCase();
+                const tot = Number(record.total_amount ?? record.subtotal ?? 0);
+                const pd = Number(record.paid_amount ?? 0);
+                const out = record.outstanding_amount !== undefined && record.outstanding_amount !== null
+                    ? Number(record.outstanding_amount)
+                    : Math.max(0, tot - pd);
+                const isPaid = raw === 'lunas' || raw === 'paid' || (tot > 0 && out <= 0.01);
+                return isPaid ? 'LUNAS' : 'BELUM\nLUNAS';
+            }
+            return record.status ? String(mapDocumentStatus(record.status)).toUpperCase() : '';
+        })(),
         showProcessButton: config.showProcessButton ?? false,
-        processDisabled: record.status === 'Lunas',
+        processDisabled: (() => {
+            if (pageId === 'sales-invoice' || pageId === 'purchase-invoice') {
+                const raw = String(record.status ?? '').trim().toLowerCase();
+                const tot = Number(record.total_amount ?? record.subtotal ?? 0);
+                const pd = Number(record.paid_amount ?? 0);
+                const out = record.outstanding_amount !== undefined && record.outstanding_amount !== null
+                    ? Number(record.outstanding_amount)
+                    : Math.max(0, tot - pd);
+                return raw === 'lunas' || raw === 'paid' || (tot > 0 && out <= 0.01);
+            }
+            return record.status === 'Lunas';
+        })(),
         subtotal: `Rp ${formatCurrencyValue(subtotalValue)}`,
         discountValue: metadata.discount_input_value ?? (record.discount_total > 0 ? formatCurrencyValue(record.discount_total) : '0'),
         discountMode: metadata.discount_mode ?? '%',

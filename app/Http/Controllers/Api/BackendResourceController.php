@@ -135,6 +135,31 @@ class BackendResourceController extends Controller
             $entity->setAttribute('status', $computedStatus);
         }
 
+        if (in_array($resource, ['sales-invoices', 'purchase-invoices'], true) && $entity instanceof \App\Domain\Support\Models\OperationDocument) {
+            $paid = (float) ($entity->paid_amount ?? 0.0);
+            $docTotal = (float) ($entity->total_amount ?? 0.0);
+            $outstanding = max(0.00, round($docTotal - $paid, 2));
+
+            if ($docTotal > 0 && $outstanding <= 0.01) {
+                $computedStatus = 'Lunas';
+            } elseif ($paid > 0 && $outstanding > 0.01) {
+                $computedStatus = 'Sebagian';
+            } else {
+                $computedStatus = 'Belum Lunas';
+            }
+
+            if ($entity->status !== $computedStatus || (float) $entity->outstanding_amount !== $outstanding) {
+                \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->where('id', $entity->id)
+                    ->update([
+                        'outstanding_amount' => $outstanding,
+                        'status' => $computedStatus,
+                    ]);
+                $entity->setAttribute('outstanding_amount', $outstanding);
+                $entity->setAttribute('status', $computedStatus);
+            }
+        }
+
         $customRecord = $blueprint->runShow($record);
 
         return response()->json([
