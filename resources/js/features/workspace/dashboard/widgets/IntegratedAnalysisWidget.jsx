@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { MapPin, MessageSquare, Megaphone, Package } from 'lucide-react';
-import { getMetric, WidgetSection, getProductImageUrl, HighlightProductText, AbcCategoryLegend, getBuildingStoreLayoutRecommendation } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
+import { getMetric, WidgetSection, getProductImageUrl, HighlightProductText, AbcCategoryLegend, getBuildingStoreLayoutRecommendation, getBuildingStoreCashierRecommendation } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { IntegratedMatrixChart } from '@/features/workspace/dashboard/analytics/AnalyticsCharts';
 import { AbcTopItemRow } from '@/features/workspace/dashboard/analytics/AnalyticsWidgetRows';
 
@@ -71,13 +71,14 @@ export default function IntegratedAnalysisWidget({
 
     const getStrategyTactic = (antecedentAbc, consequentAbc, antecedentName = '', consequentName = '') => {
         const customLocation = getBuildingStoreLayoutRecommendation(antecedentName, consequentName);
+        const customCashier = getBuildingStoreCashierRecommendation(antecedentName, consequentName, antecedentAbc, consequentAbc);
 
         if (antecedentAbc === 'A' && consequentAbc === 'C') {
             return {
                 title: 'Taktik Jual Silang (Utama → Tambahan)',
                 desc: 'Tempatkan aksesoris di dekat produk inti atau tawarkan langsung sebagai pelengkap saat transaksi untuk memicu pembelian impulsif.',
                 actionDisplay: customLocation,
-                actionCashier: `Tawarkan produk pelengkap ini sebagai opsional hemat saat pelanggan membayar di kasir.`,
+                actionCashier: customCashier,
                 tone: 'blue',
                 bg: 'bg-blue-50 border-blue-200 text-blue-800',
                 badgeBg: 'var(--color-badge-group-a)',
@@ -89,7 +90,7 @@ export default function IntegratedAnalysisWidget({
                 title: 'Taktik Paket Bundling (Utama → Utama)',
                 desc: 'Tawarkan paket bundling dengan potongan harga tipis untuk meningkatkan kuantitas pembelian dalam jumlah besar.',
                 actionDisplay: customLocation,
-                actionCashier: `Berikan penawaran diskon potongan langsung jika kedua produk dibeli secara bersamaan.`,
+                actionCashier: customCashier,
                 tone: 'blue',
                 bg: 'bg-indigo-50 border-indigo-200 text-indigo-800',
                 badgeBg: 'var(--color-badge-group-a-65)',
@@ -99,9 +100,9 @@ export default function IntegratedAnalysisWidget({
         if (antecedentAbc === 'B' && consequentAbc === 'B') {
             return {
                 title: 'Taktik Paket Produk (Stabil → Stabil)',
-                desc: 'Buat paket bundling harian di area kasir untuk mempercepat perputaran produk pelengkap yang stabil.',
+                desc: 'Buat paket penawaran di area kasir untuk mempercepat perputaran produk pelengkap yang stabil.',
                 actionDisplay: customLocation,
-                actionCashier: `Ingatkan pelanggan mengenai ketersediaan paket belanja hemat harian untuk kombinasi produk ini.`,
+                actionCashier: customCashier,
                 tone: 'blue',
                 bg: 'bg-sky-50 border-sky-200 text-sky-800',
                 badgeBg: 'var(--color-badge-group-a-40)',
@@ -109,10 +110,10 @@ export default function IntegratedAnalysisWidget({
             };
         }
         return {
-            title: 'Taktik Penataan Rak Display',
-            desc: 'Posisikan kedua barang ini berdekatan di rak display agar pelanggan dapat dengan mudah menemukannya bersama.',
+            title: 'Taktik Penataan Rak & Penawaran Pelengkap',
+            desc: 'Posisikan kedua barang ini berdekatan atau tawarkan saat transaksi agar pelanggan dapat dengan mudah melengkapi kebutuhannya.',
             actionDisplay: customLocation,
-            actionCashier: `Gunakan gantungan promo / label harga bertuliskan "Paket Combo" di rak display toko.`,
+            actionCashier: customCashier,
             tone: 'slate',
             bg: 'bg-slate-50 border-slate-200 text-slate-700',
             badgeBg: 'var(--color-badge-group-a-18)',

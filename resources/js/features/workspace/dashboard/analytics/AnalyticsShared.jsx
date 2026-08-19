@@ -1,4 +1,4 @@
-export { parsePercentValue, formatCompactLabel, getMetric, getProductImageUrl, getBuildingStoreLayoutRecommendation } from './analyticsUtils';
+export { parsePercentValue, formatCompactLabel, getMetric, getProductImageUrl, getBuildingStoreLayoutRecommendation, getBuildingStoreCashierRecommendation } from './analyticsUtils';
 
 export function HighlightProductText({ text, itemA, itemAId, itemB, itemBId }) {
     if (!text) return null;
