@@ -17,6 +17,7 @@ class Product extends DomainModel
         'base_unit_id',
         'purchase_unit_id',
         'sales_unit_id',
+        'main_supplier_id',
         'code',
         'barcode',
         'name',
@@ -37,12 +38,35 @@ class Product extends DomainModel
 
     public function getMainSupplierAttribute(): ?array
     {
+        if ($this->relationLoaded('mainSupplier') && $this->mainSupplier) {
+            return [
+                [
+                    'id' => $this->mainSupplier->id,
+                    'label' => sprintf('%s - %s', $this->mainSupplier->code, $this->mainSupplier->name),
+                    'name' => $this->mainSupplier->name,
+                    'code' => $this->mainSupplier->code,
+                ],
+            ];
+        }
+        if ($this->main_supplier_id) {
+            $sup = \App\Domain\Partner\Models\Supplier::find($this->main_supplier_id);
+            if ($sup) {
+                return [
+                    [
+                        'id' => $sup->id,
+                        'label' => sprintf('%s - %s', $sup->code, $sup->name),
+                        'name' => $sup->name,
+                        'code' => $sup->code,
+                    ],
+                ];
+            }
+        }
         return null;
     }
 
     public function getMainSupplierIdAttribute(): ?int
     {
-        return null;
+        return $this->main_supplier_id ? (int) $this->main_supplier_id : null;
     }
 
     protected static function boot()
@@ -107,5 +131,15 @@ class Product extends DomainModel
     public function salesUnit(): BelongsTo
     {
         return $this->belongsTo(Unit::class, 'sales_unit_id');
+    }
+
+    public function mainSupplier(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Partner\Models\Supplier::class, 'main_supplier_id');
+    }
+
+    public function preferredSupplier(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Partner\Models\Supplier::class, 'main_supplier_id');
     }
 }
