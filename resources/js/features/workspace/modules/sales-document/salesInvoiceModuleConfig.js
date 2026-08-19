@@ -10,6 +10,7 @@ import {
     mergeSalesDocumentConfigWithPage,
     sharedDetailDockActions,
 } from '@/features/workspace/modules/sales-document/salesDocumentConfigCore';
+import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 
 const todayDisplayDate = buildTodayDisplayDate();
