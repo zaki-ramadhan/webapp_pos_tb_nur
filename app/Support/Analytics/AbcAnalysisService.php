@@ -117,6 +117,7 @@ class AbcAnalysisService
             $sharePct = $totalRevenue > 0 ? ($revenue / $totalRevenue) * 100 : 0;
 
             $topItems[] = [
+                'id' => $row->product_id,
                 'name' => $row->product_name,
                 'code' => $row->product_code,
                 'unitsSold' => number_format($row->units_sold, 0, ',', '.') . ($row->unit_name ? (' ' . $row->unit_name) : ''),
