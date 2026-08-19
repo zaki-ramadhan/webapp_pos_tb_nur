@@ -819,7 +819,7 @@ class InventoryInquiryQueryService
             ->with($withRelations)
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
             ->when(filled($filters['supplier_id'] ?? null) && $hasMainSupplierCol, fn ($query) => $query->where('main_supplier_id', (int) $filters['supplier_id']))
-            ->where('is_active', true)
+            ->where(fn ($q) => $q->whereNull('is_active')->orWhere('is_active', true))
             ->get();
     }
 
