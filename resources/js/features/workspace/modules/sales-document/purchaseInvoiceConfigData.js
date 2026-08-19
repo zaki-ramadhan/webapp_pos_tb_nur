@@ -149,15 +149,7 @@ export const defaultPurchaseInvoiceConfig = {
         exchangeRate: 'Kurs',
     },
     numberingOptions: ['Faktur Pembelian'],
-    headerSelectLookupField: {
-        label: 'Rujukan Rincian',
-        required: true,
-        selectValueKey: 'invoiceSource',
-        valueKey: 'invoiceSourceReferences',
-        options: ['Faktur', 'Penerimaan', 'Tanpa Faktur'],
-        placeholder: 'Cari/Pilih Faktur...',
-        searchLabel: 'Cari faktur',
-    },
+    headerSelectLookupField: null,
     customerPlaceholder: 'Cari/Pilih Pemasok...',
     customerSearchLabel: 'Cari pemasok',
     table: {
