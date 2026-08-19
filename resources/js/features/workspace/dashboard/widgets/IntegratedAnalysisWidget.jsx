@@ -1,8 +1,28 @@
 import { useState, useMemo } from 'react';
-import { MapPin, MessageSquare, Megaphone, Package } from 'lucide-react';
+import { MapPin, MessageSquare, Megaphone, Package, Image as ImageIcon } from 'lucide-react';
 import { getMetric, WidgetSection, getProductImageUrl, HighlightProductText, AbcCategoryLegend, getBuildingStoreLayoutRecommendation, getBuildingStoreCashierRecommendation } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { IntegratedMatrixChart } from '@/features/workspace/dashboard/analytics/AnalyticsCharts';
 import { AbcTopItemRow } from '@/features/workspace/dashboard/analytics/AnalyticsWidgetRows';
+
+function ProductMiniThumbnail({ name }) {
+    const [imgError, setImgError] = useState(false);
+    const imageUrl = getProductImageUrl(name);
+
+    return (
+        <div className="h-6 w-6 rounded-[3px] border border-slate-200 bg-slate-100 flex items-center justify-center text-slate-400 overflow-hidden shrink-0">
+            {imageUrl && !imgError ? (
+                <img
+                    src={imageUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    onError={() => setImgError(true)}
+                />
+            ) : (
+                <ImageIcon className="h-3.5 w-3.5 text-slate-400" />
+            )}
+        </div>
+    );
+}
 
 export default function IntegratedAnalysisWidget({
     widget,
@@ -196,11 +216,7 @@ export default function IntegratedAnalysisWidget({
                                                     }}
                                                     className="group inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200/80 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-blue-50/80 hover:border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 text-left"
                                                 >
-                                                    <img
-                                                        src={getProductImageUrl(rule.antecedent)}
-                                                        alt=""
-                                                        className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
-                                                    />
+                                                    <ProductMiniThumbnail name={rule.antecedent} />
                                                     <span className="text-sm font-normal text-slate-800 group-hover:text-blue-900 truncate max-w-[180px] sm:max-w-[320px] lg:max-w-[420px]">
                                                         {rule.antecedent}
                                                     </span>
@@ -208,7 +224,7 @@ export default function IntegratedAnalysisWidget({
                                                         <span
                                                             className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0"
                                                             style={{ backgroundColor: rule.antecedentColor }}
-                                                            title={`Kategori ${rule.antecedentAbc}${itemAData ? ` — Omzet: ${itemAData.revenue} (${itemAData.share} kontribusi)` : ''}`}
+                                                            title={`Kategori ${rule.antecedentAbc}${itemAData ? ` — Omzet: ${(itemAData.revenue || '').replace(/,00$/, '')} (${itemAData.share} kontribusi)` : ''}`}
                                                         >
                                                             Kat. {rule.antecedentAbc}{itemAData?.share ? ` • ${itemAData.share}` : ''}
                                                         </span>
@@ -236,11 +252,7 @@ export default function IntegratedAnalysisWidget({
                                                     }}
                                                     className="group inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200/80 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-blue-50/80 hover:border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 text-left"
                                                 >
-                                                    <img
-                                                        src={getProductImageUrl(rule.consequent)}
-                                                        alt=""
-                                                        className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
-                                                    />
+                                                    <ProductMiniThumbnail name={rule.consequent} />
                                                     <span className="text-sm font-normal text-slate-800 group-hover:text-blue-900 truncate max-w-[180px] sm:max-w-[320px] lg:max-w-[420px]">
                                                         {rule.consequent}
                                                     </span>
