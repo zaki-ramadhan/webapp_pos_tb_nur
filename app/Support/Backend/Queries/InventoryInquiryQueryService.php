@@ -800,10 +800,16 @@ class InventoryInquiryQueryService
      */
     protected function queryProducts(array $filters): Collection
     {
+        $hasMainSupplierCol = \Illuminate\Support\Facades\Schema::hasColumn('products', 'main_supplier_id');
+        $withRelations = ['baseUnit', 'purchaseUnit', 'salesUnit'];
+        if ($hasMainSupplierCol) {
+            $withRelations[] = 'mainSupplier';
+        }
+
         return Product::query()
-            ->with(['baseUnit', 'purchaseUnit', 'salesUnit', 'mainSupplier'])
+            ->with($withRelations)
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
-            ->when(filled($filters['supplier_id'] ?? null), fn ($query) => $query->where('main_supplier_id', (int) $filters['supplier_id']))
+            ->when(filled($filters['supplier_id'] ?? null) && $hasMainSupplierCol, fn ($query) => $query->where('main_supplier_id', (int) $filters['supplier_id']))
             ->where('is_active', true)
             ->get();
     }

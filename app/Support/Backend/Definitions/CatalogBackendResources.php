@@ -105,10 +105,12 @@ class CatalogBackendResources
                 label: 'Products',
                 searchColumns: ['code', 'barcode', 'name', 'product_type'],
                 modelClass: Product::class,
-                with: [
-                    'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'mainSupplier', 'attachments',
+                with: array_values(array_filter([
+                    'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit',
+                    \Illuminate\Support\Facades\Schema::hasColumn('products', 'main_supplier_id') ? 'mainSupplier' : null,
+                    'attachments',
                     'groupItems', 'groupItems.childProduct', 'groupItems.unit',
-                ],
+                ])),
                 storeRules: self::productRules(),
                 updateRules: fn (Model $record) => self::productRules($record),
                 syncUsing: function (Model $record, array $payload): void {
