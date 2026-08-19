@@ -364,7 +364,7 @@ class InventoryInquiryQueryService
                     'item_code' => $product->code,
                     'item_name' => $product->name,
                     'supplier' => $product->mainSupplier?->name ?? $product->preferredSupplier?->name ?? '-',
-                    'supplier_id' => $product->main_supplier_id,
+                    'supplier_id' => $product->attributes['main_supplier_id'] ?? null,
                     'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
                     'current_stock' => $this->formatNumber($currentStock),
                     'available_stock' => $this->formatNumber($currentStock),
