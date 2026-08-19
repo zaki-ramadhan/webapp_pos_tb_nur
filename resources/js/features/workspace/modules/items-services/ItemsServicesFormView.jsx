@@ -339,7 +339,7 @@ export default function ItemsServicesFormView({
                             })
                         );
                     }
-                    setValues(buildFormValues(config, null));
+                    setValues(buildItemsServicesFormValues(config, null));
                 }
             },
         });
