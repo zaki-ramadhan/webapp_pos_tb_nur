@@ -368,9 +368,7 @@ class InventoryInquiryQueryService
                     $minimumStock = (float) ($product->minimum_stock ?? 0);
                     $deficit = max(0.0, $minimumStock - $currentStock);
 
-                    $supplierName = ($product->relationLoaded('mainSupplier') && $product->mainSupplier)
-                        ? $product->mainSupplier->name
-                        : ($latestSupplierMap->get($product->id) ?? '-');
+                    $supplierName = $latestSupplierMap->get($product->id) ?? '-';
 
                     return [
                         'id' => $product->id,
@@ -378,7 +376,6 @@ class InventoryInquiryQueryService
                         'item_code' => $product->code,
                         'item_name' => $product->name,
                         'supplier' => $supplierName,
-                        'supplier_id' => $product->main_supplier_id ?? null,
                         'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
                         'current_stock' => $this->formatNumber($currentStock),
                         'available_stock' => $this->formatNumber($currentStock),
@@ -818,9 +815,8 @@ class InventoryInquiryQueryService
     protected function queryProducts(array $filters): Collection
     {
         return Product::query()
-            ->with(['baseUnit', 'purchaseUnit', 'salesUnit', 'mainSupplier'])
+            ->with(['baseUnit', 'purchaseUnit', 'salesUnit'])
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
-            ->when(filled($filters['supplier_id'] ?? null), fn ($query) => $query->where('main_supplier_id', (int) $filters['supplier_id']))
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
                 $query->where(function ($q) use ($search) {
