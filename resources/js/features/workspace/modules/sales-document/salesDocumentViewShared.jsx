@@ -22,7 +22,9 @@ import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail, handlers, pageId }) {
     const secondaryActionLabel = values.secondaryHeaderActionLabel ?? config.secondaryActionLabel;
     const showSecondaryHeaderAction = Boolean(secondaryActionLabel) && (values.showSecondaryHeaderAction ?? config.showSecondaryHeaderAction ?? false);
-    const showProcessButton = isDetail ? values.showProcessButton : (values.showProcessButtonOnCreate ?? config.showProcessButtonOnCreate ?? false);
+    const showProcessButton = isDetail
+        ? (values.showProcessButton ?? config.showProcessButton ?? true)
+        : (values.showProcessButtonOnCreate ?? config.showProcessButtonOnCreate ?? true);
     const showTakeButton = values.showHeaderTakeButton ?? config.showHeaderTakeButton ?? true;
 
     const takeRef = useRef(null);
