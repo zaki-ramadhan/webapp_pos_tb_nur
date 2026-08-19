@@ -25,14 +25,18 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
                 ? null
                 : config.itemSectionLeadingAction ?? (!isDetail ? { label: 'Tambah Item', onClick: handlers?.onCreateItem } : null);
 
-    const itemLeadingAction = showFetchButtonForReturn
-        ? { label: 'Ambil', onClick: handlers?.onOpenFetchItemsModal }
-        : baseLeadingAction;
+    const itemLeadingAction = hideAddItem
+        ? null
+        : (showFetchButtonForReturn
+            ? { label: 'Ambil', onClick: handlers?.onOpenFetchItemsModal }
+            : baseLeadingAction);
 
     const itemRowClick = canOpenItemModal ? config.onOpenItemModal : handlers?.onEditItem;
-    const itemTitleClick = showFetchButtonForReturn
-        ? handlers?.onOpenFetchItemsModal
-        : (canOpenItemModal ? config.onOpenItemModal : handlers?.onCreateItem);
+    const itemTitleClick = hideAddItem
+        ? null
+        : (showFetchButtonForReturn
+            ? handlers?.onOpenFetchItemsModal
+            : (canOpenItemModal ? config.onOpenItemModal : handlers?.onCreateItem));
 
     const importButton = !isDetail && handlers?.onImportClick && !hideImport ? (
         <button
