@@ -239,7 +239,15 @@ export default function InventoryInquiryView({ config, pageId }) {
 
 
 
-
+    useEffect(() => {
+        if (error && !isAccessRestricted && (!isItemLocation || hasTarget)) {
+            showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                message: typeof error === 'string' ? error : (error.message || 'Terjadi kesalahan saat memuat data.'),
+            });
+        }
+    }, [error, isAccessRestricted, isItemLocation, hasTarget]);
 
     function handleButtonClick(controlId) {
         if (controlId === 'order' || controlId === 'request') {

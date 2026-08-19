@@ -30,6 +30,7 @@ class CatalogBackendResources
                     'code' => ['nullable', 'string', 'max:50', 'unique:units,code'],
                     'name' => ['required', 'string', 'max:120'],
                     'precision' => ['nullable', 'integer', 'min:0', 'max:6'],
+                    'tax_reference_code' => ['nullable', 'string', 'max:100'],
                     'is_active' => ['sometimes', 'boolean'],
                 ],
                 updateRules: fn (Model $record) => [
@@ -37,6 +38,7 @@ class CatalogBackendResources
                     'code' => ['nullable', 'string', 'max:50', Rule::unique('units', 'code')->ignore($record)],
                     'name' => ['required', 'string', 'max:120'],
                     'precision' => ['nullable', 'integer', 'min:0', 'max:6'],
+                    'tax_reference_code' => ['nullable', 'string', 'max:100'],
                     'is_active' => ['sometimes', 'boolean'],
                 ],
             ),
@@ -105,12 +107,10 @@ class CatalogBackendResources
                 label: 'Products',
                 searchColumns: ['code', 'barcode', 'name', 'product_type'],
                 modelClass: Product::class,
-                with: array_values(array_filter([
-                    'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit',
-                    \Illuminate\Support\Facades\Schema::hasColumn('products', 'main_supplier_id') ? 'mainSupplier' : null,
-                    'attachments',
+                with: [
+                    'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'attachments',
                     'groupItems', 'groupItems.childProduct', 'groupItems.unit',
-                ])),
+                ],
                 storeRules: self::productRules(),
                 updateRules: fn (Model $record) => self::productRules($record),
                 syncUsing: function (Model $record, array $payload): void {
@@ -244,7 +244,7 @@ class CatalogBackendResources
             'cogs_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'purchase_return_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'uninvoiced_purchase_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
-            'code' => ['nullable', 'string', 'max:50', $record ? Rule::unique('products', 'code')->ignore($record) : 'unique:products,code'],
+            'code' => ['required', 'string', 'max:50', $record ? Rule::unique('products', 'code')->ignore($record) : 'unique:products,code'],
             'barcode' => ['nullable', 'string', 'max:100', $record ? Rule::unique('products', 'barcode')->ignore($record) : 'unique:products,barcode'],
             'name' => ['required', 'string', 'max:160'],
             'product_type' => ['required', 'string', 'max:50'],
