@@ -33,7 +33,14 @@ class Product extends DomainModel
 
     protected array $searchable = ['code', 'barcode', 'name', 'product_type'];
 
+    protected $appends = ['main_supplier', 'main_supplier_id'];
+
     public function getMainSupplierAttribute(): ?array
+    {
+        return null;
+    }
+
+    public function getMainSupplierIdAttribute(): ?int
     {
         return null;
     }
