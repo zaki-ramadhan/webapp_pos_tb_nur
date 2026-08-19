@@ -242,7 +242,7 @@ class CatalogBackendResources
             'cogs_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'purchase_return_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'uninvoiced_purchase_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
-            'code' => ['required', 'string', 'max:50', $record ? Rule::unique('products', 'code')->ignore($record) : 'unique:products,code'],
+            'code' => ['nullable', 'string', 'max:50', $record ? Rule::unique('products', 'code')->ignore($record) : 'unique:products,code'],
             'barcode' => ['nullable', 'string', 'max:100', $record ? Rule::unique('products', 'barcode')->ignore($record) : 'unique:products,barcode'],
             'name' => ['required', 'string', 'max:160'],
             'product_type' => ['required', 'string', 'max:50'],
