@@ -342,53 +342,58 @@ class InventoryInquiryQueryService
      */
     public function paginateMinimumStocks(array $filters): LengthAwarePaginator
     {
-        $products = $this->queryProducts($filters);
-        $productIds = $products->pluck('id')->all();
-        $allStockTotals = !empty($productIds) ? $this->buildStockTotalsByProduct($productIds, $filters) : [];
+        try {
+            $products = $this->queryProducts($filters);
+            $productIds = $products->pluck('id')->all();
+            $allStockTotals = !empty($productIds) ? $this->buildStockTotalsByProduct($productIds, $filters) : [];
 
-        $rows = $products
-            ->map(function (Product $product) use ($allStockTotals): ?array {
-                $totals = $allStockTotals[$product->id] ?? [
-                    'stock_on_hand' => 0.0,
-                    'stock_available' => 0.0,
-                ];
+            $rows = $products
+                ->map(function (Product $product) use ($allStockTotals): ?array {
+                    $totals = $allStockTotals[$product->id] ?? [
+                        'stock_on_hand' => 0.0,
+                        'stock_available' => 0.0,
+                    ];
 
-                $currentStock = (float) $totals['stock_on_hand'];
-                $minimumStock = (float) ($product->minimum_stock ?? 0);
+                    $currentStock = (float) $totals['stock_on_hand'];
+                    $minimumStock = (float) ($product->minimum_stock ?? 0);
 
-                if ($currentStock > $minimumStock) {
-                    return null;
-                }
+                    if ($currentStock > $minimumStock) {
+                        return null;
+                    }
 
-                $deficit = max(0.0, $minimumStock - $currentStock);
+                    $deficit = max(0.0, $minimumStock - $currentStock);
 
-                return [
-                    'id' => $product->id,
-                    'item_id' => $product->id,
-                    'item_code' => $product->code,
-                    'item_name' => $product->name,
-                    'supplier' => $product->mainSupplier?->name ?? $product->preferredSupplier?->name ?? '-',
-                    'supplier_id' => $product->attributes['main_supplier_id'] ?? null,
-                    'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
-                    'current_stock' => $this->formatNumber($currentStock),
-                    'available_stock' => $this->formatNumber($currentStock),
-                    'minimum_stock' => $this->formatNumber($minimumStock),
-                    'minimum_limit' => $this->formatNumber($minimumStock),
-                    'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
-                    'raw_current_stock' => $currentStock,
-                    'raw_available_stock' => $currentStock,
-                    'raw_minimum_stock' => $minimumStock,
-                    'raw_minimum_limit' => $minimumStock,
-                ];
-            })
-            ->filter()
-            ->sortBy([
-                ['supplier', 'asc'],
-                ['item_name', 'asc'],
-            ])
-            ->values();
+                    return [
+                        'id' => $product->id,
+                        'item_id' => $product->id,
+                        'item_code' => $product->code,
+                        'item_name' => $product->name,
+                        'supplier' => ($product->relationLoaded('mainSupplier') && $product->mainSupplier) ? $product->mainSupplier->name : '-',
+                        'supplier_id' => $product->attributes['main_supplier_id'] ?? null,
+                        'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
+                        'current_stock' => $this->formatNumber($currentStock),
+                        'available_stock' => $this->formatNumber($currentStock),
+                        'minimum_stock' => $this->formatNumber($minimumStock),
+                        'minimum_limit' => $this->formatNumber($minimumStock),
+                        'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
+                        'raw_current_stock' => $currentStock,
+                        'raw_available_stock' => $currentStock,
+                        'raw_minimum_stock' => $minimumStock,
+                        'raw_minimum_limit' => $minimumStock,
+                    ];
+                })
+                ->filter()
+                ->sortBy([
+                    ['supplier', 'asc'],
+                    ['item_name', 'asc'],
+                ])
+                ->values();
 
-        return $this->paginateRows($rows, $filters);
+            return $this->paginateRows($rows, $filters);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('paginateMinimumStocks error: ' . $e->getMessage(), ['exception' => $e]);
+            return $this->paginateRows(collect(), $filters);
+        }
     }
 
     /**
