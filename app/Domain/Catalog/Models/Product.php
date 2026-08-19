@@ -17,6 +17,7 @@ class Product extends DomainModel
         'base_unit_id',
         'purchase_unit_id',
         'sales_unit_id',
+        'main_supplier_id',
         'code',
         'barcode',
         'name',
@@ -33,15 +34,19 @@ class Product extends DomainModel
 
     protected array $searchable = ['code', 'barcode', 'name', 'product_type'];
 
-    protected $appends = ['main_supplier', 'main_supplier_id'];
-
     public function getMainSupplierAttribute(): ?array
     {
-        return null;
-    }
-
-    public function getMainSupplierIdAttribute(): ?int
-    {
+        $supplier = $this->relationLoaded('mainSupplier') ? $this->mainSupplier : null;
+        if ($supplier) {
+            return [
+                [
+                    'id' => $supplier->id,
+                    'label' => sprintf('%s - %s', $supplier->code, $supplier->name),
+                    'name' => $supplier->name,
+                    'code' => $supplier->code,
+                ],
+            ];
+        }
         return null;
     }
 
@@ -107,5 +112,10 @@ class Product extends DomainModel
     public function salesUnit(): BelongsTo
     {
         return $this->belongsTo(Unit::class, 'sales_unit_id');
+    }
+
+    public function mainSupplier(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Partner\Models\Supplier::class, 'main_supplier_id');
     }
 }
