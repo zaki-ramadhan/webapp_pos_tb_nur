@@ -34,7 +34,7 @@ class Product extends DomainModel
 
     protected array $searchable = ['code', 'barcode', 'name', 'product_type'];
 
-    protected $appends = ['main_supplier', 'main_supplier_id'];
+    protected $appends = ['main_supplier'];
 
     public function getMainSupplierAttribute(): ?array
     {
@@ -48,8 +48,10 @@ class Product extends DomainModel
                 ],
             ];
         }
-        if ($this->main_supplier_id) {
-            $sup = \App\Domain\Partner\Models\Supplier::find($this->main_supplier_id);
+
+        $supId = $this->attributes['main_supplier_id'] ?? null;
+        if ($supId) {
+            $sup = \App\Domain\Partner\Models\Supplier::find($supId);
             if ($sup) {
                 return [
                     [
@@ -66,7 +68,9 @@ class Product extends DomainModel
 
     public function getMainSupplierIdAttribute(): ?int
     {
-        return $this->main_supplier_id ? (int) $this->main_supplier_id : null;
+        return isset($this->attributes['main_supplier_id']) && $this->attributes['main_supplier_id'] !== null
+            ? (int) $this->attributes['main_supplier_id']
+            : null;
     }
 
     protected static function boot()
