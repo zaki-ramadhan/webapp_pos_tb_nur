@@ -443,26 +443,66 @@ export default function SalesDocumentFormView({
                 setEditCostOpen(true);
             },
             onProcessPembayaran: (formValues) => {
-                const recordId = formValues.__backendRecordId || formValues.id;
-                if (!recordId) return;
+                const recordId = formValues.__backendRecordId || formValues.id || activeRecordId;
 
                 if (pageId === 'purchase-invoice') {
-                    window.__pendingImportPurchaseInvoice = { id: recordId };
+                    const supplierName = formValues.customer?.[0] || formValues.supplier?.[0] || formValues.supplierName || '';
+                    const supplierId = formValues.__partnerId || formValues.supplier_id || formValues.customer_id || null;
+                    const invoiceDocNumber = formValues.documentNumber || formValues.number || '';
+                    const invoiceDate = formValues.entryDate || '';
+                    const rawTotal = formValues.total || formValues.subtotal || '0';
+                    const cleanTotal = String(rawTotal).trim();
+                    const totalLabel = cleanTotal.startsWith('Rp') ? cleanTotal : (cleanTotal ? `Rp ${cleanTotal}` : 'Rp 0');
+
+                    const invoiceItem = {
+                        id: String(recordId || invoiceDocNumber || 'invoice-1'),
+                        __lineId: null,
+                        __relatedDocumentId: recordId || null,
+                        number: invoiceDocNumber,
+                        formNumber: invoiceDocNumber,
+                        date: invoiceDate,
+                        total: totalLabel,
+                        outstanding: totalLabel,
+                        pay: totalLabel,
+                        discount: 'Rp 0',
+                        payment: totalLabel,
+                        pphChecked: false,
+                        pphLabel: '',
+                        pphAmount: 'Rp 0',
+                        withholdingProof: '',
+                        discountAccount: '',
+                        discountValue: '',
+                        discountNotes: '',
+                        department: '',
+                    };
+
+                    const initialValues = {
+                        __supplierId: supplierId,
+                        payee: supplierName ? [supplierName] : [],
+                        invoices: [invoiceItem],
+                        invoiceRecordId: recordId || null,
+                    };
+
                     window.dispatchEvent(
                         new CustomEvent('workspace:open-page', {
                             detail: {
                                 pageId: 'purchase-payment',
                                 targetTabId: 'purchase-payment-create',
+                                mode: 'form',
                                 openForm: true,
+                                initialValues,
                             },
                         })
                     );
-                    window.dispatchEvent(
-                        new CustomEvent('workspace:import-purchase-invoice', {
-                            detail: { id: recordId },
-                        })
-                    );
+                    if (recordId) {
+                        window.dispatchEvent(
+                            new CustomEvent('workspace:import-purchase-invoice', {
+                                detail: { id: recordId },
+                            })
+                        );
+                    }
                 } else {
+                    if (!recordId) return;
                     window.__pendingImportSalesInvoice = { id: recordId };
                     window.dispatchEvent(
                         new CustomEvent('workspace:open-page', {

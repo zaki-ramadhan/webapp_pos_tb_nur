@@ -71,6 +71,67 @@ export default function PurchasePaymentFormView({
         setActiveSectionId((isDetail ? config.detailSectionTabs : config.sectionTabs)?.[0]?.id ?? 'details');
     }, [activeRecordId]);
 
+    const applyInitialValues = useCallback((initVals) => {
+        if (!initVals || isDetail) return;
+        setValues((current) => {
+            let nextInvoices = current.invoices ?? [];
+            if (initVals.invoices?.length) {
+                const incomingIds = new Set(initVals.invoices.map((i) => String(i.id)));
+                nextInvoices = [
+                    ...nextInvoices.filter((i) => !incomingIds.has(String(i.id))),
+                    ...initVals.invoices,
+                ];
+            }
+            const updated = applyPurchasePaymentInvoices(current, nextInvoices);
+            return {
+                ...updated,
+                __supplierId: initVals.__supplierId ?? updated.__supplierId,
+                payee: initVals.payee?.length ? initVals.payee : (initVals.supplier ? [initVals.supplier] : updated.payee),
+            };
+        });
+
+        if (initVals.invoiceRecordId) {
+            getBackendResource('purchase-invoices', initVals.invoiceRecordId).then((res) => {
+                const invoiceRecord = res?.data;
+                if (invoiceRecord) {
+                    const supplierName = invoiceRecord.supplier?.name || invoiceRecord.customer?.name || invoiceRecord.contact?.name || invoiceRecord.supplier_name;
+                    const supplierId = invoiceRecord.supplier_id || invoiceRecord.customer_id || invoiceRecord.contact_id;
+                    setValues((current) => {
+                        const existing = current.invoices ?? [];
+                        const withoutCurrent = existing.filter((inv) => String(inv.id) !== String(invoiceRecord.id) && String(inv.__relatedDocumentId) !== String(invoiceRecord.id));
+                        const updated = applyPurchasePaymentInvoices(current, [
+                            ...withoutCurrent,
+                            buildPurchasePaymentInvoiceFromRecord(invoiceRecord),
+                        ]);
+                        return {
+                            ...updated,
+                            __supplierId: supplierId ?? updated.__supplierId,
+                            payee: supplierName ? [supplierName] : updated.payee,
+                        };
+                    });
+                }
+            }).catch(() => null);
+        }
+    }, [isDetail, setValues]);
+
+    useEffect(() => {
+        if (!isDetail && typeof window !== 'undefined' && window.__pendingInitialValues?.['purchase-payment']) {
+            const pending = window.__pendingInitialValues['purchase-payment'];
+            window.__pendingInitialValues['purchase-payment'] = null;
+            applyInitialValues(pending);
+        }
+    }, [isDetail, applyInitialValues, activeLevel2Tab]);
+
+    useEffect(() => {
+        function handleInitialValues(e) {
+            if (e.detail?.pageId === 'purchase-payment' && e.detail?.initialValues && !isDetail) {
+                applyInitialValues(e.detail.initialValues);
+            }
+        }
+        window.addEventListener('workspace:set-initial-values', handleInitialValues);
+        return () => window.removeEventListener('workspace:set-initial-values', handleInitialValues);
+    }, [isDetail, applyInitialValues]);
+
     useEffect(() => {
         function applyInvoiceImport(pendingId) {
             if (!pendingId || isDetail) return;
