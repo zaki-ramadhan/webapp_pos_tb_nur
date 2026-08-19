@@ -94,6 +94,7 @@ export function buildPurchaseInvoiceRecord(row = {}, config = {}) {
         }),
         summaryStatusTone: isLunas ? 'success' : 'warning',
         showSecondaryHeaderAction: false,
+        showHeaderTakeButton: false,
         showProcessButton: true,
         showProcessButtonOnCreate: false,
         processDisabled: isLunas,
