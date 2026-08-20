@@ -19,6 +19,19 @@ function sanitizeFilters(filters = {}) {
 const globalCache = new Map();
 const CACHE_FRESH_THRESHOLD_MS = 5000;
 
+export function clearGlobalIndexCache(resource = null) {
+    if (!resource) {
+        globalCache.clear();
+        return;
+    }
+    const norm = String(resource).toLowerCase();
+    for (const key of globalCache.keys()) {
+        if (key.toLowerCase().startsWith(`${norm}::`)) {
+            globalCache.delete(key);
+        }
+    }
+}
+
 const HELPER_LOOKUP_RESOURCES = new Set([
     'units',
     'brands',
