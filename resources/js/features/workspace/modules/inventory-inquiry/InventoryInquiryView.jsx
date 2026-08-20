@@ -315,22 +315,22 @@ export default function InventoryInquiryView({ config, pageId }) {
                 .filter(Boolean);
 
             const uniqueSupplierNames = [...new Set(supplierNames)];
-            const isSameSupplier = uniqueSupplierNames.length === 1;
+            const isSameSupplier = uniqueSupplierNames.length === 1 && supplierNames.length === selectedRows.length;
 
-            const firstRow = selectedRows[0];
-            const supplierName = firstRow?.supplier && firstRow.supplier !== '-' ? firstRow.supplier : '';
-            const supplierId = firstRow?.supplierId || firstRow?.supplier_id || null;
+            let resolvedSupplierName = '';
+            let resolvedSupplierId = null;
 
-            const matchingSupplier = suppliers.find((s) =>
-                (supplierId && Number(s.id) === Number(supplierId)) ||
-                (supplierName && s.name?.toLowerCase() === supplierName.toLowerCase()) ||
-                (supplierName && s.full_name?.toLowerCase() === supplierName.toLowerCase())
-            );
-
-            const resolvedSupplierName = matchingSupplier
-                ? (matchingSupplier.name || matchingSupplier.full_name)
-                : supplierName;
-            const resolvedSupplierId = matchingSupplier ? matchingSupplier.id : supplierId;
+            if (isSameSupplier) {
+                const targetSupplierName = uniqueSupplierNames[0];
+                const targetSupplierId = selectedRows.find((r) => r.supplierId || r.supplier_id)?.supplierId || null;
+                const matchingSupplier = suppliers.find((s) =>
+                    (targetSupplierId && Number(s.id) === Number(targetSupplierId)) ||
+                    (targetSupplierName && s.name?.toLowerCase() === targetSupplierName.toLowerCase()) ||
+                    (targetSupplierName && s.full_name?.toLowerCase() === targetSupplierName.toLowerCase())
+                );
+                resolvedSupplierName = matchingSupplier ? (matchingSupplier.name || matchingSupplier.full_name) : targetSupplierName;
+                resolvedSupplierId = matchingSupplier ? matchingSupplier.id : targetSupplierId;
+            }
 
             const initialValues = {
                 customer: resolvedSupplierName ? [resolvedSupplierName] : [],
