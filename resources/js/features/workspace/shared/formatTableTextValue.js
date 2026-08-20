@@ -55,10 +55,10 @@ export default function formatTableTextValue(value, column = null) {
             const isConditionColumn = colId.includes('condition') || colId.includes('kondisi') || colLabel.includes('kondisi') || colLabel.includes('kelayakan');
             if (isConditionColumn) {
                 const val = String(value ?? '').toLowerCase().trim();
-                if (val === 'damaged' || val.includes('rusak') || val.includes('cacat')) return 'Barang Rusak / Cacat';
+                if (val === 'damaged' || val.includes('rusak') || val.includes('cacat')) return 'Barang Rusak';
                 if (val === 'expired' || val.includes('kedaluwarsa') || val.includes('expired')) return 'Barang Kedaluwarsa';
-                if (val === 'inactive' || val.includes('nonaktif')) return 'Nonaktif (Tidak Dijual)';
-                if (val === 'normal' || val === '-' || val === '') return 'Layak Jual (Normal)';
+                if (val === 'inactive' || val.includes('nonaktif')) return 'Nonaktif';
+                if (val === 'normal' || val === '-' || val === '') return 'Layak Jual';
                 return value;
             }
 
@@ -114,7 +114,7 @@ export default function formatTableTextValue(value, column = null) {
         
         const isConditionColumn = colId.includes('condition') || colId.includes('kondisi') || colLabel.includes('kondisi') || colLabel.includes('kelayakan');
         if (isConditionColumn) {
-            return 'Layak Jual (Normal)';
+            return 'Layak Jual';
         }
 
         const isNumeric = column.align === 'right' ||
