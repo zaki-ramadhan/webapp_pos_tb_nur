@@ -239,6 +239,9 @@ export default function ItemsServicesFormView({
                     barcode: values.barcode?.trim() || null,
                     name: values.name?.trim(),
                     product_type: values.kind || 'Persediaan',
+                    item_condition: values.itemCondition || 'normal',
+                    expiry_date: values.expiryDate || null,
+                    condition_notes: values.conditionNotes?.trim() || null,
                     category_id: values.category?.[0]?.id ?? values.categoryId ?? null,
                     brand_id: values.brand?.[0]?.id ?? values.brandId ?? null,
                     base_unit_id: values.primaryUnit?.[0]?.id ?? values.baseUnitId ?? null,
@@ -345,34 +348,6 @@ export default function ItemsServicesFormView({
         });
     }
 
-    function requestDelete() {
-        if (!detailRow?.id || saving) {
-            return;
-        }
-        setDeleteConfirmationOpen(true);
-    }
-
-    async function handleDelete() {
-        if (!detailRow?.id) {
-            return;
-        }
-
-        await executeCrudFormAction({
-            loadingMessage: 'Sedang menghapus barang.',
-            successMessage: 'Barang berhasil dihapus.',
-            setSaving,
-            setStatus,
-            onStart: () => setDeleteConfirmationOpen(false),
-            execute: () => deleteBackendResource('products', detailRow.id),
-            getErrorMessage: (error) => getBackendErrorMessage(error),
-            onSuccess: async () => {
-                await onRefresh?.();
-                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
-                onOpenContent?.();
-            },
-        });
-    }
-
     return (
         <ModuleFormTemplate
             form={{ ...config, tabs: filteredTabs, rightTabs }}
@@ -382,19 +357,7 @@ export default function ItemsServicesFormView({
             saving={saving}
             saveDisabled={saveDisabled}
             onSave={handleSave}
-            actionsSlot={
-                <>
-                    {isDetail ? (
-                        <DockActionButton
-                            label={saving ? 'Memproses...' : 'Hapus'}
-                            tone="danger"
-                            icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                            disabled={saving}
-                            onClick={requestDelete}
-                        />
-                    ) : null}
-                </>
-            }
+            actionsSlot={null}
         >
             <div className="flex-1 min-h-0">
                 {activeTabId === 'sales-purchase' ? (
@@ -441,24 +404,6 @@ export default function ItemsServicesFormView({
                     />
                 )}
             </div>
-
-            <ConfirmationModal
-                open={deleteConfirmationOpen}
-                onClose={() => setDeleteConfirmationOpen(false)}
-                onConfirm={handleDelete}
-                title="Konfirmasi"
-                message={
-                    values.unitConversions && values.unitConversions.length > 0 ? (
-                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}\n\nBarang ini memiliki data konversi unit berelasi yang akan ikut terhapus.`
-                    ) : (
-                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}`
-                    )
-                }
-                confirmLabel="Ya"
-                cancelLabel="Batal"
-                confirmVariant="primary"
-                confirmLoading={saving}
-            />
         </ModuleFormTemplate>
     );
 }
