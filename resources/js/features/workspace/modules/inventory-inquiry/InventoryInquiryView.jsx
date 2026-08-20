@@ -501,13 +501,13 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     onClick={firstColumnIsCheckbox && !isInactive ? () => toggleRow(row) : undefined}
                                     className={`border-ui-border-row ${
                                         isInactive
-                                            ? 'bg-slate-50/70 text-slate-500'
+                                            ? 'bg-rose-50/70 text-rose-950 hover:bg-rose-100/80 transition-colors'
                                             : selectedIds.has(row.id)
-                                            ? 'bg-blue-50/60 hover:bg-blue-50'
+                                            ? 'bg-blue-50/60 hover:bg-blue-50 transition-colors'
                                             : index % 2 === 1
-                                            ? 'bg-ui-bg-hover'
-                                            : 'bg-white'
-                                    } ${firstColumnIsCheckbox && !isInactive ? 'cursor-pointer transition' : ''}`.trim()}
+                                            ? 'bg-ui-bg-hover hover:bg-workspace-hover-bg transition-colors'
+                                            : 'bg-white hover:bg-workspace-hover-bg transition-colors'
+                                    } ${firstColumnIsCheckbox && !isInactive ? 'cursor-pointer' : ''}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
                                         <DataTableCell className="w-px px-3 text-center" onClick={(e) => e.stopPropagation()}>
@@ -521,7 +521,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                             />
                                         </DataTableCell>
                                     ) : null}
-                                    <DataTableCell className="px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
+                                    <DataTableCell className={`px-2.5 text-center text-base whitespace-nowrap ${isInactive ? 'text-rose-700/80 font-medium' : 'text-table-row-number'}`}>
                                         {from > 0 ? (from + index) : (index + 1)}
                                     </DataTableCell>
                                     {dataColumns.map((column) => (
