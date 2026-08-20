@@ -302,6 +302,12 @@ export default function ItemsServicesFormView({
             },
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
+                if (record) {
+                    const mappedRecord = mapProductRow(record);
+                    setFetchedRow(mappedRecord);
+                    const newFormValues = buildItemsServicesFormValues(config, mappedRecord);
+                    updateDbBaseline(newFormValues);
+                }
                 await onRefresh?.();
                 markClean();
                 if (recordId) {
