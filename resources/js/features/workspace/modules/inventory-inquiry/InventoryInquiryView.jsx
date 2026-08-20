@@ -273,7 +273,9 @@ export default function InventoryInquiryView({ config, pageId }) {
             const lineItems = selectedRows.map((row) => {
                 const minLimit = parseNumericInput(row.rawMinimumLimit ?? row.minimumLimit ?? row.minimumStock ?? 1);
                 const currentStock = parseNumericInput(row.rawAvailableStock ?? row.availableStock ?? 0);
-                const qtyNeeded = Math.max(1, minLimit - currentStock);
+                const isProblematic = row.itemCondition === 'damaged' || row.itemCondition === 'expired' || row.itemCondition === 'inactive';
+                const effectiveStock = isProblematic ? 0 : currentStock;
+                const qtyNeeded = Math.max(minLimit > 0 ? minLimit : 1, minLimit - effectiveStock);
 
                 const price = parseNumericInput(
                     row.default_purchase_price ??
