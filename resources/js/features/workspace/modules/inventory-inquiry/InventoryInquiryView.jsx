@@ -506,7 +506,33 @@ export default function InventoryInquiryView({ config, pageId }) {
                                             style={getCellStyle(column.id)}
                                             onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
-                                            {formatTableTextValue(row[column.id])}
+                                            {column.id === 'itemName' ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const prodId = row.productId || row.itemId || row.id;
+                                                        if (typeof window !== 'undefined') {
+                                                            window.dispatchEvent(
+                                                                new CustomEvent('workspace:open-page', {
+                                                                    detail: {
+                                                                        pageId: 'items-services',
+                                                                        recordId: prodId,
+                                                                        label: row.itemName,
+                                                                        tabLabel: row.itemName,
+                                                                        openForm: true,
+                                                                    },
+                                                                })
+                                                            );
+                                                        }
+                                                    }}
+                                                    className="font-medium text-blue-700 hover:text-blue-900 hover:underline cursor-pointer transition-colors text-left focus:outline-none"
+                                                >
+                                                    {formatTableTextValue(row[column.id])}
+                                                </button>
+                                            ) : (
+                                                formatTableTextValue(row[column.id])
+                                            )}
                                         </DataTableCell>
                                     ))}
                                 </DataTableRow>
