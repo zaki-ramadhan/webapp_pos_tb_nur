@@ -63,7 +63,10 @@ class OrganizationBackendResources
                 label: 'Departments',
                 searchColumns: ['code', 'name', 'notes'],
                 modelClass: Department::class,
-                with: ['users', 'parentDepartment'],
+                with: array_merge(
+                    ['parentDepartment'],
+                    \Illuminate\Support\Facades\Schema::hasTable('department_user') ? ['users'] : []
+                ),
                 storeRules: [
                     'code' => ['required', 'string', 'max:50', 'unique:departments,code'],
                     'name' => ['required', 'string', 'max:120'],
