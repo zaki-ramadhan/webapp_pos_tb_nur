@@ -14,6 +14,7 @@ class Product extends DomainModel
     protected $fillable = [
         'category_id',
         'brand_id',
+        'main_supplier_id',
         'base_unit_id',
         'purchase_unit_id',
         'sales_unit_id',
@@ -40,12 +41,30 @@ class Product extends DomainModel
 
     public function getMainSupplierAttribute(): ?array
     {
-        return null;
+        $supplier = $this->mainSupplier;
+        if (!$supplier) {
+            return null;
+        }
+        return [
+            'id' => $supplier->id,
+            'code' => $supplier->code,
+            'name' => $supplier->name,
+        ];
     }
 
     public function getMainSupplierIdAttribute(): ?int
     {
-        return null;
+        return $this->attributes['main_supplier_id'] ?? null;
+    }
+
+    public function mainSupplier(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Partner\Models\Supplier::class, 'main_supplier_id');
+    }
+
+    public function preferredSupplier(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Partner\Models\Supplier::class, 'main_supplier_id');
     }
 
     protected static function boot()

@@ -380,12 +380,18 @@ class InventoryInquiryQueryService
                     $statusBadge = 'normal';
                 }
 
+                $supplierModel = $product->preferredSupplier ?? $product->mainSupplier;
+                $supplierName = $supplierModel?->name ?? $supplierModel?->full_name ?? '-';
+                $supplierId = $product->main_supplier_id ?? $supplierModel?->id ?? null;
+
                 return [
                     'id' => $product->id,
                     'item_id' => $product->id,
                     'item_code' => $product->code,
                     'item_name' => $product->name,
-                    'supplier' => $product->preferredSupplier?->name ?? '-',
+                    'supplier' => $supplierName,
+                    'supplier_id' => $supplierId,
+                    'main_supplier_id' => $supplierId,
                     'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
                     'cost_price' => $this->formatNumber($purchasePrice),
                     'default_purchase_price' => $purchasePrice,
@@ -837,7 +843,7 @@ class InventoryInquiryQueryService
     protected function queryProducts(array $filters): Collection
     {
         return Product::query()
-            ->with(['baseUnit', 'purchaseUnit', 'salesUnit'])
+            ->with(['baseUnit', 'purchaseUnit', 'salesUnit', 'preferredSupplier', 'mainSupplier'])
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
             ->where('is_active', true)
             ->get();
