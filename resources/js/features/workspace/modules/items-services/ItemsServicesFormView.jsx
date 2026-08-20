@@ -174,6 +174,13 @@ export default function ItemsServicesFormView({
     }, [recordId, detailRow?.id, updateDbBaseline]);
 
     function handleChange(field, nextValue) {
+        if (typeof field === 'object' && field !== null) {
+            setValues((currentValues) => ({
+                ...currentValues,
+                ...field,
+            }));
+            return;
+        }
         setValues((currentValues) => ({
             ...currentValues,
             [field]: nextValue,

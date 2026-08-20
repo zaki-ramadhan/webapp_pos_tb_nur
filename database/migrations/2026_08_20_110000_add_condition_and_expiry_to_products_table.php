@@ -8,30 +8,30 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('products', function (Blueprint ): void {
+        Schema::table('products', function (Blueprint $table): void {
             if (!Schema::hasColumn('products', 'item_condition')) {
-                ->string('item_condition', 50)->default('normal')->after('product_type');
+                $table->string('item_condition', 50)->default('normal')->after('product_type');
             }
             if (!Schema::hasColumn('products', 'expiry_date')) {
-                ->date('expiry_date')->nullable()->after('item_condition');
+                $table->date('expiry_date')->nullable()->after('item_condition');
             }
             if (!Schema::hasColumn('products', 'condition_notes')) {
-                ->text('condition_notes')->nullable()->after('expiry_date');
+                $table->text('condition_notes')->nullable()->after('expiry_date');
             }
         });
     }
 
     public function down(): void
     {
-        Schema::table('products', function (Blueprint ): void {
+        Schema::table('products', function (Blueprint $table): void {
             if (Schema::hasColumn('products', 'condition_notes')) {
-                ->dropColumn('condition_notes');
+                $table->dropColumn('condition_notes');
             }
             if (Schema::hasColumn('products', 'expiry_date')) {
-                ->dropColumn('expiry_date');
+                $table->dropColumn('expiry_date');
             }
             if (Schema::hasColumn('products', 'item_condition')) {
-                ->dropColumn('item_condition');
+                $table->dropColumn('item_condition');
             }
         });
     }

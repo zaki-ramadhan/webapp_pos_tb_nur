@@ -282,6 +282,8 @@ function buildFallbackDetailRecord(row, config) {
         itemCondition: row.item_condition ?? row.itemCondition ?? 'normal',
         expiryDate: row.expiry_date ? String(row.expiry_date).split('T')[0] : (row.expiryDate ?? ''),
         conditionNotes: row.condition_notes ?? row.conditionNotes ?? '',
+        isActive: row.is_active !== undefined ? Boolean(row.is_active) : (row.isActive !== undefined ? Boolean(row.isActive) : true),
+        is_active: row.is_active !== undefined ? Boolean(row.is_active) : (row.isActive !== undefined ? Boolean(row.isActive) : true),
         codeAuto: false,
         code: row.code ?? '',
         barcode: row.barcode ?? buildBarcode(row.code),
