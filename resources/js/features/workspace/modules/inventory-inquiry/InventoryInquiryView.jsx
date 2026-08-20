@@ -499,14 +499,14 @@ export default function InventoryInquiryView({ config, pageId }) {
                                 <DataTableRow
                                     key={row.id}
                                     onClick={firstColumnIsCheckbox && !isInactive ? () => toggleRow(row) : undefined}
-                                    className={`border-ui-border-row ${
+                                    className={`border-ui-border-row transition-colors ${
                                         isInactive
-                                            ? 'bg-red-100/90 text-red-950 hover:bg-red-200/90 transition-colors'
+                                            ? '!bg-[#fff1f2] hover:!bg-[#ffe4e6] text-rose-950'
                                             : selectedIds.has(row.id)
-                                            ? 'bg-blue-50/60 hover:bg-blue-50 transition-colors'
+                                            ? '!bg-blue-50/60 hover:!bg-blue-50'
                                             : index % 2 === 1
-                                            ? 'bg-ui-bg-hover hover:bg-workspace-hover-bg transition-colors'
-                                            : 'bg-white hover:bg-workspace-hover-bg transition-colors'
+                                            ? 'bg-ui-bg-hover hover:bg-[#edf2f7]'
+                                            : 'bg-white hover:bg-[#edf2f7]'
                                     } ${firstColumnIsCheckbox && !isInactive ? 'cursor-pointer' : ''}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
@@ -521,7 +521,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                             />
                                         </DataTableCell>
                                     ) : null}
-                                    <DataTableCell className={`px-2.5 text-center text-base whitespace-nowrap ${isInactive ? 'text-red-800 font-semibold' : 'text-table-row-number'}`}>
+                                    <DataTableCell className={`px-2.5 text-center text-base whitespace-nowrap ${isInactive ? 'text-rose-800 font-medium' : 'text-table-row-number'}`}>
                                         {from > 0 ? (from + index) : (index + 1)}
                                     </DataTableCell>
                                     {dataColumns.map((column) => (
