@@ -30,6 +30,7 @@ const listColumns = [
     { id: 'name', label: 'Nama Barang', widthClassName: 'min-w-[220px] w-full', align: 'left', truncate: true },
     { id: 'code', label: 'Kode Barang', widthClassName: 'w-[110px]', align: 'left' },
     { id: 'kind', label: 'Jenis Barang', widthClassName: 'w-[110px]', align: 'left' },
+    { id: 'itemConditionLabel', label: 'Kondisi Barang', widthClassName: 'w-[130px]', align: 'center', noWrap: true },
     { id: 'unit', label: 'Satuan', widthClassName: 'w-[80px]', align: 'left', noWrap: true },
     { id: 'salePrice', label: 'Def. Hrg. Jual Satuan', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
     { id: 'stockAtWarehouse', label: 'Stok Fisik', widthClassName: 'w-[90px]', align: 'right', noWrap: true },
@@ -37,6 +38,8 @@ const listColumns = [
     
   // Kolom-kolom baru (default disembunyikan di Settings menu)
 
+    { id: 'expiryDateFormatted', label: 'Tgl Kedaluwarsa', widthClassName: 'w-[140px]', align: 'center', defaultHidden: true },
+    { id: 'conditionNotes', label: 'Ket. Kondisi/Rusak', widthClassName: 'w-[180px]', align: 'left', defaultHidden: true, truncate: true },
     { id: 'purchasePrice', label: 'Harga Beli', widthClassName: 'w-[150px]', align: 'right', defaultHidden: true, noWrap: true },
     { id: 'purchaseUnit', label: 'Satuan Beli', widthClassName: 'w-[110px]', align: 'left', defaultHidden: true, noWrap: true },
     { id: 'barcode', label: 'Barcode', widthClassName: 'w-[140px]', align: 'left', defaultHidden: true },
@@ -64,6 +67,9 @@ const createDefaults = {
     category: [],
     categoryId: null,
     kind: 'Persediaan',
+    itemCondition: 'normal',
+    expiryDate: '',
+    conditionNotes: '',
     codeAuto: true,
     code: '',
     barcode: '',
@@ -273,6 +279,9 @@ function buildFallbackDetailRecord(row, config) {
         category: categoryList,
         categoryId: categoryId,
         kind: row.kind ?? config.createDefaults.kind,
+        itemCondition: row.item_condition ?? row.itemCondition ?? 'normal',
+        expiryDate: row.expiry_date ? String(row.expiry_date).split('T')[0] : (row.expiryDate ?? ''),
+        conditionNotes: row.condition_notes ?? row.conditionNotes ?? '',
         codeAuto: false,
         code: row.code ?? '',
         barcode: row.barcode ?? buildBarcode(row.code),
@@ -318,10 +327,37 @@ function buildFallbackDetailRecord(row, config) {
 }
 
 export function buildItemsServicesConfig(pageConfig = {}) {
-    const resolvedRows = (pageConfig.table?.rows ?? defaultConfig.table.rows).map((row) => ({
-        ...row,
-        categoryFilter: row.categoryFilter ?? inferCategory(row),
-    }));
+    const resolvedRows = (pageConfig.table?.rows ?? defaultConfig.table.rows).map((row) => {
+        const cond = row.item_condition ?? row.itemCondition ?? 'normal';
+        let itemConditionLabel = 'Normal (Layak)';
+        if (cond === 'expired') {
+            itemConditionLabel = 'Kedaluwarsa';
+        } else if (cond === 'damaged') {
+            itemConditionLabel = 'Rusak / Cacat';
+        } else if (cond === 'inactive' || row.is_active === false) {
+            itemConditionLabel = 'Nonaktif';
+        }
+
+        const expDate = row.expiry_date ?? row.expiryDate;
+        let expiryDateFormatted = '-';
+        if (expDate) {
+            try {
+                const d = new Date(expDate);
+                if (!isNaN(d.getTime())) {
+                    expiryDateFormatted = d.toLocaleDateString('id-ID');
+                }
+            } catch {}
+        }
+
+        return {
+            ...row,
+            categoryFilter: row.categoryFilter ?? inferCategory(row),
+            itemCondition: cond,
+            itemConditionLabel,
+            expiryDateFormatted,
+            conditionNotes: row.condition_notes ?? row.conditionNotes ?? '-',
+        };
+    });
 
     return {
         ...defaultConfig,
