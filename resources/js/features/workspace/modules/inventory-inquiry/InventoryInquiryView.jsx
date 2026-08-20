@@ -501,7 +501,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     onClick={firstColumnIsCheckbox && !isInactive ? () => toggleRow(row) : undefined}
                                     className={`border-ui-border-row ${
                                         isInactive
-                                            ? 'bg-rose-50/70 text-rose-950 hover:bg-rose-100/80 transition-colors'
+                                            ? 'bg-red-100/90 text-red-950 hover:bg-red-200/90 transition-colors'
                                             : selectedIds.has(row.id)
                                             ? 'bg-blue-50/60 hover:bg-blue-50 transition-colors'
                                             : index % 2 === 1
@@ -521,7 +521,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                             />
                                         </DataTableCell>
                                     ) : null}
-                                    <DataTableCell className={`px-2.5 text-center text-base whitespace-nowrap ${isInactive ? 'text-rose-700/80 font-medium' : 'text-table-row-number'}`}>
+                                    <DataTableCell className={`px-2.5 text-center text-base whitespace-nowrap ${isInactive ? 'text-red-800 font-semibold' : 'text-table-row-number'}`}>
                                         {from > 0 ? (from + index) : (index + 1)}
                                     </DataTableCell>
                                     {dataColumns.map((column) => (
