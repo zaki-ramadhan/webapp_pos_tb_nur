@@ -41,20 +41,26 @@ class Product extends DomainModel
 
     public function getMainSupplierAttribute(): ?array
     {
-        $supplier = $this->mainSupplier;
-        if (!$supplier) {
+        try {
+            $supplier = $this->mainSupplier;
+            if (!$supplier) {
+                return null;
+            }
+            return [
+                'id' => $supplier->id,
+                'code' => $supplier->code,
+                'name' => $supplier->name,
+            ];
+        } catch (\Throwable) {
             return null;
         }
-        return [
-            'id' => $supplier->id,
-            'code' => $supplier->code,
-            'name' => $supplier->name,
-        ];
     }
 
     public function getMainSupplierIdAttribute(): ?int
     {
-        return $this->attributes['main_supplier_id'] ?? null;
+        return array_key_exists('main_supplier_id', $this->attributes) && filled($this->attributes['main_supplier_id'])
+            ? (int) $this->attributes['main_supplier_id']
+            : null;
     }
 
     public function mainSupplier(): BelongsTo
