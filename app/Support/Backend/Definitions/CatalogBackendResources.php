@@ -145,7 +145,7 @@ class CatalogBackendResources
                     }
 
 
-                    if (array_key_exists('opening_stock_rows', $payload) && is_array($payload['opening_stock_rows'])) {
+                    if ($record->wasRecentlyCreated && array_key_exists('opening_stock_rows', $payload) && is_array($payload['opening_stock_rows'])) {
                         foreach ($payload['opening_stock_rows'] as $stockRow) {
                             $qty = (float) ($stockRow['quantity'] ?? 0);
                             $cost = (float) ($stockRow['unit_cost'] ?? $stockRow['unitCost'] ?? $record->default_purchase_price ?? 0);
