@@ -45,7 +45,7 @@ class MinimumStockPage
                     'className' => 'w-full lg:w-[280px]',
                 ],
                 'table' => [
-                    'tableClassName' => 'min-w-[1800px]',
+                    'tableClassName' => 'min-w-[1400px]',
                     'searchKeys' => ['supplier', 'itemName', 'itemCode'],
                     'columns' => [
                         ['id' => 'selected', 'label' => '', 'kind' => 'checkbox', 'widthClassName' => 'w-[64px]', 'align' => 'center'],
@@ -54,8 +54,6 @@ class MinimumStockPage
                         ['id' => 'itemCode', 'label' => 'Kode Barang', 'widthClassName' => 'w-[220px]', 'align' => 'center'],
                         ['id' => 'unit', 'label' => 'Satuan', 'widthClassName' => 'w-[170px]', 'align' => 'center'],
                         ['id' => 'availableStock', 'label' => 'Stok tersedia', 'widthClassName' => 'w-[190px]', 'align' => 'center'],
-                        ['id' => 'ordered', 'label' => 'Dipesan', 'widthClassName' => 'w-[160px]', 'align' => 'center'],
-                        ['id' => 'requested', 'label' => 'Diminta', 'widthClassName' => 'w-[160px]', 'align' => 'center'],
                         ['id' => 'minimumLimit', 'label' => 'Batas Minimum Stok', 'widthClassName' => 'w-[200px]', 'align' => 'center'],
                         ['id' => 'statusLabel', 'label' => 'Status Kelayakan & Stok', 'widthClassName' => 'w-[250px]', 'align' => 'center'],
                     ],
