@@ -242,6 +242,7 @@ export default function ItemsServicesFormView({
                     item_condition: values.itemCondition || 'normal',
                     expiry_date: values.expiryDate || null,
                     condition_notes: values.conditionNotes?.trim() || null,
+                    is_active: values.itemCondition === 'inactive' ? false : (values.isActive !== false && values.is_active !== false),
                     category_id: values.category?.[0]?.id ?? values.categoryId ?? null,
                     brand_id: values.brand?.[0]?.id ?? values.brandId ?? null,
                     base_unit_id: values.primaryUnit?.[0]?.id ?? values.baseUnitId ?? null,
