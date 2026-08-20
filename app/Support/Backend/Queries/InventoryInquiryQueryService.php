@@ -361,19 +361,19 @@ class InventoryInquiryQueryService
 
                 // Determine Status Label & Status Badge
                 if ($itemCondition === 'damaged') {
-                    $statusLabel = 'Barang Rusak / Cacat';
+                    $statusLabel = 'Barang Rusak';
                     $statusBadge = 'damaged';
                 } elseif ($itemCondition === 'expired') {
                     $statusLabel = 'Barang Kedaluwarsa';
                     $statusBadge = 'expired';
                 } elseif ($itemCondition === 'inactive' || !$isActive) {
-                    $statusLabel = 'Nonaktif (Tidak Dijual)';
+                    $statusLabel = 'Nonaktif';
                     $statusBadge = 'inactive';
                 } elseif ($currentStock <= 0) {
-                    $statusLabel = 'Stok Habis (Kritis)';
+                    $statusLabel = 'Stok Habis';
                     $statusBadge = 'critical';
                 } elseif ($currentStock <= $minimumStock) {
-                    $statusLabel = 'Stok Menipis (Di Bawah Minimum)';
+                    $statusLabel = 'Stok Menipis';
                     $statusBadge = 'warning';
                 } else {
                     $statusLabel = 'Stok Normal';
