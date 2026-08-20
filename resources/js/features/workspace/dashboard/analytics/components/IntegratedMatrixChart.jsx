@@ -48,6 +48,8 @@ export default function IntegratedMatrixChart({ rules }) {
             confidence: parsePercentValue(rule.confidence),
             support: rule.support,
             lift: rule.lift,
+            antecedentAbc: ant,
+            consequentAbc: cons,
             labelTactic,
             barColor,
             hoverColor,
@@ -147,6 +149,35 @@ export default function IntegratedMatrixChart({ rules }) {
         },
     };
 
+    // Detect which tactic categories actually exist in current rules
+    const hasAC = chartData.some((item) => (item.antecedentAbc === 'A' && item.consequentAbc === 'C') || (item.antecedentAbc === 'C' && item.consequentAbc === 'A') || item.labelTactic.includes('Jual Silang'));
+    const hasAA = chartData.some((item) => item.antecedentAbc === 'A' && item.consequentAbc === 'A');
+    const hasB = chartData.some((item) => item.antecedentAbc === 'B' || item.consequentAbc === 'B');
+    const hasCC = chartData.some((item) => item.antecedentAbc === 'C' && item.consequentAbc === 'C');
+
+    const activeLegends = [
+        hasAC && {
+            color: '#2563eb',
+            title: 'A ↔ C Jual Silang (Prioritas Utama)',
+            desc: 'Barang aksesoris (C) terikat dengan produk inti (A).',
+        },
+        hasAA && {
+            color: '#059669',
+            title: 'A ↔ A Paket Bundling (Sangat Kuat)',
+            desc: 'Paket bundling antar-produk inti omzet terbesar.',
+        },
+        hasB && {
+            color: '#d97706',
+            title: 'Kategori B Paket Rutin (Pelengkap)',
+            desc: 'Kombinasi melibatkan produk kebutuhan rutin (B).',
+        },
+        hasCC && {
+            color: '#6366f1',
+            title: 'C ↔ C Display Rak (Pendukung)',
+            desc: 'Penataan letak rak perkakas/aksesoris berdampingan.',
+        },
+    ].filter(Boolean);
+
     return (
         <div onContextMenu={(e) => e.preventDefault()} className="space-y-4 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
             <div className="overflow-x-auto custom-scrollbar rounded-[8px] border border-abc-card-border bg-white p-3 shadow-abc-card">
@@ -155,35 +186,16 @@ export default function IntegratedMatrixChart({ rules }) {
                 </div>
             </div>
 
-            <div className="grid gap-3 border border-slate-100 bg-white rounded-lg p-3 shadow-widget-medium grid-cols-2 lg:grid-cols-4">
-                <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#2563eb]" />
-                    <div>
-                        <p className="text-sm font-semibold text-brand-darker leading-4">A → C Jual Silang (Prioritas Utama)</p>
-                        <p className="text-sm text-slate-500 mt-1">Barang aksesoris (C) dipicu produk inti (A).</p>
+            <div className={`grid gap-3 border border-slate-100 bg-white rounded-lg p-3 shadow-widget-medium ${activeLegends.length <= 2 ? 'grid-cols-1 sm:grid-cols-2' : activeLegends.length === 3 ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-2 lg:grid-cols-4'}`}>
+                {activeLegends.map((leg, idx) => (
+                    <div key={idx} className="flex items-start gap-2">
+                        <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: leg.color }} />
+                        <div>
+                            <p className="text-sm font-semibold text-brand-darker leading-4">{leg.title}</p>
+                            <p className="text-sm text-slate-500 mt-1">{leg.desc}</p>
+                        </div>
                     </div>
-                </div>
-                <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#059669]" />
-                    <div>
-                        <p className="text-sm font-semibold text-brand-darker leading-4">A → A Paket Bundling (Sangat Kuat)</p>
-                        <p className="text-sm text-slate-500 mt-1">Bundling diskon produk inti omzet terbesar.</p>
-                    </div>
-                </div>
-                <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#d97706]" />
-                    <div>
-                        <p className="text-sm font-semibold text-brand-darker leading-4">B → B Paket Pelengkap (Rutin)</p>
-                        <p className="text-sm text-slate-500 mt-1">Produk pendukung rutin yang stabil.</p>
-                    </div>
-                </div>
-                <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#6366f1]" />
-                    <div>
-                        <p className="text-sm font-semibold text-brand-darker leading-4">Display Rak Rakit (Pendukung)</p>
-                        <p className="text-sm text-slate-500 mt-1">Penataan letak rak berdampingan.</p>
-                    </div>
-                </div>
+                ))}
             </div>
         </div>
     );
