@@ -49,7 +49,7 @@ class MinimumStockPage
                     'searchKeys' => ['supplier', 'itemName', 'itemCode'],
                     'columns' => [
                         ['id' => 'selected', 'label' => '', 'kind' => 'checkbox', 'widthClassName' => 'w-[64px]', 'align' => 'center'],
-                        ['id' => 'supplier', 'label' => 'Pemasok', 'widthClassName' => 'w-[340px]', 'align' => 'center'],
+                        ['id' => 'supplier', 'label' => 'Pemasok', 'widthClassName' => 'w-[340px]', 'align' => 'left'],
                         ['id' => 'itemName', 'label' => 'Nama Barang', 'widthClassName' => 'w-[320px]', 'align' => 'left'],
                         ['id' => 'itemCode', 'label' => 'Kode Barang', 'widthClassName' => 'w-[220px]', 'align' => 'center'],
                         ['id' => 'unit', 'label' => 'Satuan', 'widthClassName' => 'w-[170px]', 'align' => 'center'],
