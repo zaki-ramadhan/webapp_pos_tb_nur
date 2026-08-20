@@ -1,3 +1,5 @@
+import { clearGlobalIndexCache } from './useBackendIndexResource';
+
 function getBackendClient() {
     if (!window.axios) {
         throw new Error('HTTP client belum tersedia.');
@@ -61,6 +63,7 @@ function saveToSessionStorage(key, data) {
 }
 
 export function clearBackendCache(resource = null) {
+    clearGlobalIndexCache(resource);
     if (!resource) {
         apiCache.clear();
         inFlightRequests.clear();
