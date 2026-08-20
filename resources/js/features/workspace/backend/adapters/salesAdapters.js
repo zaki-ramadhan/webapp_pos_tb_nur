@@ -220,6 +220,21 @@ export function mapProductRow(record) {
         saleableStock: record.stock_available ?? 0,
         notes: record.notes ?? '',
         isActive: record.is_active !== false,
+        is_active: record.is_active !== false,
+        itemCondition: record.item_condition ?? record.itemCondition ?? 'normal',
+        item_condition: record.item_condition ?? record.itemCondition ?? 'normal',
+        conditionNotes: record.condition_notes ?? record.conditionNotes ?? '',
+        condition_notes: record.condition_notes ?? record.conditionNotes ?? '',
+        expiryDate: record.expiry_date ? String(record.expiry_date).split('T')[0] : (record.expiryDate ?? ''),
+        expiry_date: record.expiry_date ? String(record.expiry_date).split('T')[0] : (record.expiry_date ?? ''),
+        expiryDateFormatted: record.expiry_date ? normalizeDisplayDate(record.expiry_date) : '-',
+        itemConditionLabel: record.item_condition === 'damaged'
+            ? 'Barang Rusak'
+            : record.item_condition === 'expired'
+            ? 'Barang Kedaluwarsa'
+            : record.item_condition === 'inactive' || record.is_active === false
+            ? 'Nonaktif'
+            : 'Layak Jual',
         tabLabel: record.name ?? '',
         categoryId: record.category_id ?? record.category?.id ?? null,
         brandId: record.brand_id ?? record.brand?.id ?? null,
