@@ -47,6 +47,14 @@ function resolveCellAlignClassName(align) {
     return 'text-left';
 }
 
+function isInactiveRow(row) {
+    if (!row) return false;
+    const cond = String(row.itemCondition ?? row.item_condition ?? '').toLowerCase();
+    const badge = String(row.statusBadge ?? '').toLowerCase();
+    const status = String(row.status ?? row.statusLabel ?? '').toLowerCase();
+    return cond === 'inactive' || badge === 'inactive' || status.includes('nonaktif') || row.is_active === false || row.isActive === false;
+}
+
 export default function InventoryInquiryView({ config, pageId }) {
     const resource = BACKEND_INVENTORY_RESOURCES[pageId];
     const [values, setValues] = useState(() => buildInitialValues(config));
@@ -195,8 +203,9 @@ export default function InventoryInquiryView({ config, pageId }) {
     const serializedIds = sortedRows.map((r) => r.id).join(',');
     useMemo(() => setSelectedIds(new Set()), [serializedIds]);
 
-    const allSelected = sortedRows.length > 0 && sortedRows.every((r) => selectedIds.has(r.id));
-    const someSelected = !allSelected && sortedRows.some((r) => selectedIds.has(r.id));
+    const selectableRows = useMemo(() => sortedRows.filter((r) => !isInactiveRow(r)), [sortedRows]);
+    const allSelected = selectableRows.length > 0 && selectableRows.every((r) => selectedIds.has(r.id));
+    const someSelected = !allSelected && selectableRows.some((r) => selectedIds.has(r.id));
 
     const resolvedControls = useMemo(() => {
         return (config.controls ?? [])
@@ -215,10 +224,13 @@ export default function InventoryInquiryView({ config, pageId }) {
     }, [config.controls, values.itemType]);
 
     function toggleAll() {
-        setSelectedIds(allSelected ? new Set() : new Set(sortedRows.map((r) => r.id)));
+        setSelectedIds(allSelected ? new Set() : new Set(selectableRows.map((r) => r.id)));
     }
 
-    function toggleRow(id) {
+    function toggleRow(rowOrId) {
+        const row = typeof rowOrId === 'object' ? rowOrId : sortedRows.find((r) => r.id === rowOrId);
+        if (row && isInactiveRow(row)) return;
+        const id = typeof rowOrId === 'object' ? rowOrId.id : rowOrId;
         setSelectedIds((prev) => {
             const next = new Set(prev);
             next.has(id) ? next.delete(id) : next.add(id);
@@ -261,7 +273,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                 return;
             }
 
-            const selectedRows = tableRows.filter((row) => selectedIds.has(row.id));
+            const selectedRows = tableRows.filter((row) => selectedIds.has(row.id) && !isInactiveRow(row));
             const targetPageId = controlId === 'order'
                 ? (pageProps.pages?.['purchase-order'] ? 'purchase-order' : 'purchase-invoice')
                 : (pageProps.pages?.['item-request'] ? 'item-request' : 'purchase-invoice');
@@ -481,25 +493,31 @@ export default function InventoryInquiryView({ config, pageId }) {
 
                     <DataTableBody>
                         {sortedRows.length ? (
-                            sortedRows.map((row, index) => (
+                            sortedRows.map((row, index) => {
+                                const isInactive = isInactiveRow(row);
+                                return (
                                 <DataTableRow
                                     key={row.id}
-                                    onClick={firstColumnIsCheckbox ? () => toggleRow(row.id) : undefined}
+                                    onClick={firstColumnIsCheckbox && !isInactive ? () => toggleRow(row) : undefined}
                                     className={`border-ui-border-row ${
-                                        selectedIds.has(row.id)
+                                        isInactive
+                                            ? 'bg-slate-50/70 text-slate-500'
+                                            : selectedIds.has(row.id)
                                             ? 'bg-blue-50/60 hover:bg-blue-50'
                                             : index % 2 === 1
                                             ? 'bg-ui-bg-hover'
                                             : 'bg-white'
-                                    } ${firstColumnIsCheckbox ? 'cursor-pointer transition' : ''}`.trim()}
+                                    } ${firstColumnIsCheckbox && !isInactive ? 'cursor-pointer transition' : ''}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
                                         <DataTableCell className="w-px px-3 text-center" onClick={(e) => e.stopPropagation()}>
                                             <Checkbox
-                                                checked={selectedIds.has(row.id)}
-                                                onChange={() => toggleRow(row.id)}
+                                                checked={!isInactive && selectedIds.has(row.id)}
+                                                onChange={() => toggleRow(row)}
+                                                disabled={isInactive}
                                                 size="sm"
                                                 aria-label={`Pilih baris ${index + 1}`}
+                                                title={isInactive ? 'Barang nonaktif tidak dapat dipesan / direstok' : undefined}
                                             />
                                         </DataTableCell>
                                     ) : null}
@@ -543,7 +561,8 @@ export default function InventoryInquiryView({ config, pageId }) {
                                         </DataTableCell>
                                     ))}
                                 </DataTableRow>
-                            ))
+                            );
+                        })
                         ) : (
                             <DataTableRow className="bg-white">
                                 {firstColumnIsCheckbox ? <DataTableCell className="px-2.5 py-2 text-black" /> : null}
