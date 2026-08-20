@@ -845,7 +845,6 @@ class InventoryInquiryQueryService
         return Product::query()
             ->with(['baseUnit', 'purchaseUnit', 'salesUnit', 'preferredSupplier', 'mainSupplier'])
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
-            ->where('is_active', true)
             ->get();
     }
 
