@@ -198,12 +198,23 @@ export default function InventoryInquiryView({ config, pageId }) {
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
     const { handleResizeStart, getCellStyle } = useColumnResize('inventory-inquiry');
 
-  // Reset selection jika data berubah
+    const displayRows = useMemo(() => {
+        const activeRows = [];
+        const inactiveRows = [];
+        for (const row of sortedRows) {
+            if (isInactiveRow(row)) {
+                inactiveRows.push(row);
+            } else {
+                activeRows.push(row);
+            }
+        }
+        return [...activeRows, ...inactiveRows];
+    }, [sortedRows]);
 
-    const serializedIds = sortedRows.map((r) => r.id).join(',');
+    const serializedIds = displayRows.map((r) => r.id).join(',');
     useMemo(() => setSelectedIds(new Set()), [serializedIds]);
 
-    const selectableRows = useMemo(() => sortedRows.filter((r) => !isInactiveRow(r)), [sortedRows]);
+    const selectableRows = useMemo(() => displayRows.filter((r) => !isInactiveRow(r)), [displayRows]);
     const allSelected = selectableRows.length > 0 && selectableRows.every((r) => selectedIds.has(r.id));
     const someSelected = !allSelected && selectableRows.some((r) => selectedIds.has(r.id));
 
@@ -228,7 +239,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     }
 
     function toggleRow(rowOrId) {
-        const row = typeof rowOrId === 'object' ? rowOrId : sortedRows.find((r) => r.id === rowOrId);
+        const row = typeof rowOrId === 'object' ? rowOrId : displayRows.find((r) => r.id === rowOrId);
         if (row && isInactiveRow(row)) return;
         const id = typeof rowOrId === 'object' ? rowOrId.id : rowOrId;
         setSelectedIds((prev) => {
@@ -416,7 +427,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     onClearLookup={handleLookupClear}
                                     onRefresh={reload}
                                     exportConfig={{
-                                        rows: sortedRows,
+                                        rows: displayRows,
                                         columns: cleanedColumns,
                                         filename: 'barang-per-gudang'
                                     }}
@@ -492,36 +503,36 @@ export default function InventoryInquiryView({ config, pageId }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {sortedRows.length ? (
-                            sortedRows.map((row, index) => {
+                        {displayRows.length ? (
+                            displayRows.map((row, index) => {
                                 const isInactive = isInactiveRow(row);
                                 return (
                                 <DataTableRow
                                     key={row.id}
                                     onClick={firstColumnIsCheckbox && !isInactive ? () => toggleRow(row) : undefined}
-                                    className={`border-ui-border-row transition-colors ${
-                                        isInactive
-                                            ? '!bg-red-300 hover:!bg-red-400 text-red-950'
-                                            : selectedIds.has(row.id)
-                                            ? '!bg-blue-50/60 hover:!bg-blue-50'
+                                    className={`border-ui-border-row ${
+                                        selectedIds.has(row.id)
+                                            ? 'bg-blue-50/60 hover:bg-blue-50'
                                             : index % 2 === 1
-                                            ? 'bg-ui-bg-hover hover:bg-[#edf2f7]'
-                                            : 'bg-white hover:bg-[#edf2f7]'
-                                    } ${firstColumnIsCheckbox && !isInactive ? 'cursor-pointer' : ''}`.trim()}
+                                            ? 'bg-ui-bg-hover hover:bg-workspace-hover-bg'
+                                            : 'bg-white hover:bg-workspace-hover-bg'
+                                    } ${firstColumnIsCheckbox && !isInactive ? 'cursor-pointer transition' : ''}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
                                         <DataTableCell className="w-px px-3 text-center" onClick={(e) => e.stopPropagation()}>
-                                            <Checkbox
-                                                checked={!isInactive && selectedIds.has(row.id)}
-                                                onChange={() => toggleRow(row)}
-                                                disabled={isInactive}
-                                                size="sm"
-                                                aria-label={`Pilih baris ${index + 1}`}
-                                                title={isInactive ? 'Barang nonaktif tidak dapat dipesan / direstok' : undefined}
-                                            />
+                                            {isInactive ? (
+                                                <span className="text-slate-400 font-medium select-none text-xs" title="Barang nonaktif tidak dapat dipesan / direstok">-</span>
+                                            ) : (
+                                                <Checkbox
+                                                    checked={selectedIds.has(row.id)}
+                                                    onChange={() => toggleRow(row)}
+                                                    size="sm"
+                                                    aria-label={`Pilih baris ${index + 1}`}
+                                                />
+                                            )}
                                         </DataTableCell>
                                     ) : null}
-                                    <DataTableCell className={`px-2.5 text-center text-base whitespace-nowrap ${isInactive ? 'text-red-950 font-semibold' : 'text-table-row-number'}`}>
+                                    <DataTableCell className="px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
                                         {from > 0 ? (from + index) : (index + 1)}
                                     </DataTableCell>
                                     {dataColumns.map((column) => (
