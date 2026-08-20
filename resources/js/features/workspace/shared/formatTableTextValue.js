@@ -52,6 +52,16 @@ export default function formatTableTextValue(value, column = null) {
                 value = value.replace(/^(?:bapak|bapak\.|bpk|bpk\.|ibu|ibu\.|ib|ib\.|saudara|saudara\.|sdr|sdr\.|tuan|tuan\.|tn|tn\.|nyonya|nyonya\.|ny|ny\.)\s+/i, '');
             }
 
+            const isConditionColumn = colId.includes('condition') || colId.includes('kondisi') || colLabel.includes('kondisi') || colLabel.includes('kelayakan');
+            if (isConditionColumn) {
+                const val = String(value ?? '').toLowerCase().trim();
+                if (val === 'damaged' || val.includes('rusak') || val.includes('cacat')) return 'Barang Rusak / Cacat';
+                if (val === 'expired' || val.includes('kedaluwarsa') || val.includes('expired')) return 'Barang Kedaluwarsa';
+                if (val === 'inactive' || val.includes('nonaktif')) return 'Nonaktif (Tidak Dijual)';
+                if (val === 'normal' || val === '-' || val === '') return 'Layak Jual (Normal)';
+                return value;
+            }
+
             const isNumeric = column.align === 'right' ||
                               colId.includes('price') || 
                               colId.includes('amount') || 
@@ -102,6 +112,11 @@ export default function formatTableTextValue(value, column = null) {
         const colId = String(column.id ?? '').toLowerCase();
         const colLabel = String(column.label ?? '').toLowerCase();
         
+        const isConditionColumn = colId.includes('condition') || colId.includes('kondisi') || colLabel.includes('kondisi') || colLabel.includes('kelayakan');
+        if (isConditionColumn) {
+            return 'Layak Jual (Normal)';
+        }
+
         const isNumeric = column.align === 'right' ||
                           colId.includes('price') || 
                           colId.includes('amount') || 
