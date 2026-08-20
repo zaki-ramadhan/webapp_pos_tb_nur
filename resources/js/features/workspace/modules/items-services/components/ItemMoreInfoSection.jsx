@@ -71,7 +71,7 @@ export function ItemMoreInfoSection({ config, values, onChange, isLoading }) {
 
             <div className="space-y-3 pt-2">
                 <CheckboxField
-                    label="Barang Rusak / Afkir / Cacat"
+                    label="Barang Rusak / Cacat"
                     checked={isDamaged}
                     onChange={handleToggleDamaged}
                 />
