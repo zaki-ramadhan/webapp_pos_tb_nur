@@ -101,8 +101,16 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
+            \Illuminate\Support\Facades\Log::error('Backend API Throwable: ' . $exception->getMessage(), [
+                'url' => $request->fullUrl(),
+                'method' => $request->method(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+
             return response()->json([
-                'message' => 'An unexpected server error occurred.',
+                'message' => config('app.debug') ? $exception->getMessage() : 'An unexpected server error occurred.',
             ], 500);
         });
 
