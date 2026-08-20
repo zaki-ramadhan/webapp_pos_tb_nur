@@ -70,6 +70,10 @@ class Product extends DomainModel
             if (is_null($product->default_sale_price)) {
                 $product->default_sale_price = 0;
             }
+
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('products', 'item_condition')) {
+                unset($product->attributes['item_condition'], $product->attributes['expiry_date'], $product->attributes['condition_notes']);
+            }
         });
     }
 
