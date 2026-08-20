@@ -14,7 +14,6 @@ export function useWorkspaceFormDraftState({
 
     useEffect(() => {
         const recordChanged = recordId !== prevRecordId.current;
-        const initialValuesChanged = JSON.stringify(initialValues) !== JSON.stringify(prevInitialValues.current);
 
         if (recordChanged) {
             prevRecordId.current = recordId;
@@ -22,29 +21,6 @@ export function useWorkspaceFormDraftState({
             hasUserEditedRef.current = false;
             setValues(initialValues);
             setSavedSnapshot(initialValues);
-            onSync?.(initialValues);
-        } else if (initialValuesChanged && !hasUserEditedRef.current) {
-            prevInitialValues.current = initialValues;
-            setValues((prev) => {
-                const preserved = {};
-                if (Array.isArray(prev.openingStockRows) && prev.openingStockRows.length > 0 && (!initialValues.openingStockRows || initialValues.openingStockRows.length === 0)) {
-                    preserved.openingStockRows = prev.openingStockRows;
-                }
-                return {
-                    ...initialValues,
-                    ...preserved,
-                };
-            });
-            setSavedSnapshot((prev) => {
-                const preserved = {};
-                if (Array.isArray(prev.openingStockRows) && prev.openingStockRows.length > 0 && (!initialValues.openingStockRows || initialValues.openingStockRows.length === 0)) {
-                    preserved.openingStockRows = prev.openingStockRows;
-                }
-                return {
-                    ...initialValues,
-                    ...preserved,
-                };
-            });
             onSync?.(initialValues);
         }
     }, [recordId, initialValues, onSync]);
