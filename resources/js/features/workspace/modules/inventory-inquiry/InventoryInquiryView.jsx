@@ -310,6 +310,13 @@ export default function InventoryInquiryView({ config, pageId }) {
                 };
             });
 
+            const supplierNames = selectedRows
+                .map((r) => (r.supplier && r.supplier !== '-' ? r.supplier.trim() : ''))
+                .filter(Boolean);
+
+            const uniqueSupplierNames = [...new Set(supplierNames)];
+            const isSameSupplier = uniqueSupplierNames.length === 1;
+
             const firstRow = selectedRows[0];
             const supplierName = firstRow?.supplier && firstRow.supplier !== '-' ? firstRow.supplier : '';
             const supplierId = firstRow?.supplierId || firstRow?.supplier_id || null;
@@ -526,7 +533,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                                             );
                                                         }
                                                     }}
-                                                    className="font-medium text-blue-700 hover:text-blue-900 hover:underline cursor-pointer transition-colors text-left focus:outline-none"
+                                                    className="font-normal text-blue-700 hover:text-blue-900 hover:underline cursor-pointer transition-colors text-left focus:outline-none"
                                                 >
                                                     {formatTableTextValue(row[column.id])}
                                                 </button>
