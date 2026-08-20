@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { usePage } from '@inertiajs/react';
+import { CircleX } from 'lucide-react';
 import { isOwnerUser } from '@/features/workspace/backend/adapters/generalAdapters';
 
 import {
@@ -521,7 +522,9 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     {firstColumnIsCheckbox ? (
                                         <DataTableCell className="w-px px-3 text-center" onClick={(e) => e.stopPropagation()}>
                                             {isInactive ? (
-                                                <span className="text-slate-400 font-medium select-none text-xs" title="Barang nonaktif tidak dapat dipesan / direstok">-</span>
+                                                <div className="flex items-center justify-center py-0.5" title="Barang nonaktif tidak dapat dipesan / direstok">
+                                                    <CircleX className="h-4 w-4 text-slate-400 select-none" />
+                                                </div>
                                             ) : (
                                                 <Checkbox
                                                     checked={selectedIds.has(row.id)}
