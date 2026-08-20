@@ -56,6 +56,10 @@ export function getProductImageUrl(name, size = 120) {
 export function getBuildingStoreLayoutRecommendation(itemA = '', itemB = '') {
     const text = (itemA + ' ' + itemB).toLowerCase();
 
+    // Specific tool check before raw bulk sand check (e.g. "Sekop Pasir" is a tool)
+    if (/sekop|cangkul|perkakas|tang|palu|gergaji|meteran|kawat|paku|engsel|gembok|baut|sekrup/i.test(text) && !/cor|split|bata|batako|pondasi/i.test(text) && !/pasir\s+(cor|pasang|hitam|lumajang|merah|putih)/i.test(text)) {
+        return `Simpan kawat bendrat dalam kotak sekat di bawah meja kasir kios depan, dan gantung sekop/perkakas pada papan display dinding kios.`;
+    }
     if (/keramik|granit|tile|nat|perekat keramik/i.test(text)) {
         return `Simpan tumpukan dus keramik di gudang belakang rumah (area kering), dan sediakan kepingan sampel motif serta semen nat di rak display kios depan dekat kasir.`;
     }
@@ -77,9 +81,6 @@ export function getBuildingStoreLayoutRecommendation(itemA = '', itemB = '') {
     if (/kran|keran|lem|fitting|keni|tee|stop|seal|flange/i.test(text)) {
         return `Pajang kran dan fitting di etalase kaca kios depan dekat kasir, serta gantungkan seal tape dan lem pipa di sisi etalase.`;
     }
-    if (/kawat|paku|engsel|gembok|baut|sekrup|tang|palu|gergaji|meteran|cangkul|sekop/i.test(text)) {
-        return `Simpan paku/baut dalam kotak sekat di bawah meja kasir kios depan, dan gantung perkakas pada papan display dinding kios.`;
-    }
     if (/listrik|kabel|saklar|isolatip|stop kontak|fitting lampu|lampu/i.test(text)) {
         return `Pajang di etalase alat listrik kios depan, dan posisikan produk pelengkap/isolatip di gantungannya.`;
     }
@@ -92,9 +93,17 @@ export function getBuildingStoreCashierRecommendation(itemA = '', itemB = '', an
     const textB = (itemB || '').toLowerCase();
     const text = (itemA + ' ' + itemB).toLowerCase();
 
+    // Tools pair (e.g. Sekop + Kawat Bendrat)
+    if (/sekop|cangkul/i.test(text) && /kawat|paku/i.test(text)) {
+        return `Tawarkan kawat bendrat atau paku tambahan sebelum transaksi kasir difinalisasi sebagai pelengkap alat pertukangan.`;
+    }
+
     // Cross-category pairs first
     if ((/semen|mortar/i.test(textA) && /kuas|cat|thinner/i.test(textB)) || (/kuas|cat|thinner/i.test(textA) && /semen|mortar/i.test(textB))) {
         return `Tawarkan kuas cat atau alat finishing sebagai pelengkap persiapan plesteran dan pengecatan saat pembeli memesan semen di kasir.`;
+    }
+    if ((/pasir/i.test(textA) && /thinner|cat/i.test(textB)) || (/thinner|cat/i.test(textA) && /pasir/i.test(textB))) {
+        return `Tawarkan bahan pelarut cat atau kuas pembersih saat konsumen memesan pasir untuk tahap penyelesaian renovasi bangunan di kasir kios.`;
     }
     if ((/semen|cor|pasir/i.test(textA) && /kawat|paku|besi/i.test(textB)) || (/kawat|paku|besi/i.test(textA) && /semen|cor|pasir/i.test(textB))) {
         return `Tawarkan kawat bendrat atau paku cor saat pembeli memesan semen/pasir untuk pekerjaan struktur.`;
