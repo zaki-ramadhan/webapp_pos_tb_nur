@@ -24,5 +24,23 @@ class AppServiceProvider extends ServiceProvider
                 $request->user()?->id ?: $request->ip()
             );
         });
+
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('products')) {
+                \Illuminate\Support\Facades\Schema::table('products', function (\Illuminate\Database\Schema\Blueprint $table): void {
+                    if (!\Illuminate\Support\Facades\Schema::hasColumn('products', 'item_condition')) {
+                        $table->string('item_condition', 50)->default('normal')->after('product_type');
+                    }
+                    if (!\Illuminate\Support\Facades\Schema::hasColumn('products', 'expiry_date')) {
+                        $table->date('expiry_date')->nullable()->after('item_condition');
+                    }
+                    if (!\Illuminate\Support\Facades\Schema::hasColumn('products', 'condition_notes')) {
+                        $table->text('condition_notes')->nullable()->after('expiry_date');
+                    }
+                });
+            }
+        } catch (\Throwable) {
+            // Ignore during build / without DB
+        }
     }
 }

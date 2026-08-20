@@ -13,34 +13,54 @@ export function ItemMoreInfoSection({ values, onChange, isLoading }) {
     function handleToggleDamaged(e) {
         const checked = e.target.checked;
         if (checked) {
-            onChange('itemCondition', 'damaged');
-            onChange('conditionNotes', 'Barang Rusak / Cacat');
+            onChange({
+                itemCondition: 'damaged',
+                conditionNotes: 'Barang Rusak / Cacat',
+                isActive: true,
+                is_active: true,
+            });
         } else {
-            onChange('itemCondition', 'normal');
-            onChange('conditionNotes', '');
+            onChange({
+                itemCondition: 'normal',
+                conditionNotes: '',
+            });
         }
     }
 
     function handleToggleExpired(e) {
         const checked = e.target.checked;
         if (checked) {
-            onChange('itemCondition', 'expired');
-            onChange('conditionNotes', 'Barang Kedaluwarsa');
+            onChange({
+                itemCondition: 'expired',
+                conditionNotes: 'Barang Kedaluwarsa',
+                isActive: true,
+                is_active: true,
+            });
         } else {
-            onChange('itemCondition', 'normal');
-            onChange('conditionNotes', '');
-            onChange('expiryDate', '');
+            onChange({
+                itemCondition: 'normal',
+                conditionNotes: '',
+                expiryDate: '',
+            });
         }
     }
 
     function handleToggleInactive(e) {
         const checked = e.target.checked;
         if (checked) {
-            onChange('itemCondition', 'inactive');
-            onChange('isActive', false);
+            onChange({
+                itemCondition: 'inactive',
+                isActive: false,
+                is_active: false,
+                conditionNotes: 'Nonaktif (Tidak Dijual)',
+            });
         } else {
-            onChange('itemCondition', 'normal');
-            onChange('isActive', true);
+            onChange({
+                itemCondition: 'normal',
+                isActive: true,
+                is_active: true,
+                conditionNotes: '',
+            });
         }
     }
 
