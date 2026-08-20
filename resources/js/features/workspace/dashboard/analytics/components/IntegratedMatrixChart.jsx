@@ -158,18 +158,18 @@ export default function IntegratedMatrixChart({ rules }) {
     const activeLegends = [
         hasAC && {
             color: '#2563eb',
-            title: 'A ↔ C Jual Silang (Prioritas Utama)',
+            title: 'A ↔ C / C ↔ A Jual Silang (Prioritas Utama)',
             desc: 'Barang aksesoris (C) terikat dengan produk inti (A).',
         },
         hasAA && {
             color: '#059669',
             title: 'A ↔ A Paket Bundling (Sangat Kuat)',
-            desc: 'Paket bundling antar-produk inti omzet terbesar.',
+            desc: 'Paket bundling antar-produk inti omzet terbesar (A).',
         },
         hasB && {
             color: '#d97706',
-            title: 'Kategori B Paket Rutin (Pelengkap)',
-            desc: 'Kombinasi melibatkan produk kebutuhan rutin (B).',
+            title: 'B ↔ A / B ↔ C Paket Pelengkap (Rutin)',
+            desc: 'Kombinasi produk menengah (B) dengan produk lainnya.',
         },
         hasCC && {
             color: '#6366f1',
