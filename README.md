@@ -1,152 +1,63 @@
-# Web App POS & ERP Toko Bangunan "TB Nur"
+# Sistem POS & Manajemen Operasional Toko Bangunan (TB Nur)
 
-Aplikasi POS (Point of Sale) dan ERP (Enterprise Resource Planning) berbasis web modern yang dirancang khusus untuk Toko Bangunan **"TB Nur"**. Aplikasi ini digunakan oleh **Owner (Pemilik Toko)** dan **Karyawan Back-Office** untuk mengelola data master, stok gudang multi-cabang, transaksi penjualan tempo/piutang, pembelian supplier, pencatatan kas/bank, serta laporan keuangan real-time.
-
----
-
-## 📋 Prasyarat & Lingkungan Pengembangan
-
-- **Backend**: PHP 8.3+ | Laravel 11+
-- **Frontend**: Node.js 20+ | React 19 | Inertia.js 2+ | TailwindCSS
-- **Database**: MySQL 8.0+ / MariaDB 10.6+
-- **Build Tools**: Vite 7+
+Aplikasi web untuk mendukung operasional harian Toko Bangunan **TB Nur**, mencakup transaksi kasir, pengelolaan persediaan material, pencatatan transaksi tempo (piutang & hutang), arus kas, hingga laporan keuangan usaha.
 
 ---
 
-## 🌐 Arsitektur Integrasi API & Strategi Optimasi (Upstream APIs)
+## 📌 Ringkasan Fitur
 
-Aplikasi ini melakukan pemanggilan (fetch) data ke API pihak ketiga eksternal secara teratur dengan optimasi ketat di sisi server guna memastikan efisiensi request dan kepatuhan terhadap rate limit:
-
-*   **API Daftar Bank Indonesia**
-    *   **Endpoint Upstream (GitHub Raw)**: `https://raw.githubusercontent.com/riod94/list-bank-indonesia/master/bank.json`
-    *   **Endpoint Lokal (Backend Wrapper)**: `/api/backend/banks`
-    *   **Metode & Performa**: Server backend mengambil data bank dari repositori open-source GitHub tersebut secara berkala dan menyimpannya ke memori cache server menggunakan `Cache::rememberForever('indonesian_banks_list', ...)`.
-    *   **Keuntungan Teknis**: Meniadakan latensi jaringan (0ms response untuk frontend), bebas dari risiko server eksternal down, dan memiliki sistem *Fail-Safe Fallback* (jika koneksi internet terputus, backend otomatis memuat cadangan data lokal agar aplikasi tetap berfungsi normal).
-
-*   **API Nilai Tukar Kurs Mata Uang**
-    *   **Endpoint Upstream (ExchangeRate-API)**: `https://open.er-api.com/v6/latest/USD`
-    *   **Endpoint Lokal (Backend Wrapper)**: `/api/backend/currencies/sync`
-    *   **Metode & Performa**: Menggunakan `Cache::remember` dengan durasi **12 jam** (43.200 detik).
-    *   **Keuntungan Teknis**: Karena nilai tukar diperbarui harian oleh penyedia API, pembatasan request setiap 12 jam sekali sangat menghemat pemakaian resource server dan menjamin kelangsungan kuota API gratis.
-
----
-
-## ⚡ Fitur Utama & Deskripsi Algoritma
-
-### A. Penilaian Persediaan & HPP (FIFO Costing Engine)
-Aplikasi menggunakan metode **FIFO (First-In-First-Out)** untuk pencatatan arus barang dan perhitungan Harga Pokok Penjualan (HPP/COGS):
-*   **Pencatatan Batch (Stock Entry)**: Setiap barang masuk (Faktur Pembelian, Retur Penjualan, Penyesuaian Positif) mendaftarkan batch baru di database lengkap dengan harga beli asli (`unit_cost`) dan tanggal masuk.
-*   **Konsumsi FIFO (Stock Consumption)**: Ketika terjadi barang keluar (Faktur Penjualan, Retur Pembelian, Penyesuaian Negatif), sistem otomatis memotong stok dari batch tertua terlebih dahulu. HPP dihitung secara dinamis berdasarkan nilai beli batch yang terpotong tersebut.
-*   **Rollback Costing**: Jika dokumen transaksi diperbarui (update) atau dibatalkan (void), sistem secara otomatis mengembalikan status konsumsi batch ke kondisi semula untuk mencegah ketidaksesuaian nilai buku stok.
-
-### B. Unified Document Model (Pola Desain Database)
-Untuk transaksi keuangan dan stok, kami tidak membuat puluhan tabel transaksi terpisah. Kami menerapkan pola **Unified Document Model**:
-*   Semua transaksi keuangan (Sales Order, Invoice, Pembayaran Kas/Bank, Saldo Awal Piutang/Hutang) disimpan dalam tabel terpadu `operation_documents` dan detail item di `operation_document_lines`. Kolom `document_type` bertindak sebagai pembeda.
-*   Semua pergerakan barang non-keuangan (Mutasi barang antar-gudang, stock opname, koreksi penyesuaian) disimpan dalam tabel `inventory_documents` dan `inventory_document_lines`.
-*   **Alasan Teknis**: Mengurangi jumlah table join di database, menyederhanakan query, serta mempercepat proses audit transaksi.
-
-### C. Multitab Workspace SPA (Single Page Application)
-*   Menggunakan **Inertia.js + React 19**.
-*   Sistem tab workspace di frontend memungkinkan pengguna membuka banyak modul sekaligus (seperti browser tab di dalam aplikasi) tanpa melakukan reload halaman penuh. State form dan input yang sedang dikerjakan tidak akan hilang jika pengguna berpindah tab.
-*   **Streamlined Workspace Toolbar**: Desain tampilan tabel menggunakan `TableToolbar` ringkas tanpa dropdown filter atas yang tidak perlu, sehingga antarmuka lebih bersih dan fokus pada pencarian serta tombol aksi utama.
+- **Kasir & Penjualan (POS)**  
+  Mendukung transaksi tunai maupun tempo, pencatatan uang muka (DP), cetak nota, dan retur penjualan.
+- **Pembelian & Hutang Supplier**  
+  Pencatatan faktur barang masuk dari pemasok, pemantauan jatuh tempo, dan riwayat pembayaran hutang.
+- **Manajemen Persediaan & Gudang**  
+  Monitoring stok multi-gudang, penyesuaian stok fisik (opname), dan kalkulasi harga pokok otomatis berbasis metode FIFO.
+- **Kas & Perbankan**  
+  Pencatatan penerimaan dan pengeluaran kas operasional serta transfer saldo antar-rekening toko.
+- **Laporan & Rekapitulasi**  
+  Laporan laba kotor, ringkasan piutang/hutang, mutasi kas/bank, dan kartu riwayat pergerakan stok barang.
+- **Workspace Multi-Tab**  
+  Navigasi modular yang memungkinkan pengguna membuka beberapa menu sekaligus tanpa kehilangan data isian form saat berpindah tab.
 
 ---
 
-## 🚫 Modul yang Dihapus / Di-Scope Down (Secara Spesifik Tidak Digunakan)
+## 💻 Kebutuhan Sistem & Teknologi
 
-Sesuai kebutuhan operasional klien, modul-modul berikut **telah dihapus secara permanen** dari sistem (backend blueprint, frontend registry, dan menu navigasi) dan **tidak boleh dibuat ulang**:
-
-1.  **Penyesuaian Harga Diskon (`price-adjustment`)**: Diskon diinput langsung pada baris transaksi dokumen (Sales Invoice/Purchase Invoice).
-2.  **Pesanan Pembelian (`purchase-order`)**: Dokumen pembelian langsung diproses melalui Faktur Pembelian (Hutang).
-3.  **Komisi Penjual (`sales-commission`)**: Role penjual & komisi sales tidak digunakan.
-4.  **Harga Pemasok (`supplier-price`)**: Tidak ada master harga khusus pemasok.
-5.  **Permintaan Barang (`item-request`)**: Tidak ada alur pengajuan permintaan barang terpisah.
-6.  **Merk Barang (`item-brand`)**: Kategori dan master barang tidak menggunakan atribut merek terpisah.
-7.  **Rekonsiliasi Bank (`bank-reconciliation`)**: Transaksi bank langsung diproses dan dipantau melalui Histori Bank & Kas/Bank.
-8.  **Toggle No. Seri / Produksi pada Master Barang**: Dihapus untuk menyederhanakan data master barang & jasa.
+- **Backend**: PHP 8.3+ (Laravel 11)
+- **Frontend**: React 19, Inertia.js, Tailwind CSS
+- **Database**: MySQL 8.0+ / MariaDB
+- **Build Tool**: Vite 7+
 
 ---
 
-## 🛠️ Daftar Endpoint API Lokal (Backend Controller)
+## 🚀 Panduan Instalasi & Menjalankan Aplikasi
 
-Semua endpoint dilindungi oleh middleware `auth` dan `throttle:api`:
+1. **Pasang Dependensi Backend & Frontend:**
+   ```bash
+   composer install
+   npm install
+   ```
 
-| Method | Endpoint | Fungsi | Keterangan |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/api/backend/resources` | Mendapatkan daftar modul yang aktif | Membaca konfigurasi hak akses user |
-| **GET** | `/api/backend/banks` | Mengambil daftar bank Indonesia | Terhubung ke Upstream API & Cache |
-| **POST**| `/api/backend/currencies/sync` | Sinkronisasi kurs mata uang | Update database berbasis API kurs USD |
-| **POST**| `/api/backend/attachments/upload`| Unggah lampiran berkas dokumen | Menyimpan bukti transaksi |
-| **GET** | `/api/backend/{resource}` | List data (Read) | Mendukung pencarian & pagination |
-| **POST**| `/api/backend/{resource}` | Buat data baru (Create) | Menjalankan validasi Form Request |
-| **GET** | `/api/backend/{resource}/{id}`| Detail data (Read One) | Mengembalikan relasi data lengkap |
-| **PUT** | `/api/backend/{resource}/{id}`| Edit/Update data | Memicu audit log & penyesuaian HPP |
-| **DELETE**| `/api/backend/{resource}/{id}`| Hapus data | Soft delete / Hard delete |
+2. **Konfigurasi Environment:**
+   Salin berkas `.env.example` menjadi `.env` lalu sesuaikan konfigurasi database:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-*(Catatan: `{resource}` di atas dinamis, bernilai `items-services`, `customers`, `suppliers`, `employees`, `sales-invoices`, `sales-deposits`, `sales-receipts`, `purchase-invoices`, `purchase-payments`, `cash-payments`, `cash-receipts`, `bank-transfers`, `inventory-adjustments`, dll.)*
+3. **Migrasi Database & Data Awal:**
+   ```bash
+   php artisan migrate --seed
+   ```
 
----
-
-## 🗄️ Entitas Database Utama (Entity Relationship)
-
-Berikut adalah ringkasan entitas utama di database MySQL `post_tb_nur`:
-
-1.  **Grup Pengaturan & Organisasi**
-    *   `users`: Autentikasi sistem (email, password).
-    *   `roles` & `permissions`: Level otorisasi hak akses menu.
-    *   `branches`: Kantor cabang operasional (Pusat, Cabang A).
-    *   `warehouses`: Gudang penyimpanan barang (terikat ke cabang).
-    *   `employees` & `employee_bank_accounts`: Data staf, gaji, dan rekening transfer.
-
-2.  **Grup Katalog & Partner**
-    *   `products`: Data barang & jasa (SKU, nama, stok minimal, tanpa toggle seri/produksi).
-    *   `units` & `product_unit_conversions`: Satuan unit (Pcs, Sak, Kubik) dan konversinya.
-    *   `product_prices`: Harga bertingkat (Tiering) untuk retail vs kontraktor.
-    *   `customers` & `suppliers`: Data kontak pembeli dan pemasok tempo.
-
-3.  **Grup Transaksi**
-    *   `operation_documents` & `_lines`: Faktur penjualan/POS, retur, hutang-piutang, kas masuk/keluar, saldo awal piutang/hutang.
-    *   `inventory_documents` & `_lines`: Mutasi stok antar-gudang, stok opname, penyesuaian persediaan.
+4. **Jalankan Server Pengembangan:**
+   ```bash
+   composer run dev
+   ```
+   Aplikasi siap diakses melalui browser pada alamat default `http://localhost:8000`.
 
 ---
 
-## 📂 Peta Halaman & Modul Aktif Aplikasi (Frontend Workspace)
+## 📄 Catatan Penggunaan
 
-Halaman diletakkan secara modular pada direktori `resources/js/features/workspace/modules`:
-
-1.  **Pengaturan**: Preferensi toko, format penomoran nota, hak akses role & permission, manajemen user.
-2.  **Perusahaan**: Manajemen cabang, departemen, pajak perusahaan, penggajian karyawan (payroll), log aktivitas audit staf.
-3.  **Buku Besar (Accounting)**: Chart of Accounts (COA) / rekening perkiraan, beban biaya, payroll bulanan, jurnal umum manual.
-4.  **Kas & Bank**: Pencatatan uang keluar (pembayaran), uang masuk (penerimaan), transfer saldo antar bank, histori bank.
-5.  **Penjualan (Sales)**: Uang muka penjualan, faktur penjualan (POS/tempo), penerimaan pembayaran piutang (dengan Modal Saldo Awal Piutang), retur penjualan, database pelanggan, check-in kunjungan sales.
-6.  **Pembelian (Purchasing)**: Faktur pembelian (hutang), pembayaran hutang supplier (dengan Modal Saldo Awal Hutang), retur pembelian, database pemasok.
-7.  **Persediaan (Inventory)**: Master Barang & Jasa, penyesuaian persediaan stok (decoupled FIFO), opname stok fisik, lokasi & minimum stok gudang.
-8.  **Laporan**: Cetak Laporan Laba Rugi, Neraca Keuangan, Arus Kas, Buku Pembantu Piutang/Hutang, Kartu Stok Barang.
-
----
-
-## 🚀 Cara Menjalankan Aplikasi
-
-1.  **Install Dependencies:**
-    ```bash
-    composer install
-    npm install
-    ```
-2.  **Konfigurasi Database:**
-    Salin `.env.example` menjadi `.env` dan sesuaikan konfigurasi database (`DB_DATABASE=post_tb_nur`).
-3.  **Migrasi & Seed Data:**
-    ```bash
-    php artisan migrate --seed
-    ```
-4.  **Jalankan Dev Server (Wajib menggunakan `composer run dev`):**
-    ```bash
-    composer run dev
-    ```
-5.  **Jalankan Suite Pengujian Automated (PHPUnit):**
-    ```bash
-    php artisan test
-    ```
-6.  **Build Production Asset:**
-    ```bash
-    npx vite build
-    ```
+Aplikasi ini dikembangkan khusus sesuai alur operasional Toko Bangunan TB Nur. Hak akses data master, konfigurasi usaha, dan catatan transaksi sepenuhnya berada di bawah kendali pemilik toko.
