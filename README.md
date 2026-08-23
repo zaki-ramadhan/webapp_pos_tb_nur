@@ -2,7 +2,7 @@
 
 Aplikasi web untuk mendukung operasional harian Toko Bangunan **TB Nur**, mencakup transaksi kasir, pengelolaan persediaan material, pencatatan transaksi tempo (piutang & hutang), arus kas, hingga laporan keuangan usaha.
 
-![Preview Aplikasi TB Nur POS](public/images/preview.png)
+[![Preview Aplikasi TB Nur POS](public/images/preview.webp)](https://tb-nur.shop/)
 
 ---
 
