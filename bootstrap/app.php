@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route('dashboard'));
 
@@ -41,7 +42,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return response()->json([
-                'message' => 'The given data was invalid.',
+                'message' => 'Data yang dimasukkan tidak valid atau belum lengkap.',
                 'errors' => $exception->errors(),
             ], 422);
         });
@@ -52,7 +53,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return response()->json([
-                'message' => 'Authentication is required for this request.',
+                'message' => 'Sesi login Anda telah berakhir. Silakan login kembali.',
             ], 401);
         });
 
@@ -62,7 +63,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return response()->json([
-                'message' => 'You are not allowed to perform this action.',
+                'message' => $exception->getMessage() ?: 'Anda tidak memiliki hak akses untuk melakukan tindakan ini.',
             ], 403);
         });
 
@@ -72,7 +73,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return response()->json([
-                'message' => 'Resource not found.',
+                'message' => 'Data yang diminta tidak ditemukan.',
             ], 404);
         });
 
@@ -81,9 +82,18 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
+            $status = $exception->getStatusCode();
+            $defaultMessage = match ($status) {
+                403 => 'Anda tidak memiliki hak akses untuk melakukan tindakan ini.',
+                404 => 'Data atau halaman yang diminta tidak ditemukan.',
+                419 => 'Sesi Anda telah kedaluwarsa. Silakan muat ulang halaman.',
+                429 => 'Terlalu banyak permintaan. Mohon tunggu beberapa saat sebelum mencoba kembali.',
+                default => $exception->getMessage() ?: 'Permintaan tidak dapat diproses.',
+            };
+
             return response()->json([
-                'message' => $exception->getStatusCode() === 404 ? 'Resource not found.' : ($exception->getMessage() ?: 'Request failed.'),
-            ], $exception->getStatusCode());
+                'message' => $defaultMessage,
+            ], $status);
         });
 
         $exceptions->render(function (QueryException $exception, Request $request) use ($isBackendApi) {
@@ -92,7 +102,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return response()->json([
-                'message' => 'The resource could not be persisted because of a database constraint.',
+                'message' => 'Data tidak dapat disimpan karena masih terhubung dengan data lain atau nomor dokumen sudah digunakan.',
             ], 409);
         });
 
@@ -110,7 +120,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ]);
 
             return response()->json([
-                'message' => config('app.debug') ? $exception->getMessage() : 'An unexpected server error occurred.',
+                'message' => config('app.debug') ? $exception->getMessage() : 'Terjadi kendala pada sistem. Silakan coba beberapa saat lagi.',
             ], 500);
         });
 

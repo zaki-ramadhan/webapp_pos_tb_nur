@@ -87,7 +87,7 @@ class BackendResourceController extends Controller
         }
 
         return response()->json([
-            'message' => "{$blueprint->label} created successfully.",
+            'message' => "{$blueprint->label} berhasil ditambahkan.",
             'data' => $record,
         ], 201);
     }
@@ -203,7 +203,7 @@ class BackendResourceController extends Controller
         }
 
         return response()->json([
-            'message' => "{$blueprint->label} updated successfully.",
+            'message' => "{$blueprint->label} berhasil diperbarui.",
             'data' => $entity,
         ]);
     }
@@ -221,7 +221,7 @@ class BackendResourceController extends Controller
         $this->writer->delete($blueprint, $entity);
 
         return response()->json([
-            'message' => "{$blueprint->label} deleted successfully.",
+            'message' => "{$blueprint->label} berhasil dihapus.",
         ]);
     }
 
@@ -234,7 +234,7 @@ class BackendResourceController extends Controller
         $blueprint = BackendResourceRegistry::find($resource);
 
         if ($blueprint === null) {
-            throw new NotFoundHttpException("Backend resource [{$resource}] is not registered.");
+            throw new NotFoundHttpException("Modul data [{$resource}] tidak terdaftar di sistem.");
         }
 
         return $blueprint;

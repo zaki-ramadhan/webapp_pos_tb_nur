@@ -224,13 +224,31 @@ export function extractBackendTotal(payload) {
     return extractBackendRows(payload).length;
 }
 
-export function getBackendErrorMessage(error, fallbackMessage = 'Permintaan backend gagal diproses.') {
-    if (error?.response?.status === 403 || error?.response?.data?.message === 'This action is unauthorized.') {
-        return 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.';
+export function getBackendErrorMessage(error, fallbackMessage = 'Permintaan tidak dapat diproses saat ini.') {
+    const status = error?.response?.status;
+
+    if (status === 401) {
+        return 'Sesi login Anda telah berakhir. Silakan login kembali.';
     }
-    if (error?.response?.status === 404) {
-        return 'Data tidak ditemukan atau sudah dihapus';
+    if (status === 403 || error?.response?.data?.message === 'This action is unauthorized.') {
+        return 'Anda tidak memiliki hak akses untuk melakukan tindakan ini.';
     }
+    if (status === 404) {
+        return 'Data tidak ditemukan atau sudah dihapus.';
+    }
+    if (status === 409) {
+        return 'Data tidak dapat disimpan karena masih terhubung dengan data lain atau nomor dokumen sudah digunakan.';
+    }
+    if (status === 419) {
+        return 'Sesi Anda telah kedaluwarsa. Silakan muat ulang halaman.';
+    }
+    if (status === 429) {
+        return 'Terlalu banyak permintaan. Mohon tunggu beberapa saat sebelum mencoba kembali.';
+    }
+    if (status >= 500) {
+        return 'Terjadi gangguan sementara pada server. Silakan coba sesaat lagi.';
+    }
+
     const validationErrors = error?.response?.data?.errors;
 
     if (validationErrors && typeof validationErrors === 'object') {
@@ -246,7 +264,17 @@ export function getBackendErrorMessage(error, fallbackMessage = 'Permintaan back
     const responseMessage = error?.response?.data?.message;
 
     if (typeof responseMessage === 'string' && responseMessage.trim()) {
+        if (responseMessage === 'The given data was invalid.') {
+            return 'Data yang dimasukkan tidak valid atau belum lengkap.';
+        }
+        if (responseMessage === 'Server Error') {
+            return 'Terjadi gangguan pada server. Silakan coba sesaat lagi.';
+        }
         return responseMessage;
+    }
+
+    if (error?.code === 'ERR_NETWORK' || error?.message?.includes('Network Error')) {
+        return 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
     }
 
     if (typeof error?.message === 'string' && error.message.trim()) {
