@@ -1,8 +1,3 @@
-import {
-    AbcAnalysisWidget,
-    AprioriAnalysisWidget,
-    IntegratedAnalysisWidget,
-} from '@/features/workspace/dashboard/DashboardAnalyticsWidgets';
 import DashboardWidgetEmptyState from '@/features/workspace/dashboard/widgets/DashboardWidgetEmptyState';
 import {
     ExpenseBreakdownMetric,
@@ -26,6 +21,7 @@ function WidgetEmptyState({ widget }) {
         />
     );
 }
+
 function WidgetSkeleton({ widget }) {
     if (widget.type === 'line' || widget.type === 'cash-availability') {
         return (
@@ -60,39 +56,6 @@ function WidgetSkeleton({ widget }) {
         );
     }
 
-    if (widget.type === 'abc-analysis' || widget.type === 'apriori-analysis') {
-        return (
-            <div className="flex h-full min-h-0 flex-col gap-3 rounded-[8px] p-2 bg-slate-100 border border-slate-200 animate-pulse">
-                <div className="grid grid-cols-3 gap-2">
-                    <div className="h-16 rounded bg-slate-300" />
-                    <div className="h-16 rounded bg-slate-300" />
-                    <div className="h-16 rounded bg-slate-300" />
-                </div>
-                <div className="min-h-0 flex-1 space-y-3 pr-1">
-                    <div className="h-14 rounded-lg bg-slate-200" />
-                    <div className="h-14 rounded-lg bg-slate-200" />
-                </div>
-            </div>
-        );
-    }
-
-    if (widget.type === 'integrated-analysis') {
-        return (
-            <div className="flex h-full min-h-0 flex-col gap-3 rounded-[8px] p-2 bg-slate-100 border border-slate-200 animate-pulse">
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    <div className="h-16 rounded bg-slate-300" />
-                    <div className="h-16 rounded bg-slate-300" />
-                    <div className="h-16 rounded bg-slate-300" />
-                    <div className="h-16 rounded bg-slate-300" />
-                </div>
-                <div className="min-h-0 flex-1 space-y-3 pr-1">
-                    <div className="h-14 rounded-lg bg-slate-200" />
-                    <div className="h-14 rounded-lg bg-slate-200" />
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="flex flex-1 flex-col gap-4 animate-pulse">
             <div className="h-4 w-1/2 rounded bg-slate-300" />
@@ -104,10 +67,6 @@ function WidgetSkeleton({ widget }) {
 
 export default function DashboardWidgetBody({
     widget,
-    analyticsDetailsExpanded,
-    onToggleAnalyticsDetails,
-    chartExpanded,
-    onToggleChart,
     isLoading = false,
 }) {
     if (isLoading) {
@@ -157,26 +116,6 @@ export default function DashboardWidgetBody({
 
     if (widget.type === 'recent-activity') {
         return <RecentActivityWidget widget={widget} />;
-    }
-
-    if (widget.type === 'abc-analysis') {
-        return <AbcAnalysisWidget widget={widget} expanded={analyticsDetailsExpanded} onToggle={onToggleAnalyticsDetails} />;
-    }
-
-    if (widget.type === 'apriori-analysis') {
-        return <AprioriAnalysisWidget widget={widget} expanded={analyticsDetailsExpanded} onToggle={onToggleAnalyticsDetails} />;
-    }
-
-    if (widget.type === 'integrated-analysis') {
-        return (
-            <IntegratedAnalysisWidget
-                widget={widget}
-                expanded={analyticsDetailsExpanded}
-                onToggle={onToggleAnalyticsDetails}
-                chartExpanded={chartExpanded}
-                onToggleChart={onToggleChart}
-            />
-        );
     }
 
     return null;

@@ -5,7 +5,6 @@ import { FormErrorProvider } from '@/components/ui/FormErrorContext';
 export default function DashboardActivePageContent({
     dashboard,
     widgets,
-    analyticsWidget,
     isLoading = false,
     handleRefreshWidget,
     handleReorderWidgets,
@@ -26,7 +25,6 @@ export default function DashboardActivePageContent({
                 <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-tab-active-bg px-1.5 py-1.5 sm:px-2 sm:py-2">
                     <DashboardWidgetGrid
                         widgets={activeDashboardWidgets}
-                        analyticsWidget={analyticsWidget}
                         onRefreshWidget={handleRefreshWidget}
                         onReorderWidgets={handleReorderWidgets}
                         isLoading={isLoading}
