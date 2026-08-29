@@ -31,7 +31,7 @@ class BackendResourceSecurityValidator
             if ($user->branches()->exists()) {
                 $allowedBranchIds = $user->branches->pluck('id')->toArray();
                 if (! in_array((int) $payload['branch_id'], $allowedBranchIds, true)) {
-                    throw new AuthorizationException('You are not allowed to assign records to this branch.');
+                    throw new AuthorizationException('Anda tidak memiliki hak akses untuk mengelola data pada cabang ini.');
                 }
             }
         }
@@ -57,7 +57,7 @@ class BackendResourceSecurityValidator
         if ($resource === 'users' && isset($payload['role_ids'])) {
             $superAdminRoleId = Role::where('code', 'super_admin')->value('id');
             if ($superAdminRoleId && in_array($superAdminRoleId, $payload['role_ids'])) {
-                throw new AuthorizationException('You cannot assign the super_admin role.');
+                throw new AuthorizationException('Hanya Super Admin yang berwenang menetapkan hak akses tingkat tertinggi.');
             }
         }
 
@@ -67,22 +67,22 @@ class BackendResourceSecurityValidator
             foreach ($payload['permissions'] as $perm) {
                 $menuKey = $perm['menu_key'] ?? '';
                 if ($menuKey === '*') {
-                    throw new AuthorizationException('Only super admins can grant wildcard permissions.');
+                    throw new AuthorizationException('Hanya Super Admin yang dapat memberikan izin akses penuh (*).');
                 }
 
                 $targetBlueprint = BackendResourceRegistry::find($menuKey);
                 if ($targetBlueprint) {
                     if (! empty($perm['can_create']) && ! $this->access->can($user, $targetBlueprint, 'create')) {
-                        throw new AuthorizationException("You cannot grant create permission for {$targetBlueprint->label} because you do not have it.");
+                        throw new AuthorizationException("Anda tidak dapat memberikan izin tambah pada modul {$targetBlueprint->label} karena Anda tidak memilikinya.");
                     }
                     if (! empty($perm['can_update']) && ! $this->access->can($user, $targetBlueprint, 'update')) {
-                        throw new AuthorizationException("You cannot grant update permission for {$targetBlueprint->label} because you do not have it.");
+                        throw new AuthorizationException("Anda tidak dapat memberikan izin ubah pada modul {$targetBlueprint->label} karena Anda tidak memilikinya.");
                     }
                     if (! empty($perm['can_delete']) && ! $this->access->can($user, $targetBlueprint, 'delete')) {
-                        throw new AuthorizationException("You cannot grant delete permission for {$targetBlueprint->label} because you do not have it.");
+                        throw new AuthorizationException("Anda tidak dapat memberikan izin hapus pada modul {$targetBlueprint->label} karena Anda tidak memilikinya.");
                     }
                     if (! empty($perm['can_view']) && ! $this->access->can($user, $targetBlueprint, 'view')) {
-                        throw new AuthorizationException("You cannot grant view permission for {$targetBlueprint->label} because you do not have it.");
+                        throw new AuthorizationException("Anda tidak dapat memberikan izin lihat pada modul {$targetBlueprint->label} karena Anda tidak memilikinya.");
                     }
                 }
             }
