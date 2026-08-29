@@ -13,7 +13,6 @@ const DashboardView = forwardRef(function DashboardView(
     {
         dashboard,
         widgets,
-        analyticsWidget,
         topbarHeight = 0,
         mobileWorkspaceMenuOpen = false,
         onCloseMobileWorkspaceMenu,
@@ -154,7 +153,6 @@ const DashboardView = forwardRef(function DashboardView(
                     <DashboardActivePageContent
                         dashboard={dashboard}
                         widgets={widgets ?? dashboard?.widgets}
-                        analyticsWidget={analyticsWidget}
                         isLoading={false}
                         handleRefreshWidget={handleRefreshWidget}
                         renderedPages={renderedPages}

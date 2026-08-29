@@ -11,7 +11,7 @@ use Throwable;
 
 class DashboardBlueprintProvider
 {
-    public static function get(?array $abc = null, ?array $apriori = null, bool $loadData = true, ?string $asOfDate = null): array
+    public static function get(bool $loadData = true, ?string $asOfDate = null): array
     {
         $attachmentsNotice = [
             'parts' => [
@@ -338,90 +338,6 @@ class DashboardBlueprintProvider
             ],
             'transactionTypeOptions' => $transactionTypeOptions,
         ];
-
-      // Gabung data ABC & Apriori
-
-        foreach ($data['widgets'] as &$w) {
-            if ($w['id'] === 'integrated-analysis' || str_starts_with($w['id'], 'integrated-analysis')) {
-                $combinedMetrics = [];
-                if ($apriori !== null && isset($apriori['metrics'])) {
-                    foreach ($apriori['metrics'] as $m) {
-                        if ($m['label'] === 'Transaksi' || $m['label'] === 'Pasangan Laris Valid' || $m['label'] === 'Rule Valid') {
-                            if ($m['label'] === 'Rule Valid') {
-                                $m['label'] = 'Pasangan Laris Valid';
-                            }
-                            $combinedMetrics[] = $m;
-                        }
-                    }
-                }
-                if ($abc !== null && isset($abc['metrics'])) {
-                    foreach ($abc['metrics'] as $m) {
-                        if ($m['label'] === 'Item A' || $m['label'] === 'Nilai Analisis') {
-                            if ($m['label'] === 'Item A') {
-                                $m['label'] = 'Fokus Stok (Kat A)';
-                            }
-                            $combinedMetrics[] = $m;
-                        }
-                    }
-                }
-
-                if (!empty($combinedMetrics)) {
-                    $w['metrics'] = $combinedMetrics;
-                }
-
-                if ($abc !== null) {
-                    $w['distribution'] = $abc['distribution'];
-                    $w['topItems'] = $abc['topItems'];
-                }
-
-                if ($apriori !== null) {
-                    $formattedRules = [];
-                    foreach ($apriori['rules'] as $rule) {
-                        $formattedRules[] = [
-                            'id' => $rule['id'],
-                            'segment' => 'Pasangan Terlaris',
-                            'transactionBase' => 'Pasangan Laris Valid',
-                            'antecedent' => $rule['antecedent'],
-                            'antecedentId' => $rule['antecedentId'] ?? null,
-                            'consequent' => $rule['consequent'],
-                            'consequentId' => $rule['consequentId'] ?? null,
-                            'antecedentAbc' => $rule['antecedentAbc'] ?? null,
-                            'antecedentColor' => $rule['antecedentColor'] ?? null,
-                            'consequentAbc' => $rule['consequentAbc'] ?? null,
-                            'consequentColor' => $rule['consequentColor'] ?? null,
-                            'support' => $rule['support'],
-                            'confidence' => $rule['confidence'],
-                            'lift' => $rule['lift'],
-                            'insight' => "Pembelian {$rule['antecedent']} [" . ($rule['antecedentAbc'] ?? 'C') . "] sering diikuti {$rule['consequent']} [" . ($rule['consequentAbc'] ?? 'C') . "].",
-                        ];
-                    }
-                    $w['rules'] = $formattedRules;
-                }
-
-                if ($abc !== null && $apriori !== null && !empty($apriori['rules']) && !empty($abc['topItems'])) {
-                    $topRule = $apriori['rules'][0];
-                    $topItem = $abc['topItems'][0];
-                    $w['insight'] = "Rekomendasi Utama: Pelanggan yang membeli {$topRule['antecedent']} [Kat {$topRule['antecedentAbc']}] memiliki tingkat kepastian {$topRule['confidence']} untuk turut membeli {$topRule['consequent']} [Kat {$topRule['consequentAbc']}]. Kombinasikan dengan prioritas stok {$topItem['name']} [Kat A] yang menyumbang {$topItem['share']} omzet toko.";
-                } else if ($apriori !== null && !empty($apriori['rules'])) {
-                    $w['insight'] = $apriori['insight'];
-                } else if ($abc !== null) {
-                    $w['insight'] = $abc['insight'];
-                }
-            } else if ($w['id'] === 'abc-analysis' || str_starts_with($w['id'], 'abc-analysis')) {
-                if ($abc !== null) {
-                    $w['metrics'] = $abc['metrics'];
-                    $w['distribution'] = $abc['distribution'];
-                    $w['topItems'] = $abc['topItems'];
-                    $w['insight'] = $abc['insight'];
-                }
-            } else if ($w['id'] === 'apriori-analysis' || str_starts_with($w['id'], 'apriori-analysis')) {
-                if ($apriori !== null) {
-                    $w['metrics'] = $apriori['metrics'];
-                    $w['rules'] = $apriori['rules'];
-                    $w['insight'] = $apriori['insight'];
-                }
-            }
-        }
 
         return $data;
     }
