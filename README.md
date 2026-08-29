@@ -32,34 +32,6 @@ Aplikasi web untuk mendukung operasional harian Toko Bangunan **TB Nur**, mencak
 
 ---
 
-## 🚀 Panduan Instalasi & Menjalankan Aplikasi
+## 🔒 Kepemilikan & Hak Cipta
 
-1. **Pasang Dependensi Backend & Frontend:**
-   ```bash
-   composer install
-   npm install
-   ```
-
-2. **Konfigurasi Environment:**
-   Salin berkas `.env.example` menjadi `.env` lalu sesuaikan konfigurasi database:
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-
-3. **Migrasi Database & Data Awal:**
-   ```bash
-   php artisan migrate --seed
-   ```
-
-4. **Jalankan Server Pengembangan:**
-   ```bash
-   composer run dev
-   ```
-   Aplikasi siap diakses melalui browser pada alamat default `http://localhost:8000`.
-
----
-
-## 📄 Catatan Penggunaan
-
-Aplikasi ini dikembangkan khusus sesuai alur operasional Toko Bangunan TB Nur. Hak akses data master, konfigurasi usaha, dan catatan transaksi sepenuhnya berada di bawah kendali pemilik toko.
+Sistem ini bersifat privat (**Proprietary / Closed-Source**) dan dikembangkan khusus untuk kebutuhan internal Toko Bangunan **TB Nur**. Seluruh hak cipta, struktur kode, dan data operasional dilindungi dan tidak ditujukan untuk distribusi publik maupun penggunaan pihak ketiga tanpa izin resmi dari pemilik.
