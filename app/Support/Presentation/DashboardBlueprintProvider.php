@@ -66,68 +66,6 @@ class DashboardBlueprintProvider
             ),
             'widgets' => [
                 [
-                    'id' => 'integrated-analysis',
-                    'title' => 'Analisis Kombinasi Produk & Prioritas Omzet (Metode Apriori & ABC)',
-                    'subtitle' => 'Strategi display produk sering dibeli bersama (Apriori) & prioritas stok penyumbang omzet (ABC)',
-                    'type' => 'integrated-analysis',
-                    'metrics' => [
-                        [
-                            'label' => 'Transaksi',
-                            'value' => '2.184',
-                            'helper' => 'Periode April 2026',
-                            'tone' => 'blue',
-                        ],
-                        [
-                            'label' => 'Rule Siap Pakai',
-                            'value' => '7',
-                            'helper' => 'Pola asosiasi kuat',
-                            'tone' => 'rose',
-                        ],
-                        [
-                            'label' => 'Fokus Stok (Kat A)',
-                            'value' => '14',
-                            'helper' => '76% kontribusi omzet',
-                            'tone' => 'blue',
-                        ],
-                    ],
-                    'distribution' => [
-                        'labels' => ['Kategori A', 'Kategori B', 'Kategori C'],
-                        'datasets' => [
-                            [
-                                'data' => [14, 18, 68],
-                                'backgroundColor' => ['#ffd15d', '#86c7ff', '#ff8463'],
-                            ],
-                        ],
-                    ],
-                    'rules' => [
-                        [
-                            'id' => 'rule-1',
-                            'segment' => 'Top Rule',
-                            'transactionBase' => 'Rule Valid',
-                            'antecedent' => 'Semen Padang 50kg',
-                            'consequent' => 'Pasir Cor 1 Colt',
-                            'antecedentAbc' => 'A',
-                            'antecedentColor' => '#ffd15d',
-                            'consequentAbc' => 'A',
-                            'consequentColor' => '#ffd15d',
-                            'support' => '42%',
-                            'confidence' => '78%',
-                            'lift' => '1.8x',
-                            'insight' => 'Pembelian Semen Padang 50kg [A] sering diikuti Pasir Cor 1 Colt [A].',
-                        ],
-                    ],
-                    'topItems' => [
-                        [
-                            'name' => 'Besi Beton 10mm',
-                            'category' => 'Kat A',
-                            'share' => '28,4%',
-                            'color' => '#ffd15d',
-                        ],
-                    ],
-                    'insight' => 'Rekomendasi Utama: Pelanggan yang membeli Semen Padang 50kg [Kat A] memiliki peluang 78% untuk membeli Pasir Cor 1 Colt [Kat A]. Kombinasikan dengan prioritas stok Besi Beton 10mm [Kat A] yang menyumbang 28,4% omzet toko.',
-                    'heightClass' => 'min-h-[460px]',
-                ],
-                [
                     'id' => 'recent-activity',
                     'title' => 'Aktivitas Terakhir Anda',
                     'type' => 'recent-activity',
