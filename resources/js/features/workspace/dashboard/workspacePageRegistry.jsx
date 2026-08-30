@@ -31,6 +31,7 @@ import UsersManagementView from '@/features/workspace/modules/users-management/U
 import WarehouseView from '@/features/workspace/modules/warehouse/WarehouseView';
 import BusinessPartnerView from '@/features/workspace/modules/business-partner/BusinessPartnerView';
 import JournalActivityLogView from '@/features/workspace/modules/journal-activity-log/JournalActivityLogView';
+import SmartlinkEbankingView from '@/features/workspace/modules/smartlink-ebanking/SmartlinkEbankingView';
 
 export const STATIC_PAGE_RENDERERS = {
     preferences: (page) => <PreferencesView page={page} />,
@@ -46,6 +47,7 @@ export const CONTENT_PAGE_COMPONENTS = {
     'payroll-entry': PayrollEntryView,
     users: UsersManagementView,
     'journal-activity-log': JournalActivityLogView,
+    'smartlink-ebanking': SmartlinkEbankingView,
 };
 
 export const LEVEL2_CONTENT_PAGE_COMPONENTS = {

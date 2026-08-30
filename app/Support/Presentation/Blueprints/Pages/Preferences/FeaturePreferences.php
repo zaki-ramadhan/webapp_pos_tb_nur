@@ -19,8 +19,8 @@ class FeaturePreferences
                         'items' => [
                             ['id' => 'sales-quote-order', 'label' => 'Penawaran dan Pesanan Penjualan', 'checked' => false],
                             ['id' => 'sales-return', 'label' => 'Retur Penjualan', 'checked' => true],
-                            ['id' => 'price-adjustment', 'label' => 'Penyesuaian Harga atau Diskon', 'checked' => true],
-                            ['id' => 'salesman', 'label' => 'Tenaga Penjual (Salesman)', 'checked' => true],
+                            ['id' => 'price-adjustment', 'label' => 'Penyesuaian Harga atau Diskon', 'checked' => false],
+                            ['id' => 'salesman', 'label' => 'Tenaga Penjual (Salesman)', 'checked' => false],
                         ],
                     ],
                     [
@@ -45,7 +45,7 @@ class FeaturePreferences
                         'column' => 1,
                         'items' => [
                             ['id' => 'purchase-order', 'label' => 'Pesanan Pembelian', 'checked' => false],
-                            ['id' => 'supplier-price-list', 'label' => 'Daftar Harga Pemasok', 'checked' => true],
+                            ['id' => 'supplier-price-list', 'label' => 'Daftar Harga Pemasok', 'checked' => false],
                         ],
                     ],
                 ],
@@ -60,7 +60,7 @@ class FeaturePreferences
                         'icon' => 'inventory',
                         'column' => 1,
                         'items' => [
-                            ['id' => 'item-request', 'label' => 'Permintaan Barang', 'checked' => true],
+                            ['id' => 'item-request', 'label' => 'Permintaan Barang', 'checked' => false],
                             ['id' => 'multi-warehouse', 'label' => 'Multi Gudang', 'checked' => true],
                             ['id' => 'multi-unit', 'label' => 'Multi Satuan Barang', 'checked' => false],
                             ['id' => 'simple-production', 'label' => 'Produksi Sederhana', 'checked' => false],
