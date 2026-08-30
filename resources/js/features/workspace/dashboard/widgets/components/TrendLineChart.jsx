@@ -1,4 +1,4 @@
-import '@/features/workspace/dashboard/analytics/chartSetup';
+import '@/features/workspace/dashboard/widgets/chartSetup';
 import { Line } from 'react-chartjs-2';
 import DashboardChartShell from '@/features/workspace/dashboard/widgets/DashboardChartShell';
 import {

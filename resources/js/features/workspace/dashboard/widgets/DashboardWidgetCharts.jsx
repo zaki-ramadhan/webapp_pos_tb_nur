@@ -1,4 +1,4 @@
-import '@/features/workspace/dashboard/analytics/chartSetup';
+import '@/features/workspace/dashboard/widgets/chartSetup';
 
 import TrendLineChart from './components/TrendLineChart';
 import BreakdownDoughnutChart from './components/BreakdownDoughnutChart';
