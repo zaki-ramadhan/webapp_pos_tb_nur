@@ -6,7 +6,6 @@ const inactiveWorkspacePageIds = new Set([
     'supplier-price',
     'item-request',
     'item-brand',
-    'bank-reconciliation',
 ]);
 
 const inactiveReportCategoryIds = new Set([
@@ -56,7 +55,6 @@ const pageToFeatureMap = {
 
     'purchase-order': 'purchase-order',
     'goods-receipt': 'purchase-order',
-    'purchase-deposit': 'purchase-order',
     'supplier-price': 'supplier-price-list',
 
   // Pengiriman

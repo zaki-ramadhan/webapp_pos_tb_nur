@@ -11,7 +11,8 @@ import { useCallback, useMemo, useState } from 'react';
 
 export default function BankInquiryView({ page }) {
     const config = bankInquiryPageConfigs[page.id] ?? bankInquiryPageConfigs['bank-statement'];
-    const [filters, setFilters] = useState(() => buildBankFilters({}));
+    const isStatement = page.id === 'bank-statement';
+    const [filters, setFilters] = useState(() => buildBankFilters(isStatement ? { keyword: 'Bank BRI' } : {}));
     const resource = BACKEND_BANK_RESOURCES[page.id] ?? BACKEND_BANK_RESOURCES['bank-statement'];
     const {
         rows,
@@ -50,16 +51,34 @@ export default function BankInquiryView({ page }) {
     }, []);
 
     return (
-        <InquiryWorkspaceView
-            key={page.id}
-            pageId={page.id}
-            config={config}
-            rows={tableRows}
-            loading={loading}
-            error={error}
-            onRefresh={reload}
-            onValuesChange={handleValuesChange}
-            pagination={serverPaginationProps}
-        />
+        <div className="flex h-full flex-col min-h-0">
+            {isStatement && (
+                <div className="border-b border-ui-border bg-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs shadow-xs">
+                    <div className="flex items-center gap-2">
+                        <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="font-semibold text-slate-800">
+                            SmartLink e-Banking: BRI Mobile (BRIMO)
+                        </span>
+                        <span className="text-slate-300">|</span>
+                        <span className="font-mono text-slate-600">0129-01-002847-50-8</span>
+                        <span className="text-slate-500 font-medium">(TB NUR - OPERASIONAL)</span>
+                    </div>
+                    <span className="rounded bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
+                        Sinkronisasi Otomatis BRIMO Aktif
+                    </span>
+                </div>
+            )}
+            <InquiryWorkspaceView
+                key={page.id}
+                pageId={page.id}
+                config={config}
+                rows={tableRows}
+                loading={loading}
+                error={error}
+                onRefresh={reload}
+                onValuesChange={handleValuesChange}
+                pagination={serverPaginationProps}
+            />
+        </div>
     );
 }

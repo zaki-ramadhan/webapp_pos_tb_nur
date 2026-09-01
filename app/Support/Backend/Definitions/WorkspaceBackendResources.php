@@ -64,6 +64,12 @@ class WorkspaceBackendResources
                 'bank-history',
                 fn (array $filters) => app(BankInquiryQueryService::class)->paginateHistory($filters),
             ),
+            'bank-reconciliations' => self::bankResource(
+                'bank-reconciliations',
+                'Bank Reconciliations',
+                'bank-reconciliation',
+                fn (array $filters) => app(BankInquiryQueryService::class)->paginateReconciliation($filters),
+            ),
             'item-locations' => self::inventoryInquiryResource(
                 'item-locations',
                 'Item Locations',
