@@ -43,7 +43,7 @@ class PageBlueprintRegistry
             'cash-payment' => Pages\CashPaymentPage::get($navigationPages),
             'cash-receipt' => Pages\CashReceiptPage::get($navigationPages),
             'bank-transfer' => Pages\BankTransferPage::get($navigationPages),
-            'smartlink-ebanking' => Pages\SmartlinkEbankingPage::get($navigationPages),
+            'smartlink-bank' => Pages\SmartlinkEbankingPage::get($navigationPages),
             'journal-activity-log' => Pages\JournalActivityLogPage::get($navigationPages),
             'payroll-entry' => Pages\PayrollEntryPage::get(),
             'salary-allowance' => Pages\SalaryAllowancePage::get(),
