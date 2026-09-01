@@ -35,7 +35,6 @@ export default function PurchaseDepositFormView({
     const [isDeleting, setIsDeleting] = useState(false);
     const [activeTab, setActiveTab] = useState('deposit');
 
-    // Load detail if viewing existing record
     useEffect(() => {
         if (!activeRecordId) return;
 
@@ -51,9 +50,13 @@ export default function PurchaseDepositFormView({
                         const rec = buildRecord(result.data);
                         setValues(rec);
                     }
+                } else if (isMounted) {
+                    toast.error('Gagal memuat detail uang muka pembelian.');
                 }
-            } catch (err) {
-                console.error(err);
+            } catch {
+                if (isMounted) {
+                    toast.error('Koneksi terputus saat mengambil detail uang muka.');
+                }
             }
         })();
 

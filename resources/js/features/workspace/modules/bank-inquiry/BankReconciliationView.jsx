@@ -23,7 +23,6 @@ export default function BankReconciliationView({ page, onOpenContent }) {
         per_page: 100,
     }), [filters]);
 
-    // Internal Transactions (Jurnal Accurate)
     const {
         rows: accurateDocs,
         total: totalDocs,
@@ -35,15 +34,13 @@ export default function BankReconciliationView({ page, onOpenContent }) {
         initialPerPage: 100,
     });
 
-    // CSV Mutasi Bank State
     const [csvRows, setCsvRows] = useState([]);
     const [csvFileName, setCsvFileName] = useState('');
     const [selectedDocNumbers, setSelectedDocNumbers] = useState(new Set());
     const [isReconciling, setIsReconciling] = useState(false);
-    const [activeTab, setActiveTab] = useState('all'); // 'all' | 'matched' | 'unmatched' | 'reconciled'
+    const [activeTab, setActiveTab] = useState('all');
     const fileInputRef = useRef(null);
 
-    // Auto sample mutasi generator for BRIMO
     const loadSampleBrimoCsv = () => {
         const sampleCsv = `Tanggal,Keterangan,Tipe,Nominal,Saldo
 ${new Date().toLocaleDateString('id-ID')},TRSF BRIMO CR PEMBAYARAN FAKTUR TB NUR,CR,3500000,181112000
@@ -68,7 +65,7 @@ ${new Date().toLocaleDateString('id-ID')},BIAYA ADM REK BRI BULANAN,DB,12000,184
 
             processImportedRows(headers, rows, file.name);
             toast.success(`File ${file.name} (${rows.length} baris mutasi) berhasil dimuat!`);
-        } catch (err) {
+        } catch {
             toast.error('Gagal membaca file. Pastikan format file .csv atau .xlsx.');
         } finally {
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -163,7 +160,6 @@ ${new Date().toLocaleDateString('id-ID')},BIAYA ADM REK BRI BULANAN,DB,12000,184
         return docList;
     }, [accurateDocs, csvRows]);
 
-    // Filtered by active tab
     const displayedDocs = useMemo(() => {
         if (activeTab === 'matched') {
             return comparisonResults.filter(d => d.matchStatus === 'Cocok');
@@ -177,7 +173,6 @@ ${new Date().toLocaleDateString('id-ID')},BIAYA ADM REK BRI BULANAN,DB,12000,184
         return comparisonResults;
     }, [comparisonResults, activeTab]);
 
-    // Handle selection
     const toggleSelectDoc = (docNumber) => {
         setSelectedDocNumbers(prev => {
             const next = new Set(prev);
@@ -195,7 +190,6 @@ ${new Date().toLocaleDateString('id-ID')},BIAYA ADM REK BRI BULANAN,DB,12000,184
         }
     };
 
-    // Auto match and select matched docs
     const handleAutoMatchAndSelect = () => {
         if (csvRows.length === 0) {
             toast.info('Silakan unggah file CSV mutasi bank terlebih dahulu.');
@@ -213,7 +207,6 @@ ${new Date().toLocaleDateString('id-ID')},BIAYA ADM REK BRI BULANAN,DB,12000,184
         toast.success(`Ditemukan ${matchedNumbers.size} transaksi yang cocok dengan mutasi CSV!`);
     };
 
-    // Execute Reconcile
     const handleProcessReconcile = async (isClosed = true) => {
         const docNumbers = Array.from(selectedDocNumbers);
         if (docNumbers.length === 0) {
@@ -244,14 +237,13 @@ ${new Date().toLocaleDateString('id-ID')},BIAYA ADM REK BRI BULANAN,DB,12000,184
             } else {
                 toast.error('Gagal memperbarui status rekonsiliasi di server.');
             }
-        } catch (err) {
-            toast.error('Terjadi kesalahan jaringan.');
+        } catch {
+            toast.error('Terjadi kesalahan jaringan saat memperbarui status.');
         } finally {
             setIsReconciling(false);
         }
     };
 
-    // Stats
     const stats = useMemo(() => {
         const total = comparisonResults.length;
         const matched = comparisonResults.filter(d => d.matchStatus === 'Cocok').length;
