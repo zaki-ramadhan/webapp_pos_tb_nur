@@ -9,12 +9,30 @@ const DEFAULT_ACCOUNTS = [
         id: '1',
         serviceType: 'BRI Mobile (BRIMO)',
         accountNumber: '0129-01-002847-50-8',
-        accountId: '110102',
-        accountRelation: '[110102] Bank BRI',
-        accountName: 'TB NUR - OPERASIONAL',
+        name: '0129-01-002847-50-8',
         tabLabel: '0129-01-002847-50-8',
+        label: '0129-01-002847-50-8',
+        accountId: '110102',
+        accountRelation: 'Bank BRI',
+        accountName: 'Bank BRI',
     },
 ];
+
+function sanitizeAccount(item) {
+    const accNumber = item.accountNumber || item.name || '';
+    const cleanRelation = (item.accountRelation || '').replace(/^\[.*?\]\s*/, '');
+    return {
+        ...item,
+        id: String(item.id),
+        accountNumber: accNumber,
+        name: accNumber,
+        tabLabel: accNumber,
+        label: accNumber,
+        accountRelation: cleanRelation,
+        accountName: item.accountName || cleanRelation,
+        serviceType: item.serviceType || 'BRI Mobile (BRIMO)',
+    };
+}
 
 export default function SmartlinkEbankingView({
     page,
@@ -32,35 +50,38 @@ export default function SmartlinkEbankingView({
             if (saved) {
                 const parsed = JSON.parse(saved);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    return parsed;
+                    return parsed.map(sanitizeAccount);
                 }
             }
         } catch {
             // fallback
         }
-        return page?.table?.rows?.length ? page.table.rows : DEFAULT_ACCOUNTS;
+        const initialRows = page?.table?.rows?.length ? page.table.rows : DEFAULT_ACCOUNTS;
+        return initialRows.map(sanitizeAccount);
     });
 
     const persistAccounts = useCallback((newAccounts) => {
-        setAccounts(newAccounts);
+        const sanitized = newAccounts.map(sanitizeAccount);
+        setAccounts(sanitized);
         try {
-            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newAccounts));
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
         } catch {
             // ignore
         }
     }, []);
 
     const handleSaveAccount = (record, isEdit) => {
+        const cleanRecord = sanitizeAccount(record);
         let updated;
         if (isEdit) {
-            updated = accounts.map((item) => (String(item.id) === String(record.id) ? record : item));
+            updated = accounts.map((item) => (String(item.id) === String(cleanRecord.id) ? cleanRecord : item));
         } else {
-            updated = [record, ...accounts];
+            updated = [cleanRecord, ...accounts];
         }
         persistAccounts(updated);
 
         if (isEdit) {
-            onCloseDetail?.(record.id);
+            onCloseDetail?.(cleanRecord.id);
         } else if (activeLevel2Tab?.id) {
             onCloseTab?.(activeLevel2Tab.id);
         }
@@ -87,12 +108,14 @@ export default function SmartlinkEbankingView({
         searchPlaceholder: page?.table?.searchPlaceholder || 'Ketik dan [Enter]',
     }), [page?.table, accounts]);
 
-    const handleOpenRowDetail = (row) => {
-        const record = row?.row || row;
+    const handleOpenRowDetail = (detail) => {
+        const recordId = detail?.recordId || detail?.id;
+        const found = accounts.find((a) => String(a.id) === String(recordId));
+        const label = found?.accountNumber || detail?.tabLabel || detail?.label || 'Detail';
         onOpenDetail?.({
-            recordId: String(record.id),
-            label: record.accountNumber,
-            tabLabel: record.accountNumber,
+            recordId: String(recordId),
+            label,
+            tabLabel: label,
         });
     };
 
@@ -109,7 +132,7 @@ export default function SmartlinkEbankingView({
                             if (saved) {
                                 const parsed = JSON.parse(saved);
                                 if (Array.isArray(parsed) && parsed.length > 0) {
-                                    setAccounts(parsed);
+                                    setAccounts(parsed.map(sanitizeAccount));
                                 }
                             }
                         } catch {
