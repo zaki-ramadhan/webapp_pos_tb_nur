@@ -108,3 +108,26 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
     Route::match(['put', 'patch'], '/{resource}/{record}', [BackendResourceController::class, 'update'])->whereNumber('record');
     Route::delete('/{resource}/{record}', [BackendResourceController::class, 'destroy'])->whereNumber('record');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Mobile API V1 Routes (Stateless Bearer Token Authentication)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('v1')->group(function (): void {
+    Route::post('/auth/login', [\App\Http\Controllers\Api\V1\MobileAuthController::class, 'login'])->middleware('throttle:60,1');
+
+    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function (): void {
+        Route::get('/auth/me', [\App\Http\Controllers\Api\V1\MobileAuthController::class, 'me']);
+        Route::post('/auth/logout', [\App\Http\Controllers\Api\V1\MobileAuthController::class, 'logout']);
+
+        Route::get('/resources', [BackendResourceController::class, 'resources']);
+        Route::get('/live-updates', [BackendResourceController::class, 'liveUpdates']);
+        Route::get('/{resource}', [BackendResourceController::class, 'index']);
+        Route::post('/{resource}', [BackendResourceController::class, 'store']);
+        Route::get('/{resource}/{record}', [BackendResourceController::class, 'show'])->whereNumber('record');
+        Route::match(['put', 'patch'], '/{resource}/{record}', [BackendResourceController::class, 'update'])->whereNumber('record');
+        Route::delete('/{resource}/{record}', [BackendResourceController::class, 'destroy'])->whereNumber('record');
+    });
+});
+
