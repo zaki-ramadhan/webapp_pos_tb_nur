@@ -50,8 +50,9 @@ class SmartlinkEbankingPage
                 'rows' => [
                     [
                         'id' => '1',
+                        'name' => '0129-01-002847-50-8',
                         'accountNumber' => '0129-01-002847-50-8',
-                        'accountRelation' => '[110102] Bank BRI',
+                        'accountRelation' => 'Bank BRI',
                         'serviceType' => 'BRI Mobile (BRIMO)',
                         'accountId' => '110102',
                         'accountName' => 'TB NUR - OPERASIONAL',
