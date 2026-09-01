@@ -49,6 +49,7 @@ const DETAIL_TAB_PAGE_IDS = [
     'cash-payment',
     'cash-receipt',
     'bank-transfer',
+    'smartlink-bank',
     'journal-activity-log',
     'department',
     'employees',
