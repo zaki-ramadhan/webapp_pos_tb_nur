@@ -194,7 +194,7 @@ export default function ErrorExperience({
                     </p>
 
                     {subtitle && (
-                        <div className="mt-4 inline-flex font-mono text-xs tracking-wider text-slate-400 uppercase border border-slate-100 bg-slate-50/30 px-2 py-0.5 rounded">
+                        <div className="mt-4 inline-flex text-xs tracking-wider text-slate-400 uppercase border border-slate-100 bg-slate-50/30 px-2 py-0.5 rounded">
                             {subtitle}
                         </div>
                     )}

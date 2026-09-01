@@ -61,17 +61,17 @@ export default function SmartlinkEbankingView({ page }) {
                                     <td className="px-3 py-3 font-medium text-slate-900">
                                         BRI Mobile (BRIMO)
                                     </td>
-                                    <td className="px-3 py-3 font-mono">
+                                    <td className="px-3 py-3">
                                         0129-01-002847-50-8
                                     </td>
                                     <td className="px-3 py-3">
                                         TB NUR - OPERASIONAL
                                     </td>
-                                    <td className="px-3 py-3 font-mono text-slate-600">
+                                    <td className="px-3 py-3 text-slate-600">
                                         brimo_tbnur_ops
                                     </td>
                                     <td className="px-3 py-3">
-                                        <span className="font-mono text-slate-700">110102</span> - Bank BRI
+                                        <span className="text-slate-700">110102</span> - Bank BRI
                                     </td>
                                     <td className="px-3 py-3 text-right font-medium text-slate-900">
                                         Rp 181.112.000
