@@ -33,7 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $isBackendApi = static fn (Request $request): bool => $request->is('api/backend/*');
+        $isBackendApi = static fn (Request $request): bool => $request->is('api/*');
         $friendlyErrorStatuses = [400, 401, 403, 404, 405, 409, 419, 429, 500, 503];
 
         $exceptions->render(function (ValidationException $exception, Request $request) use ($isBackendApi) {
