@@ -51,6 +51,11 @@ const UserAvatar = memo(function UserAvatar({
 
         setCachedUrl(imageUrl);
 
+        // Skip canvas cross-origin caching for external images (e.g. Google avatars)
+        if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+            return;
+        }
+
         let active = true;
         const img = new Image();
         img.crossOrigin = 'anonymous';
@@ -66,9 +71,8 @@ const UserAvatar = memo(function UserAvatar({
                 const dataUrl = canvas.toDataURL('image/png');
                 localStorage.setItem(`avatar_cache_${imageUrl}`, dataUrl);
                 setCachedUrl(dataUrl);
-            } catch (e) {
-              // Ignore canvas security errors for external CDNs (CORS)
-
+            } catch {
+                // Ignore canvas security errors for external CDNs
             }
         };
 

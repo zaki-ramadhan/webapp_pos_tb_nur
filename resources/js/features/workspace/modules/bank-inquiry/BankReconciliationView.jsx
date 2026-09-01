@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import Button from '@/components/ui/Button';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { buildTodayDisplayDate, buildFirstDayOfMonthDisplayDate } from '@/features/workspace/shared/dateDefaults';
+import { normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 
 export default function BankReconciliationView({ page, onOpenContent }) {
