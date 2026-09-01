@@ -33,7 +33,6 @@ import BusinessPartnerView from '@/features/workspace/modules/business-partner/B
 import JournalActivityLogView from '@/features/workspace/modules/journal-activity-log/JournalActivityLogView';
 import SmartlinkEbankingView from '@/features/workspace/modules/smartlink-ebanking/SmartlinkEbankingView';
 import PurchaseDepositView from '@/features/workspace/modules/purchase-deposit/PurchaseDepositView';
-import BankReconciliationView from '@/features/workspace/modules/bank-inquiry/BankReconciliationView';
 
 export const STATIC_PAGE_RENDERERS = {
     preferences: (page) => <PreferencesView page={page} />,
@@ -50,7 +49,6 @@ export const CONTENT_PAGE_COMPONENTS = {
     users: UsersManagementView,
     'journal-activity-log': JournalActivityLogView,
     'smartlink-ebanking': SmartlinkEbankingView,
-    'bank-reconciliation': BankReconciliationView,
 };
 
 export const LEVEL2_CONTENT_PAGE_COMPONENTS = {
@@ -90,6 +88,7 @@ export const LEVEL2_DETAIL_PAGE_COMPONENTS = {
 export const BANK_INQUIRY_PAGE_IDS = new Set([
     'bank-statement',
     'bank-history',
+    'bank-reconciliation',
 ]);
 
 export { BankInquiryView };
