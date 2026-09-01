@@ -248,7 +248,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                                     <DataTableBody>
                                         {previewItems.map((item, idx) => (
                                             <DataTableRow key={idx} className={item.valid ? 'hover:bg-slate-50' : 'bg-danger-border/50'}>
-                                                <DataTableCell className="px-3 py-2 font-mono text-slate-600">{item.rawCode}</DataTableCell>
+                                                <DataTableCell className="px-3 py-2 text-slate-600">{item.rawCode}</DataTableCell>
                                                 <DataTableCell className="px-3 py-2">
                                                     <div className="text-slate-800">{item.name}</div>
                                                     {item.valid && (
@@ -257,9 +257,9 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                                                         </div>
                                                     )}
                                                 </DataTableCell>
-                                                <DataTableCell className="px-3 py-2 text-left font-mono">{item.rawQty}</DataTableCell>
+                                                <DataTableCell className="px-3 py-2 text-left">{item.rawQty}</DataTableCell>
                                                 {columnMapping.price !== -1 && (
-                                                    <DataTableCell className="px-3 py-2 text-left font-mono">
+                                                    <DataTableCell className="px-3 py-2 text-left">
                                                         {item.price ? `Rp ${Number(item.price).toLocaleString('id-ID')}` : '-'}
                                                     </DataTableCell>
                                                 )}
