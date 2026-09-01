@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureUserHasStoreAccess
+{
+    /**
+     * @var list<string>
+     */
+    protected array $privilegedEmails = [
+        'piscokpiscok2610@gmail.com',
+        'nurhayati.karya@gmail.com',
+        'zakiram4dhan@gmail.com',
+    ];
+
+    /**
+     * Pastikan user yang login memiliki peran toko (Owner atau Karyawan Aktif).
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sesi login Anda telah berakhir. Silakan login kembali.',
+            ], 401);
+        }
+
+        $email = strtolower((string) $user->email);
+
+        // 1. Owner utama / Super admin selalu lolos
+        if (in_array($email, $this->privilegedEmails, true) || $user->hasAnyRoleCodes(['super_admin'])) {
+            return $next($request);
+        }
+
+        // 2. Akun wajib dalam kondisi aktif
+        if ($user->is_active === false) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun Anda sedang dinonaktifkan oleh Owner toko.',
+            ], 403);
+        }
+
+        // 3. User wajib memiliki Role toko atau Access Group
+        $hasActiveRole = $user->roles()->where('roles.is_active', true)->exists();
+        $hasAccessGroup = $user->accessGroups()->exists();
+
+        if (! $hasActiveRole && ! $hasAccessGroup) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun Anda belum memiliki peran toko yang sah. Hubungi Owner untuk mengaktifkan akses Anda.',
+            ], 403);
+        }
+
+        return $next($request);
+    }
+}

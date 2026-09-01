@@ -39,6 +39,23 @@ class MobileAuthController extends Controller
             ], 403);
         }
 
+        $privilegedEmails = [
+            'piscokpiscok2610@gmail.com',
+            'nurhayati.karya@gmail.com',
+            'zakiram4dhan@gmail.com',
+        ];
+        $email = strtolower((string) $user->email);
+        $isPrivileged = in_array($email, $privilegedEmails, true) || $user->hasAnyRoleCodes(['super_admin']);
+        $hasActiveRole = $user->roles()->where('roles.is_active', true)->exists();
+        $hasAccessGroup = $user->accessGroups()->exists();
+
+        if (! $isPrivileged && ! $hasActiveRole && ! $hasAccessGroup) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun Anda belum memiliki peran toko yang sah. Hubungi Owner untuk mengaktifkan akses Anda.',
+            ], 403);
+        }
+
         $user->update(['last_login_at' => now()]);
 
         $deviceName = ! empty($validated['device_name']) ? $validated['device_name'] : 'Mobile Device';
