@@ -24,7 +24,7 @@ class PageBlueprintRegistry
             'sales-invoice' => Pages\SalesInvoicePage::get($navigationPages, 'sales-invoice'),
             'purchase-invoice' => Pages\PurchaseInvoicePage::get($navigationPages, 'purchase-invoice'),
             'goods-receipt' => Pages\PurchaseInvoicePage::get($navigationPages, 'goods-receipt'),
-            'purchase-deposit' => Pages\PurchaseInvoicePage::get($navigationPages, 'purchase-deposit'),
+            'purchase-deposit' => Pages\PurchaseDepositPage::get($navigationPages),
             'sales-quote' => Pages\SalesInvoicePage::get($navigationPages, 'sales-quote'),
             'sales-order' => Pages\SalesInvoicePage::get($navigationPages, 'sales-order'),
             'sales-delivery' => Pages\SalesInvoicePage::get($navigationPages, 'sales-delivery'),

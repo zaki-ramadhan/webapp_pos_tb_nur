@@ -76,7 +76,20 @@ export const bankInquiryPageConfigs = {
         },
     },
     'bank-statement': {
-        controls: DEFAULT_CONTROLS,
+        controls: [
+            {
+                ...createSearchControl(),
+                value: 'Bank BRI',
+                placeholder: 'Bank BRI (BRIMO)',
+            },
+            createDateControl('startDate', firstDayOfMonthDisplayDate),
+            {
+                type: 'label',
+                label: 's/d',
+                wrapperClassName: 'px-1 text-center',
+            },
+            createDateControl('endDate', todayDisplayDate),
+        ],
         actions: [
             createAction('reload', 'link', 'Muat ulang'),
             createAction('help', 'idea', 'Bantuan rekening koran', 'warning'),

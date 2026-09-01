@@ -484,6 +484,7 @@ final class PosBlueprint
             'sales-return',
             'inventory-adjustment',
             'purchase-invoice',
+            'purchase-deposit',
             'purchase-payment',
             'purchase-return',
             'item-location',
