@@ -15,33 +15,55 @@ class SmartlinkEbankingPage
         ];
 
         return array_replace($base, [
-            'smartlink' => [
-                'provider' => 'BRI Mobile (BRIMO)',
-                'providerCode' => 'BRIMO',
-                'title' => 'SmartLink e-Banking BRI Mobile (BRIMO)',
-                'description' => 'Hubungkan rekening operasional BRI Toko TB Nur untuk sinkronisasi mutasi rekening koran dan rekonsiliasi kas/bank otomatis.',
-                'status' => 'connected',
-                'account' => [
-                    'bankName' => 'Bank Rakyat Indonesia (BRI)',
-                    'appType' => 'BRI Mobile (BRIMO)',
-                    'accountNumber' => '0129-01-002847-50-8',
-                    'accountName' => 'TB NUR - OPERASIONAL',
-                    'loginUserId' => 'brimo_tbnur_ops',
-                    'lastSyncAt' => date('d M Y, H:i') . ' WIB',
-                    'balance' => 'Rp 181.112.000',
-                ],
-                'features' => [
+            'subtab' => [
+                'id' => 'smartlink-bank-create',
+                'label' => 'Data Baru',
+            ],
+            'viewModes' => [
+                'form' => 'Form',
+                'table' => 'Tabel',
+            ],
+            'table' => [
+                'createLabel' => 'Tambah Akun e-Banking',
+                'refreshLabel' => 'Muat ulang',
+                'searchPlaceholder' => 'Ketik dan [Enter]',
+                'columns' => [
                     [
-                        'id' => 'statement',
-                        'title' => 'Rekening Koran Otomatis',
-                        'desc' => 'Membaca seluruh riwayat mutasi debit dan kredit langsung dari data internet banking BRIMO.',
+                        'id' => 'accountNumber',
+                        'label' => 'No. Rekening Bank',
+                        'align' => 'left',
+                        'widthClassName' => 'w-[30%]',
                     ],
                     [
-                        'id' => 'reconciliation',
-                        'title' => 'Rekonsiliasi Bank Cepat',
-                        'desc' => 'Mencocokkan file mutasi/CSV bank dengan catatan transaksi faktur dan pengeluaran aplikasi.',
+                        'id' => 'accountRelation',
+                        'label' => 'Relasi Akun...',
+                        'align' => 'left',
+                        'widthClassName' => 'w-[35%]',
+                    ],
+                    [
+                        'id' => 'serviceType',
+                        'label' => 'Jenis Internet Banking',
+                        'align' => 'left',
+                        'widthClassName' => 'w-[35%]',
                     ],
                 ],
+                'rows' => [
+                    [
+                        'id' => '1',
+                        'accountNumber' => '0129-01-002847-50-8',
+                        'accountRelation' => '[110102] Bank BRI',
+                        'serviceType' => 'BRI Mobile (BRIMO)',
+                        'accountId' => '110102',
+                        'accountName' => 'TB NUR - OPERASIONAL',
+                        'tabLabel' => '0129-01-002847-50-8',
+                    ],
+                ],
+            ],
+            'form' => [
+                'tabs' => [
+                    ['id' => 'general', 'label' => 'Internet Banking'],
+                ],
+                'saveLabel' => 'Simpan',
             ],
         ]);
     }
