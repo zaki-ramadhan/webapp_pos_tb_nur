@@ -28,6 +28,39 @@ class MobileApiV1Test extends TestCase
             ->assertJsonValidationErrors(['email']);
     }
 
+    public function test_user_without_store_role_cannot_login_on_mobile(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'orangluar@gmail.com',
+            'password' => Hash::make('password123'),
+            'is_active' => true,
+        ]);
+
+        $response = $this->postJson('/api/v1/auth/login', [
+            'email' => 'orangluar@gmail.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(403)
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'Akun Anda belum memiliki peran toko yang sah. Hubungi Owner untuk mengaktifkan akses Anda.');
+    }
+
+    public function test_user_without_store_role_cannot_access_conventional_backend_api(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'orangluar@gmail.com',
+            'password' => Hash::make('password123'),
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($user)->getJson('/api/backend/banks');
+
+        $response->assertStatus(403)
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'Akun Anda belum memiliki peran toko yang sah. Hubungi Owner untuk mengaktifkan akses Anda.');
+    }
+
     public function test_mobile_login_succeeds_and_returns_bearer_token(): void
     {
         $role = Role::create([

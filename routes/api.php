@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\BackendResourceController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(function (): void {
+Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api', \App\Http\Middleware\EnsureUserHasStoreAccess::class])->group(function (): void {
     Route::post('/attachments/upload', [\App\Http\Controllers\Api\AttachmentUploadController::class, 'upload']);
     Route::post('/currencies/sync', [BackendResourceController::class, 'syncCurrencies']);
     Route::get('/banks', function (): \Illuminate\Http\JsonResponse {
@@ -117,7 +117,7 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
 Route::prefix('v1')->group(function (): void {
     Route::post('/auth/login', [\App\Http\Controllers\Api\V1\MobileAuthController::class, 'login'])->middleware('throttle:60,1');
 
-    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function (): void {
+    Route::middleware(['auth:sanctum', 'throttle:api', \App\Http\Middleware\EnsureUserHasStoreAccess::class])->group(function (): void {
         Route::get('/auth/me', [\App\Http\Controllers\Api\V1\MobileAuthController::class, 'me']);
         Route::post('/auth/logout', [\App\Http\Controllers\Api\V1\MobileAuthController::class, 'logout']);
 
