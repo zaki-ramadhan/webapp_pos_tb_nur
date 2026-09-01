@@ -44,6 +44,8 @@ class ActiveWorkspaceBackendCoverageTest extends TestCase
             'supplier-price' => 'supplier-prices',
             'group-access' => 'access-groups',
             'transaction-approval' => 'transaction-approval-rules',
+            'smartlink-bank' => 'bank-statements',
+            'sales-checkin' => 'activity-logs',
         ];
 
         $missing = array_values(array_filter(
