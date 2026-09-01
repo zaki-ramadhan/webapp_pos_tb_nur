@@ -6,7 +6,7 @@ const implementedWorkspacePageIds = new Set([
     'activity-log',
     'currency-master',
     'bank-transfer',
-    'smartlink-ebanking',
+    'smartlink-bank',
     'bank-statement',
     'bank-reconciliation',
     'bank-history',

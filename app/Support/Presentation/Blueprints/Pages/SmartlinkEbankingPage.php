@@ -6,8 +6,8 @@ class SmartlinkEbankingPage
 {
     public static function get(array $navigationPages): array
     {
-        $base = $navigationPages['smartlink-ebanking'] ?? [
-            'id' => 'smartlink-ebanking',
+        $base = $navigationPages['smartlink-bank'] ?? [
+            'id' => 'smartlink-bank',
             'label' => 'SmartLink e-Banking',
             'moduleLabel' => 'Kas & Bank',
             'icon' => 'link',

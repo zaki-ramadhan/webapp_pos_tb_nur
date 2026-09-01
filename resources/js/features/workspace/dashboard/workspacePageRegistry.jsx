@@ -48,7 +48,7 @@ export const CONTENT_PAGE_COMPONENTS = {
     'payroll-entry': PayrollEntryView,
     users: UsersManagementView,
     'journal-activity-log': JournalActivityLogView,
-    'smartlink-ebanking': SmartlinkEbankingView,
+    'smartlink-bank': SmartlinkEbankingView,
 };
 
 export const LEVEL2_CONTENT_PAGE_COMPONENTS = {
