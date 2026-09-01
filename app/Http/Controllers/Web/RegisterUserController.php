@@ -70,7 +70,7 @@ class RegisterUserController extends Controller
         ]);
 
         $attributes = [
-            'name' => trim($payload['name']),
+            'name' => strip_tags(trim($payload['name'])),
             'email' => Str::lower(trim($payload['email'])),
             'password' => Hash::make($payload['password']),
         ];
