@@ -10,6 +10,7 @@ export default function BackendLookupField({
     searchLabel = 'Cari data',
     getOptionLabel = (option) => (typeof option === 'string' ? option : (option?.label ?? option?.name ?? '')),
     getOptionSearchText = (option) => (typeof option === 'string' ? option : (option?.label ?? option?.name ?? '')),
+    filterOption = null,
     renderOption = null,
     queryParams = {},
     onSelect,
@@ -53,6 +54,8 @@ export default function BackendLookupField({
         }
     };
 
+    const resolvedItems = filterOption ? items.filter(filterOption) : items;
+
     return (
         <div
             onFocusCapture={handleActivate}
@@ -63,7 +66,7 @@ export default function BackendLookupField({
                 values={(values || []).map((val) => (typeof val === 'string' ? val : getOptionLabel(val)))}
                 placeholder={placeholder}
                 searchLabel={searchLabel}
-                items={items}
+                items={resolvedItems}
                 searching={searching}
                 getOptionLabel={getOptionLabel}
                 getOptionSearchText={getOptionSearchText}
