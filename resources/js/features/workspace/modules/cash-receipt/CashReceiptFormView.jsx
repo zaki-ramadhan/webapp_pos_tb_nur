@@ -8,7 +8,6 @@ import {
     deleteBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
@@ -261,7 +260,6 @@ export default function CashReceiptFormView({
                 footer={<TransactionTotalCard label={config.totalCardLabel} value={values.totalValue} />}
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 {activeSectionId === 'additional-info' ? (
                     <ReceiptInfoSection
                         config={config}

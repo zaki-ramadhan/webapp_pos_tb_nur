@@ -16,7 +16,6 @@ import {
     TransactionFormLayout,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import {
     PurchasePaymentAdditionalInfoSection,
@@ -357,7 +356,6 @@ export default function PurchasePaymentFormView({
                 }
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 {activeSectionId === 'additional-info' ? (
                     <PurchasePaymentAdditionalInfoSection config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />
                 ) : activeSectionId === 'payment-info' ? (

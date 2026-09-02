@@ -12,7 +12,6 @@ import {
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { TransactionFormLayout, TransactionTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import {
     ExpenseAdditionalInfoSection,
@@ -268,7 +267,6 @@ export default function ExpenseEntryFormView({
                 footer={<TransactionTotalCard label={config.totalCardLabel} value={values.totalValue} />}
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 {activeSectionId === 'additional-info' ? (
                     <ExpenseAdditionalInfoSection config={config} values={values} setValues={setValues} handlers={handlers} />
                 ) : activeSectionId === 'summary' ? (

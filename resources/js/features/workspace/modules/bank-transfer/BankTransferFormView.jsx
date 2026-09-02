@@ -15,7 +15,6 @@ import { handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActio
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import {
     BankTransferHeader,
@@ -330,7 +329,6 @@ export default function BankTransferFormView({
                 footer={<TransferSummaryCards values={values} />}
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 {activeSectionId === 'fee' ? (
                     <TransferFeeSection config={config} values={values} handlers={handlers} />
                 ) : activeSectionId === 'additional-info' ? (

@@ -19,7 +19,6 @@ import {
     TransactionFormLayout,
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import {
     CashPaymentHeader,
     PaymentInfoSection,
@@ -326,7 +325,6 @@ export default function CashPaymentFormView({
                 footer={<TransactionTotalCard label={config.totalCardLabel} value={values.totalValue} />}
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 {activeSectionId === 'additional-info' ? (
                     <PaymentInfoSection
                         config={config}
