@@ -103,9 +103,10 @@ export default function PortalDropdown({
 
     if (!open) return null;
 
-    const showDropdown = coords !== null;
-
-    const renderAbove = coords && (side === 'top' || (side === 'auto' && coords.spaceBelow < (maxHeightLimit + 15) && coords.rectTop > (maxHeightLimit + 15)));
+    const renderAbove = coords && (
+        side === 'top' ||
+        (side === 'auto' && coords.spaceBelow < 120 && coords.rectTop > coords.spaceBelow)
+    );
 
     const dynamicMaxHeight = coords
         ? renderAbove
