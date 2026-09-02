@@ -173,6 +173,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
                 <GroupAccessGeneralSection
                     general={form.general}
                     values={generalValues}
+                    currentGroupId={recordId}
                     onChangeName={(nextValue) =>
                         setGeneralValues((currentValues) => ({
                             ...currentValues,

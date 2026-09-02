@@ -33,6 +33,7 @@ export function GroupAccessAccessOption({ option, checked, onChange, children })
 export function GroupAccessGeneralSection({
     general,
     values,
+    currentGroupId = null,
     onChangeName,
     onChangeAccessLimitation,
     onChangeAccessLimitDays,
@@ -127,6 +128,7 @@ export function GroupAccessGeneralSection({
                 <GroupAccessUserLookupField
                     field={general.userSelection}
                     selectedUsers={values.selectedUsers}
+                    currentGroupId={currentGroupId}
                     onAddUser={onAddUser}
                     onRemoveUser={onRemoveUser}
                 />

@@ -172,13 +172,13 @@ export default function ReferenceLookupInput({
                 {multiValueMode ? (
                     <div className={`flex min-w-0 flex-1 flex-col gap-1.5 p-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
                         {selectedLabels.length ? (
-                            <div className="flex flex-wrap items-center gap-1.5">
+                            <div className="flex flex-wrap items-center gap-1.5 pb-0.5">
                                 {selectedLabels.map((item) => (
                                     <span
                                         key={item}
-                                        className="inline-flex max-w-full shrink-0 items-center gap-1.5 rounded-[3px] border border-[#bcd7f8] bg-[#ebf3fc] px-2 py-0.5 text-xs text-slate-800 font-normal shadow-sm"
+                                        className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2.5 py-1 text-sm text-text-chip-blue-dark font-normal shadow-sm"
                                     >
-                                        <span className="truncate max-w-[200px]">{item}</span>
+                                        <span className="truncate max-w-[240px]">{item}</span>
                                         <button
                                             type="button"
                                             onClick={(e) => {
@@ -188,9 +188,9 @@ export default function ReferenceLookupInput({
                                             }}
                                             disabled={disabled}
                                             aria-label={`Hapus ${item}`}
-                                            className="inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center text-slate-600 hover:text-red-600 cursor-pointer"
+                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-slate-500 hover:text-red-600 cursor-pointer"
                                         >
-                                            <CloseIcon className="h-3 w-3" />
+                                            <CloseIcon className="h-3.5 w-3.5" />
                                         </button>
                                     </span>
                                 ))}
