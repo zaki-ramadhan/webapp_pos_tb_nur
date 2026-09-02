@@ -16,7 +16,6 @@ import {
     TransactionSectionHeading,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import SelectField from '@/components/ui/SelectField';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import {
     DepositFooter,
@@ -236,7 +235,6 @@ export default function SalesDepositFormView({
                 footer={<DepositFooter values={values} />}
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 <div className="relative flex-1 flex flex-col min-h-0">
                     {isDetail && values.approvalStamp ? <DepositStamp label={values.approvalStamp} tone="blue" className="absolute top-[54%] right-10 sm:right-14 z-30 pointer-events-none w-[140px] h-[140px] opacity-85 select-none -translate-y-1/2" /> : null}
                     {isDetail && values.statusStamp ? <DepositStamp label={values.statusStamp} tone={values.statusTone} className="absolute top-[54%] right-10 sm:right-14 z-30 pointer-events-none w-[140px] h-[140px] opacity-85 select-none -translate-y-1/2" /> : null}

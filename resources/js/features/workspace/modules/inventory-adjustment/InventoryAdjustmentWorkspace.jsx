@@ -16,7 +16,6 @@ import {
     TransactionToolbarIconButton,
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { CogIcon, PrintIcon } from '@/features/workspace/shared/Icons';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
@@ -256,7 +255,6 @@ export function InventoryAdjustmentFormView({
                     <TransactionTotalCard label="Total" value={values.totalValue} />
                 }
             >
-                <CrudStatusMessage status={status} className="mb-3" />
                 {activeSectionId === 'additional-info' ? (
                     <InventoryAdjustmentInfoSection pageId={pageId} config={config} values={values} setValues={setValues} handlers={handlers} />
                 ) : (

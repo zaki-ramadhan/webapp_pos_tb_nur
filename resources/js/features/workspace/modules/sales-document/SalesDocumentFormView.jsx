@@ -39,7 +39,6 @@ import {
     resolveInitialSectionId,
     resolveSectionComponent,
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { showCrudErrorToast } from '@/features/workspace/shared/crudFeedback';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
@@ -554,7 +553,6 @@ export default function SalesDocumentFormView({
                 footer={config.showFooter !== false ? <SalesDocumentFooter values={values} setValues={setValues} isDetail={isDetail} pageId={pageId} /> : null}
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 <div className="relative flex-1 flex flex-col min-h-0">
                     {isDetail && (pageId === 'sales-invoice' || pageId === 'purchase-invoice') ? (
                         <DocumentStamp

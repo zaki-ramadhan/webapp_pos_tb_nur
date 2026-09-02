@@ -26,7 +26,6 @@ import {
     TransactionFormLayout,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { AccountLookupField, AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import useSalesReceiptForm from './hooks/useSalesReceiptForm';
 
 export default function SalesReceiptFormView({
@@ -288,7 +287,6 @@ export default function SalesReceiptFormView({
                 }
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 <div className="relative flex-1 flex flex-col min-h-0">
                     {activeSectionId === 'additional-info' ? (
                         <SalesReceiptAdditionalInfoSection

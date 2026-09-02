@@ -1,5 +1,4 @@
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
 import { useFormSaveShortcut } from '@/features/workspace/shared/hooks/useFormSaveShortcut';
 
@@ -36,9 +35,6 @@ export default function ModuleFormTemplate({
 
                     <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-ui-border bg-white shadow-card-light overflow-hidden px-4 py-4 -mt-px">
                         <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                            {status && (status.message || status.tone) ? (
-                                <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-                            ) : null}
 
                             <div className="flex-1 min-h-0 flex flex-col">
                                 {children}

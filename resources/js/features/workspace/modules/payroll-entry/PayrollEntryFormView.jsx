@@ -5,7 +5,6 @@ import PayrollEntryEmployeeModal from './PayrollEntryEmployeeModal';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { TransactionFormLayout, TransactionDualTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import {
     areComparableValuesEqual,
@@ -504,7 +503,6 @@ export default function PayrollEntryFormView({
                 footer={<TransactionDualTotalCard items={resolvedConfig.summaryItems} className="min-w-[360px] sm:min-w-[565px]" />}
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 {activeSectionId === 'additional-info' ? (
                     <PayrollAdditionalInfoSection config={config} values={values} setValues={setValues} />
                 ) : (

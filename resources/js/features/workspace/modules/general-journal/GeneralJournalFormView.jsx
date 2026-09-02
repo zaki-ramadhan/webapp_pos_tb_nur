@@ -13,7 +13,6 @@ import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/Wo
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { TransactionDualTotalCard, TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction, rejectCrudFormAction, handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
@@ -282,7 +281,6 @@ export default function GeneralJournalFormView({
                 }
                 dockActions={dockActions}
             >
-                <CrudStatusMessage status={status} className="mb-4" />
                 {activeSectionId === 'additional-info' ? (
                     <JournalAdditionalInfoSection config={config} values={values} setValues={setValues} handlers={handlers} />
                 ) : (
