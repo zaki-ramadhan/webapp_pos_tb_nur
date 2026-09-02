@@ -19,7 +19,7 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
-import useTableSort from '@/features/workspace/shared/useTableSort';
+import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 import { InquiryActionButton, InquiryControl } from './components/InquiryControls';
 
@@ -110,21 +110,26 @@ export default function InquiryWorkspaceView({
     const selectControls = controls.filter(c => c.type === 'select');
 
     const isServerSort = Boolean(pagination?.onSort || config.table?.onSort);
-    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
-    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
-    const { handleResizeStart, getCellStyle } = useColumnResize(config.id || 'bank-inquiry');
+    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const activeSortKey = isServerSort ? (pagination?.sortBy || config.table?.sortBy || sortKey) : sortKey;
+    const activeSortDir = isServerSort ? (pagination?.sortDirection || config.table?.sortDirection || sortDir) : sortDir;
 
     const handleSortClick = (columnId) => {
+        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
         if (isServerSort) {
             const onSort = pagination?.onSort || config.table?.onSort;
-            const currentKey = pagination?.sortBy || config.table?.sortBy;
-            const currentDir = pagination?.sortDirection || config.table?.sortDirection || 'asc';
-            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
             onSort?.(columnId, nextDir);
-        } else {
-            handleClientSort(columnId);
         }
+        handleClientSort(columnId, nextDir);
     };
+
+    const sortedRows = useMemo(() => {
+        if (activeSortKey) {
+            return sortRows(filteredRows, activeSortKey, activeSortDir);
+        }
+        return filteredRows;
+    }, [filteredRows, activeSortKey, activeSortDir]);
+    const { handleResizeStart, getCellStyle } = useColumnResize(config.id || 'bank-inquiry');
 
     const resolvedColumns = useMemo(() => {
         return config.table.columns.map((col) => {
@@ -244,7 +249,7 @@ export default function InquiryWorkspaceView({
                                                 align={column.align}
                                                 widthClassName={column.widthClassName}
                                                 sortable={column.sortable !== false}
-                                                sortDirection={isServerSort ? ((pagination?.sortBy || config.table?.sortBy) === column.id ? (pagination?.sortDirection || config.table?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                                sortDirection={activeSortKey === column.id ? activeSortDir : null}
                                                 onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                                 style={getCellStyle(column.id, { position: 'relative' })}
                                                 onResizeStart={(e) => handleResizeStart(e, column.id)}

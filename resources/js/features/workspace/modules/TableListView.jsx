@@ -15,7 +15,7 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
-import useTableSort from '@/features/workspace/shared/useTableSort';
+import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 import Pagination from '@/components/ui/Pagination';
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
@@ -118,16 +118,17 @@ export default function TableListView({
         }
     }, [keyword, filters, hasExternalPagination]);
 
+    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
+    const activeSortDir = isServerSort ? (table.sortDirection || table.pagination?.sortDirection || sortDir) : sortDir;
+
     const handleSortClick = (columnId) => {
+        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
         if (isServerSort) {
             const onSort = table.onSort || table.pagination?.onSort;
-            const currentKey = table.sortBy || table.pagination?.sortBy;
-            const currentDir = table.sortDirection || table.pagination?.sortDirection || 'asc';
-            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
             onSort?.(columnId, nextDir);
-        } else {
-            handleClientSort(columnId);
         }
+        handleClientSort(columnId, nextDir);
     };
 
     const filteredRows = useMemo(() => {
@@ -159,8 +160,12 @@ export default function TableListView({
         });
     }, [isServerSearch, filters, keyword, table.columns, table.filters, table.rows]);
 
-    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
-    const displayRows = isServerSort ? filteredRows : clientSortedRows;
+    const displayRows = useMemo(() => {
+        if (activeSortKey) {
+            return sortRows(filteredRows, activeSortKey, activeSortDir);
+        }
+        return filteredRows;
+    }, [filteredRows, activeSortKey, activeSortDir]);
 
     const paginatedRows = useMemo(() => {
         if (hasExternalPagination) {
@@ -292,7 +297,7 @@ export default function TableListView({
                                     widthClassName={column.widthClassName}
                                     sortable={column.sortable !== false}
                                     noWrap={column.noWrap === true}
-                                    sortDirection={isServerSort ? ((table.sortBy || table.pagination?.sortBy) === column.id ? (table.sortDirection || table.pagination?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                    sortDirection={activeSortKey === column.id ? activeSortDir : null}
                                     onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                     style={getCellStyle(column.id, { position: 'relative' })}
                                     onResizeStart={(e) => handleResizeStart(e, column.id)}

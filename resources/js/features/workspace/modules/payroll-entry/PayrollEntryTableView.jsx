@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 import { tableRegistry } from '@/features/workspace/shared/columnVisibility';
 import Pagination from '@/components/ui/Pagination';
-import useTableSort from '@/features/workspace/shared/useTableSort';
+import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 
 import SelectField from '@/components/ui/SelectField';
 import { TransactionDataTable } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -89,16 +89,17 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
         return () => clearTimeout(timer);
     }, [keyword, isServerSearch, config.table.onSearch, config.table.pagination?.onSearch]);
 
+    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const activeSortKey = isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy || sortKey) : sortKey;
+    const activeSortDir = isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection || sortDir) : sortDir;
+
     const handleSortClick = (columnId) => {
+        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
         if (isServerSort) {
             const onSort = config.table.onSort || config.table.pagination?.onSort;
-            const currentKey = config.table.sortBy || config.table.pagination?.sortBy;
-            const currentDir = config.table.sortDirection || config.table.pagination?.sortDirection || 'asc';
-            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
             onSort?.(columnId, nextDir);
-        } else {
-            handleClientSort(columnId);
         }
+        handleClientSort(columnId, nextDir);
     };
 
     const filteredRows = useMemo(() => {
@@ -144,8 +145,12 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
         });
     }, [isServerSearch, config.table.columns, config.table.filters, config.table.rows, filters, keyword]);
 
-    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
-    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
+    const sortedRows = useMemo(() => {
+        if (activeSortKey) {
+            return sortRows(filteredRows, activeSortKey, activeSortDir);
+        }
+        return filteredRows;
+    }, [filteredRows, activeSortKey, activeSortDir]);
 
     useEffect(() => {
         tableRegistry.setActiveTable(config.table.columns, filteredRows, 'payroll-entries');
@@ -183,9 +188,7 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
                         getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
                         renderHeaderCell={(column) => {
                             const sortable = column.sortable !== false;
-                            const activeKey = isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy) : sortKey;
-                            const activeDir = isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection) : sortDir;
-                            const direction = activeKey === column.id ? activeDir : null;
+                            const direction = activeSortKey === column.id ? activeSortDir : null;
                             const justifyClass = column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start';
 
                             if (!sortable) {

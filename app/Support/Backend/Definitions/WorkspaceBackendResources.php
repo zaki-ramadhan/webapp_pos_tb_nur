@@ -131,9 +131,31 @@ class WorkspaceBackendResources
                     ->when(filled($filters['resource_key'] ?? null), fn ($builder) => $builder->where('resource_key', (string) $filters['resource_key']))
                     ->when(filled($filters['actor_user_id'] ?? null), fn ($builder) => $builder->where('actor_user_id', (int) $filters['actor_user_id']))
                     ->when(filled($filters['date_from'] ?? null), fn ($builder) => $builder->whereDate('occurred_at', '>=', (string) $filters['date_from']))
-                    ->when(filled($filters['date_to'] ?? null), fn ($builder) => $builder->whereDate('occurred_at', '<=', (string) $filters['date_to']))
-                    ->orderByDesc('occurred_at')
-                    ->orderByDesc('id');
+                    ->when(filled($filters['date_to'] ?? null), fn ($builder) => $builder->whereDate('occurred_at', '<=', (string) $filters['date_to']));
+
+                $sortBy = (string) ($filters['sort_by'] ?? '');
+                $sortDir = strtolower((string) ($filters['sort_direction'] ?? $filters['sort_dir'] ?? 'desc')) === 'asc' ? 'asc' : 'desc';
+
+                if ($sortBy === 'userName' || $sortBy === 'actor_name' || $sortBy === 'user') {
+                    $query->leftJoin('users', 'activity_logs.actor_user_id', '=', 'users.id')
+                          ->orderBy('users.name', $sortDir)
+                          ->select('activity_logs.*');
+                } elseif ($sortBy === 'email' || $sortBy === 'actor_email') {
+                    $query->leftJoin('users', 'activity_logs.actor_user_id', '=', 'users.id')
+                          ->orderBy('users.email', $sortDir)
+                          ->select('activity_logs.*');
+                } elseif ($sortBy === 'referenceName' || $sortBy === 'description' || $sortBy === 'subject_label') {
+                    $query->orderBy('activity_logs.description', $sortDir);
+                } elseif ($sortBy === 'actionLabel' || $sortBy === 'action') {
+                    $query->orderBy('activity_logs.action', $sortDir);
+                } elseif ($sortBy === 'transactionTypeLabel' || $sortBy === 'transactionTypeValue' || $sortBy === 'resource' || $sortBy === 'resource_key') {
+                    $query->orderBy('activity_logs.resource_key', $sortDir);
+                } elseif ($sortBy === 'loggedAt' || $sortBy === 'date' || $sortBy === 'dateValue' || $sortBy === 'occurred_at') {
+                    $query->orderBy('activity_logs.occurred_at', $sortDir);
+                } else {
+                    $query->orderByDesc('activity_logs.occurred_at')
+                          ->orderByDesc('activity_logs.id');
+                }
 
                 $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 100));
 
