@@ -636,14 +636,16 @@ class FinancialEntitySeeder extends Seeder
         $branchId = DB::table('branches')->first()?->id;
         $assetAcc = DB::table('accounts')->where('code', '1201')->value('id');
 
+        $startYear = (int) date('Y') - 1;
+
         DB::table('fixed_assets')->insert([
             [
                 'branch_id' => $branchId,
                 'asset_account_id' => $assetAcc,
                 'code' => 'AST-001',
                 'name' => 'Mobil Pick Up Mitsubishi L300 Pengangkut Material',
-                'purchase_date' => '2025-01-10',
-                'usage_date' => '2025-01-15',
+                'purchase_date' => sprintf('%04d-01-10', $startYear),
+                'usage_date' => sprintf('%04d-01-15', $startYear),
                 'depreciation_method' => 'Straight Line',
                 'quantity' => 1,
                 'asset_life_years' => 8,
@@ -661,8 +663,8 @@ class FinancialEntitySeeder extends Seeder
                 'asset_account_id' => $assetAcc,
                 'code' => 'AST-002',
                 'name' => 'Set Komputer Kasir POS Touchscreen & Thermal Printer',
-                'purchase_date' => '2025-02-01',
-                'usage_date' => '2025-02-01',
+                'purchase_date' => sprintf('%04d-02-01', $startYear),
+                'usage_date' => sprintf('%04d-02-01', $startYear),
                 'depreciation_method' => 'Straight Line',
                 'quantity' => 2,
                 'asset_life_years' => 4,
@@ -680,8 +682,8 @@ class FinancialEntitySeeder extends Seeder
                 'asset_account_id' => $assetAcc,
                 'code' => 'AST-003',
                 'name' => 'Timbangan Digital Industri 500kg',
-                'purchase_date' => '2025-03-05',
-                'usage_date' => '2025-03-05',
+                'purchase_date' => sprintf('%04d-03-05', $startYear),
+                'usage_date' => sprintf('%04d-03-05', $startYear),
                 'depreciation_method' => 'Straight Line',
                 'quantity' => 1,
                 'asset_life_years' => 5,
@@ -699,8 +701,8 @@ class FinancialEntitySeeder extends Seeder
                 'asset_account_id' => $assetAcc,
                 'code' => 'AST-004',
                 'name' => 'Forklift Mini Toyota 2.5 Ton',
-                'purchase_date' => '2025-01-20',
-                'usage_date' => '2025-01-25',
+                'purchase_date' => sprintf('%04d-01-20', $startYear),
+                'usage_date' => sprintf('%04d-01-25', $startYear),
                 'depreciation_method' => 'Straight Line',
                 'quantity' => 1,
                 'asset_life_years' => 10,

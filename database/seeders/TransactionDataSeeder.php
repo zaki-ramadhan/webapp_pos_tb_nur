@@ -21,6 +21,12 @@ class TransactionDataSeeder extends Seeder
         $warehouseId = DB::table('warehouses')->first()->id ?? 1;
         $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id') ?? 1;
 
+        $now = Carbon::now();
+        $currentYear = (int) $now->year;
+        $currentMonth = (int) $now->month;
+        $currentDay = (int) $now->day;
+        $startYear = $currentYear - 1;
+
         $accKasKecil  = DB::table('accounts')->where('code', '110101')->value('id') ?? DB::table('accounts')->value('id');
         $accBankBCA   = DB::table('accounts')->where('code', '110102')->value('id') ?? $accKasKecil;
         $accBankMnd   = DB::table('accounts')->where('code', '110103')->value('id') ?? $accKasKecil;
@@ -136,14 +142,14 @@ class TransactionDataSeeder extends Seeder
             DB::table('inventory_batches')->insert([
                 'product_id' => $p->id,
                 'warehouse_id' => $warehouseId,
-                'entry_date' => '2025-01-02 08:00:00',
+                'entry_date' => sprintf('%04d-01-02 08:00:00', $startYear),
                 'qty_received' => $received,
                 'qty_remaining' => $remaining,
                 'unit_cost' => $p->default_purchase_price,
                 'source_type' => 'opening_balance',
                 'source_id' => $p->id,
                 'source_line_id' => null,
-                'created_at' => '2025-01-02 08:00:00',
+                'created_at' => sprintf('%04d-01-02 08:00:00', $startYear),
                 'updated_at' => now(),
             ]);
         }
@@ -171,19 +177,19 @@ class TransactionDataSeeder extends Seeder
         };
 
         // Helper closure to generate safe historical entry dates (Chronological & bounded)
-        $buildEntryDate = function ($year, $m, $defaultDay) {
-            if ($year === 2026 && $m === 8) {
-                $safeDay = min(9, max(1, $defaultDay));
-                return sprintf('2026-08-%02d', $safeDay);
+        $buildEntryDate = function ($year, $m, $defaultDay) use ($currentYear, $currentMonth, $currentDay) {
+            if ($year === $currentYear && $m === $currentMonth) {
+                $safeDay = min($currentDay, max(1, $defaultDay));
+                return sprintf('%04d-%02d-%02d', $year, $m, $safeDay);
             }
             $safeDay = min(28, max(1, $defaultDay));
             return sprintf('%04d-%02d-%02d', $year, $m, $safeDay);
         };
 
-        // 2. Sales Quotes (Penawaran Penjualan - 2025 & 2026)
+        // 2. Sales Quotes (Penawaran Penjualan)
         $quoteCount = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $quoteCount++;
                 $entryDate = $buildEntryDate($year, $m, 10);
@@ -211,14 +217,14 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 3. Sales Orders (Pesanan Penjualan - 2025 & 2026)
+        // 3. Sales Orders (Pesanan Penjualan)
         // Dynamically distribute Sales Orders across all catalog products so 35+ products have active SO reservations
         $allCatalogProducts = DB::table('products')->orderBy('id')->get()->toArray();
         $totalCatalogCount = count($allCatalogProducts);
         $orderCount = 0;
 
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $orderCount++;
                 $entryDate = $buildEntryDate($year, $m, 12);
@@ -265,10 +271,10 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 4. Sales Deliveries (Surat Jalan - 2025 & 2026)
+        // 4. Sales Deliveries (Surat Jalan)
         $delivCount = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $delivCount++;
                 $entryDate = $buildEntryDate($year, $m, 13);
@@ -340,15 +346,16 @@ class TransactionDataSeeder extends Seeder
         $siIds = [];
         $invoiceSeq = 0;
 
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxMonth = ($year === 2026) ? 8 : 12;
-            $growthMultiplier = ($year === 2026) ? 1.18 : 1.00;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxMonth = ($year === $currentYear) ? $currentMonth : 12;
+            $growthMultiplier = ($year === $currentYear) ? 1.18 : 1.00;
 
             for ($m = 1; $m <= $maxMonth; $m++) {
-                $invoicesThisMonth = ($year === 2026 && $m === 8) ? 18 : 6;
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $invoicesThisMonth = $isCurrentMonthNow ? max(10, min(18, $currentDay)) : 6;
                 for ($k = 1; $k <= $invoicesThisMonth; $k++) {
                     $invoiceSeq++;
-                    $defaultDay = ($year === 2026 && $m === 8) ? $k : (4 * $k);
+                    $defaultDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($k / $invoicesThisMonth) * $currentDay))) : min(28, 4 * $k);
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $defaultDay);
                     $dt = Carbon::parse($entryDate);
 
@@ -413,10 +420,77 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 6. Sales Returns (2025 & 2026)
+        // 5b. Guarantee Last 7 Days Rolling Sales Invoices (Memastikan Trend 7 Hari Dasbor Selalu Penuh)
+        for ($d = 6; $d >= 0; $d--) {
+            $trendDate = $now->copy()->subDays($d);
+            $entryDate = $trendDate->toDateString();
+            $dt = $trendDate;
+            $invoiceSeq++;
+
+            $pattern = $salesPatterns[($invoiceSeq - 1) % count($salesPatterns)];
+            $docNo = sprintf('FP.%s.%s.%04d', $trendDate->format('Y'), $trendDate->format('m'), 8500 + $d);
+            $custId = ($invoiceSeq % 5 === 0) ? $c5 : (($invoiceSeq % 4 === 0) ? $c4 : (($invoiceSeq % 3 === 0) ? $c3 : (($invoiceSeq % 2 === 0) ? $c2 : $c1)));
+
+            $docId = DB::table('operation_documents')->insertGetId([
+                'document_type' => 'sales_invoice',
+                'branch_id' => $branchId,
+                'warehouse_id' => $warehouseId,
+                'customer_id' => $custId,
+                'currency_id' => $currencyId,
+                'responsible_user_id' => ($invoiceSeq % 2 === 0) ? $userAdminId : $userKasirId,
+                'document_number' => $docNo,
+                'status' => 'Posted',
+                'entry_date' => $entryDate,
+                'subtotal' => 0,
+                'discount_total' => 0,
+                'tax_total' => 0,
+                'total_amount' => 0,
+                'is_closed' => true,
+                'created_at' => $dt,
+                'updated_at' => $dt,
+            ]);
+            $siIds[$invoiceSeq] = ['id' => $docId, 'number' => $docNo];
+
+            $totalAmount = 0;
+            foreach ($pattern as $productId => $qty) {
+                $product = DB::table('products')->where('id', $productId)->first();
+                $price = $product->default_sale_price ?? 50000;
+                $lineTotal = $price * $qty;
+                $totalAmount += $lineTotal;
+
+                DB::table('operation_document_lines')->insert([
+                    'operation_document_id' => $docId,
+                    'line_type' => 'sales_invoice',
+                    'product_id' => $productId,
+                    'unit_id' => $product->base_unit_id ?? 1,
+                    'warehouse_id' => $warehouseId,
+                    'description' => $product->name,
+                    'quantity' => $qty,
+                    'unit_price' => $price,
+                    'total_amount' => $lineTotal,
+                    'sort_order' => $productId,
+                    'created_at' => $dt,
+                    'updated_at' => $dt,
+                ]);
+            }
+
+            // Buat invoice hari ini dan beberapa hari lalu ada yang belum lunas dengan jatuh tempo dalam 3-10 hari ke depan
+            $isPaid = ($d !== 1 && $d !== 3);
+            $dueDate = $isPaid ? null : $now->copy()->addDays(rand(3, 8))->toDateString();
+            DB::table('operation_documents')->where('id', $docId)->update([
+                'subtotal' => $totalAmount,
+                'total_amount' => $totalAmount,
+                'paid_amount' => $isPaid ? $totalAmount : 0,
+                'outstanding_amount' => $isPaid ? 0 : $totalAmount,
+                'due_date' => $dueDate,
+                'status' => $isPaid ? 'Lunas' : 'Belum Lunas',
+            ]);
+        }
+
+        // 6. Sales Returns
         $srCount = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 2; $m <= $maxM; $m += 3) {
                 $srCount++;
                 $entryDate = $buildEntryDate($year, $m, 11);
@@ -445,10 +519,10 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 7. Sales Deposits (Uang Muka Penjualan - 2025 & 2026)
+        // 7. Sales Deposits (Uang Muka Penjualan)
         $sdCount = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m += 3) {
                 $sdCount++;
                 $entryDate = $buildEntryDate($year, $m, 5);
@@ -472,20 +546,16 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 8. Sales Receipts (Penerimaan Penjualan - 2025 & 2026)
+        // 8. Sales Receipts (Penerimaan Penjualan)
         $receiptSeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $rcCountThisMonth = ($year === 2026 && $m === 8) ? 6 : 1;
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $rcCountThisMonth = $isCurrentMonthNow ? 4 : 1;
                 for ($rcK = 1; $rcK <= $rcCountThisMonth; $rcK++) {
                     $receiptSeq++;
-                    if ($year === 2026 && $m === 8) {
-                        $augRcDays = [1 => 5, 2 => 8, 3 => 11, 4 => 14, 5 => 17, 6 => 18];
-                        $rcDay = $augRcDays[$rcK] ?? 18;
-                    } else {
-                        $rcDay = 14;
-                    }
+                    $rcDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($rcK / $rcCountThisMonth) * $currentDay))) : 14;
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $rcDay);
                     $dt = Carbon::parse($entryDate);
                     $payAmount = 1250000 + (($receiptSeq % 4) * 250000);
@@ -528,10 +598,10 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 9. Purchase Orders (2025 & 2026)
+        // 9. Purchase Orders
         $poCount = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $poCount++;
                 $entryDate = $buildEntryDate($year, $m, 3);
@@ -558,10 +628,10 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 10. Goods Receipts (2025 & 2026)
+        // 10. Goods Receipts
         $grCount = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $grCount++;
                 $entryDate = $buildEntryDate($year, $m, 6);
@@ -587,24 +657,20 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 11. Purchase Invoices (2025 & 2026 - Calibrated for ~Rp 190M HPP per year)
+        // 11. Purchase Invoices (Calibrated for ~Rp 190M HPP per year)
         $piIds = [];
         $piSeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $piCountThisMonth = ($year === 2026 && $m === 8) ? 6 : 1;
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $piCountThisMonth = $isCurrentMonthNow ? 4 : 1;
                 for ($piK = 1; $piK <= $piCountThisMonth; $piK++) {
                     $piSeq++;
-                    if ($year === 2026 && $m === 8) {
-                        $augPiDays = [1 => 4, 2 => 8, 3 => 11, 4 => 14, 5 => 17, 6 => 18];
-                        $piDay = $augPiDays[$piK] ?? 18;
-                    } else {
-                        $piDay = 8;
-                    }
+                    $piDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($piK / $piCountThisMonth) * $currentDay))) : 8;
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $piDay);
                     $dt = Carbon::parse($entryDate);
-                    $isPaid = ($piSeq % 3 !== 0);
+                    $isPaid = $isCurrentMonthNow ? ($piK % 2 === 0) : ($piSeq % 3 !== 0);
                     $docNo = sprintf('FB.%04d.%02d.%04d', $year, $m, $piK);
                     $supplierPool = [$s1, $s4, $s2, $s3, $s5, $s6, $s7, $s8];
                     $supplierId = $supplierPool[($piSeq - 1) % count($supplierPool)];
@@ -620,6 +686,8 @@ class TransactionDataSeeder extends Seeder
                         default => sprintf('INV-SUP-%04d%02d-%03d', $year, $m, $piSeq),
                     };
 
+                    $dueDate = $isPaid ? null : ($isCurrentMonthNow ? $now->copy()->addDays(rand(3, 10))->toDateString() : date('Y-m-d', strtotime($entryDate . ' + 30 days')));
+
                     $docId = DB::table('operation_documents')->insertGetId([
                         'document_type' => 'purchase_invoice',
                         'branch_id' => $branchId,
@@ -631,7 +699,7 @@ class TransactionDataSeeder extends Seeder
                         'reference_number' => $supplierBillNo,
                         'status' => $isPaid ? 'Lunas' : 'Belum Lunas',
                         'entry_date' => $entryDate,
-                        'due_date' => $isPaid ? null : date('Y-m-d', strtotime($entryDate . ' + 30 days')),
+                        'due_date' => $dueDate,
                         'subtotal' => 0,
                         'discount_total' => 0,
                         'tax_total' => 0,
@@ -644,7 +712,7 @@ class TransactionDataSeeder extends Seeder
                     ]);
                     $piIds[$piSeq] = ['id' => $docId, 'number' => $docNo];
 
-                    if ($year === 2025) {
+                    if ($year === $startYear) {
                         $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 40 + ($m % 3), 75000, $dt);
                         $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 600, 800, $dt);
                     } else {
@@ -663,10 +731,10 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 12. Purchase Returns (2025 & 2026)
+        // 12. Purchase Returns
         $prCount = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 3; $m <= $maxM; $m += 4) {
                 $prCount++;
                 $entryDate = $buildEntryDate($year, $m, 12);
@@ -695,20 +763,16 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 13. Purchase Payments (2025 & 2026)
+        // 13. Purchase Payments
         $pySeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $pyCountThisMonth = ($year === 2026 && $m === 8) ? 4 : 1;
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $pyCountThisMonth = $isCurrentMonthNow ? 4 : 1;
                 for ($pyK = 1; $pyK <= $pyCountThisMonth; $pyK++) {
                     $pySeq++;
-                    if ($year === 2026 && $m === 8) {
-                        $augPyDays = [1 => 8, 2 => 12, 3 => 16, 4 => 18];
-                        $pyDay = $augPyDays[$pyK] ?? 18;
-                    } else {
-                        $pyDay = 14;
-                    }
+                    $pyDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($pyK / $pyCountThisMonth) * $currentDay))) : 14;
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $pyDay);
                     $dt = Carbon::parse($entryDate);
                     $payAmount = 4500000;
@@ -751,10 +815,10 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 14. Item Requests (2025 & 2026)
+        // 14. Item Requests
         $reqCount = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m += 3) {
                 $reqCount++;
                 $entryDate = $buildEntryDate($year, $m, 12);
@@ -778,10 +842,10 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 15. Inventory Adjustments (2025 & 2026 Quarterly Opname)
+        // 15. Inventory Adjustments (Quarterly Opname)
         $iaSeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 3; $m <= $maxM; $m += 3) {
                 $iaSeq++;
                 $entryDate = $buildEntryDate($year, $m, 14);
@@ -818,10 +882,10 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 16. Stock Transfers (2025 & 2026)
+        // 16. Stock Transfers
         $trfSeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $trfSeq++;
                 $entryDate = $buildEntryDate($year, $m, 14);
@@ -846,21 +910,17 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 17. Cash Payments (2025 & 2026)
+        // 17. Cash Payments
         $accPerlengkapan = DB::table('accounts')->where('code', '120101')->value('id') ?? 18;
         $cpSeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $cpCountThisMonth = ($year === 2026 && $m === 8) ? 4 : 1;
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $cpCountThisMonth = $isCurrentMonthNow ? 4 : 1;
                 for ($cpK = 1; $cpK <= $cpCountThisMonth; $cpK++) {
                     $cpSeq++;
-                    if ($year === 2026 && $m === 8) {
-                        $augCpDays = [1 => 6, 2 => 12, 3 => 17, 4 => 18];
-                        $cpDay = $augCpDays[$cpK] ?? 18;
-                    } else {
-                        $cpDay = 10;
-                    }
+                    $cpDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($cpK / $cpCountThisMonth) * $currentDay))) : 10;
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $cpDay);
                     $dt = Carbon::parse($entryDate);
                     $docId = DB::table('operation_documents')->insertGetId([
@@ -896,21 +956,17 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 18. Cash Receipts (2025 & 2026)
+        // 18. Cash Receipts
         $accPendapatanLain = DB::table('accounts')->where('code', '410102')->value('id') ?? 47;
         $crSeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $crCountThisMonth = ($year === 2026 && $m === 8) ? 4 : 1;
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $crCountThisMonth = $isCurrentMonthNow ? 4 : 1;
                 for ($crK = 1; $crK <= $crCountThisMonth; $crK++) {
                     $crSeq++;
-                    if ($year === 2026 && $m === 8) {
-                        $augCrDays = [1 => 5, 2 => 11, 3 => 16, 4 => 18];
-                        $crDay = $augCrDays[$crK] ?? 18;
-                    } else {
-                        $crDay = 11;
-                    }
+                    $crDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($crK / $crCountThisMonth) * $currentDay))) : 11;
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $crDay);
                     $dt = Carbon::parse($entryDate);
                     $docId = DB::table('operation_documents')->insertGetId([
@@ -946,19 +1002,16 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 19. Bank Transfers (2025 & 2026)
+        // 19. Bank Transfers
         $btSeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
-                $btCountThisMonth = ($year === 2026 && $m === 8) ? 2 : 1;
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $btCountThisMonth = $isCurrentMonthNow ? 2 : 1;
                 for ($btK = 1; $btK <= $btCountThisMonth; $btK++) {
                     $btSeq++;
-                    if ($year === 2026 && $m === 8) {
-                        $btDay = ($btK === 1) ? 10 : 17;
-                    } else {
-                        $btDay = 13;
-                    }
+                    $btDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($btK / $btCountThisMonth) * $currentDay))) : 13;
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $btDay);
                     $dt = Carbon::parse($entryDate);
                     DB::table('operation_documents')->insert([
@@ -981,20 +1034,16 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 20. General Journal Entries (2025 & 2026)
+        // 20. General Journal Entries
         $gjSeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                $gjCountThisMonth = ($year === 2026 && $m === 8) ? 3 : 1;
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $gjCountThisMonth = $isCurrentMonthNow ? 3 : 1;
                 for ($gjK = 1; $gjK <= $gjCountThisMonth; $gjK++) {
                     $gjSeq++;
-                    if ($year === 2026 && $m === 8) {
-                        $augGjDays = [1 => 8, 2 => 14, 3 => 18];
-                        $gjDay = $augGjDays[$gjK] ?? 18;
-                    } else {
-                        $gjDay = 13;
-                    }
+                    $gjDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($gjK / $gjCountThisMonth) * $currentDay))) : 13;
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $gjDay);
                     $dt = Carbon::parse($entryDate);
                     $docId = DB::table('operation_documents')->insertGetId([
@@ -1044,7 +1093,7 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 21. Expense Entries (FULL 2025 & 2026 Monthly Expenses - Calibrated for ~Rp 25M / year)
+        // 21. Expense Entries (Monthly Expenses - Calibrated for ~Rp 25M / year)
         $accUtangBeban = DB::table('accounts')->where('code', '210202')->value('id') ?? 35;
         $accBebanGaji = DB::table('accounts')->where('code', '610101')->value('id') ?? 54;
         $accBebanListrik = DB::table('accounts')->where('code', '610201')->value('id') ?? 66;
@@ -1056,8 +1105,8 @@ class TransactionDataSeeder extends Seeder
         ];
 
         $expSeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 foreach ($expenseTemplates as $tplIdx => $tpl) {
                     $expSeq++;
@@ -1109,7 +1158,7 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 22. Payroll Entries (FULL 2025 & 2026 Monthly Payroll - Calibrated for ~Rp 3.5M / month)
+        // 22. Payroll Entries (Monthly Payroll - Calibrated for ~Rp 3.5M / month)
         $employeesList = DB::table('employees')->get();
         $monthsList = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -1118,8 +1167,8 @@ class TransactionDataSeeder extends Seeder
         ];
 
         $paySeq = 0;
-        for ($year = 2025; $year <= 2026; $year++) {
-            $maxM = ($year === 2026) ? 8 : 12;
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $paySeq++;
                 $entryDate = $buildEntryDate($year, $m, 14);
