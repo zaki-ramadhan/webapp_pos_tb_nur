@@ -122,9 +122,7 @@ export default function PayrollEntryEmployeeModal({
         if (e) e.preventDefault();
 
         if (grossIncome <= 0) {
-            showErrorToast({
-                message: 'Pendapatan bruto harus diisi dan lebih dari 0.',
-            });
+            onClose();
             return;
         }
 

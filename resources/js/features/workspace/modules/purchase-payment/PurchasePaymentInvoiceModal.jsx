@@ -68,7 +68,7 @@ export default function PurchasePaymentInvoiceModal({ open, onClose, modal, invo
             closeAriaLabel="Tutup rincian faktur"
             panelClassName="max-w-[572px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[430px] py-3"
-            footer={<DocumentModalFooter />}
+            footer={<DocumentModalFooter onSubmit={onClose} />}
         >
             {activeTabId === 'discount-info' ? (
                 <PurchasePaymentDiscountInfoTab values={values} setValues={setValues} />

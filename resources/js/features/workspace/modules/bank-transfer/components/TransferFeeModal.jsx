@@ -36,18 +36,18 @@ export default function TransferFeeModal({
     function handlePrimaryAction() {
         if (activeTab === 'detail') {
             if (!feeCustomName.trim()) {
-                showErrorToast({ message: 'Nama Akun wajib diisi.' });
+                onClose();
                 return;
             }
             setActiveTab('notes');
         } else {
             const amountNum = parseNumericInput(feeAmount);
             if (!feeCustomName.trim()) {
-                showErrorToast({ message: 'Nama Akun wajib diisi.' });
+                onClose();
                 return;
             }
             if (amountNum <= 0) {
-                showErrorToast({ message: 'Nilai biaya transfer harus lebih dari 0.' });
+                onClose();
                 return;
             }
 

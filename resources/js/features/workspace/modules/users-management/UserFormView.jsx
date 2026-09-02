@@ -5,7 +5,7 @@ import RadioField from '@/components/ui/RadioField';
 import TextInput from '@/components/ui/TextInput';
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
-import { executeCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 import useBackendResource from '@/features/workspace/backend/useBackendResource';
 import { toUserPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
@@ -140,30 +140,32 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
 
     const { store, update } = useBackendResource({ resource: 'users' });
 
-    async function handleSave() {
-        window.dispatchEvent(new CustomEvent('form-validation-clear'));
-
-        const inputVal = values.phone.trim();
+    const validationMessage = useMemo(() => {
+        const inputVal = values.phone?.trim() ?? '';
         if (!inputVal) {
-            setStatus({ tone: 'error', message: 'No Handphone/Email wajib diisi.' });
-            window.dispatchEvent(new CustomEvent('form-validation-error', { 
-                detail: { phone: 'No Handphone/Email wajib diisi.' } 
-            }));
+            return 'No Handphone/Email wajib diisi.';
+        }
+        if (inputVal.includes('@')) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(inputVal)) {
+                return 'Format email tidak valid.';
+            }
+        }
+        return '';
+    }, [values.phone]);
+
+    const saveDisabled = saving || Boolean(validationMessage);
+
+    async function handleSave() {
+        if (validationMessage) {
+            rejectCrudFormAction(validationMessage, {
+                setStatus,
+                fieldErrors: { phone: validationMessage },
+            });
             return;
         }
 
-        const isEmailInput = inputVal.includes('@');
-        if (isEmailInput) {
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailRegex.test(inputVal)) {
-                setStatus({ tone: 'error', message: 'Format email tidak valid.' });
-                window.dispatchEvent(new CustomEvent('form-validation-error', { 
-                    detail: { phone: 'Format email tidak valid.' } 
-                }));
-                return;
-            }
-        }
-
+        const inputVal = values.phone.trim();
         const payload = buildPayloadFromInput(inputVal, values, lookupData, isDetail, detailRow);
 
         await executeCrudFormAction({
@@ -199,7 +201,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
             setActiveTabId={() => {}}
             status={status}
             saving={saving}
-            saveDisabled={saving}
+            saveDisabled={saveDisabled}
             onSave={handleSave}
         >
             <div className="flex-1 min-h-0 pt-2">

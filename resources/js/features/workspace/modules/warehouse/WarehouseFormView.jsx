@@ -114,16 +114,20 @@ export default function WarehouseFormView({
 
 
 
-    function handleChange(field, nextValue) {
-        setHasSaved(false);
-        setValues((cur) => ({ ...cur, [field]: nextValue }));
-    }
+    const validationMessage = useMemo(() => {
+        if (!values.name?.trim()) {
+            return 'Nama Gudang wajib diisi.';
+        }
+        return '';
+    }, [values.name]);
+
+    const saveDisabled = saving || Boolean(validationMessage);
 
     async function handleSave() {
-        if (!values.name?.trim()) {
-            rejectCrudFormAction('Nama Gudang wajib diisi.', {
+        if (validationMessage) {
+            rejectCrudFormAction(validationMessage, {
                 setStatus,
-                fieldErrors: { name: 'Nama Gudang wajib diisi.' },
+                fieldErrors: { name: validationMessage },
             });
             return;
         }
@@ -221,7 +225,7 @@ export default function WarehouseFormView({
             setActiveTabId={setActiveTabId}
             status={status}
             saving={saving}
-            saveDisabled={saving}
+            saveDisabled={saveDisabled}
             onSave={handleSave}
             actionsSlot={
                 isDetailMode ? (

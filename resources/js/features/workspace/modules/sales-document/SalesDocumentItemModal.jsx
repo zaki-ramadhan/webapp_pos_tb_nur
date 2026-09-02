@@ -36,7 +36,7 @@ export default function SalesDocumentItemModal({ open, onClose, modal }) {
             closeAriaLabel="Tutup rincian barang"
             panelClassName="max-w-[620px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[336px] py-3"
-            footer={<DocumentModalFooter deleteLabel={modal.deleteLabel} submitLabel={modal.submitLabel} />}
+            footer={<DocumentModalFooter deleteLabel={modal.deleteLabel} submitLabel={modal.submitLabel} onSubmit={onClose} />}
         >
             {activeTabIdSafe === 'serial' ? (
                 <ItemSerialTab detail={detail} />
