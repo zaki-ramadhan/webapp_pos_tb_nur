@@ -205,7 +205,7 @@ export function SearchableTableSection({
                                                     : 'bg-white'
                                             }`.trim()}
                                             onClick={rowClickable ? () => onRowClick(row) : undefined}
-                                            title={isRowUnavailable ? 'Barang ini telah dihapus dari master data sehingga rinciannya tidak dapat diedit.' : undefined}
+                                            title={isRowUnavailable ? 'Barang ini telah dihapus dari daftar barang sehingga rinciannya tidak dapat diedit.' : undefined}
                                         >
                                             {columns.map((column) => (
                                                 <DataTableCell

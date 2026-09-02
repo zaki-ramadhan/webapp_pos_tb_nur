@@ -167,7 +167,7 @@ export function validateSalesDocumentValues(values, config) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
         if (item?.__isProductDeleted || item?.__isUnavailable) {
-            return `Barang '${item.name}' telah dihapus atau dinonaktifkan dari master data. Hapus baris item tersebut sebelum memproses dokumen.`;
+            return `Barang '${item.name}' telah dihapus atau dinonaktifkan dari daftar barang. Hapus baris item tersebut sebelum memproses dokumen.`;
         }
         if (!String(item?.name ?? '').trim()) {
             return `Nama barang ke-${i + 1} dari rincian barang harus diisi.`;

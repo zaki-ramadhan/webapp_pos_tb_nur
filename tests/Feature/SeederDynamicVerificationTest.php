@@ -51,6 +51,8 @@ class SeederDynamicVerificationTest extends TestCase
             'Delivery Orders',
             'UD. TB Nur',
             'UD.',
+            'Master Barang',
+            'Master',
         ];
 
         $activityLogs = DB::table('activity_logs')->get();

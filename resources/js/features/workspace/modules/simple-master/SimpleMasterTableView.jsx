@@ -7,7 +7,7 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
         <ModuleTableTemplate
             table={table}
             resourceName={table.resource}
-            exportFilename={table.label ? table.label.toLowerCase().replace(/\s+/g, '-') : 'data-master'}
+            exportFilename={table.label ? table.label.toLowerCase().replace(/\s+/g, '-') : 'data-toko'}
             exportTitle={table.label || 'Laporan'}
             onCreate={onCreate}
             onOpenDetail={onOpenDetail}
