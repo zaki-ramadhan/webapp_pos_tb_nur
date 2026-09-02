@@ -167,16 +167,16 @@ export default function ReferenceLookupInput({
             <div
                 onMouseDown={focusInput}
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex w-full items-center overflow-hidden rounded-[4px] border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : 'cursor-text'}`.trim()}
+                className={`group flex w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : 'cursor-text'}`.trim()}
             >
                 {multiValueMode ? (
                     <div className={`flex min-w-0 flex-1 flex-col gap-1.5 p-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
                         {selectedLabels.length ? (
-                            <div className="flex flex-wrap items-center gap-1.5 pb-0.5">
+                            <div className="flex flex-wrap items-center gap-2 pb-0.5">
                                 {selectedLabels.map((item) => (
                                     <span
                                         key={item}
-                                        className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2.5 py-1 text-sm text-text-chip-blue-dark font-normal shadow-sm"
+                                        className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark"
                                     >
                                         <span className="truncate max-w-[240px]">{item}</span>
                                         <button
@@ -188,9 +188,9 @@ export default function ReferenceLookupInput({
                                             }}
                                             disabled={disabled}
                                             aria-label={`Hapus ${item}`}
-                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-slate-500 hover:text-red-600 cursor-pointer"
+                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 hover:text-red-500 cursor-pointer"
                                         >
-                                            <CloseIcon className="h-3.5 w-3.5" />
+                                            <CloseIcon className="h-4 w-4" />
                                         </button>
                                     </span>
                                 ))}
