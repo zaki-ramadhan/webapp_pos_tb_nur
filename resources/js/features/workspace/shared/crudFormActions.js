@@ -6,7 +6,6 @@ import {
     showCrudSuccessToast,
     showCrudValidationToast,
 } from '@/features/workspace/shared/crudFeedback';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 function dispatchValidationErrors(errors) {
     window.dispatchEvent(new CustomEvent('form-validation-error', { detail: errors ?? {} }));
@@ -21,21 +20,13 @@ export function rejectCrudFormAction(message, { setStatus = null, fieldErrors = 
         return false;
     }
 
-    showCrudValidationToast(message);
-
-    let modalMessages = [];
     if (fieldErrors && typeof fieldErrors === 'object') {
         dispatchValidationErrors(fieldErrors);
-        modalMessages = Array.from(new Set(Object.values(fieldErrors).filter(Boolean)));
     }
 
-    showSystemErrorModal({
-        title: 'Terjadi Permasalahan pada Pemrosesan',
-        description: 'Silakan perbaiki permasalahan berikut ini:',
-        message: modalMessages.length === 0 ? message : '',
-        messages: modalMessages,
-        confirmLabel: 'OK',
-    });
+    showCrudValidationToast(message);
+
+    setStatus?.({ tone: 'error', message });
 
     return false;
 }
@@ -90,12 +81,7 @@ export async function executeCrudFormAction({
 
         const errorMessage = getErrorMessage?.(error) ?? error?.message ?? 'Terjadi kesalahan.';
 
-      // Tampilkan error validasi
-
-        let modalMessages = [];
         if (serverFieldErrors && typeof serverFieldErrors === 'object') {
-          // Format error per field
-
             const flat = Object.fromEntries(
                 Object.entries(serverFieldErrors).map(([key, value]) => [
                     key,
@@ -103,23 +89,20 @@ export async function executeCrudFormAction({
                 ]),
             );
             dispatchValidationErrors(flat);
-            modalMessages = Array.from(new Set(Object.values(flat).filter(Boolean)));
+
+            const fieldMessages = Array.from(new Set(Object.values(flat).filter(Boolean)));
+            const toastMessage = fieldMessages.length > 0
+                ? fieldMessages.slice(0, 3).join(' • ') + (fieldMessages.length > 3 ? ` (+${fieldMessages.length - 3} lainnya)` : '')
+                : errorMessage;
+
+            dismissCrudLoadingToast(loadingToastId);
+            setStatus?.({ tone: 'error', message: toastMessage });
+            showCrudValidationToast(toastMessage);
+        } else {
+            dismissCrudLoadingToast(loadingToastId);
+            setStatus?.({ tone: 'error', message: errorMessage });
+            showCrudErrorToast(errorMessage);
         }
-
-        dismissCrudLoadingToast(loadingToastId);
-        setStatus?.({
-            tone: 'error',
-            message: errorMessage,
-        });
-        showCrudErrorToast(errorMessage);
-
-        showSystemErrorModal({
-            title: 'Terjadi Permasalahan pada Pemrosesan',
-            description: 'Silakan perbaiki permasalahan berikut ini:',
-            message: modalMessages.length === 0 ? errorMessage : '',
-            messages: modalMessages,
-            confirmLabel: 'OK',
-        });
 
         return {
             ok: false,

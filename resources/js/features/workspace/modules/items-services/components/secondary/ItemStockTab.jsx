@@ -16,7 +16,6 @@ import {
 import useTableSort from '@/features/workspace/shared/useTableSort';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import OpeningStockModal from '../../OpeningStockModal';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export default function ItemStockTab({ config, values, onChange }) {
     const [modalOpen, setModalOpen] = useState(false);
@@ -55,12 +54,7 @@ export default function ItemStockTab({ config, values, onChange }) {
                         type="button"
                         onClick={async () => {
                             if (!values.name?.trim()) {
-                                await showSystemErrorModal({
-                                    title: 'Terjadi Permasalahan pada Pemrosesan',
-                                    description: 'Silakan perbaiki permasalahan berikut ini:',
-                                    message: 'Nama Barang harus diisi.',
-                                    confirmLabel: 'OK',
-                                });
+                                await showCrudValidationToast('Nama Barang harus diisi.');
                                 return;
                             }
                             setModalOpen(true);

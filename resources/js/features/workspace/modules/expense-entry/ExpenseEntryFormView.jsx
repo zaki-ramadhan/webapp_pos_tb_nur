@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ExpenseEntryLineItemModal from './ExpenseEntryLineItemModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -220,22 +219,14 @@ export default function ExpenseEntryFormView({
             })),
         onSelectLineAccount: (record) => {
             if (!values.__liabilityAccountId || !values.liabilityAccounts?.length) {
-                showSystemErrorModal({
-                    title: 'Terjadi Permasalahan pada Pemrosesan',
-                    description: 'Silakan perbaiki permasalahan berikut ini:',
-                    message: 'Hutang beban harus diisi',
-                });
+                showCrudValidationToast('Hutang beban harus diisi');
                 return;
             }
             openLineModal(record, null);
         },
         onEditLineItem: (item) => {
             if (!values.__liabilityAccountId || !values.liabilityAccounts?.length) {
-                showSystemErrorModal({
-                    title: 'Terjadi Permasalahan pada Pemrosesan',
-                    description: 'Silakan perbaiki permasalahan berikut ini:',
-                    message: 'Hutang beban harus diisi',
-                });
+                showCrudValidationToast('Hutang beban harus diisi');
                 return;
             }
             openLineModal(null, item);

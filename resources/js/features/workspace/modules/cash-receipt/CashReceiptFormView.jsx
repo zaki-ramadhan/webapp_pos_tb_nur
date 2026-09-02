@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import MoneyMovementLineItemModal from '@/features/workspace/shared/MoneyMovementLineItemModal';
 import {
@@ -223,12 +222,7 @@ export default function CashReceiptFormView({
                     window.dispatchEvent(new CustomEvent('form-validation-error', {
                         detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
                     }));
-                    showSystemErrorModal({
-                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                        description: 'Silakan perbaiki permasalahan berikut ini:',
-                        message: 'Akun Kas/Bank harus diisi.',
-                        confirmLabel: 'OK',
-                    });
+                    showCrudValidationToast('Akun Kas/Bank harus diisi.');
                     return;
                 }
                 applyLineItemUpdate(record);
@@ -238,12 +232,7 @@ export default function CashReceiptFormView({
                     window.dispatchEvent(new CustomEvent('form-validation-error', {
                         detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
                     }));
-                    showSystemErrorModal({
-                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                        description: 'Silakan perbaiki permasalahan berikut ini:',
-                        message: 'Akun Kas/Bank harus diisi.',
-                        confirmLabel: 'OK',
-                    });
+                    showCrudValidationToast('Akun Kas/Bank harus diisi.');
                     return;
                 }
                 applyLineItemUpdate(null, item);

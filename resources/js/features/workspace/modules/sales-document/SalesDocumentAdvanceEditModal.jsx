@@ -4,7 +4,6 @@ import { showErrorToast } from '@/components/feedback/toast';
 import DocumentModalLayout, { DocumentModalFooter } from '@/features/workspace/modules/shared/document-modal/DocumentModalLayout';
 import { DocumentModalCurrencyField } from '@/features/workspace/modules/shared/document-modal/DocumentModalFields';
 import { TransactionFieldLabel } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { parseNumericInput, formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 
 const MODAL_TABS = [

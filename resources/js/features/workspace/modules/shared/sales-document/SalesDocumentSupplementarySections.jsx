@@ -1,6 +1,5 @@
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 export { SalesDocumentFooter } from './SalesDocumentStatusSections';
 
 export function SalesDocumentAdditionalCostSection({ config, values, setValues, handlers }) {
@@ -30,12 +29,7 @@ export function SalesDocumentAdditionalCostSection({ config, values, setValues, 
                         if (!values.__partnerId) {
                             const partnerLabel = config.labels?.customer || 'Pemasok/Pelanggan';
                             const msg = `${partnerLabel} harus diisi.`;
-                            showSystemErrorModal({
-                                title: 'Terjadi Permasalahan pada Pemrosesan',
-                                description: 'Silakan perbaiki permasalahan berikut ini:',
-                                message: msg,
-                                confirmLabel: 'OK',
-                            });
+                            showCrudValidationToast(msg);
                             window.dispatchEvent(
                                 new CustomEvent('form-validation-error', {
                                     detail: {
