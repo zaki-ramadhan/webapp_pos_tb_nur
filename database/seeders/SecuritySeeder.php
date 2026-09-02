@@ -264,7 +264,7 @@ class SecuritySeeder extends Seeder
             ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Kas & Bank', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penerimaan Kas Kecil', 'subj' => 'Jurnal Penerimaan Kas'],
             ['group' => 'finance', 'res' => 'cash-payments', 'label' => 'Pengeluaran Kas', 'perm' => 'cash-payment', 'action' => 'create', 'desc' => 'Mencatat Pengeluaran Kas Operasional Toko', 'subj' => 'Pengeluaran Kas Toko'],
             ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penyesuaian Operasional', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penyesuaian Beban Perlengkapan', 'subj' => 'Jurnal Penyesuaian'],
-            ['group' => 'general', 'res' => 'products', 'label' => 'Master Barang', 'perm' => 'product', 'action' => 'update', 'desc' => 'Mengubah Master Harga Barang Bahan Bangunan', 'subj' => 'Master Barang'],
+            ['group' => 'general', 'res' => 'products', 'label' => 'Data Barang', 'perm' => 'product', 'action' => 'update', 'desc' => 'Memperbarui Data & Harga Barang', 'subj' => 'Data Barang'],
             ['group' => 'finance', 'res' => 'sales-receipts', 'label' => 'Penerimaan Piutang', 'perm' => 'sales-receipt', 'action' => 'create', 'desc' => 'Mencatat Penerimaan Pelunasan Piutang', 'subj' => 'Penerimaan Piutang'],
         ];
 

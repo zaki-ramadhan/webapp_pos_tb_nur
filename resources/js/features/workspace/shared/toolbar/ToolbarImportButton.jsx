@@ -10,7 +10,7 @@ const DEPENDENCY_GUIDES = {
     'employees': {
         title: 'Karyawan',
         dependencies: [
-            { label: 'Cabang Master', path: 'branch' },
+            { label: 'Data Cabang', path: 'branch' },
             { label: 'Departemen', path: 'department' }
         ],
         description: 'Sebelum mengimpor data Karyawan, pastikan data Cabang dan Departemen yang digunakan oleh Karyawan tersebut sudah terdaftar di sistem agar data relasi tidak terputus.'

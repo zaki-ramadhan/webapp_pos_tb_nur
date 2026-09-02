@@ -236,7 +236,7 @@ export default function SalesDocumentFormView({
     function handleEditItem(item) {
         if (item?.__isUnavailable || item?.__isProductDeleted) {
             showErrorToast({
-                message: `Barang '${item.name}' telah dihapus dari master data sehingga tidak dapat diedit. Silakan hapus baris item ini jika ingin menggantinya.`,
+                message: `Barang '${item.name}' telah dihapus dari daftar barang sehingga tidak dapat diedit. Silakan hapus baris item ini jika ingin menggantinya.`,
             });
             return;
         }

@@ -158,7 +158,7 @@ export function TransactionDataTable({
                                             : 'bg-white'
                                     } ${customRowClassName}`.trim()}
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
-                                    title={isRowUnavailable ? 'Barang/Akun ini telah dihapus dari master data sehingga tidak dapat diedit.' : undefined}
+                                    title={isRowUnavailable ? 'Barang/Akun ini telah dihapus dari daftar data sehingga tidak dapat diedit.' : undefined}
                                 >
                                     {activeShowNumbering && (
                                         <DataTableCell

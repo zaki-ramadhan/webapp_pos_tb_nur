@@ -61,8 +61,18 @@ class DashboardActivityQueryService
             'brands' => 'Merek',
             'unit' => 'Satuan',
             'units' => 'Satuan',
-            'product' => 'Barang',
-            'products' => 'Barang',
+            'product' => 'Data Barang',
+            'products' => 'Data Barang',
+            'items-services' => 'Data Barang',
+            'item-service' => 'Data Barang',
+            'warehouse-master' => 'Gudang',
+            'warehouse-masters' => 'Gudang',
+            'currency-master' => 'Mata Uang',
+            'currency-masters' => 'Mata Uang',
+            'shipping-master' => 'Pengiriman',
+            'shipping-masters' => 'Pengiriman',
+            'fob-master' => 'Syarat Pengiriman',
+            'fob-masters' => 'Syarat Pengiriman',
             'sales-quote' => 'Penawaran Penjualan',
             'sales-quotes' => 'Penawaran Penjualan',
             'sales-order' => 'Pesanan Penjualan',
@@ -225,6 +235,7 @@ class DashboardActivityQueryService
             // Normalisasi agar tidak ada kebocoran istilah bahasa Inggris dari log lama
             $activityTitle = str_ireplace(array_keys($englishReplacements), array_values($englishReplacements), $activityTitle);
             $activityTitle = str_ireplace(['UD. TB Nur', 'UD TB Nur', 'UD. '], ['TB Nur', 'TB Nur', ''], $activityTitle);
+            $activityTitle = str_ireplace(['Master Barang', 'Master Data', 'Data Master', 'Master '], ['Data Barang', 'Data Sistem', 'Data Toko', 'Data '], $activityTitle);
 
             $userActivities[] = [
                 'id' => $log->id,
