@@ -408,8 +408,8 @@ export function mapUserRow(record) {
 export function toUserPayload(values) {
     return {
         name: values.name?.trim() ?? '',
-        email: values.email?.trim() ?? '',
-        phone: values.phone?.trim() ?? '',
+        email: values.email?.trim() || null,
+        phone: values.phone?.trim() || null,
         password: values.password || undefined,
         is_active: values.isActive !== false,
         access_group_ids: values.accessGroupIds ?? [],
