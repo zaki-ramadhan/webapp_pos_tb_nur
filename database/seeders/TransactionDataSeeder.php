@@ -956,6 +956,45 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
+        // 17b. Guarantee Last 7 Days Rolling Cash Payments (Memastikan Arus Kas Keluar Dasbor Terisi)
+        for ($d = 5; $d >= 0; $d -= 2) {
+            $trendDate = $now->copy()->subDays($d);
+            $entryDate = $trendDate->toDateString();
+            $dt = $trendDate;
+            $cpSeq++;
+            $cpAmount = 250000 + (($cpSeq % 3) * 75000);
+
+            $docId = DB::table('operation_documents')->insertGetId([
+                'document_type' => 'cash_payment',
+                'branch_id' => $branchId,
+                'currency_id' => $currencyId,
+                'primary_account_id' => $accKasKecil,
+                'document_number' => sprintf('KK.%s.%s.%04d', $trendDate->format('Y'), $trendDate->format('m'), 9500 + $d),
+                'status' => 'Posted',
+                'entry_date' => $entryDate,
+                'subtotal' => $cpAmount,
+                'total_amount' => $cpAmount,
+                'notes' => 'Pembelian perlengkapan toko dan operasional berkala',
+                'is_closed' => true,
+                'created_at' => $dt,
+                'updated_at' => $dt,
+            ]);
+
+            DB::table('operation_document_lines')->insert([
+                'operation_document_id' => $docId,
+                'line_type' => 'cash_payment',
+                'account_id' => $accPerlengkapan,
+                'description' => 'Pembelian perlengkapan toko dan operasional berkala',
+                'reference_code' => '120101',
+                'quantity' => 1,
+                'unit_price' => $cpAmount,
+                'total_amount' => $cpAmount,
+                'sort_order' => 1,
+                'created_at' => $dt,
+                'updated_at' => $dt,
+            ]);
+        }
+
         // 18. Cash Receipts
         $accPendapatanLain = DB::table('accounts')->where('code', '410102')->value('id') ?? 47;
         $crSeq = 0;
