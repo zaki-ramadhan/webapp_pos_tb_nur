@@ -14,10 +14,9 @@ import {
     SortIcon,
     ChevronDownIcon,
 } from '@/features/workspace/shared/Icons';
-import { showWarningToast, showSuccessToast } from '@/components/feedback/toast';
+import { showSuccessToast } from '@/components/feedback/toast';
 import { applyComputedTotals } from './salesDocumentFormShared';
 import SalesDocumentCopyModal from './SalesDocumentCopyModal';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail, handlers, pageId }) {
     const secondaryActionLabel = values.secondaryHeaderActionLabel ?? config.secondaryActionLabel;
@@ -46,16 +45,7 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
                     __partnerId: `${partnerLabel} harus diisi.`
                 }
             }));
-            showWarningToast({
-                title: 'Perhatian',
-                message: `${partnerLabel} harus diisi terlebih dahulu.`,
-            });
-            showSystemErrorModal({
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                description: 'Silakan perbaiki permasalahan berikut ini:',
-                message: `${partnerLabel} harus diisi.`,
-                confirmLabel: 'OK',
-            });
+            showCrudValidationToast(`${partnerLabel} harus diisi.`);
             return;
         }
         setCopyOption(optionName);
@@ -92,17 +82,7 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
                 detail: validationDetail
             }));
 
-            showWarningToast({
-                title: 'Perhatian',
-                message: errorMessages.join(' '),
-            });
-
-            showSystemErrorModal({
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                description: 'Silakan perbaiki permasalahan berikut ini:',
-                messages: errorMessages,
-                confirmLabel: 'OK',
-            });
+            showCrudValidationToast(errorMessages.join(' • '));
             return;
         }
 

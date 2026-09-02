@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
+import { showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
 import { showSuccessToast } from '@/components/feedback/toast';
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import {
@@ -295,21 +295,8 @@ export default function BankTransferFormView({
                     }
                     
                     if (missing.length > 0) {
-                        if (missing.length === 1) {
-                            showSystemErrorModal({
-                                title: 'Terjadi Permasalahan pada Pemrosesan',
-                                description: 'Silakan perbaiki permasalahan berikut ini:',
-                                message: `${missing[0]} harus diisi.`,
-                                confirmLabel: 'OK',
-                            });
-                        } else {
-                            showSystemErrorModal({
-                                title: 'Terjadi Permasalahan pada Pemrosesan',
-                                description: 'Silakan perbaiki data input berikut terlebih dahulu:',
-                                messages: missing.map((item) => `${item} harus diisi.`),
-                                confirmLabel: 'OK',
-                            });
-                        }
+                        const msg = missing.map((item) => `${item} harus diisi.`).join(' • ');
+                        showCrudValidationToast(msg);
                         return;
                     }
                     

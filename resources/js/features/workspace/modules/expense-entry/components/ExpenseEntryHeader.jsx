@@ -5,7 +5,6 @@ import { AccountLookupField } from '@/features/workspace/shared/AccountLookupCon
 import { CloseIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
@@ -20,11 +19,7 @@ export default function ExpenseEntryHeader({ config, values, setValues, showAuto
         if (values.__backendRecordId) {
             handlers.onProcessPembayaran?.(values);
         } else {
-            await showSystemErrorModal({
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                description: 'Silakan perbaiki permasalahan berikut ini:',
-                message: 'Data tidak ditemukan atau sudah dihapus',
-            });
+            await showCrudValidationToast('Data tidak ditemukan atau sudah dihapus');
         }
     };
 

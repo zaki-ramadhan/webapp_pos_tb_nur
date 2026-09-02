@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { showSuccessToast, showErrorToast, showLoadingToast, updateToastToSuccess, updateToastToError } from '@/components/feedback/toast';
 import {
     createBackendResource,
@@ -267,12 +266,7 @@ export default function CashPaymentFormView({
                     window.dispatchEvent(new CustomEvent('form-validation-error', {
                         detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
                     }));
-                    showSystemErrorModal({
-                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                        description: 'Silakan perbaiki permasalahan berikut ini:',
-                        message: 'Akun Kas/Bank harus diisi.',
-                        confirmLabel: 'OK',
-                    });
+                    showCrudValidationToast('Akun Kas/Bank harus diisi.');
                     return;
                 }
                 applyLineItemUpdate(record);
@@ -282,12 +276,7 @@ export default function CashPaymentFormView({
                     window.dispatchEvent(new CustomEvent('form-validation-error', {
                         detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
                     }));
-                    showSystemErrorModal({
-                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                        description: 'Silakan perbaiki permasalahan berikut ini:',
-                        message: 'Akun Kas/Bank harus diisi.',
-                        confirmLabel: 'OK',
-                    });
+                    showCrudValidationToast('Akun Kas/Bank harus diisi.');
                     return;
                 }
                 applyLineItemUpdate(null, item);
@@ -297,12 +286,7 @@ export default function CashPaymentFormView({
                     window.dispatchEvent(new CustomEvent('form-validation-error', {
                         detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
                     }));
-                    showSystemErrorModal({
-                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                        description: 'Silakan perbaiki permasalahan berikut ini:',
-                        message: 'Akun Kas/Bank harus diisi.',
-                        confirmLabel: 'OK',
-                    });
+                    showCrudValidationToast('Akun Kas/Bank harus diisi.');
                     return;
                 }
                 setTakeExpenseOpen(true);
@@ -312,12 +296,7 @@ export default function CashPaymentFormView({
                     window.dispatchEvent(new CustomEvent('form-validation-error', {
                         detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
                     }));
-                    showSystemErrorModal({
-                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                        description: 'Silakan perbaiki permasalahan berikut ini:',
-                        message: 'Akun Kas/Bank harus diisi.',
-                        confirmLabel: 'OK',
-                    });
+                    showCrudValidationToast('Akun Kas/Bank harus diisi.');
                     return;
                 }
                 setTakePayrollOpen(true);

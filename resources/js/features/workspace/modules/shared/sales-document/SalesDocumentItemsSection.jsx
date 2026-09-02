@@ -1,6 +1,5 @@
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export function SalesDocumentItemsSection({ config, values, isDetail, handlers }) {
     const itemTitle = values.itemCountLabel || config.itemSectionTitle;

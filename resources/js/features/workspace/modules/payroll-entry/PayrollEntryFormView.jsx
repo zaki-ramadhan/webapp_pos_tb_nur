@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
  
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import PayrollEntryEmployeeModal from './PayrollEntryEmployeeModal';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
@@ -413,12 +412,7 @@ export default function PayrollEntryFormView({
             onSelectEmployee: (emp) => {
                 if (!emp) return;
                 if (!values.liabilityAccounts || values.liabilityAccounts.length === 0) {
-                    showSystemErrorModal({
-                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                        description: 'Silakan perbaiki permasalahan berikut ini:',
-                        message: 'Akun Hutang Beban (Utang Gaji) harus diisi.',
-                        confirmLabel: 'OK',
-                    });
+                    showCrudValidationToast('Akun Hutang Beban (Utang Gaji) harus diisi.');
                     return;
                 }
                 const existingIds = new Set(employeeRows.map((r) => String(r.employeeId)));
@@ -520,12 +514,7 @@ export default function PayrollEntryFormView({
                         setValues={setValues}
                         onTake={() => {
                             if (!values.liabilityAccounts || values.liabilityAccounts.length === 0) {
-                                showSystemErrorModal({
-                                    title: 'Terjadi Permasalahan pada Pemrosesan',
-                                    description: 'Silakan perbaiki permasalahan berikut ini:',
-                                    message: 'Akun Hutang Beban (Utang Gaji) harus diisi.',
-                                    confirmLabel: 'OK',
-                                });
+                                showCrudValidationToast('Akun Hutang Beban (Utang Gaji) harus diisi.');
                                 return;
                             }
                             setCopyModalOpen(true);

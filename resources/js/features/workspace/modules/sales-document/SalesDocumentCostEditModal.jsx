@@ -9,7 +9,6 @@ import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import SelectField from '@/components/ui/SelectField';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { parseNumericInput, formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 
 const MODAL_TABS = [

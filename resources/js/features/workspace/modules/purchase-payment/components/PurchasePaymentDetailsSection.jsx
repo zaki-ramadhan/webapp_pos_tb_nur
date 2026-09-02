@@ -1,6 +1,6 @@
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { TransactionLineItemsSection } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
+import { showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
 
 export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpenInvoice, handlers = {} }) {
     const hasSupplier = Boolean(values.__supplierId || (Array.isArray(values.payee) && values.payee.length > 0));
@@ -9,12 +9,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
         const hasBank = Boolean(values.__bankAccountId || (Array.isArray(values.bankAccounts) && values.bankAccounts.length > 0));
         if (!hasBank) {
             const msg = 'Bank harus diisi.';
-            showSystemErrorModal({
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                description: 'Silakan perbaiki permasalahan berikut ini:',
-                message: msg,
-                confirmLabel: 'OK',
-            });
+            showCrudValidationToast(msg);
             window.dispatchEvent(
                 new CustomEvent('form-validation-error', {
                     detail: {

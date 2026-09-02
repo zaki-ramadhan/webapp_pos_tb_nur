@@ -9,7 +9,6 @@ import {
     SalesDocumentHeaderButtons,
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { getBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import { applyComputedTotals } from '@/features/workspace/modules/sales-document/salesDocumentFormShared';
 import { showSuccessToast } from '@/components/feedback/toast';
@@ -124,12 +123,7 @@ export default function SalesDocumentFormHeader({
                                                 if (!values.__partnerId) {
                                                     const partnerLabel = config.labels?.customer || 'Pelanggan';
                                                     const msg = `${partnerLabel} harus diisi.`;
-                                                    showSystemErrorModal({
-                                                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                                                        description: 'Silakan perbaiki permasalahan berikut ini:',
-                                                        message: msg,
-                                                        confirmLabel: 'OK',
-                                                    });
+                                                    showCrudValidationToast(msg);
                                                     window.dispatchEvent(
                                                         new CustomEvent('form-validation-error', {
                                                             detail: {
