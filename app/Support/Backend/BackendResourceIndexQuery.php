@@ -98,25 +98,7 @@ class BackendResourceIndexQuery
             }
         }
 
-        $sortBy = (string) ($filters['sort_by'] ?? '');
-        $sortDir = strtolower((string) ($filters['sort_direction'] ?? $filters['sort_dir'] ?? 'asc')) === 'desc' ? 'desc' : 'asc';
-
-        if ($sortBy !== '' && Schema::hasColumn($tableName, $sortBy)) {
-            $query->orderBy("{$tableName}.{$sortBy}", $sortDir);
-        } elseif (Schema::hasColumn($tableName, 'entry_date')) {
-            $query->orderByDesc("{$tableName}.entry_date")
-                  ->orderByDesc("{$tableName}.id");
-        } elseif (Schema::hasColumn($tableName, 'document_date')) {
-            $query->orderByDesc("{$tableName}.document_date")
-                  ->orderByDesc("{$tableName}.id");
-        } elseif ($tableName === 'accounts') {
-            $query->orderBy("{$tableName}.code", 'asc');
-        } elseif (Schema::hasColumn($tableName, 'name')) {
-            $query->orderBy("{$tableName}.name", 'asc')
-                  ->orderBy("{$tableName}.id", 'asc');
-        } else {
-            $query->orderByDesc("{$tableName}.id");
-        }
+        $this->applySorting($query, $tableName, $filters);
 
         $paginator = $query
             ->paginate($perPage, ['*'], 'page', $page)
@@ -217,5 +199,171 @@ class BackendResourceIndexQuery
                 $builder->orWhere($fullCol, 'like', "%{$keyword}%");
             }
         });
+    }
+
+    /**
+     * @param array<string, mixed> $filters
+     */
+    private function applySorting(Builder $query, string $tableName, array $filters): void
+    {
+        $sortBy = trim((string) ($filters['sort_by'] ?? ''));
+        $sortDir = strtolower((string) ($filters['sort_direction'] ?? $filters['sort_dir'] ?? 'asc')) === 'desc' ? 'desc' : 'asc';
+
+        if ($sortBy === '') {
+            $this->applyDefaultSort($query, $tableName);
+            return;
+        }
+
+        // Aliases kamus kolom frontend ke backend
+        $columnMap = [
+            'documentNumber' => 'document_number',
+            'number' => 'document_number',
+            'entryDate' => 'entry_date',
+            'date' => 'entry_date',
+            'transDate' => 'entry_date',
+            'documentDate' => 'document_date',
+            'totalAmount' => 'total_amount',
+            'total' => 'total_amount',
+            'amount' => 'total_amount',
+            'paidAmount' => 'paid_amount',
+            'paid' => 'paid_amount',
+            'outstandingAmount' => 'outstanding_amount',
+            'outstanding' => 'outstanding_amount',
+            'statusLabel' => 'status',
+            'paymentStatus' => 'status',
+            'dueDate' => 'due_date',
+            'notes' => 'notes',
+            'itemCode' => 'code',
+            'itemName' => 'name',
+            'sellingPrice' => 'default_selling_price',
+            'purchasePrice' => 'default_purchase_price',
+            'price' => 'default_selling_price',
+            'stock' => 'stock',
+            'accountCode' => 'code',
+            'accountName' => 'name',
+            'accountType' => 'account_type',
+            'customerCode' => 'code',
+            'customerName' => 'name',
+            'supplierCode' => 'code',
+            'supplierName' => 'name',
+            'employeeCode' => 'code',
+            'employeeName' => 'name',
+            'loggedAt' => 'occurred_at',
+            'actionLabel' => 'action',
+            'transactionTypeLabel' => 'resource_key',
+            'referenceName' => 'description',
+        ];
+
+        $snakeKey = $columnMap[$sortBy] ?? \Illuminate\Support\Str::snake($sortBy);
+
+        // Relasi relasional khusus untuk sorting tabel operation_documents
+        if ($tableName === 'operation_documents') {
+            if (in_array($sortBy, ['customer', 'customerName', 'customer_name'], true)) {
+                $query->leftJoin('customers', 'operation_documents.customer_id', '=', 'customers.id')
+                      ->orderBy('customers.name', $sortDir)
+                      ->select("{$tableName}.*");
+                return;
+            }
+            if (in_array($sortBy, ['supplier', 'supplierName', 'supplier_name'], true)) {
+                $query->leftJoin('suppliers', 'operation_documents.supplier_id', '=', 'suppliers.id')
+                      ->orderBy('suppliers.name', $sortDir)
+                      ->select("{$tableName}.*");
+                return;
+            }
+            if (in_array($sortBy, ['user', 'userName', 'responsible_user', 'responsibleUser'], true)) {
+                $query->leftJoin('users', 'operation_documents.responsible_user_id', '=', 'users.id')
+                      ->orderBy('users.name', $sortDir)
+                      ->select("{$tableName}.*");
+                return;
+            }
+            if (in_array($sortBy, ['branch', 'branchName'], true)) {
+                $query->leftJoin('branches', 'operation_documents.branch_id', '=', 'branches.id')
+                      ->orderBy('branches.name', $sortDir)
+                      ->select("{$tableName}.*");
+                return;
+            }
+        }
+
+        // Relasi relasional untuk tabel products
+        if ($tableName === 'products') {
+            if (in_array($sortBy, ['category', 'categoryName', 'category_name'], true)) {
+                $categoryCol = Schema::hasColumn('products', 'category_id') ? 'category_id' : 'product_category_id';
+                $query->leftJoin('product_categories', "products.{$categoryCol}", '=', 'product_categories.id')
+                      ->orderBy('product_categories.name', $sortDir)
+                      ->select("{$tableName}.*");
+                return;
+            }
+            if (in_array($sortBy, ['sellingPrice', 'selling_price', 'salePrice', 'sale_price', 'price'], true)) {
+                $priceCol = Schema::hasColumn('products', 'default_sale_price') ? 'default_sale_price' : 'default_selling_price';
+                $query->orderBy("{$tableName}.{$priceCol}", $sortDir);
+                return;
+            }
+            if (in_array($sortBy, ['unit', 'unitName', 'unit_name'], true)) {
+                $query->leftJoin('units', 'products.base_unit_id', '=', 'units.id')
+                      ->orderBy('units.name', $sortDir)
+                      ->select("{$tableName}.*");
+                return;
+            }
+            if (in_array($sortBy, ['brand', 'brandName', 'brand_name'], true)) {
+                $query->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+                      ->orderBy('brands.name', $sortDir)
+                      ->select("{$tableName}.*");
+                return;
+            }
+        }
+
+        // Relasi relasional untuk tabel employees
+        if ($tableName === 'employees' && in_array($sortBy, ['department', 'departmentName', 'department_name'], true)) {
+            $query->leftJoin('departments', 'employees.department_id', '=', 'departments.id')
+                  ->orderBy('departments.name', $sortDir)
+                  ->select("{$tableName}.*");
+            return;
+        }
+
+        // Kolom langsung pada tabel
+        if (Schema::hasColumn($tableName, $snakeKey)) {
+            $query->orderBy("{$tableName}.{$snakeKey}", $sortDir);
+            return;
+        }
+
+        if (Schema::hasColumn($tableName, $sortBy)) {
+            $query->orderBy("{$tableName}.{$sortBy}", $sortDir);
+            return;
+        }
+
+        if (Schema::hasColumn($tableName, "{$snakeKey}_date")) {
+            $query->orderBy("{$tableName}.{$snakeKey}_date", $sortDir);
+            return;
+        }
+
+        if (Schema::hasColumn($tableName, "{$snakeKey}_amount")) {
+            $query->orderBy("{$tableName}.{$snakeKey}_amount", $sortDir);
+            return;
+        }
+
+        if (Schema::hasColumn($tableName, "{$snakeKey}_id")) {
+            $query->orderBy("{$tableName}.{$snakeKey}_id", $sortDir);
+            return;
+        }
+
+        $this->applyDefaultSort($query, $tableName);
+    }
+
+    private function applyDefaultSort(Builder $query, string $tableName): void
+    {
+        if (Schema::hasColumn($tableName, 'entry_date')) {
+            $query->orderByDesc("{$tableName}.entry_date")
+                  ->orderByDesc("{$tableName}.id");
+        } elseif (Schema::hasColumn($tableName, 'document_date')) {
+            $query->orderByDesc("{$tableName}.document_date")
+                  ->orderByDesc("{$tableName}.id");
+        } elseif ($tableName === 'accounts') {
+            $query->orderBy("{$tableName}.code", 'asc');
+        } elseif (Schema::hasColumn($tableName, 'name')) {
+            $query->orderBy("{$tableName}.name", 'asc')
+                  ->orderBy("{$tableName}.id", 'asc');
+        } else {
+            $query->orderByDesc("{$tableName}.id");
+        }
     }
 }

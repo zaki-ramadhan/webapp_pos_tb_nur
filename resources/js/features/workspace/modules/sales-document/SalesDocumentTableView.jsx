@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
-import useTableSort from '@/features/workspace/shared/useTableSort';
+import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     SalesDocumentStatusCell,
@@ -47,16 +47,17 @@ export default function SalesDocumentTableView({
         return () => clearTimeout(timer);
     }, [keyword, isServerSearch, config.table.onSearch, config.table.pagination?.onSearch]);
 
+    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const activeSortKey = isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy || sortKey) : sortKey;
+    const activeSortDir = isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection || sortDir) : sortDir;
+
     const handleSortClick = (columnId) => {
+        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
         if (isServerSort) {
             const onSort = config.table.onSort || config.table.pagination?.onSort;
-            const currentKey = config.table.sortBy || config.table.pagination?.sortBy;
-            const currentDir = config.table.sortDirection || config.table.pagination?.sortDirection || 'asc';
-            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
             onSort?.(columnId, nextDir);
-        } else {
-            handleClientSort(columnId);
         }
+        handleClientSort(columnId, nextDir);
     };
 
     const filteredRows = useMemo(() => {
@@ -100,8 +101,12 @@ export default function SalesDocumentTableView({
         });
     }, [isServerSearch, config.table.filters, config.table.rows, filters, keyword]);
 
-    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
-    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
+    const sortedRows = useMemo(() => {
+        if (activeSortKey) {
+            return sortRows(filteredRows, activeSortKey, activeSortDir);
+        }
+        return filteredRows;
+    }, [filteredRows, activeSortKey, activeSortDir]);
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -130,8 +135,8 @@ export default function SalesDocumentTableView({
                         })
                     }
                     getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
-                    sortKey={isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy) : sortKey}
-                    sortDir={isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection) : sortDir}
+                    sortKey={activeSortKey}
+                    sortDir={activeSortDir}
                     onSort={handleSortClick}
                     renderCell={({ row, column }) => (
                         <SalesDocumentStatusCell columnId={column.id} row={row}>

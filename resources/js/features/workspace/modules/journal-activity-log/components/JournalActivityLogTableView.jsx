@@ -16,7 +16,7 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
-import useTableSort from '@/features/workspace/shared/useTableSort';
+import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 function matchesFilter(row, filter, selectedValue) {
@@ -61,16 +61,17 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
         return () => clearTimeout(timer);
     }, [keyword, isServerSearch, config.table.onSearch, config.table.pagination?.onSearch]);
 
+    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const activeSortKey = isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy || sortKey) : sortKey;
+    const activeSortDir = isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection || sortDir) : sortDir;
+
     const handleSortClick = (columnId) => {
+        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
         if (isServerSort) {
             const onSort = config.table.onSort || config.table.pagination?.onSort;
-            const currentKey = config.table.sortBy || config.table.pagination?.sortBy;
-            const currentDir = config.table.sortDirection || config.table.pagination?.sortDirection || 'asc';
-            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
             onSort?.(columnId, nextDir);
-        } else {
-            handleClientSort(columnId);
         }
+        handleClientSort(columnId, nextDir);
     };
 
     useEffect(() => {
@@ -135,8 +136,12 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
         });
     }, [isServerSearch, config.table.rows, keyword, filters, filtersConfig, config.table.columns]);
 
-    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
-    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
+    const sortedRows = useMemo(() => {
+        if (activeSortKey) {
+            return sortRows(filteredRows, activeSortKey, activeSortDir);
+        }
+        return filteredRows;
+    }, [filteredRows, activeSortKey, activeSortDir]);
 
     useEffect(() => {
         tableRegistry.setActiveTable(cleanedColumns, sortedRows, 'journal-activity-log');
@@ -199,7 +204,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                                     align={column.align}
                                     widthClassName={column.widthClassName}
                                     sortable={column.sortable !== false}
-                                    sortDirection={isServerSort ? ((config.table.sortBy || config.table.pagination?.sortBy) === column.id ? (config.table.sortDirection || config.table.pagination?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                    sortDirection={activeSortKey === column.id ? activeSortDir : null}
                                     onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                     style={getCellStyle(column.id, { position: 'relative' })}
                                     onResizeStart={(e) => handleResizeStart(e, column.id)}

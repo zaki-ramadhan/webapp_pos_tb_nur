@@ -14,7 +14,7 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
-import useTableSort from '@/features/workspace/shared/useTableSort';
+import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 export default function ModuleTableTemplate({
@@ -76,16 +76,17 @@ export default function ModuleTableTemplate({
         return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
     }, [cleanedColumns, visibleColumnIds]);
 
+    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
+    const activeSortDir = isServerSort ? (table.sortDirection || table.pagination?.sortDirection || sortDir) : sortDir;
+
     const handleSortClick = (columnId) => {
+        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
         if (isServerSort) {
             const onSort = table.onSort || table.pagination?.onSort;
-            const currentKey = table.sortBy || table.pagination?.sortBy;
-            const currentDir = table.sortDirection || table.pagination?.sortDirection || 'asc';
-            const nextDir = currentKey === columnId ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
             onSort?.(columnId, nextDir);
-        } else {
-            handleClientSort(columnId);
         }
+        handleClientSort(columnId, nextDir);
     };
 
     const filteredRows = useMemo(() => {
@@ -125,8 +126,12 @@ export default function ModuleTableTemplate({
         });
     }, [isServerSearch, customFiltersSlot, customRowFilter, inactiveFilter, inactiveFilterKey, keyword, table.rows, table.columns]);
 
-    const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
-    const sortedRows = isServerSort ? filteredRows : clientSortedRows;
+    const sortedRows = useMemo(() => {
+        if (activeSortKey) {
+            return sortRows(filteredRows, activeSortKey, activeSortDir);
+        }
+        return filteredRows;
+    }, [filteredRows, activeSortKey, activeSortDir]);
 
     useEffect(() => {
         tableRegistry.setActiveTable(cleanedColumns, sortedRows, resourceName);
@@ -221,7 +226,7 @@ export default function ModuleTableTemplate({
                                         align={column.align}
                                         widthClassName={column.widthClassName}
                                         sortable={column.sortable !== false}
-                                        sortDirection={isServerSort ? ((table.sortBy || table.pagination?.sortBy) === column.id ? (table.sortDirection || table.pagination?.sortDirection) : null) : (sortKey === column.id ? sortDir : null)}
+                                        sortDirection={activeSortKey === column.id ? activeSortDir : null}
                                         onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
                                         style={getCellStyle(column.id, { position: 'relative' })}
                                         onResizeStart={(e) => handleResizeStart(e, column.id)}

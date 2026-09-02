@@ -25,7 +25,7 @@ import {
     useColumnVisibility,
 } from '@/features/workspace/shared/columnVisibility';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
-import useTableSort from '@/features/workspace/shared/useTableSort';
+import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 function matchesFilter(row, filter, selectedValue) {
@@ -132,7 +132,12 @@ export default function ActivityLogView({ page }) {
         });
     }, [filters, rows, filtersConfig]);
 
-    const sortedRows = filteredRows;
+    const sortedRows = useMemo(() => {
+        if (sortBy) {
+            return sortRows(filteredRows, sortBy, sortDirection);
+        }
+        return filteredRows;
+    }, [filteredRows, sortBy, sortDirection]);
 
     useEffect(() => {
         tableRegistry.setActiveTable(cleanedColumns, sortedRows, 'activity-log');
