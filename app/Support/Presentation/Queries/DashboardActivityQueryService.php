@@ -224,6 +224,7 @@ class DashboardActivityQueryService
 
             // Normalisasi agar tidak ada kebocoran istilah bahasa Inggris dari log lama
             $activityTitle = str_ireplace(array_keys($englishReplacements), array_values($englishReplacements), $activityTitle);
+            $activityTitle = str_ireplace(['UD. TB Nur', 'UD TB Nur', 'UD. '], ['TB Nur', 'TB Nur', ''], $activityTitle);
 
             $userActivities[] = [
                 'id' => $log->id,
