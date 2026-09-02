@@ -18,7 +18,7 @@ export function resolveSelectedUserLabel(user) {
 
 export default function GroupAccessUserLookupField({ field, selectedUsers, onAddUser, onRemoveUser }) {
     return (
-        <div className="w-full max-w-[880px]">
+        <div className="w-full max-w-[430px]">
             <BackendLookupField
                 resource="users"
                 values={selectedUsers}
