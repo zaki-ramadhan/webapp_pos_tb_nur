@@ -280,8 +280,8 @@ class SecuritySeeder extends Seeder
             $tpl = $logTemplates[$i % count($logTemplates)];
             // Give admin user more frequent activity logs for clear dashboard timeline
             $act = ($i % 2 === 0) ? $adminUser : $actors[$i % count($actors)];
-            $timeAgo = now()->subDays($i / 2)->subHours(rand(1, 4));
-            $docNum = 'DOC.2026.08.' . str_pad($i + 1, 5, '0', STR_PAD_LEFT);
+            $timeAgo = now()->subHours(($i * 3) + rand(1, 2));
+            $docNum = sprintf('DOC.%s.%s.%05d', $timeAgo->format('Y'), $timeAgo->format('m'), $i + 1);
 
             $beforeData = ($tpl['action'] === 'update' || $tpl['action'] === 'delete') ? [
                 'document_number' => $docNum,

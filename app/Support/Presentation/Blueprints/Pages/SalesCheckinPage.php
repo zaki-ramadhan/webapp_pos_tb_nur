@@ -10,6 +10,12 @@ class SalesCheckinPage
             return [];
         }
 
+        $today = date('Y-m-d');
+        $yesterday = date('Y-m-d', strtotime('-1 day'));
+        $todayLabel = date('d/m/Y');
+        $yesterdayLabel = date('d/m/Y', strtotime('-1 day'));
+        $prefix = date('Y.m');
+
         return array_replace($navigationPages['sales-checkin'], [
             'table' => [
                 'refreshLabel' => 'Muat ulang',
@@ -26,8 +32,8 @@ class SalesCheckinPage
                         'rowKey' => 'dateFilter',
                         'options' => [
                             ['value' => 'all', 'label' => 'Tanggal: Semua'],
-                            ['value' => '2026-04-28', 'label' => 'Tanggal: 28/04/2026'],
-                            ['value' => '2026-04-27', 'label' => 'Tanggal: 27/04/2026'],
+                            ['value' => $today, 'label' => 'Tanggal: ' . $todayLabel],
+                            ['value' => $yesterday, 'label' => 'Tanggal: ' . $yesterdayLabel],
                         ],
                     ],
                     [
@@ -51,62 +57,62 @@ class SalesCheckinPage
                 'rows' => [
                     [
                         'id' => 'sales-checkin-1',
-                        'dateLabel' => '28/04/2026 09:10',
-                        'number' => 'CI.2026.04.00018',
+                        'dateLabel' => $todayLabel . ' 09:10',
+                        'number' => 'CI.' . $prefix . '.00018',
                         'customerName' => 'PT Sumber Retail Nusantara',
                         'salesName' => 'Adam Pratama',
                         'transactionName' => 'Pesanan Penjualan',
-                        'dateFilter' => '2026-04-28',
+                        'dateFilter' => $today,
                         'salesFilter' => 'adam-pratama',
                     ],
                     [
                         'id' => 'sales-checkin-2',
-                        'dateLabel' => '28/04/2026 10:24',
-                        'number' => 'CI.2026.04.00019',
+                        'dateLabel' => $todayLabel . ' 10:24',
+                        'number' => 'CI.' . $prefix . '.00019',
                         'customerName' => 'CV Mitra Karya Abadi',
                         'salesName' => 'Jhonni Haris',
                         'transactionName' => 'Faktur Penjualan',
-                        'dateFilter' => '2026-04-28',
+                        'dateFilter' => $today,
                         'salesFilter' => 'jhonni-haris',
                     ],
                     [
                         'id' => 'sales-checkin-3',
-                        'dateLabel' => '28/04/2026 13:42',
-                        'number' => 'CI.2026.04.00020',
+                        'dateLabel' => $todayLabel . ' 13:42',
+                        'number' => 'CI.' . $prefix . '.00020',
                         'customerName' => 'Toko Sentosa Elektronik',
                         'salesName' => 'Nur Aulia',
                         'transactionName' => 'Penawaran Penjualan',
-                        'dateFilter' => '2026-04-28',
+                        'dateFilter' => $today,
                         'salesFilter' => 'nur-aulia',
                     ],
                     [
                         'id' => 'sales-checkin-4',
-                        'dateLabel' => '27/04/2026 16:08',
-                        'number' => 'CI.2026.04.00017',
+                        'dateLabel' => $yesterdayLabel . ' 16:08',
+                        'number' => 'CI.' . $prefix . '.00017',
                         'customerName' => 'PT Arta Boga Sejahtera',
                         'salesName' => 'Adam Pratama',
                         'transactionName' => 'Pesanan Penjualan',
-                        'dateFilter' => '2026-04-27',
+                        'dateFilter' => $yesterday,
                         'salesFilter' => 'adam-pratama',
                     ],
                     [
                         'id' => 'sales-checkin-5',
-                        'dateLabel' => '27/04/2026 11:55',
-                        'number' => 'CI.2026.04.00016',
+                        'dateLabel' => $yesterdayLabel . ' 11:55',
+                        'number' => 'CI.' . $prefix . '.00016',
                         'customerName' => 'UD Makmur Jaya',
                         'salesName' => 'Jhonni Haris',
                         'transactionName' => 'Retur Penjualan',
-                        'dateFilter' => '2026-04-27',
+                        'dateFilter' => $yesterday,
                         'salesFilter' => 'jhonni-haris',
                     ],
                     [
                         'id' => 'sales-checkin-6',
-                        'dateLabel' => '27/04/2026 09:18',
-                        'number' => 'CI.2026.04.00015',
+                        'dateLabel' => $yesterdayLabel . ' 09:18',
+                        'number' => 'CI.' . $prefix . '.00015',
                         'customerName' => 'PT Graha Niaga Mandiri',
                         'salesName' => 'Nur Aulia',
                         'transactionName' => 'Penerimaan Penjualan',
-                        'dateFilter' => '2026-04-27',
+                        'dateFilter' => $yesterday,
                         'salesFilter' => 'nur-aulia',
                     ],
                 ],
