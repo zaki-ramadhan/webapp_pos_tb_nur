@@ -44,7 +44,7 @@ export function GroupAccessGeneralSection({
 }) {
     return (
         <div>
-            <div className="grid gap-y-6 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
+            <div className="grid gap-y-3.5 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
                 <label htmlFor={general.nameField?.id} className="pt-2 text-xs sm:text-sm text-section-tab-accent-text">
                     {general.nameField?.label} <span className="text-tab-active-border-t">*</span>
                 </label>
@@ -56,13 +56,13 @@ export function GroupAccessGeneralSection({
                         trailing={
                             general.nameField?.clearable ? <CloseIcon className="h-[18px] w-[18px] text-section-tab-neutral-text" /> : null
                         }
-                        className="h-[40px] rounded-[4px] border-brand-blue-border-light shadow-focus-blue-medium"
+                        className="h-[36px] rounded-[4px] border-brand-blue-border-light shadow-focus-blue-medium"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
 
-                <div className="pt-2 text-xs sm:text-sm text-section-tab-accent-text">{general.accessLimitations?.label}</div>
-                <div className="flex flex-col gap-4 pt-1">
+                <div className="pt-1.5 text-xs sm:text-sm text-section-tab-accent-text">{general.accessLimitations?.label}</div>
+                <div className="flex flex-col gap-2.5 pt-0.5">
                     {(general.accessLimitations?.options ?? []).map((option) => {
                         const isChecked = values.accessLimitationId === option.id;
                         return (

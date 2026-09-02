@@ -167,68 +167,122 @@ export default function ReferenceLookupInput({
             <div
                 onMouseDown={focusInput}
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : 'cursor-text'}`.trim()}
+                className={`group flex w-full items-center overflow-hidden rounded-[4px] border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : 'cursor-text'}`.trim()}
             >
-                <div className={`flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-2 py-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
-                    {selectedLabels.length ? (
-                        selectedLabels.map((item) => (
-                            <span
-                                key={item}
-                                className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark"
+                {multiValueMode ? (
+                    <div className={`flex min-w-0 flex-1 flex-col gap-1.5 p-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
+                        {selectedLabels.length ? (
+                            <div className="flex flex-wrap items-center gap-1.5">
+                                {selectedLabels.map((item) => (
+                                    <span
+                                        key={item}
+                                        className="inline-flex max-w-full shrink-0 items-center gap-1.5 rounded-[3px] border border-[#bcd7f8] bg-[#ebf3fc] px-2 py-0.5 text-xs text-slate-800 font-normal shadow-sm"
+                                    >
+                                        <span className="truncate max-w-[200px]">{item}</span>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleRemove(item);
+                                            }}
+                                            disabled={disabled}
+                                            aria-label={`Hapus ${item}`}
+                                            className="inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center text-slate-600 hover:text-red-600 cursor-pointer"
+                                        >
+                                            <CloseIcon className="h-3 w-3" />
+                                        </button>
+                                    </span>
+                                ))}
+                            </div>
+                        ) : null}
+
+                        <div className="flex items-center w-full min-w-0 pt-0.5">
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                value={query}
+                                disabled={disabled}
+                                placeholder={placeholder}
+                                onFocus={() => {
+                                    setOpen(true);
+                                }}
+                                onChange={handleChange}
+                                aria-label={searchLabel}
+                                className={`h-[24px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-brand-dark outline-none placeholder:text-disabled-border-t cursor-text disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => inputRef.current?.focus()}
+                                disabled={disabled}
+                                aria-label={searchLabel}
+                                className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-slate-600 hover:text-slate-800 disabled:text-slate-300 focus:outline-none cursor-pointer"
                             >
-                                <span className="truncate">{item}</span>
-                                <button
-                                    type="button"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        if (multiValueMode) {
-                                            handleRemove(item);
-                                            return;
-                                        }
-
-                                        handleClear();
-                                    }}
+                                {searching ? (
+                                    <LoadingIcon className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <SearchIcon className="h-4 w-4" />
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <div className={`flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-2 py-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
+                            {selectedLabels.length ? (
+                                selectedLabels.map((item) => (
+                                    <span
+                                        key={item}
+                                        className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark"
+                                    >
+                                        <span className="truncate">{item}</span>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleClear();
+                                            }}
+                                            disabled={disabled}
+                                            aria-label={`Hapus ${item}`}
+                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 hover:text-red-500"
+                                        >
+                                            <CloseIcon className="h-4 w-4" />
+                                        </button>
+                                    </span>
+                                ))
+                            ) : (
+                                <input
+                                    ref={inputRef}
+                                    type="text"
+                                    value={query}
                                     disabled={disabled}
-                                    aria-label={`Hapus ${item}`}
-                                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 hover:text-red-500"
-                                >
-                                    <CloseIcon className="h-4 w-4" />
-                                </button>
-                            </span>
-                        ))
-                    ) : null}
+                                    placeholder={selectedLabel ? '' : placeholder}
+                                    onFocus={() => {
+                                        setOpen(true);
+                                    }}
+                                    onChange={handleChange}
+                                    aria-label={searchLabel}
+                                    className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-brand-dark outline-none placeholder:text-disabled-border-t cursor-text disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
+                                />
+                            )}
+                        </div>
 
-                    {!multiValueMode && selectedLabel ? null : (
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            value={query}
+                        <button
+                            type="button"
+                            onClick={() => inputRef.current?.focus()}
                             disabled={disabled}
-                            placeholder={selectedLabel ? '' : placeholder}
-                            onFocus={() => {
-                                setOpen(true);
-                            }}
-                            onChange={handleChange}
                             aria-label={searchLabel}
-                            className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-brand-dark outline-none placeholder:text-disabled-border-t cursor-text disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
-                        />
-                    )}
-                </div>
-
-                <button
-                    type="button"
-                    onClick={() => inputRef.current?.focus()}
-                    disabled={disabled}
-                    aria-label={searchLabel}
-                    className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-ui-border-medium text-text-darkest disabled:text-slate-300 focus:outline-none"
-                >
-                    {searching ? (
-                        <LoadingIcon className="h-5 w-5 animate-spin" />
-                    ) : (
-                        <SearchIcon className="h-5 w-5" />
-                    )}
-                </button>
+                            className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-ui-border-medium text-text-darkest disabled:text-slate-300 focus:outline-none"
+                        >
+                            {searching ? (
+                                <LoadingIcon className="h-5 w-5 animate-spin" />
+                            ) : (
+                                <SearchIcon className="h-5 w-5" />
+                            )}
+                        </button>
+                    </>
+                )}
             </div>
 
             {showMenu ? (

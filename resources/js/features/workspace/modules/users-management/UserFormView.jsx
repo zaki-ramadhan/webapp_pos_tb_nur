@@ -262,7 +262,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
             >
                 {isDetail ? (
                     <div className="flex-1 min-h-0 pt-2">
-                        <div className="grid gap-x-8 gap-y-4 lg:grid-cols-[140px_minmax(0,1fr)] lg:items-center max-w-[620px]">
+                        <div className="grid gap-x-8 gap-y-2.5 lg:grid-cols-[140px_minmax(0,1fr)] lg:items-center max-w-[500px]">
                             <label className="text-xs sm:text-sm text-section-tab-accent-text font-normal">
                                 Nama
                             </label>
@@ -326,11 +326,11 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                     </div>
                 ) : (
                     <div className="flex-1 min-h-0 pt-2">
-                        <h2 className="text-[15px] text-text-darkest leading-normal font-normal mb-8">
+                        <h2 className="text-[15px] text-text-darkest leading-normal font-normal mb-5">
                             Tambahkan pengguna untuk mengakses database ini dengan memasukkan no handphone/emailnya
                         </h2>
 
-                        <div className="grid gap-x-8 gap-y-5 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start max-w-[980px]">
+                        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start max-w-[980px]">
                             <label className="pt-2 text-xs sm:text-sm text-section-tab-accent-text font-normal">
                                 No Handphone/Email <span className="text-tab-active-border-t">*</span>
                             </label>
