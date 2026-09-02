@@ -103,6 +103,8 @@ export default function PortalDropdown({
 
     if (!open) return null;
 
+    const showDropdown = coords !== null;
+
     const renderAbove = coords && (
         side === 'top' ||
         (side === 'auto' && coords.spaceBelow < 120 && coords.rectTop > coords.spaceBelow)
