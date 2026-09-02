@@ -106,9 +106,9 @@ class IdentityBackendResources
                 with: ['roles', 'accessGroups', 'branches'],
                 storeRules: [
                     'name' => ['required', 'string', 'max:160'],
-                    'email' => ['required', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255', 'unique:users,email'],
+                    'email' => ['nullable', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255', 'unique:users,email'],
                     'phone' => ['nullable', 'string', 'max:50'],
-                    'password' => ['required', 'string', 'min:8'],
+                    'password' => ['nullable', 'string', 'min:8'],
                     'is_active' => ['sometimes', 'boolean'],
                     'role_ids' => ['sometimes', 'array'],
                     'role_ids.*' => ['integer', 'exists:roles,id'],
@@ -119,7 +119,7 @@ class IdentityBackendResources
                 ],
                 updateRules: fn (Model $record) => [
                     'name' => ['required', 'string', 'max:160'],
-                    'email' => ['required', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255', Rule::unique('users', 'email')->ignore($record)],
+                    'email' => ['nullable', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255', Rule::unique('users', 'email')->ignore($record)],
                     'phone' => ['nullable', 'string', 'max:50'],
                     'password' => ['nullable', 'string', 'min:8'],
                     'is_active' => ['sometimes', 'boolean'],

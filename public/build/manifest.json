@@ -1,6 +1,6 @@
 {
-  "_AuthLayout-Lvgl5OVC.js": {
-    "file": "assets/AuthLayout-Lvgl5OVC.js",
+  "_AuthLayout-Dfy6ITRJ.js": {
+    "file": "assets/AuthLayout-Dfy6ITRJ.js",
     "name": "AuthLayout",
     "imports": [
       "_vendor-core-BEwXzJZP.js",
@@ -59,7 +59,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-C19lVF8h.css",
+    "file": "assets/app-D9sqmWxZ.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -68,7 +68,7 @@
     ]
   },
   "resources/js/app/App.jsx": {
-    "file": "assets/App-BPlR6Lda.js",
+    "file": "assets/App-CkODHRBg.js",
     "name": "App",
     "src": "resources/js/app/App.jsx",
     "isEntry": true,
@@ -85,7 +85,7 @@
     ]
   },
   "resources/js/pages/DashboardPage.jsx": {
-    "file": "assets/DashboardPage-BQSHFQyf.js",
+    "file": "assets/DashboardPage-sUnrHt1O.js",
     "name": "DashboardPage",
     "src": "resources/js/pages/DashboardPage.jsx",
     "isDynamicEntry": true,
@@ -100,7 +100,7 @@
     ]
   },
   "resources/js/pages/ErrorPage.jsx": {
-    "file": "assets/ErrorPage-hu7-0FR7.js",
+    "file": "assets/ErrorPage-Cbueb7DB.js",
     "name": "ErrorPage",
     "src": "resources/js/pages/ErrorPage.jsx",
     "isDynamicEntry": true,
@@ -111,13 +111,13 @@
     ]
   },
   "resources/js/pages/HomePage.jsx": {
-    "file": "assets/HomePage-B4_iW44w.js",
+    "file": "assets/HomePage-BtU-0Lu_.js",
     "name": "HomePage",
     "src": "resources/js/pages/HomePage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-BEwXzJZP.js",
-      "_AuthLayout-Lvgl5OVC.js",
+      "_AuthLayout-Dfy6ITRJ.js",
       "resources/js/app/App.jsx",
       "_Notice-bNDvJiXb.js",
       "_GlobalBackgroundArt-DlEbnYPm.js",
@@ -125,26 +125,26 @@
     ]
   },
   "resources/js/pages/RegisterPage.jsx": {
-    "file": "assets/RegisterPage-CrKIDYOQ.js",
+    "file": "assets/RegisterPage-D6cIVk3k.js",
     "name": "RegisterPage",
     "src": "resources/js/pages/RegisterPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-BEwXzJZP.js",
-      "_AuthLayout-Lvgl5OVC.js",
+      "_AuthLayout-Dfy6ITRJ.js",
       "resources/js/app/App.jsx",
       "_GlobalBackgroundArt-DlEbnYPm.js",
       "_vendor-icons-acugLcPE.js"
     ]
   },
   "resources/js/pages/ResetPasswordPage.jsx": {
-    "file": "assets/ResetPasswordPage-1h3j36HN.js",
+    "file": "assets/ResetPasswordPage-BA-K6xx0.js",
     "name": "ResetPasswordPage",
     "src": "resources/js/pages/ResetPasswordPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-BEwXzJZP.js",
-      "_AuthLayout-Lvgl5OVC.js",
+      "_AuthLayout-Dfy6ITRJ.js",
       "resources/js/app/App.jsx",
       "_Notice-bNDvJiXb.js",
       "_GlobalBackgroundArt-DlEbnYPm.js",
