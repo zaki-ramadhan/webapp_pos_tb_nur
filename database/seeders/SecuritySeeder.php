@@ -16,7 +16,7 @@ class SecuritySeeder extends Seeder
         \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
 
         $settings = [
-            ['group_key' => 'company_info', 'setting_key' => 'company-name', 'value' => 'UD. TB Nur', 'label' => 'Nama Toko'],
+            ['group_key' => 'company_info', 'setting_key' => 'company-name', 'value' => 'TB Nur', 'label' => 'Nama Toko'],
             ['group_key' => 'company_info', 'setting_key' => 'business-category', 'value' => 'GROSIR / WHOLESALER', 'label' => 'Kategori Usaha'],
             ['group_key' => 'company_info', 'setting_key' => 'business-field', 'value' => 'Bahan Bangunan', 'label' => 'Bidang Usaha'],
             ['group_key' => 'company_info', 'setting_key' => 'phone', 'value' => '02156693463', 'label' => 'Telepon'],
@@ -255,7 +255,7 @@ class SecuritySeeder extends Seeder
         // Seed activity logs
         $logs = [];
         $logTemplates = [
-            ['group' => 'auth', 'res' => 'users', 'label' => 'Sistem Utama', 'perm' => 'login', 'action' => 'login', 'desc' => 'Pengguna berhasil masuk ke sistem POS UD. TB Nur', 'subj' => 'Sistem POS'],
+            ['group' => 'auth', 'res' => 'users', 'label' => 'Sistem Utama', 'perm' => 'login', 'action' => 'login', 'desc' => 'Pengguna berhasil masuk ke sistem POS TB Nur', 'subj' => 'Sistem POS'],
             ['group' => 'sales', 'res' => 'sales-invoices', 'label' => 'Faktur Penjualan', 'perm' => 'sales-invoice', 'action' => 'create', 'desc' => 'Membuat Faktur Penjualan POS Kasir', 'subj' => 'Faktur Penjualan POS'],
             ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penjualan Kasir', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penjualan Kasir POS', 'subj' => 'Jurnal Penjualan POS'],
             ['group' => 'purchasing', 'res' => 'purchase-orders', 'label' => 'Pesanan Pembelian', 'perm' => 'purchase-order', 'action' => 'create', 'desc' => 'Membuat Pesanan Pembelian Stok', 'subj' => 'Pesanan Pembelian'],
