@@ -15,6 +15,7 @@ import useBackendResource from '@/features/workspace/backend/useBackendResource'
 import { mapPartnerRow, toPartnerPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { getBackendErrorMessage, getBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
+import { showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { FormErrorProvider } from '@/components/ui/FormErrorContext';
 
@@ -76,37 +77,30 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         onResolved: () => onRefresh?.(),
     });
 
-    const handleSave = async () => {
-        window.dispatchEvent(new CustomEvent('form-validation-clear'));
-
+    const validationMessage = useMemo(() => {
         if (!values.name?.trim()) {
-            setStatus({ tone: 'error', message: 'Nama harus diisi.' });
-            window.dispatchEvent(new CustomEvent('form-validation-error', { 
-                detail: { name: 'Nama harus diisi.' } 
-            }));
-            setErrorModal({
-                open: true,
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                message: formatErrorMessageList('Nama harus diisi'),
-            });
-            return;
+            return 'Nama harus diisi.';
         }
-
         if (values.email?.trim()) {
-            const emailStr = values.email.trim();
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailRegex.test(emailStr)) {
-                setStatus({ tone: 'error', message: 'Format email tidak valid.' });
-                window.dispatchEvent(new CustomEvent('form-validation-error', { 
-                    detail: { email: 'Format email tidak valid.' } 
-                }));
-                setErrorModal({
-                    open: true,
-                    title: 'Terjadi Permasalahan pada Pemrosesan',
-                    message: formatErrorMessageList('Format email tidak valid'),
-                });
-                return;
+            if (!emailRegex.test(values.email.trim())) {
+                return 'Format email tidak valid.';
             }
+        }
+        return '';
+    }, [values.name, values.email]);
+
+    const handleSave = async () => {
+        if (validationMessage) {
+            setStatus({ tone: 'error', message: validationMessage });
+            showCrudValidationToast(validationMessage);
+            window.dispatchEvent(new CustomEvent('form-validation-error', { 
+                detail: {
+                    name: !values.name?.trim() ? 'Nama harus diisi.' : undefined,
+                    email: values.email?.trim() && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(values.email.trim()) ? 'Format email tidak valid.' : undefined,
+                } 
+            }));
+            return;
         }
 
         setStatus({ tone: '', message: '' });
@@ -205,7 +199,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         }));
     }
 
-    const saveDisabled = processing || !values.name?.trim();
+    const saveDisabled = processing || Boolean(validationMessage);
 
     return (
         <FormErrorProvider>

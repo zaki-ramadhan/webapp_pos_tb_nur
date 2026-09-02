@@ -95,9 +95,7 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
         }
 
         if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            setActiveTabId(tabs[0]?.id ?? 'details');
-            showErrorToast({ message: Object.values(newErrors)[0] });
+            onClose();
             return;
         }
 

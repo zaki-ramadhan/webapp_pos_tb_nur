@@ -75,10 +75,11 @@ export default function PurchaseDepositFormView({
         handleChange('depositAmount', formatted);
     };
 
+    const validationError = useMemo(() => validatePurchaseDepositValues(values, config), [values, config]);
+
     const handleSave = async () => {
-        const error = validatePurchaseDepositValues(values, config);
-        if (error) {
-            toast.error(error);
+        if (validationError) {
+            toast.error(validationError);
             return;
         }
 
@@ -156,7 +157,7 @@ export default function PurchaseDepositFormView({
                         variant="primary"
                         size="sm"
                         onClick={handleSave}
-                        disabled={isSaving}
+                        disabled={isSaving || Boolean(validationError)}
                     >
                         {isSaving ? 'Menyimpan...' : 'Simpan'}
                     </Button>

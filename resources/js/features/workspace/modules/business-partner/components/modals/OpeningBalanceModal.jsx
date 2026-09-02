@@ -45,11 +45,7 @@ export function OpeningBalanceModal({
     const handleSave = () => {
         const numericAmount = parseAmountInput(amount);
         if (!numericAmount || numericAmount <= 0) {
-            setErrorModal({
-                open: true,
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                message: formatErrorMessageList('Jumlah harus diisi'),
-            });
+            onClose?.();
             return;
         }
 

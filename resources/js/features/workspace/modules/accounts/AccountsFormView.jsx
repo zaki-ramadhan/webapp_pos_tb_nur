@@ -171,7 +171,7 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
         values.isSubAccount,
         values.autoCode,
     ]);
-    const saveDisabled = saving || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+    const saveDisabled = saving || Boolean(validationMessage);
 
     async function handleSave() {
         if (validationMessage) {

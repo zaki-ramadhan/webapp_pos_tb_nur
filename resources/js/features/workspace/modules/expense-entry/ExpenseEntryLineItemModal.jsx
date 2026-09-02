@@ -51,9 +51,7 @@ export default function ExpenseEntryLineItemModal({
         const amount = parseNumericInput(lineModalValues.amount) ?? 0;
 
         if (amount <= 0) {
-            showErrorToast({
-                message: 'Nilai beban harus diisi dan lebih dari 0.',
-            });
+            onClose();
             return;
         }
 

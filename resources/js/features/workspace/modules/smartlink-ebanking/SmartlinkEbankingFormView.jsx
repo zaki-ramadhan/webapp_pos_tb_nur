@@ -60,17 +60,24 @@ export default function SmartlinkEbankingFormView({
         }
     }, [initialData, activeLevel2Tab?.id]);
 
-    const handleSave = () => {
+    const validationMessage = useMemo(() => {
         if (!formData.serviceType) {
-            toast.error('Silakan pilih jenis internet banking');
-            return;
+            return 'Silakan pilih jenis internet banking';
         }
         if (!formData.accountNumber.trim()) {
-            toast.error('Nomor rekening bank wajib diisi');
-            return;
+            return 'Nomor rekening bank wajib diisi';
         }
         if (!formData.accountRelation.trim()) {
-            toast.error('Relasi akun bank perkiraan wajib dipilih');
+            return 'Relasi akun bank perkiraan wajib dipilih';
+        }
+        return '';
+    }, [formData.serviceType, formData.accountNumber, formData.accountRelation]);
+
+    const saveDisabled = saving || Boolean(validationMessage);
+
+    const handleSave = () => {
+        if (validationMessage) {
+            toast.error(validationMessage);
             return;
         }
 
@@ -115,6 +122,7 @@ export default function SmartlinkEbankingFormView({
             activeTabId={activeTabId}
             setActiveTabId={setActiveTabId}
             saving={saving}
+            saveDisabled={saveDisabled}
             onSave={handleSave}
             actionsSlot={
                 isEdit ? (

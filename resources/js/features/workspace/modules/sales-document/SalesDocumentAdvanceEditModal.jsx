@@ -89,9 +89,7 @@ export default function SalesDocumentAdvanceEditModal({
         }
 
         if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            const firstErrorMsg = Object.values(newErrors)[0];
-            showErrorToast({ message: firstErrorMsg });
+            onClose();
             return;
         }
 

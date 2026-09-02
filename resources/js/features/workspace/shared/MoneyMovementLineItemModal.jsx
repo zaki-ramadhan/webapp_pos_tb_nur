@@ -74,15 +74,13 @@ export default function MoneyMovementLineItemModal({
 
     const handleSave = () => {
         if (!selectedAccount?.id) {
-            showErrorToast({ message: isPayment ? 'Akun pembayaran harus dipilih.' : 'Akun penerimaan harus dipilih.' });
-            setActiveTab('detail');
+            onClose();
             return;
         }
 
         const parsedAmount = parseNumericInput(amount);
         if (parsedAmount <= 0) {
-            showErrorToast({ message: isPayment ? 'Nilai pembayaran harus lebih besar dari 0.' : 'Nilai penerimaan harus lebih besar dari 0.' });
-            setActiveTab('detail');
+            onClose();
             return;
         }
 

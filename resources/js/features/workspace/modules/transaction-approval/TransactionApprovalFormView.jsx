@@ -134,14 +134,21 @@ export default function TransactionApprovalFormView({
         return (userRows ?? []).map((u) => ({ value: String(u.id), label: u.name }));
     }, [values.approverType, userRows, roleRows]);
 
-    async function handleSave() {
+    const validationMessage = useMemo(() => {
         if (!values.ruleName?.trim()) {
-            setStatus({ tone: 'danger', message: 'Nama aturan harus diisi.' });
-            return;
+            return 'Nama aturan harus diisi.';
         }
-
         if (!values.approverId) {
-            setStatus({ tone: 'danger', message: 'Penyetuju transaksi harus dipilih.' });
+            return 'Penyetuju transaksi harus dipilih.';
+        }
+        return '';
+    }, [values.ruleName, values.approverId]);
+
+    const saveDisabled = saving || Boolean(validationMessage);
+
+    async function handleSave() {
+        if (validationMessage) {
+            setStatus({ tone: 'error', message: validationMessage });
             return;
         }
 
@@ -200,7 +207,7 @@ export default function TransactionApprovalFormView({
         <ModuleFormTemplate
             form={form}
             saving={saving}
-            saveDisabled={saving}
+            saveDisabled={saveDisabled}
             status={status}
             onSave={handleSave}
         >

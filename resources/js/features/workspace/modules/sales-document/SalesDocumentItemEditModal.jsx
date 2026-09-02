@@ -454,10 +454,7 @@ export default function SalesDocumentItemEditModal({
         }
 
         if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            setActiveTabId('details');
-            const firstErrorMsg = Object.values(newErrors)[0];
-            showErrorToast({ message: firstErrorMsg });
+            onClose();
             return;
         }
 

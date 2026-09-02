@@ -74,13 +74,7 @@ export function useTransactionForm({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
-    const saveDisabled = saving || !isDirty || Boolean(
-        validationMessage && (
-            validationMessage.includes('wajib diisi') ||
-            validationMessage.includes('wajib dipilih') ||
-            validationMessage.includes('wajib diisi minimal 1')
-        )
-    );
+    const saveDisabled = saving || Boolean(validationMessage);
 
     async function selectLookup(resource, title, onApply, labelBuilder = buildLookupLabel, queryParams = {}) {
         try {
@@ -185,7 +179,7 @@ export function buildWorkspaceDockActions({
 
             if (action.id === 'save') {
                 const resolvedDisabledReason = disabledReason
-                    || (saveDisabled ? (validationMessage || (!isDirty ? 'Belum ada perubahan data pada formulir' : 'Formulir belum valid')) : undefined);
+                    || (saveDisabled ? (validationMessage || 'Formulir belum valid') : undefined);
 
                 return {
                     ...action,
