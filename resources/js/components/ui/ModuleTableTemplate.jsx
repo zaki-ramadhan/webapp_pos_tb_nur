@@ -76,19 +76,6 @@ export default function ModuleTableTemplate({
         return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
     }, [cleanedColumns, visibleColumnIds]);
 
-    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
-    const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
-    const activeSortDir = isServerSort ? (table.sortDirection || table.pagination?.sortDirection || sortDir) : sortDir;
-
-    const handleSortClick = (columnId) => {
-        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
-        if (isServerSort) {
-            const onSort = table.onSort || table.pagination?.onSort;
-            onSort?.(columnId, nextDir);
-        }
-        handleClientSort(columnId, nextDir);
-    };
-
     const filteredRows = useMemo(() => {
         if (isServerSearch) {
             if (!customFiltersSlot && inactiveFilter !== 'all') {
@@ -125,6 +112,19 @@ export default function ModuleTableTemplate({
             );
         });
     }, [isServerSearch, customFiltersSlot, customRowFilter, inactiveFilter, inactiveFilterKey, keyword, table.rows, table.columns]);
+
+    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
+    const activeSortDir = isServerSort ? (table.sortDirection || table.pagination?.sortDirection || sortDir) : sortDir;
+
+    const handleSortClick = (columnId) => {
+        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
+        if (isServerSort) {
+            const onSort = table.onSort || table.pagination?.onSort;
+            onSort?.(columnId, nextDir);
+        }
+        handleClientSort(columnId, nextDir);
+    };
 
     const sortedRows = useMemo(() => {
         if (activeSortKey) {
