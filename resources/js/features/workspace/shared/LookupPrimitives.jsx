@@ -1,13 +1,13 @@
 import PortalDropdown from '@/components/ui/PortalDropdown';
 import { InfoIcon } from '@/features/workspace/shared/Icons';
 
-export function LookupDropdownSurface({ className = '', children, maxHeightLimit = 260, onClose, anchorRef }) {
+export function LookupDropdownSurface({ className = '', children, maxHeightLimit = 260, onClose, anchorRef, side = 'bottom' }) {
     return (
         <PortalDropdown
             open={true}
             onClose={onClose}
             maxHeightLimit={maxHeightLimit}
-            side="auto"
+            side={side}
             className={className}
             anchorRef={anchorRef}
         >
