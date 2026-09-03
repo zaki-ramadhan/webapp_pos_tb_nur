@@ -44,15 +44,6 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
     const [openPages, setOpenPages] = useState(initialWorkspacePageState.openPages);
     const [activePageId, setActivePageId] = useState(initialWorkspacePageState.activePageId);
     const [pageOpeningLoading, setPageOpeningLoading] = useState(null);
-    const tabHistoryRef = useRef([initialWorkspacePageState.activePageId]);
-
-    useEffect(() => {
-        if (!activePageId) return;
-        tabHistoryRef.current = [
-            activePageId,
-            ...tabHistoryRef.current.filter((id) => id !== activePageId),
-        ];
-    }, [activePageId]);
 
   // Kelola state tab kotor
 
@@ -95,8 +86,6 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
             window.__clearBackendCache(pageId);
         }
 
-        tabHistoryRef.current = tabHistoryRef.current.filter((id) => id !== pageId);
-
         setOpenPages((currentPages) => {
             const pageIndex = currentPages.findIndex((page) => page.id === pageId);
             const nextPages = currentPages.filter((page) => page.id !== pageId);
@@ -106,25 +95,17 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
                     return currentPageId;
                 }
 
-                // 1. Coba cari tab yang sebelumnya aktif dari riwayat navigasi yang masih terbuka
-                const previousActivePageId = tabHistoryRef.current.find((id) =>
-                    nextPages.some((page) => page.id === id)
-                );
-                if (previousActivePageId) {
-                    return previousActivePageId;
-                }
-
-                // 2. Jika tidak ada di riwayat, arahkan ke tab sebelah kirinya (pageIndex - 1)
+                // 1. Selalu turun ke tab sebelah kirinya (pageIndex - 1)
                 if (pageIndex > 0 && nextPages[pageIndex - 1]) {
                     return nextPages[pageIndex - 1].id;
                 }
 
-                // 3. Jika tidak ada tab di kiri, ambil tab di posisi index yang bergeser
+                // 2. Jika tidak ada tab di kiri, ambil tab di posisi index saat ini (yang bergeser)
                 if (nextPages[pageIndex]) {
                     return nextPages[pageIndex].id;
                 }
 
-                // 4. Fallback ke tab pertama yang tersedia atau dashboard
+                // 3. Fallback ke tab pertama (Dashboard)
                 return nextPages[0]?.id ?? dashboardPage.id;
             });
 
