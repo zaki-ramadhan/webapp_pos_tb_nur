@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Info, ExternalLink, RefreshCw, GripVertical } from 'lucide-react';
+import { ExternalLink, RefreshCw, GripVertical } from 'lucide-react';
 
 import Button from '@/components/ui/Button';
 import Panel from '@/components/ui/Panel';
@@ -108,24 +108,8 @@ export default function DashboardWidgetCard({
         },
     };
 
-    const WIDGET_TOOLTIPS = {
-        'integrated-analysis': 'Rekomendasi pasangan produk sering dibeli bersamaan (Apriori) & prioritas omzet (ABC).',
-        'sales-trend': 'Grafik pergerakan omzet penjualan 7 hari terakhir.',
-        'profit-loss': 'Estimasi laba bersih dari omzet dikurangi modal HPP & operasional.',
-        'sales-summary': 'Ringkasan pendapatan penjualan MTD & status pelunasan faktur.',
-        'purchase-summary': 'Ringkasan pembelian barang MTD & status pelunasan hutang.',
-        'cash-flow': 'Perbandingan kas masuk penjualan vs kas keluar operasional.',
-        'company-expense': 'Rincian porsi pengeluaran operasional toko & gaji karyawan.',
-        'top-products': 'Daftar barang terlaris berdasarkan akumulasi unit terjual.',
-        'cash-availability': 'Estimasi saldo kas berjalan toko dari mutasi transaksi.',
-        'abc-analysis': 'Pengelompokan barang berdasarkan kontribusi omzet (A 80%, B 15%, C 5%).',
-        'apriori-analysis': 'Pola kombinasi produk yang paling sering dibeli bersamaan.',
-        'recent-activity': 'Riwayat aktivitas & penginputan transaksi terbaru.',
-    };
-
     const widgetKey = widget.sourceWidgetId ?? widget.id;
     const sourcePage = WIDGET_SOURCE_PAGES[widgetKey] ?? WIDGET_SOURCE_PAGES[widget.type];
-    const tooltipText = WIDGET_TOOLTIPS[widgetKey] ?? WIDGET_TOOLTIPS[widget.id] ?? WIDGET_TOOLTIPS[widget.type];
 
     const isEmptyData =
         (widget.type === 'abc-analysis' && (!widget.topItems || widget.topItems.length === 0)) ||
@@ -160,17 +144,6 @@ export default function DashboardWidgetCard({
                                 <h3 className="break-words text-sm lg:text-base font-medium text-tab-active-text">
                                     {widget.title === 'Beban Perusahaan' ? 'Beban Toko' : widget.title}
                                 </h3>
-                                {tooltipText && (
-                                    <span
-                                        className="group relative inline-flex shrink-0 cursor-pointer items-center text-slate-400 hover:text-brand-blue"
-                                        aria-label="Informasi widget"
-                                    >
-                                        <Info className="h-4 w-4 text-slate-400 hover:text-brand-blue" />
-                                        <span className="pointer-events-none absolute left-0 top-full z-50 mt-1 hidden w-56 rounded-md border border-slate-700 bg-slate-900 p-2 text-xs text-white shadow-xl group-hover:block sm:w-64 leading-snug font-normal">
-                                            {tooltipText}
-                                        </span>
-                                    </span>
-                                )}
                             </div>
                             {widget.subtitle ? (
                                 <p className={`mt-1 break-words text-sm ${widgetKey === 'sales-summary' || widgetKey === 'purchase-summary' || widget.type === 'summary' ? 'text-text-light' : 'text-black'}`}>{widget.subtitle}</p>
