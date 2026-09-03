@@ -59,7 +59,7 @@ function TopProductRow({ item, index }) {
             </div>
             <div className="min-w-0">
                 <p className="truncate text-xs sm:text-sm font-medium text-brand-darker group-hover:text-blue-900 transition-colors">{item.name}</p>
-                <p className="mt-0.5 text-[11px] sm:text-xs text-slate-500">
+                <p className="mt-0.5 text-[11px] sm:text-xs text-black">
                     {item.units}
                 </p>
             </div>

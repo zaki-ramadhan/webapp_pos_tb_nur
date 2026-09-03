@@ -1,7 +1,4 @@
-import { buildTodayDisplayDate, buildFirstDayOfMonthDisplayDate } from '@/features/workspace/shared/dateDefaults';
-
-const todayDisplayDate = buildTodayDisplayDate();
-const firstDayOfMonthDisplayDate = buildFirstDayOfMonthDisplayDate();
+import { buildTodayDisplayDate, buildFirstDayOfMonthDisplayDate, buildThirtyDaysAgoDisplayDate } from '@/features/workspace/shared/dateDefaults';
 
 function createSearchControl() {
     return {
@@ -33,137 +30,148 @@ function createAction(id, icon, label, tone = 'default') {
     };
 }
 
-const DEFAULT_CONTROLS = [
-    createSearchControl(),
-    createDateControl('startDate', firstDayOfMonthDisplayDate),
-    {
-        type: 'label',
-        label: 's/d',
-        wrapperClassName: 'px-1 text-center',
-    },
-    createDateControl('endDate', todayDisplayDate),
-];
+function getDefaultControls() {
+    return [
+        createSearchControl(),
+        createDateControl('startDate', buildThirtyDaysAgoDisplayDate()),
+        {
+            type: 'label',
+            label: 's/d',
+            wrapperClassName: 'px-1 text-center',
+        },
+        createDateControl('endDate', buildTodayDisplayDate()),
+    ];
+}
 
 const DEFAULT_EMPTY_SPACE_CLASS_NAME = 'min-h-[320px] sm:min-h-[420px] xl:min-h-[64vh]';
 
 export const bankInquiryPageConfigs = {
-    'account-history': {
-        controls: DEFAULT_CONTROLS,
-        actions: [
-            createAction('reload', 'link', 'Muat ulang'),
-            createAction('open-reference', 'external-link', 'Buka referensi histori akun'),
-            createAction('switch-account', 'transfer', 'Pindah akun perkiraan'),
-            createAction('help', 'idea', 'Bantuan histori akun', 'warning'),
-        ],
-        table: {
-            columns: [
-                { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
-                { id: 'sourceNumber', label: 'No. Sumber', widthClassName: 'w-[180px]', align: 'left' },
-                { id: 'transactionType', label: 'Tipe Transaksi', widthClassName: 'w-[170px]', align: 'left' },
-                { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[720px]', align: 'left' },
-                { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[150px]', align: 'right' },
-                { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
-                { id: 'balance', label: 'Saldo', widthClassName: 'w-[160px]', align: 'right' },
+    get 'account-history'() {
+        return {
+            controls: getDefaultControls(),
+            actions: [
+                createAction('reload', 'link', 'Muat ulang'),
+                createAction('open-reference', 'external-link', 'Buka referensi histori akun'),
+                createAction('switch-account', 'transfer', 'Pindah akun perkiraan'),
+                createAction('help', 'idea', 'Bantuan histori akun', 'warning'),
             ],
-            rows: [],
-            emptyLabel: 'Tidak ada data',
-            emptySpaceClassName: DEFAULT_EMPTY_SPACE_CLASS_NAME,
-            tableClassName: 'min-w-[1560px]',
-            searchKeys: ['date', 'sourceNumber', 'transactionType', 'description', 'mutation', 'type', 'balance'],
-        },
-        sidePanel: {
-            hidden: true,
-        },
-    },
-    'bank-statement': {
-        controls: [
-            {
-                ...createSearchControl(),
-                value: 'Bank BRI',
-                placeholder: 'Bank BRI (BRIMO)',
+            table: {
+                columns: [
+                    { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
+                    { id: 'sourceNumber', label: 'No. Sumber', widthClassName: 'w-[180px]', align: 'left' },
+                    { id: 'transactionType', label: 'Tipe Transaksi', widthClassName: 'w-[170px]', align: 'left' },
+                    { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[720px]', align: 'left' },
+                    { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[150px]', align: 'right' },
+                    { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
+                    { id: 'balance', label: 'Saldo', widthClassName: 'w-[160px]', align: 'right' },
+                ],
+                rows: [],
+                emptyLabel: 'Tidak ada data',
+                emptySpaceClassName: DEFAULT_EMPTY_SPACE_CLASS_NAME,
+                tableClassName: 'min-w-[1560px]',
+                searchKeys: ['date', 'sourceNumber', 'transactionType', 'description', 'mutation', 'type', 'balance'],
             },
-            createDateControl('startDate', firstDayOfMonthDisplayDate),
-            {
-                type: 'label',
-                label: 's/d',
-                wrapperClassName: 'px-1 text-center',
+            sidePanel: {
+                hidden: true,
             },
-            createDateControl('endDate', todayDisplayDate),
-        ],
-        actions: [
-            createAction('reload', 'link', 'Muat ulang'),
-            createAction('help', 'idea', 'Bantuan rekening koran', 'warning'),
-        ],
-        table: {
-            columns: [
-                { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
-                { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[520px]', align: 'left' },
-                { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[150px]', align: 'right' },
-                { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
-                { id: 'balance', label: 'Saldo', widthClassName: 'w-[200px]', align: 'right' },
-            ],
-            rows: [],
-            emptyLabel: 'Tidak ada data',
-            emptySpaceClassName: DEFAULT_EMPTY_SPACE_CLASS_NAME,
-            tableClassName: 'min-w-[1100px]',
-            searchKeys: ['date', 'description', 'mutation', 'type', 'balance'],
-        },
-        sidePanel: {
-            hidden: true,
-        },
+        };
     },
-    'bank-history': {
-        controls: DEFAULT_CONTROLS,
-        actions: [
-            createAction('reload', 'link', 'Muat ulang'),
-            createAction('export-excel', 'download', 'Ekspor Excel'),
-        ],
-        table: {
-            columns: [
-                { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
-                { id: 'sourceNumber', label: 'No. Sumber', widthClassName: 'w-[160px]', align: 'left' },
-                { id: 'checkNumber', label: 'No. Cek', widthClassName: 'w-[130px]', align: 'left' },
-                { id: 'transactionType', label: 'Tipe Transaksi', widthClassName: 'w-[180px]', align: 'left' },
-                { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[700px]', align: 'left' },
-                { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[140px]', align: 'right' },
-                { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
-                { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'right' },
+    get 'bank-statement'() {
+        return {
+            controls: [
+                {
+                    ...createSearchControl(),
+                    value: 'Bank BRI',
+                    placeholder: 'Bank BRI (BRIMO)',
+                },
+                createDateControl('startDate', buildThirtyDaysAgoDisplayDate()),
+                {
+                    type: 'label',
+                    label: 's/d',
+                    wrapperClassName: 'px-1 text-center',
+                },
+                createDateControl('endDate', buildTodayDisplayDate()),
             ],
-            rows: [],
-            emptyLabel: 'Tidak ada data',
-            emptySpaceClassName: DEFAULT_EMPTY_SPACE_CLASS_NAME,
-            tableClassName: 'min-w-[1700px]',
-            searchKeys: ['date', 'sourceNumber', 'checkNumber', 'transactionType', 'description', 'mutation', 'type', 'balance'],
-        },
-        sidePanel: {
-            hidden: true,
-        },
+            actions: [
+                createAction('reload', 'link', 'Muat ulang'),
+                createAction('help', 'idea', 'Bantuan rekening koran', 'warning'),
+            ],
+            table: {
+                columns: [
+                    { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
+                    { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[520px]', align: 'left' },
+                    { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[150px]', align: 'right' },
+                    { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
+                    { id: 'balance', label: 'Saldo', widthClassName: 'w-[200px]', align: 'right' },
+                ],
+                rows: [],
+                emptyLabel: 'Tidak ada data',
+                emptySpaceClassName: DEFAULT_EMPTY_SPACE_CLASS_NAME,
+                tableClassName: 'min-w-[1100px]',
+                searchKeys: ['date', 'description', 'mutation', 'type', 'balance'],
+            },
+            sidePanel: {
+                hidden: true,
+            },
+        };
     },
-    'bank-reconciliation': {
-        controls: DEFAULT_CONTROLS,
-        actions: [
-            createAction('reload', 'link', 'Muat ulang'),
-            createAction('switch-account', 'transfer', 'Pindah akun bank'),
-            createAction('help', 'idea', 'Bantuan rekonsiliasi bank', 'warning'),
-        ],
-        table: {
-            columns: [
-                { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
-                { id: 'documentNumber', label: 'No. Bukti', widthClassName: 'w-[180px]', align: 'left' },
-                { id: 'transactionType', label: 'Tipe Transaksi', widthClassName: 'w-[180px]', align: 'left' },
-                { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[560px]', align: 'left' },
-                { id: 'debit', label: 'Debit', widthClassName: 'w-[140px]', align: 'right' },
-                { id: 'credit', label: 'Kredit', widthClassName: 'w-[140px]', align: 'right' },
-                { id: 'status', label: 'Status', widthClassName: 'w-[140px]', align: 'center' },
+    get 'bank-history'() {
+        return {
+            controls: getDefaultControls(),
+            actions: [
+                createAction('reload', 'link', 'Muat ulang'),
+                createAction('export-excel', 'download', 'Ekspor Excel'),
             ],
-            rows: [],
-            emptyLabel: 'Tidak ada data',
-            emptySpaceClassName: DEFAULT_EMPTY_SPACE_CLASS_NAME,
-            tableClassName: 'min-w-[1450px]',
-            searchKeys: ['date', 'documentNumber', 'transactionType', 'description', 'debit', 'credit', 'status'],
-        },
-        sidePanel: {
-            hidden: true,
-        },
+            table: {
+                columns: [
+                    { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
+                    { id: 'sourceNumber', label: 'No. Sumber', widthClassName: 'w-[160px]', align: 'left' },
+                    { id: 'checkNumber', label: 'No. Cek', widthClassName: 'w-[130px]', align: 'left' },
+                    { id: 'transactionType', label: 'Tipe Transaksi', widthClassName: 'w-[180px]', align: 'left' },
+                    { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[700px]', align: 'left' },
+                    { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[140px]', align: 'right' },
+                    { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
+                    { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'right' },
+                ],
+                rows: [],
+                emptyLabel: 'Tidak ada data',
+                emptySpaceClassName: DEFAULT_EMPTY_SPACE_CLASS_NAME,
+                tableClassName: 'min-w-[1700px]',
+                searchKeys: ['date', 'sourceNumber', 'checkNumber', 'transactionType', 'description', 'mutation', 'type', 'balance'],
+            },
+            sidePanel: {
+                hidden: true,
+            },
+        };
+    },
+    get 'bank-reconciliation'() {
+        return {
+            controls: getDefaultControls(),
+            actions: [
+                createAction('reload', 'link', 'Muat ulang'),
+                createAction('switch-account', 'transfer', 'Pindah akun bank'),
+                createAction('help', 'idea', 'Bantuan rekonsiliasi bank', 'warning'),
+            ],
+            table: {
+                columns: [
+                    { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
+                    { id: 'documentNumber', label: 'No. Bukti', widthClassName: 'w-[180px]', align: 'left' },
+                    { id: 'transactionType', label: 'Tipe Transaksi', widthClassName: 'w-[180px]', align: 'left' },
+                    { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[620px]', align: 'left' },
+                    { id: 'debit', label: 'Debit', widthClassName: 'w-[150px]', align: 'right' },
+                    { id: 'credit', label: 'Kredit', widthClassName: 'w-[150px]', align: 'right' },
+                    { id: 'status', label: 'Status', widthClassName: 'w-[110px]', align: 'center' },
+                    { id: 'balance', label: 'Saldo Rekening Koran', widthClassName: 'w-[200px]', align: 'right' },
+                ],
+                rows: [],
+                emptyLabel: 'Tidak ada data',
+                emptySpaceClassName: DEFAULT_EMPTY_SPACE_CLASS_NAME,
+                tableClassName: 'min-w-[1700px]',
+                searchKeys: ['date', 'documentNumber', 'transactionType', 'description', 'debit', 'credit', 'status', 'balance'],
+            },
+            sidePanel: {
+                hidden: true,
+            },
+        };
     },
 };

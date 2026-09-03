@@ -152,7 +152,7 @@ export default function InquiryWorkspaceView({
     const restrictionText = 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.';
 
     return (
-        <div className="flex flex-col flex-1 min-h-0 h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light overflow-hidden">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <fieldset disabled={isAccessRestricted} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
@@ -161,6 +161,12 @@ export default function InquiryWorkspaceView({
                                 <InquiryControl control={searchControl} value={values[searchControl.id] ?? ''} onChange={handleChange} />
                             </div>
                         ) : null}
+
+                        {dateControls.map((control, idx) => (
+                            <div key={control.id || `date-ctrl-${idx}`} className={control.wrapperClassName ?? ''}>
+                                <InquiryControl control={control} value={values[control.id] ?? ''} onChange={handleChange} />
+                            </div>
+                        ))}
 
                         {reloadAction ? (
                             <RefreshButton
@@ -218,13 +224,131 @@ export default function InquiryWorkspaceView({
                 </div>
             ) : null}
 
-            <div
-                className={`grid min-h-0 flex-1 gap-3 mt-3 ${
-                    hasSidePanel ? 'xl:grid-cols-[minmax(0,1fr)_300px] 2xl:grid-cols-[minmax(0,1fr)_380px]' : ''
-                }`.trim()}
-            >
-                <div className="min-w-0 overflow-hidden flex flex-col flex-1">
-                    <div className="min-h-0 flex-1 flex flex-col overflow-hidden">
+            {hasSidePanel ? (
+                <div
+                    className="grid min-h-0 flex-1 gap-3 mt-3 xl:grid-cols-[minmax(0,1fr)_300px] 2xl:grid-cols-[minmax(0,1fr)_380px]"
+                >
+                    <div className="min-w-0 overflow-hidden flex flex-col flex-1">
+                        <div className="min-h-0 flex-1 flex flex-col overflow-hidden">
+                            <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="flex-1 min-h-0 overflow-auto border-table-wrapper-border">
+                                <DataTableHeader className="bg-table-header-bg">
+                                    <tr>
+                                        {sortedRows.length > 0 && (
+                                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-light text-white">
+                                                No.
+                                            </DataTableHead>
+                                        )}
+                                        {resolvedColumns.map((column) => (
+                                            <SortableTableHeaderCell
+                                                key={column.id}
+                                                label={column.label}
+                                                align={column.align}
+                                                widthClassName={column.widthClassName}
+                                                sortable={column.sortable !== false}
+                                                sortDirection={activeSortKey === column.id ? activeSortDir : null}
+                                                onSort={column.sortable !== false ? () => handleSortClick(column.id) : null}
+                                                style={getCellStyle(column.id, { position: 'relative' })}
+                                                onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                            />
+                                        ))}
+                                    </tr>
+                                </DataTableHeader>
+
+                                <DataTableBody>
+                                    {sortedRows.length ? (
+                                        sortedRows.map((row, index) => {
+                                            const offset = pagination ? pagination.from - 1 : 0;
+                                            const displayIndex = offset + index + 1;
+                                            const isClickable = Boolean(row.document_id && row.document_type);
+                                            return (
+                                                <DataTableRow
+                                                    key={row.id || index}
+                                                    onClick={isClickable ? () => openSourceDocument(row) : undefined}
+                                                    className={`${isClickable ? 'cursor-pointer' : ''} border-ui-border-row transition hover:bg-workspace-hover-bg ${
+                                                        index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
+                                                    }`.trim()}
+                                                >
+                                                    <DataTableCell className="px-3 text-center text-base text-table-row-number">
+                                                        {displayIndex}
+                                                    </DataTableCell>
+                                                    {resolvedColumns.map((column) => {
+                                                        let cellContent = null;
+                                                        const val = row[column.id];
+
+                                                        if (column.id === 'action' || column.cell) {
+                                                            cellContent = column.cell ? column.cell(row) : null;
+                                                        } else if (column.id === 'sourceNumber') {
+                                                            cellContent = (
+                                                                <span className="text-slate-900 font-normal">
+                                                                    {val || '-'}
+                                                                </span>
+                                                            );
+                                                        } else if (column.id === 'balance' || column.id === 'mutation') {
+                                                            const num = parseNumericInput(val);
+                                                            const formattedVal = formatTableTextValue(val, column);
+                                                            if (num < 0) {
+                                                                cellContent = <span className="text-red-600">{formattedVal}</span>;
+                                                            } else {
+                                                                cellContent = <span className="text-slate-700">{formattedVal}</span>;
+                                                            }
+                                                        } else {
+                                                            cellContent = formatTableTextValue(val, column);
+                                                        }
+
+                                                        return (
+                                                            <DataTableCell
+                                                                key={column.id}
+                                                                className={`px-2.5 text-base text-text-workspace-dark ${
+                                                                    column.align === 'right' ? 'text-right' : 
+                                                                    column.align === 'center' ? 'text-center' : 'text-left'
+                                                                }`.trim()}
+                                                                style={getCellStyle(column.id)}
+                                                                onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                                            >
+                                                                {cellContent}
+                                                            </DataTableCell>
+                                                        );
+                                                    })}
+                                                </DataTableRow>
+                                            );
+                                        })
+                                    ) : (
+                                        <DataTableRow className="bg-white">
+                                            <DataTableCell colSpan={resolvedColumns.length + 1} className="px-3 py-2 text-center text-base text-black">
+                                                {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
+                                            </DataTableCell>
+                                        </DataTableRow>
+                                    )}
+                                </DataTableBody>
+                            </DataTable>
+                        </div>
+
+                        {pagination ? (
+                            <Pagination
+                                page={pagination.page}
+                                perPage={pagination.perPage}
+                                total={pagination.total}
+                                lastPage={pagination.lastPage}
+                                from={pagination.from}
+                                to={pagination.to}
+                                onPageChange={pagination.onPageChange}
+                                onPerPageChange={pagination.onPerPageChange}
+                                className="mt-3"
+                            />
+                        ) : null}
+                    </div>
+
+                    <div
+                        className={`overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light ${config.sidePanel?.className ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()}
+                    >
+                        {config.sidePanel?.content ? (
+                            <div className="h-full">{config.sidePanel.content}</div>
+                        ) : null}
+                    </div>
+                </div>
+            ) : (
+                <>
+                    <div className="mt-3 min-h-0 overflow-x-auto">
                         {activePageId === 'bank-history' || activePageId === 'account-history' ? (
                             <BankLedgerTable
                                 rows={isAccessRestricted ? [] : (rows ?? [])}
@@ -234,7 +358,7 @@ export default function InquiryWorkspaceView({
                                 className={config.table.tableClassName ?? 'min-w-[1200px]'}
                             />
                         ) : (
-                            <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="flex-1 min-h-0 overflow-auto border-table-wrapper-border">
+                            <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="border-table-wrapper-border">
                                 <DataTableHeader className="bg-table-header-bg">
                                     <tr>
                                         {sortedRows.length > 0 && (
@@ -341,18 +465,8 @@ export default function InquiryWorkspaceView({
                             className="mt-3"
                         />
                     ) : null}
-                </div>
-
-                {hasSidePanel ? (
-                    <div
-                        className={`overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light ${config.sidePanel?.className ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()}
-                    >
-                        {config.sidePanel?.content ? (
-                            <div className="h-full">{config.sidePanel.content}</div>
-                        ) : null}
-                    </div>
-                ) : null}
-            </div>
+                </>
+            )}
         </div>
     );
 }
