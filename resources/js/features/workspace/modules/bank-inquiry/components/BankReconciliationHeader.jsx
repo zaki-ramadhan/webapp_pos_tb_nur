@@ -20,7 +20,7 @@ export default function BankReconciliationHeader({ lastKnownBalance = '0', rawBa
     const isNegative = rawBalanceNum < 0 || String(lastKnownBalance).includes('-');
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 bg-white border-b border-slate-200 px-3 py-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 bg-white">
             {/* Left Section: REKENING BANK */}
             <HeaderColumn
                 title="REKENING BANK"
