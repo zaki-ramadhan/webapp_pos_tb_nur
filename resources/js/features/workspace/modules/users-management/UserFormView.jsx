@@ -326,7 +326,6 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                                     type="tel"
                                     value={values.phone}
                                     onChange={!isPhoneLocked ? (e) => setValues({ ...values, phone: e.target.value.replace(/-/g, '') }) : undefined}
-                                    placeholder={!isPhoneLocked ? 'Isikan No Handphone...' : ''}
                                     readOnly={isPhoneLocked}
                                     disabled={isPhoneLocked}
                                     className={`h-[36px] w-full rounded-[4px] border-ui-border ${isPhoneLocked ? 'bg-slate-50 text-slate-700' : 'bg-white text-slate-900'}`}
@@ -344,7 +343,6 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                                     type="email"
                                     value={values.email}
                                     onChange={!isEmailLocked ? (e) => setValues({ ...values, email: e.target.value }) : undefined}
-                                    placeholder={!isEmailLocked ? 'Isikan Email...' : ''}
                                     readOnly={isEmailLocked}
                                     disabled={isEmailLocked}
                                     className={`h-[36px] w-full rounded-[4px] border-ui-border ${isEmailLocked ? 'bg-slate-50 text-slate-700' : 'bg-white text-slate-900'}`}
