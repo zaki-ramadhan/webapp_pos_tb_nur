@@ -199,9 +199,9 @@ export default function BankReconciliationWorkspace({
                         <img
                             src={emptyStateImg}
                             alt="Pilih bank yang akan direkonsiliasi"
-                            className="w-36 h-auto max-h-36 object-contain mb-4 opacity-90"
+                            className="w-72 h-auto max-h-72 object-contain mb-4 opacity-80"
                         />
-                        <div className="text-slate-700 text-base sm:text-lg font-semibold tracking-normal">
+                        <div className="text-slate-700 text-base sm:text-lg font-normal tracking-normal">
                             Pilih bank yang akan direkonsiliasi
                         </div>
                     </div>
