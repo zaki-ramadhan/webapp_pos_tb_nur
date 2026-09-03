@@ -123,7 +123,7 @@ export default function GeneralJournalTableView({
 
     return (
         <div className="flex min-h-full flex-col gap-3">
-            <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+            <div className="flex min-h-full flex-col">
                 <TableToolbar
                     size="compact"
                     className="space-y-3"

@@ -414,7 +414,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     }, [loading, error, isItemLocation, hasTarget, isWarehouseMode, config.table.emptyLabel]);
 
     return (
-        <div className="flex flex-col flex-1 min-h-0 h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light overflow-hidden">
+        <div className="flex flex-col flex-1 min-h-0 h-full overflow-hidden">
             <fieldset disabled={isAccessRestricted} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">

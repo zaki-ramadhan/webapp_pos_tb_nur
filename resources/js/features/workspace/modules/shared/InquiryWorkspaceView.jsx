@@ -152,7 +152,7 @@ export default function InquiryWorkspaceView({
     const restrictionText = 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.';
 
     return (
-        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+        <div className="min-h-full">
             <fieldset disabled={isAccessRestricted} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">

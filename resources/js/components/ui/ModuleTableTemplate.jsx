@@ -159,7 +159,7 @@ export default function ModuleTableTemplate({
     } : null);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+        <div className="min-h-full">
             <TableToolbar
                 size="compact"
                 filters={filters}
