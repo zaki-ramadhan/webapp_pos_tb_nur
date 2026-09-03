@@ -113,10 +113,6 @@ export function GroupAccessGeneralSection({
                                                 ))}
                                             </SelectField>
                                         </div>
-
-                                        <div className="flex items-center gap-2 text-sm italic text-red-350 border-l-2 border-ui-border pl-2.5 py-0.5 leading-none">
-                                            Waktu Jakarta - Indonesia
-                                        </div>
                                     </div>
                                 )}
                             </GroupAccessAccessOption>
