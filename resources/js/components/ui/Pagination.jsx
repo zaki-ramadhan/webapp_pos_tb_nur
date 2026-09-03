@@ -47,7 +47,7 @@ export default function Pagination({
     };
 
     return (
-        <div className={`flex flex-col items-center justify-between gap-4 border-t border-ui-border-light bg-white px-4 py-3 sm:flex-row ${className}`.trim()}>
+        <div className={`flex flex-col items-center justify-between gap-4 bg-white px-4 py-3 sm:flex-row ${className}`.trim()}>
             <div className="text-sm text-text-medium">
                 Menampilkan <span className="font-semibold text-text-dark">{from}</span> sampai{' '}
                 <span className="font-semibold text-text-dark">{to}</span> dari{' '}

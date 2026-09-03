@@ -219,7 +219,7 @@ export default function ItemMutationTab({ productId }) {
                         setPage(1);
                     }}
                     perPageOptions={[10, 15, 25, 50, 100]}
-                    className="mt-2 rounded-[4px] border border-ui-border-light shadow-none"
+                    className="mt-3"
                 />
             ) : null}
         </div>
