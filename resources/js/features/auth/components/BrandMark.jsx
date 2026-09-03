@@ -23,7 +23,7 @@ const BrandMark = memo(function BrandMark({
     return (
         <div className={`inline-flex items-center ${gapClass} select-none pointer-events-none ${className}`.trim()}>
             <img
-                src="/assets/images/logo.svg"
+                src="/assets/images/logo tb nur new.svg"
                 alt="TB Nur Logo"
                 className={`${logoHeight} w-auto object-contain rounded-md select-none pointer-events-none ${logoClassName}`.trim()}
             />
