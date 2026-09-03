@@ -199,7 +199,8 @@ export default function BankReconciliationWorkspace({
                         <img
                             src={emptyStateImg}
                             alt="Pilih bank yang akan direkonsiliasi"
-                            className="w-72 h-auto max-h-72 object-contain mb-4 opacity-80"
+                            className="w-48 h-auto max-h-48 object-contain mb-4 opacity-80 saturate-[0.8]"
+                            style={{ filter: 'saturate(0.8)' }}
                         />
                         <div className="text-slate-700 text-base sm:text-lg font-normal tracking-normal">
                             Pilih bank yang akan direkonsiliasi
