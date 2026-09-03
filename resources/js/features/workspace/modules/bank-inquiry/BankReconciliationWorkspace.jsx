@@ -178,7 +178,7 @@ export default function BankReconciliationWorkspace({
                             })}
                         </div>
                             {pagination && (
-                                <div className="bg-white p-2.5">
+                                <div className="bg-white">
                                     <Pagination
                                         page={pagination.page}
                                         perPage={pagination.perPage}

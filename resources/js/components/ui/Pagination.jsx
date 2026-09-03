@@ -46,8 +46,10 @@ export default function Pagination({
         }
     };
 
+    const cleanedClassName = className.replace(/\bmt-\S+/g, '').trim();
+
     return (
-        <div className={`flex flex-col items-center justify-between gap-4 bg-white px-4 py-3 sm:flex-row ${className}`.trim()}>
+        <div className={`flex flex-col items-center justify-between gap-3 bg-white px-2 pt-1 pb-2 sm:flex-row mt-1.5 ${cleanedClassName}`.trim()}>
             <div className="text-sm text-text-medium">
                 Menampilkan <span className="font-semibold text-text-dark">{from}</span> sampai{' '}
                 <span className="font-semibold text-text-dark">{to}</span> dari{' '}
