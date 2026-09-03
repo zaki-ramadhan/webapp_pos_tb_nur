@@ -47,7 +47,7 @@ class ActivityLogPage
                                 'rowKey' => 'userValue',
                                 'options' => [
                                     ['value' => 'all', 'label' => 'Pengguna: Semua'],
-                                    ['value' => 'tbnur-pos', 'label' => 'Pengguna: TB Nur POS System'],
+                                    ['value' => 'system', 'label' => 'Pengguna: Sistem'],
                                 ],
                             ],
                             [
