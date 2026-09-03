@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
@@ -7,13 +7,14 @@ import SecondaryTabs from '@/features/workspace/shared/SecondaryTabs';
 import { renderTabLabel } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { getPagePath } from '@/features/workspace/dashboard/workspaceUrls';
 
-function PrimaryTab({ tab, active, onSelect, onClose }) {
+const PrimaryTab = forwardRef(function PrimaryTab({ tab, active, onSelect, onClose }, ref) {
     const spacingClassName = tab.closable
         ? 'gap-1 pl-2.5 pr-1.5 sm:gap-1.5 sm:pl-3 sm:pr-1.5 md:gap-2 md:pl-4 md:pr-2'
         : 'gap-1.5 px-3 sm:gap-2 sm:px-3.5 md:gap-2.5 md:px-4.5';
 
     return (
         <div
+            ref={ref}
             role="tab"
             aria-selected={active}
             aria-label={tab.label}
@@ -42,7 +43,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
             ) : null}
         </div>
     );
-}
+});
 
 function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCloseAllPages }) {
     const [open, setOpen] = useState(false);
@@ -165,15 +166,70 @@ export default function DashboardPageTabs({
     onSelectLevel2Tab,
     onCloseLevel2Tab,
 }) {
+    const scrollContainerRef = useRef(null);
+    const activeTabRef = useRef(null);
+
+    useEffect(() => {
+        const frameId = requestAnimationFrame(() => {
+            if (!activeTabRef.current || !scrollContainerRef.current) {
+                return;
+            }
+            const container = scrollContainerRef.current;
+            const tab = activeTabRef.current;
+
+            const containerLeft = container.scrollLeft;
+            const containerWidth = container.clientWidth;
+            const tabLeft = tab.offsetLeft;
+            const tabWidth = tab.offsetWidth;
+            const tabRight = tabLeft + tabWidth;
+            const buffer = 16;
+
+            if (tabLeft < containerLeft) {
+                container.scrollTo({
+                    left: Math.max(0, tabLeft - buffer),
+                    behavior: 'smooth',
+                });
+            } else if (tabRight > containerLeft + containerWidth) {
+                container.scrollTo({
+                    left: tabRight - containerWidth + buffer,
+                    behavior: 'smooth',
+                });
+            }
+        });
+
+        return () => cancelAnimationFrame(frameId);
+    }, [activePage?.id, tabs]);
+
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) {
+            return;
+        }
+
+        const handleWheel = (e) => {
+            if (container.scrollWidth > container.clientWidth && e.deltaY !== 0 && !e.shiftKey) {
+                e.preventDefault();
+                container.scrollLeft += e.deltaY;
+            }
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+        return () => container.removeEventListener('wheel', handleWheel);
+    }, []);
+
     return (
         <div className="border-b border-ui-border-medium bg-ui-bg-panel pt-[3px]">
             <div className="bg-ui-bg-panel-light px-1 pt-0 sm:px-1.5">
                 <div className="flex items-stretch justify-between gap-1 sm:gap-2">
-                    <div className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    <div
+                        ref={scrollContainerRef}
+                        className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                    >
                         <div className="flex w-max min-w-full items-end gap-[5px]">
                             {tabs.map((tab) => (
                                 <PrimaryTab
                                     key={tab.id}
+                                    ref={activePage?.id === tab.id ? activeTabRef : null}
                                     tab={tab}
                                     active={activePage?.id === tab.id}
                                     onSelect={onSelectPage}
