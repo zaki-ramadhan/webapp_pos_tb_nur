@@ -118,19 +118,6 @@ export default function TableListView({
         }
     }, [keyword, filters, hasExternalPagination]);
 
-    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
-    const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
-    const activeSortDir = isServerSort ? (table.sortDirection || table.pagination?.sortDirection || sortDir) : sortDir;
-
-    const handleSortClick = (columnId) => {
-        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
-        if (isServerSort) {
-            const onSort = table.onSort || table.pagination?.onSort;
-            onSort?.(columnId, nextDir);
-        }
-        handleClientSort(columnId, nextDir);
-    };
-
     const filteredRows = useMemo(() => {
         if (isServerSearch) {
             return (table.rows ?? []).filter((row) => {
@@ -159,6 +146,19 @@ export default function TableListView({
             );
         });
     }, [isServerSearch, filters, keyword, table.columns, table.filters, table.rows]);
+
+    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
+    const activeSortDir = isServerSort ? (table.sortDirection || table.pagination?.sortDirection || sortDir) : sortDir;
+
+    const handleSortClick = (columnId) => {
+        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
+        if (isServerSort) {
+            const onSort = table.onSort || table.pagination?.onSort;
+            onSort?.(columnId, nextDir);
+        }
+        handleClientSort(columnId, nextDir);
+    };
 
     const displayRows = useMemo(() => {
         if (activeSortKey) {
