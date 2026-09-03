@@ -44,40 +44,40 @@
 
         <!-- Structured Data (JSON-LD): HardwareStore / LocalBusiness -->
         <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "HardwareStore",
-            "@id": "{{ url('/') }}#store",
-            "name": "Toko Bangunan & Material TB Nur",
-            "alternateName": ["TB Nur", "Toko Bangunan TB Nur", "TB Nur POS"],
-            "url": "{{ url('/') }}",
-            "logo": "{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}",
-            "image": "{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}",
-            "description": "Toko Bangunan & Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat, dan perlengkapan material proyek lengkap di Kaliwedi, Cirebon.",
-            "telephone": "+62-877-2498-5885",
-            "priceRange": "$$",
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "Jl. P. Anggabaya No.22, Guwa Kidul",
-                "addressLocality": "Kecamatan Kaliwedi",
-                "addressRegion": "Jawa Barat",
-                "postalCode": "45165",
-                "addressCountry": "ID"
-            },
-            "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": -6.6115,
-                "longitude": 108.4114
-            },
-            "openingHoursSpecification": [
-                {
-                    "@type": "OpeningHoursSpecification",
-                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                    "opens": "07:30",
-                    "closes": "17:00"
-                }
-            ]
-        }
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'HardwareStore',
+            '@id' => url('/') . '#store',
+            'name' => 'Toko Bangunan & Material TB Nur',
+            'alternateName' => ['TB Nur', 'Toko Bangunan TB Nur', 'TB Nur POS'],
+            'url' => url('/'),
+            'logo' => asset('assets/images/logo%20tb%20nur%20new.svg'),
+            'image' => asset('assets/images/logo%20tb%20nur%20new.svg'),
+            'description' => 'Toko Bangunan & Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat, dan perlengkapan material proyek lengkap di Kaliwedi, Cirebon.',
+            'telephone' => '+62-877-2498-5885',
+            'priceRange' => '$$',
+            'address' => [
+                '@type' => 'PostalAddress',
+                'streetAddress' => 'Jl. P. Anggabaya No.22, Guwa Kidul',
+                'addressLocality' => 'Kecamatan Kaliwedi',
+                'addressRegion' => 'Jawa Barat',
+                'postalCode' => '45165',
+                'addressCountry' => 'ID',
+            ],
+            'geo' => [
+                '@type' => 'GeoCoordinates',
+                'latitude' => -6.6115,
+                'longitude' => 108.4114,
+            ],
+            'openingHoursSpecification' => [
+                [
+                    '@type' => 'OpeningHoursSpecification',
+                    'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                    'opens' => '07:30',
+                    'closes' => '17:00',
+                ],
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
         </script>
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link
