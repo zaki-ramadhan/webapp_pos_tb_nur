@@ -218,6 +218,10 @@ class BackendResourceController extends Controller
             throw new AuthorizationException('Anda tidak memiliki hak akses untuk melihat data ini.');
         }
 
+        if ($resource === 'users' && $entity instanceof \App\Models\User) {
+            $this->validator->validateUserDeletion($request->user(), $entity);
+        }
+
         $this->writer->delete($blueprint, $entity);
 
         return response()->json([

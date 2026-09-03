@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import RadioField from '@/components/ui/RadioField';
@@ -13,15 +14,16 @@ import { toUserPayload } from '@/features/workspace/backend/workspaceBackendAdap
 
 const USER_FORM_TABS = [{ id: 'users-general', label: 'Pengguna' }];
 
-function AccessTypeField({ value, onChange }) {
+function AccessTypeField({ value, onChange, isActorSuperAdmin = false }) {
     const descriptions = {
         kasir: 'Kasir memiliki akses terbatas hanya untuk modul Penjualan & Penerimaan Penjualan. Modul lainnya dibatasi otomatis.',
-        super_admin: 'Owner Memiliki hak akses penuh tanpa batas ke seluruh modul dan pengaturan aplikasi.',
+        owner: 'Owner memiliki hak akses penuh ke seluruh transaksi operasional, laporan keuangan, dan manajemen staf toko.',
+        super_admin: 'Administrator Sistem memiliki hak akses root teknis tertinggi untuk mengelola seluruh sistem dan pemeliharaan.',
     };
 
     return (
         <div className="grid gap-3">
-            <div className="flex items-center gap-16 pt-0.5">
+            <div className="flex flex-wrap items-center gap-6 pt-0.5">
                 <RadioField
                     id="access-kasir"
                     name="access-type"
@@ -32,20 +34,31 @@ function AccessTypeField({ value, onChange }) {
                     containerClassName="w-auto inline-flex items-center"
                 />
                 <RadioField
-                    id="access-super-admin"
+                    id="access-owner"
                     name="access-type"
                     label="Owner"
-                    checked={value === 'super_admin' || value === 'administrator' || value === 'owner'}
-                    onChange={() => onChange('super_admin')}
+                    checked={value === 'owner' || value === 'admin'}
+                    onChange={() => onChange('owner')}
                     inputClassName="h-5 w-5"
                     containerClassName="w-auto inline-flex items-center"
                 />
+                {isActorSuperAdmin && (
+                    <RadioField
+                        id="access-super-admin"
+                        name="access-type"
+                        label="Administrator Sistem"
+                        checked={value === 'super_admin'}
+                        onChange={() => onChange('super_admin')}
+                        inputClassName="h-5 w-5"
+                        containerClassName="w-auto inline-flex items-center"
+                    />
+                )}
             </div>
-            {descriptions[value === 'operator' ? 'kasir' : (value === 'administrator' || value === 'owner' ? 'super_admin' : value)] && (
+            {descriptions[value === 'operator' ? 'kasir' : (value === 'admin' ? 'owner' : value)] && (
                 <div className="flex items-center gap-3 pt-0.5 mt-1">
                     <span className="block h-6 w-[5px] rounded-[2px] bg-bg-bullet-gray" aria-hidden="true" />
                     <p className="text-xs sm:text-sm italic leading-6 text-tab-active-border-t">
-                        {descriptions[value === 'operator' ? 'kasir' : (value === 'administrator' || value === 'owner' ? 'super_admin' : value)]}
+                        {descriptions[value === 'operator' ? 'kasir' : (value === 'admin' ? 'owner' : value)]}
                     </p>
                 </div>
             )}
@@ -55,15 +68,18 @@ function AccessTypeField({ value, onChange }) {
 
 function buildInitialValues(detailRow) {
     const roleIds = detailRow?.roleIds ?? [];
-    const isSuperAdmin = roleIds.includes(1) ||
-        detailRow?.accessType?.toLowerCase()?.includes('admin') ||
-        detailRow?.accessType?.toLowerCase()?.includes('owner');
+    const accessTypeStr = String(detailRow?.accessType ?? '').toLowerCase();
+    const isSuperAdmin = roleIds.includes(1) || accessTypeStr.includes('administrator sistem') || accessTypeStr.includes('super');
+    const isOwner = !isSuperAdmin && (roleIds.includes(3) || accessTypeStr.includes('owner') || accessTypeStr.includes('admin'));
 
+    let accessType = 'kasir';
     let accessTypeLabel = 'Kasir';
-    if (detailRow?.accessType) {
-        accessTypeLabel = detailRow.accessType;
-    } else if (isSuperAdmin) {
-        accessTypeLabel = 'Administrator';
+    if (isSuperAdmin) {
+        accessType = 'super_admin';
+        accessTypeLabel = 'Administrator Sistem';
+    } else if (isOwner) {
+        accessType = 'owner';
+        accessTypeLabel = 'Owner';
     }
 
     const email = detailRow?.email ?? '';
@@ -76,8 +92,8 @@ function buildInitialValues(detailRow) {
         password: '',
         isActive: detailRow?.isActive ?? true,
         accessGroupIds: detailRow?.accessGroupIds ?? [],
-        accessType: isSuperAdmin ? 'super_admin' : 'kasir',
-        accessTypeLabel,
+        accessType,
+        accessTypeLabel: detailRow?.accessType || accessTypeLabel,
         initialEmail: email.trim(),
         initialPhone: phone.trim(),
     };
@@ -113,13 +129,16 @@ function buildPayloadFromInput(inputVal, values, lookupData, isDetail, detailRow
         }
     }
 
-    const adminRole = lookupData?.roles?.find((r) => r.code === 'super_admin' || r.code === 'admin' || r.name?.toLowerCase()?.includes('admin') || r.name?.toLowerCase()?.includes('super'));
+    const superAdminRole = lookupData?.roles?.find((r) => r.code === 'super_admin');
+    const adminRole = lookupData?.roles?.find((r) => r.code === 'admin' || r.name?.toLowerCase()?.includes('admin'));
     const kasirRole = lookupData?.roles?.find((r) => r.code === 'kasir' || r.code === 'operator' || r.name?.toLowerCase()?.includes('kasir') || r.name?.toLowerCase()?.includes('operator'));
 
-    const isOwner = values.accessType === 'super_admin' || values.accessType === 'administrator' || values.accessType === 'owner';
-    const roleIds = isOwner
-        ? [adminRole?.id ?? 1]
-        : [kasirRole?.id ?? 2];
+    let roleIds = [kasirRole?.id ?? 2];
+    if (values.accessType === 'super_admin') {
+        roleIds = [superAdminRole?.id ?? 1];
+    } else if (values.accessType === 'owner' || values.accessType === 'admin') {
+        roleIds = [adminRole?.id ?? 3];
+    }
 
     return toUserPayload({
         ...values,
@@ -139,6 +158,17 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
 
     const recordId = detailRow ? String(detailRow.id) : null;
     const isDetail = Boolean(recordId);
+
+    const pageProps = usePage()?.props ?? {};
+    const authUser = pageProps.auth?.user || pageProps.user;
+    const isActorSuperAdmin = Boolean(
+        authUser?.isSuperAdmin ||
+        authUser?.role === 'Administrator Sistem' ||
+        ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'].includes(String(authUser?.email ?? '').toLowerCase())
+    );
+    const isSelf = Boolean(
+        detailRow?.id && authUser?.id && String(detailRow.id) === String(authUser.id)
+    );
 
     const initialValues = useMemo(() => buildInitialValues(detailRow), [detailRow]);
     const [values, setValues] = useState(initialValues);
@@ -288,13 +318,19 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                 onSave={handleSave}
                 actionsSlot={
                     isDetail ? (
-                        <DockActionButton
-                            label={saving ? 'Memproses...' : 'Hapus'}
-                            tone="danger"
-                            icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                            disabled={saving}
-                            onClick={() => setDeleteConfirmationOpen(true)}
-                        />
+                        !isSelf ? (
+                            <DockActionButton
+                                label={saving ? 'Memproses...' : 'Hapus'}
+                                tone="danger"
+                                icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                                disabled={saving}
+                                onClick={() => setDeleteConfirmationOpen(true)}
+                            />
+                        ) : (
+                            <div className="flex items-center text-xs text-slate-500 italic pr-3">
+                                Akun Anda sedang aktif digunakan
+                            </div>
+                        )
                     ) : null
                 }
             >
@@ -392,6 +428,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                             <AccessTypeField
                                 value={values.accessType}
                                 onChange={(v) => setValues({ ...values, accessType: v })}
+                                isActorSuperAdmin={isActorSuperAdmin}
                             />
 
                             <label className="pt-1.5 text-xs sm:text-sm text-section-tab-accent-text font-normal">Status</label>
