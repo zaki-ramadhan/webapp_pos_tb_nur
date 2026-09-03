@@ -45,9 +45,9 @@
         <!-- Structured Data (JSON-LD): HardwareStore / LocalBusiness -->
         <script type="application/ld+json">
         {!! json_encode([
-            '@context' => 'https://schema.org',
-            '@type' => 'HardwareStore',
-            '@id' => url('/') . '#store',
+            chr(64) . 'context' => 'https://schema.org',
+            chr(64) . 'type' => 'HardwareStore',
+            chr(64) . 'id' => url('/') . '#store',
             'name' => 'Toko Bangunan & Material TB Nur',
             'alternateName' => ['TB Nur', 'Toko Bangunan TB Nur', 'TB Nur POS'],
             'url' => url('/'),
@@ -57,7 +57,7 @@
             'telephone' => '+62-877-2498-5885',
             'priceRange' => '$$',
             'address' => [
-                '@type' => 'PostalAddress',
+                chr(64) . 'type' => 'PostalAddress',
                 'streetAddress' => 'Jl. P. Anggabaya No.22, Guwa Kidul',
                 'addressLocality' => 'Kecamatan Kaliwedi',
                 'addressRegion' => 'Jawa Barat',
@@ -65,13 +65,13 @@
                 'addressCountry' => 'ID',
             ],
             'geo' => [
-                '@type' => 'GeoCoordinates',
+                chr(64) . 'type' => 'GeoCoordinates',
                 'latitude' => -6.6115,
                 'longitude' => 108.4114,
             ],
             'openingHoursSpecification' => [
                 [
-                    '@type' => 'OpeningHoursSpecification',
+                    chr(64) . 'type' => 'OpeningHoursSpecification',
                     'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
                     'opens' => '07:30',
                     'closes' => '17:00',
