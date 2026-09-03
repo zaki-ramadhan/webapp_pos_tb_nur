@@ -119,11 +119,11 @@ function PromptModalContainer({ title, fields, resolve, onDestroy, showDelete })
                 open={deleteConfirmOpen}
                 onClose={() => setDeleteConfirmOpen(false)}
                 onConfirm={handleDelete}
-                title="Hapus Baris Detail"
+                title="Konfirmasi"
                 message="Apakah Anda yakin ingin menghapus baris detail ini dari daftar?"
-                confirmLabel="Hapus"
+                confirmLabel="Ya"
                 cancelLabel="Batal"
-                confirmVariant="danger"
+                confirmVariant="primary"
             />
         </WorkspaceDialog>
     );
