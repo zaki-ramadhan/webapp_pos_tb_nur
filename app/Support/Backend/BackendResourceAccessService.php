@@ -179,20 +179,29 @@ class BackendResourceAccessService
 
     public function isUserTimeRestricted(User $user): bool
     {
+        return $this->getUserTimeRestrictionMessage($user) !== null;
+    }
+
+    public function getUserTimeRestrictionMessage(User $user): ?string
+    {
         if ($user->hasAnyRoleCodes(['super_admin'])) {
-            return false;
+            return null;
         }
 
         $user->loadMissing('accessGroups');
         foreach ($user->accessGroups as $group) {
             if ((bool) $group->is_active && $group->access_limit_type === 'limited-time') {
                 if (! $this->isGroupWithinTimeLimits($group)) {
-                    return true;
+                    $days = $group->access_limit_days ?: 'hari kerja';
+                    $start = str_pad((string) ($group->access_limit_start_hour ?? '00'), 2, '0', STR_PAD_LEFT);
+                    $end = str_pad((string) ($group->access_limit_end_hour ?? '24'), 2, '0', STR_PAD_LEFT);
+
+                    return "Akses akun dibatasi. Anda hanya dapat masuk pada hari {$days} pukul {$start}.00 - {$end}.00 WIB.";
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
     public function isGroupWithinTimeLimits($group): bool

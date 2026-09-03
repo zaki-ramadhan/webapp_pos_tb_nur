@@ -56,6 +56,14 @@ class MobileAuthController extends Controller
             ], 403);
         }
 
+        $restrictionMessage = app(\App\Support\Backend\BackendResourceAccessService::class)->getUserTimeRestrictionMessage($user);
+        if ($restrictionMessage) {
+            return response()->json([
+                'success' => false,
+                'message' => $restrictionMessage,
+            ], 403);
+        }
+
         $user->update(['last_login_at' => now()]);
 
         $deviceName = ! empty($validated['device_name']) ? $validated['device_name'] : 'Mobile Device';
