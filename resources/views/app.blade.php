@@ -13,7 +13,7 @@
         <meta name="keywords" content="TB Nur, Toko Bangunan TB Nur, Toko Bangunan Cirebon, Toko Material Kaliwedi, Toko Bangunan Guwa Kidul, Bahan Bangunan Murah, Semen, Besi Beton, Pasir, Bata, Cat Tembok, TB Nur POS" />
         <meta name="author" content="Toko Bangunan &amp; Material TB Nur" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href="{{ url()->current() }}" />
+        <link rel="canonical" href="{{ request()->routeIs('home', 'login') ? url('/') : url()->current() }}" />
 
         <!-- Geo & Local SEO Tags -->
         <meta name="geo.region" content="ID-JB" />
