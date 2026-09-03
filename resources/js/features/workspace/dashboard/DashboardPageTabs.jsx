@@ -188,7 +188,7 @@ export default function DashboardPageTabs({
             </div>
 
             {activePage?.id !== 'dashboard' && activePage?.showViewIndicator && !level2Tabs.length ? (
-                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-2 pb-0 pt-0.5 sm:px-2.5 mt-0.5">
+                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5 mt-0.5">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                         <div
                             aria-disabled="true"
@@ -209,7 +209,7 @@ export default function DashboardPageTabs({
             ) : null}
 
             {activePage?.id !== 'dashboard' && level2Tabs.length ? (
-                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-2 pb-0 pt-0.5 sm:px-2.5 mt-0.5">
+                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5 mt-0.5">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                         <SecondaryTabs
                             tabs={level2Tabs}
