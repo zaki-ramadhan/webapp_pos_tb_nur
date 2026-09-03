@@ -17,3 +17,10 @@ export function buildFirstDayOfMonthDisplayDate() {
 
     return formatDisplayDate(new Date(today.getFullYear(), today.getMonth(), 1));
 }
+
+export function buildThirtyDaysAgoDisplayDate() {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+
+    return formatDisplayDate(d);
+}

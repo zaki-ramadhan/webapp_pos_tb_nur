@@ -100,7 +100,7 @@ export function mapBankRows(pageId, records) {
 
         return {
             ...base,
-            date: record.date ?? '',
+            date: formatIsoDate(record.date),
             description: record.description ?? '',
             mutation: record.mutation ?? '',
             type: record.type ?? '',
