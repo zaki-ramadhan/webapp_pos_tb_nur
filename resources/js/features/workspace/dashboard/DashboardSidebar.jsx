@@ -269,7 +269,7 @@ export default function DashboardSidebar({
                                 <div className="min-w-0">
                                     <p className="truncate text-sm font-semibold text-brand-darker">{user.name}</p>
                                     <p className="truncate text-xs font-medium text-text-light">
-                                        {user.role === 'Super Admin' || user.role === 'super_admin' ? 'Owner' : (user.role || 'Pengguna')}
+                                        {user.role === 'Super Admin' || user.role === 'super_admin' ? 'Administrator Sistem' : (user.role || 'Pengguna')}
                                     </p>
                                 </div>
                             </div>

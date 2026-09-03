@@ -88,4 +88,39 @@ class BackendResourceSecurityValidator
             }
         }
     }
+
+    /**
+     * Validasi kebijakan penghapusan pengguna (Anti-Self-Delete, Anti-Owner-Sikut, Proteksi Admin Sistem).
+     *
+     * @throws AuthorizationException
+     */
+    public function validateUserDeletion(User $actor, User $target): void
+    {
+        if ((int) $actor->id === (int) $target->id) {
+            throw new AuthorizationException('Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif digunakan.');
+        }
+
+        $developerEmails = [
+            'piscokpiscok2610@gmail.com',
+            'zakiram4dhan@gmail.com',
+        ];
+        $targetEmail = strtolower((string) $target->email);
+        $actorEmail = strtolower((string) $actor->email);
+
+        $isActorSuperAdmin = in_array($actorEmail, $developerEmails, true) || $actor->hasAnyRoleCodes(['super_admin']);
+        $isTargetSuperAdmin = in_array($targetEmail, $developerEmails, true) || $target->hasAnyRoleCodes(['super_admin']);
+
+        if ($isTargetSuperAdmin && ! $isActorSuperAdmin) {
+            throw new AuthorizationException('Anda tidak memiliki wewenang untuk menghapus akun Administrator Sistem.');
+        }
+
+        if (! $isActorSuperAdmin) {
+            $isTargetOwner = $target->hasAnyRoleCodes(['admin', 'owner'])
+                || ($target->accessGroups()->where('code', 'OWNER')->exists());
+
+            if ($isTargetOwner) {
+                throw new AuthorizationException('Owner tidak memiliki wewenang untuk menghapus akun sesama Owner.');
+            }
+        }
+    }
 }

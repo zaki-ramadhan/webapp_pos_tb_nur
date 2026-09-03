@@ -371,7 +371,10 @@ export function mapUserRow(record) {
     const roles = (record.roles ?? [])
         .map((role) => {
             const name = String(role.name ?? '');
-            if (name.toLowerCase().includes('super') || name.toLowerCase().includes('admin') || role.code === 'admin') {
+            if (name.toLowerCase().includes('super') || role.code === 'super_admin') {
+                return 'Administrator Sistem';
+            }
+            if (name.toLowerCase().includes('admin') || role.code === 'admin' || name.toLowerCase().includes('owner') || role.code === 'owner') {
                 return 'Owner';
             }
             if (name.toLowerCase().includes('operator') || role.code === 'operator' || name.toLowerCase().includes('kasir')) {
@@ -387,7 +390,8 @@ export function mapUserRow(record) {
         .filter(Boolean)
         .join(', ');
 
-    const primaryRole = roles || (record.is_super_admin ? 'Owner' : 'Kasir');
+    const isSuper = (record.roles ?? []).some((r) => r.code === 'super_admin') || record.is_super_admin;
+    const primaryRole = roles || (isSuper ? 'Administrator Sistem' : 'Kasir');
     const displayAccessType = accessGroups ? `${primaryRole} (${accessGroups})` : primaryRole;
 
     return {

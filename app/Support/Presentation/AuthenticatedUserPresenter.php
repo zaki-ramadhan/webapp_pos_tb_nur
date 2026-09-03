@@ -33,7 +33,7 @@ final class AuthenticatedUserPresenter
     {
         try {
             $email = strtolower((string) $user->email);
-            if (in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true)) {
+            if (in_array($email, ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'], true)) {
                 return true;
             }
 
@@ -57,11 +57,22 @@ final class AuthenticatedUserPresenter
     {
         try {
             $email = strtolower((string) $user->email);
-            if (in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true) || $user->hasAnyRoleCodes(['super_admin'])) {
+
+            // 1. Administrator Sistem (Developer Whitelist & Super Admin)
+            if (in_array($email, ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'], true) || $user->hasAnyRoleCodes(['super_admin'])) {
+                return 'Administrator Sistem';
+            }
+
+            // 2. Owner Toko (berdasarkan role admin/owner atau access group OWNER atau email owner awal)
+            $user->loadMissing('accessGroups');
+            $isOwner = $user->hasAnyRoleCodes(['admin', 'owner'])
+                || ($user->accessGroups && $user->accessGroups->contains(fn ($g) => strtoupper($g->code ?? '') === 'OWNER'))
+                || (in_array($email, ['nurhayati.karya@gmail.com'], true));
+
+            if ($isOwner) {
                 return 'Owner';
             }
 
-            $user->loadMissing('accessGroups');
             $groupName = $user->accessGroups->first()?->name;
             if ($groupName) {
                 return $groupName;

