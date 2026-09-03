@@ -3,7 +3,7 @@ import Pusher from 'pusher-js';
 
 window.Pusher = Pusher;
 
-const getReverbKey = () => (typeof window !== 'undefined' ? window.__REVERB_KEY__ : null) || import.meta.env.VITE_REVERB_APP_KEY || 'pos_tb_nur_reverb_key';
+const getReverbKey = () => ((typeof window !== 'undefined' && window.__REVERB_KEY__) ? window.__REVERB_KEY__ : null) || import.meta.env.VITE_REVERB_APP_KEY || null;
 const reverbKey = getReverbKey();
 
 if (typeof window !== 'undefined' && reverbKey) {

@@ -20,15 +20,20 @@ class BackendResourceIndexQuery
         }
 
         $modelClass = $blueprint->modelClass();
+        $modelInstance = new $modelClass();
+        $tableName = $modelInstance->getTable();
         $search = trim((string) ($filters['search'] ?? ''));
         $page = max(1, (int) ($filters['page'] ?? request()->input('page', 1)));
         $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 1000));
+
+        if (! Schema::hasTable($tableName)) {
+            return new \Illuminate\Pagination\LengthAwarePaginator([], 0, $perPage, $page);
+        }
+
         $query = $modelClass::query()->with($blueprint->with);
 
         $user = auth()->user();
         if ($user && ! $user->hasAnyRoleCodes(['super_admin'])) {
-            $modelInstance = new $modelClass();
-            $tableName = $modelInstance->getTable();
             if (Schema::hasColumn($tableName, 'branch_id')) {
                 if ($user->branches()->exists()) {
                     $allowedBranchIds = $user->branches->pluck('id')->toArray();

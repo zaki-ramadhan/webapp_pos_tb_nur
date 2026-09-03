@@ -58,19 +58,6 @@ export default function GeneralJournalTableView({
         return () => clearTimeout(timer);
     }, [keyword, isServerSearch, config.table.onSearch, config.table.pagination?.onSearch]);
 
-    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
-    const activeSortKey = isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy || sortKey) : sortKey;
-    const activeSortDir = isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection || sortDir) : sortDir;
-
-    const handleSortClick = (columnId) => {
-        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
-        if (isServerSort) {
-            const onSort = config.table.onSort || config.table.pagination?.onSort;
-            onSort?.(columnId, nextDir);
-        }
-        handleClientSort(columnId, nextDir);
-    };
-
     const filteredRows = useMemo(() => {
         if (isServerSearch) {
             return config.table.rows.filter((row) => {
@@ -113,6 +100,19 @@ export default function GeneralJournalTableView({
             );
         });
     }, [isServerSearch, config.table.columns, config.table.filters, config.table.rows, filters, keyword]);
+
+    const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
+    const activeSortKey = isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy || sortKey) : sortKey;
+    const activeSortDir = isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection || sortDir) : sortDir;
+
+    const handleSortClick = (columnId) => {
+        const nextDir = activeSortKey === columnId ? (activeSortDir === 'asc' ? 'desc' : 'asc') : 'asc';
+        if (isServerSort) {
+            const onSort = config.table.onSort || config.table.pagination?.onSort;
+            onSort?.(columnId, nextDir);
+        }
+        handleClientSort(columnId, nextDir);
+    };
 
     const sortedRows = useMemo(() => {
         if (activeSortKey) {

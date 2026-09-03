@@ -52,6 +52,15 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
         setFilterValues((current) => ({ ...current, [filterId]: value }));
     }
 
+    const filteredRows = useMemo(() => {
+        return table.rows.filter((row) =>
+            table.filters.every((filter) => {
+                const selected = filterValues[filter.id];
+                return !selected || selected === 'all' || row[filter.rowKey] === selected;
+            }),
+        );
+    }, [filterValues, table.filters, table.rows]);
+
     const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
     const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
     const activeSortDir = isServerSort ? (table.sortDirection || table.pagination?.sortDirection || sortDir) : sortDir;
@@ -64,15 +73,6 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
         }
         handleClientSort(columnId, nextDir);
     };
-
-    const filteredRows = useMemo(() => {
-        return table.rows.filter((row) =>
-            table.filters.every((filter) => {
-                const selected = filterValues[filter.id];
-                return !selected || selected === 'all' || row[filter.rowKey] === selected;
-            }),
-        );
-    }, [filterValues, table.filters, table.rows]);
 
     const sortedRows = useMemo(() => {
         if (activeSortKey) {
