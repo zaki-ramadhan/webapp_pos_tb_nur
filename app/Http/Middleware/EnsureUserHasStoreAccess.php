@@ -57,6 +57,27 @@ class EnsureUserHasStoreAccess
             ], 403);
         }
 
+        // 4. Pembatasan waktu operasional grup akses
+        if (! $request->routeIs('logout')) {
+            $restrictionMessage = app(\App\Support\Backend\BackendResourceAccessService::class)->getUserTimeRestrictionMessage($user);
+            if ($restrictionMessage) {
+                if ($request->expectsJson() || $request->is('api/*')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $restrictionMessage,
+                    ], 403);
+                }
+
+                auth()->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('home')->withErrors([
+                    'auth' => $restrictionMessage,
+                ]);
+            }
+        }
+
         return $next($request);
     }
 }

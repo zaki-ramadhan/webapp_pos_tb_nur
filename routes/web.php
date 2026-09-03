@@ -31,7 +31,7 @@ Route::middleware('guest')->group(function (): void {
     Route::post('/reset-password', UpdatePasswordController::class)->name('password.update')->middleware('throttle:5,1');
 });
 
-Route::middleware('auth')->group(function (): void {
+Route::middleware(['auth', \App\Http\Middleware\EnsureUserHasStoreAccess::class])->group(function (): void {
     Route::get('/api/workspace/dashboard/widgets-data', [DashboardController::class, 'getWidgetsData'])->name('dashboard.widgets-data');
     Route::get('/api/workspace/dashboard/widget-data', [DashboardController::class, 'getSingleWidgetData'])->name('dashboard.widget-data');
     Route::get('/dashboard/{sample?}', DashboardController::class)->name('dashboard');

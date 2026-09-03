@@ -149,6 +149,18 @@ class GoogleLoginController extends Controller
                 ->route('home')
                 ->with('warning', "Akun Anda ({$user->email}) belum memiliki Hak Akses. Silakan hubungi Pemilik Toko (Owner) untuk mengaktifkan akses akun Anda.");
         }
+        $restrictionMessage = app(\App\Support\Backend\BackendResourceAccessService::class)->getUserTimeRestrictionMessage($user);
+        if ($restrictionMessage) {
+            if ($usePopup) {
+                return $this->respondWithPopupError($restrictionMessage);
+            }
+
+            return redirect()
+                ->route('home')
+                ->withErrors([
+                    'auth' => $restrictionMessage,
+                ]);
+        }
 
         Auth::login($user);
         $request->session()->regenerate();

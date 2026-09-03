@@ -71,11 +71,12 @@ class LoginController extends Controller
             );
         }
 
-        if (app(\App\Support\Backend\BackendResourceAccessService::class)->isUserTimeRestricted($user)) {
+        $restrictionMessage = app(\App\Support\Backend\BackendResourceAccessService::class)->getUserTimeRestrictionMessage($user);
+        if ($restrictionMessage) {
             RateLimiter::hit($this->throttleKey($request));
 
             throw ValidationException::withMessages([
-                'auth' => 'Akses login dibatasi. Akun Anda tidak diperbolehkan masuk di luar jam kerja grup akses.',
+                'auth' => $restrictionMessage,
             ]);
         }
 
