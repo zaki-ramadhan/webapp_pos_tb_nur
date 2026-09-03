@@ -18,6 +18,16 @@ Route::get('/', function () {
         : redirect()->route('login');
 })->name('home');
 
+Route::get('/sitemap.xml', function () {
+    $path = public_path('sitemap.xml');
+    return response(file_exists($path) ? file_get_contents($path) : '', 200, ['Content-Type' => 'application/xml']);
+});
+
+Route::get('/robots.txt', function () {
+    $path = public_path('robots.txt');
+    return response(file_exists($path) ? file_get_contents($path) : '', 200, ['Content-Type' => 'text/plain']);
+});
+
 Route::get('/auth/google', [GoogleLoginController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback'])->name('auth.google.callback');
 

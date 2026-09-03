@@ -3,9 +3,82 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title inertia>{{ config('app.name', 'TB Nur POS') }}</title>
+        <title inertia>{{ config('app.name', 'Toko Bangunan & Material TB Nur') }}</title>
+
+        <!-- Google Search Console Verification -->
+        <meta name="google-site-verification" content="Hs028BUYs6Ay-vu6NwlfYy5XElxuDJIqRocvUjpq9GY" />
+
+        <!-- Primary SEO Meta Tags -->
+        <meta name="description" content="Toko Bangunan &amp; Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat, pipa, dan perlengkapan material proyek lengkap di Kaliwedi, Cirebon." />
+        <meta name="keywords" content="TB Nur, Toko Bangunan TB Nur, Toko Bangunan Cirebon, Toko Material Kaliwedi, Toko Bangunan Guwa Kidul, Bahan Bangunan Murah, Semen, Besi Beton, Pasir, Bata, Cat Tembok, TB Nur POS" />
+        <meta name="author" content="Toko Bangunan &amp; Material TB Nur" />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <link rel="canonical" href="{{ url()->current() }}" />
+
+        <!-- Geo & Local SEO Tags -->
+        <meta name="geo.region" content="ID-JB" />
+        <meta name="geo.placename" content="Kabupaten Cirebon" />
+        <meta name="geo.position" content="-6.6115;108.4114" />
+        <meta name="ICBM" content="-6.6115, 108.4114" />
+
+        <!-- Open Graph / Facebook / WhatsApp -->
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="id_ID" />
+        <meta property="og:url" content="{{ url('/') }}" />
+        <meta property="og:site_name" content="TB Nur - Toko Bangunan &amp; Material" />
+        <meta property="og:title" content="Toko Bangunan &amp; Material TB Nur Cirebon" />
+        <meta property="og:description" content="Pusat penjualan bahan bangunan dan material berkualitas di Kaliwedi, Cirebon. Semen, besi, pasir, bata, dan alat bangunan lengkap." />
+        <meta property="og:image" content="{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}" />
+        <meta property="og:image:alt" content="Logo Toko Bangunan &amp; Material TB Nur" />
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="{{ url('/') }}" />
+        <meta name="twitter:title" content="Toko Bangunan &amp; Material TB Nur Cirebon" />
+        <meta name="twitter:description" content="Pusat penjualan bahan bangunan dan material berkualitas di Kaliwedi, Cirebon. Semen, besi, pasir, bata, dan alat bangunan lengkap." />
+        <meta name="twitter:image" content="{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}" />
+
+        <!-- Favicon -->
         <link rel="icon" type="image/svg+xml" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
         <link rel="shortcut icon" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
+
+        <!-- Structured Data (JSON-LD): HardwareStore / LocalBusiness -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "HardwareStore",
+            "@id": "{{ url('/') }}#store",
+            "name": "Toko Bangunan & Material TB Nur",
+            "alternateName": ["TB Nur", "Toko Bangunan TB Nur", "TB Nur POS"],
+            "url": "{{ url('/') }}",
+            "logo": "{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}",
+            "image": "{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}",
+            "description": "Toko Bangunan & Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat, dan perlengkapan material proyek lengkap di Kaliwedi, Cirebon.",
+            "telephone": "+62-877-2498-5885",
+            "priceRange": "$$",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Jl. P. Anggabaya No.22, Guwa Kidul",
+                "addressLocality": "Kecamatan Kaliwedi",
+                "addressRegion": "Jawa Barat",
+                "postalCode": "45165",
+                "addressCountry": "ID"
+            },
+            "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": -6.6115,
+                "longitude": 108.4114
+            },
+            "openingHoursSpecification": [
+                {
+                    "@type": "OpeningHoursSpecification",
+                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                    "opens": "07:30",
+                    "closes": "17:00"
+                }
+            ]
+        }
+        </script>
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link
             href="https://fonts.bunny.net/css?family=montserrat:400,500,600,700,800"
@@ -17,8 +90,19 @@
             window.__REVERB_KEY__ = "{{ config('broadcasting.connections.reverb.key') ?? env('REVERB_APP_KEY', 'pos_tb_nur_reverb_key') }}";
         </script>
         <x-inertia::head />
-    </head>
     <body class="bg-[var(--color-surface)] text-[var(--color-ink)] antialiased">
+        <noscript>
+            <div style="padding: 24px; font-family: sans-serif; max-width: 800px; margin: 0 auto;">
+                <h1 style="color: #1e3a8a; font-size: 24px; font-weight: bold;">Toko Bangunan &amp; Material TB Nur Cirebon</h1>
+                <p style="color: #334155; font-size: 15px; line-height: 1.6;">
+                    Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat tembok, pipa, dan perlengkapan material konstruksi serta renovasi lengkap di Kaliwedi, Cirebon.
+                </p>
+                <div style="margin-top: 16px; font-size: 14px; color: #475569;">
+                    <p><strong>Alamat:</strong> Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi, Kabupaten Cirebon, Jawa Barat 45165</p>
+                    <p><strong>WhatsApp / Telepon:</strong> 0877-2498-5885</p>
+                </div>
+            </div>
+        </noscript>
         <div id="initial-loader" style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background-color: #f8f9fb; z-index: 99999; font-family: 'Montserrat', sans-serif; transition: opacity 0.3s ease-out;">
             <div style="text-align: center;">
                 <div style="width: 50px; height: 50px; border: 4px solid #e2e8f0; border-top-color: #21539b; border-radius: 50%; animation: initial-loader-spin 1s linear infinite; margin: 0 auto 20px;"></div>
