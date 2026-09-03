@@ -107,15 +107,23 @@ class BackendResourceSecurityValidator
         $targetEmail = strtolower((string) $target->email);
         $actorEmail = strtolower((string) $actor->email);
 
-        $isActorSuperAdmin = in_array($actorEmail, $developerEmails, true) || $actor->hasAnyRoleCodes(['super_admin']);
-        $isTargetSuperAdmin = in_array($targetEmail, $developerEmails, true) || $target->hasAnyRoleCodes(['super_admin']);
+        $isActorDeveloper = in_array($actorEmail, $developerEmails, true);
+        $isTargetDeveloper = in_array($targetEmail, $developerEmails, true);
 
-        if ($isTargetSuperAdmin && ! $isActorSuperAdmin) {
-            throw new AuthorizationException('Anda tidak memiliki wewenang untuk menghapus akun Administrator Sistem.');
+        if ($isTargetDeveloper) {
+            if (! $isActorDeveloper) {
+                throw new AuthorizationException('Anda tidak memiliki wewenang untuk menghapus akun Administrator Sistem.');
+            }
+
+            $totalAdmins = User::whereIn('email', $developerEmails)->count();
+            if ($totalAdmins <= 1) {
+                throw new AuthorizationException('Tidak dapat menghapus akun Administrator Sistem terakhir.');
+            }
         }
 
-        if (! $isActorSuperAdmin) {
-            $isTargetOwner = $target->hasAnyRoleCodes(['admin', 'owner'])
+        if (! $isActorDeveloper) {
+            $isTargetOwner = in_array($targetEmail, ['nurhayati.karya@gmail.com'], true)
+                || $target->hasAnyRoleCodes(['admin', 'owner', 'super_admin'])
                 || ($target->accessGroups()->where('code', 'OWNER')->exists());
 
             if ($isTargetOwner) {
