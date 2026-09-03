@@ -291,11 +291,11 @@ export function InventoryAdjustmentFormView({
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={onDeleteClick}
-                title="Hapus Dokumen"
+                title="Konfirmasi"
                 message="Dokumen ini akan dihapus permanen. Lanjutkan?"
-                confirmLabel="Hapus"
+                confirmLabel="Ya"
                 cancelLabel="Batal"
-                confirmVariant="danger"
+                confirmVariant="primary"
                 confirmLoading={saving}
             />
         </>

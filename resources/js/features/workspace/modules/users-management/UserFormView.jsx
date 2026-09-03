@@ -329,6 +329,15 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
 
     const resolvedForm = useMemo(() => ({ ...form, tabs: USER_FORM_TABS }), [form]);
 
+    const userIdentifier = useMemo(() => {
+        const name = (values.name || '').trim();
+        const contact = (values.email || values.phone || '').trim();
+        if (name && contact && name.toLowerCase() !== contact.toLowerCase()) {
+            return `${name} (${contact})`;
+        }
+        return name || contact || 'pengguna ini';
+    }, [values.name, values.email, values.phone]);
+
     return (
         <>
             <ModuleFormTemplate
@@ -417,6 +426,30 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                                     inputClassName="text-xs sm:text-sm"
                                 />
                             </div>
+
+                            <label className="text-xs sm:text-sm text-section-tab-accent-text font-normal">
+                                Status
+                            </label>
+                            <div className="flex items-center gap-8 pt-0.5">
+                                <RadioField
+                                    id="detail-status-active"
+                                    name="detail-user-status"
+                                    label="Aktif"
+                                    checked={values.isActive === true}
+                                    onChange={() => setValues({ ...values, isActive: true })}
+                                    inputClassName="h-5 w-5"
+                                    containerClassName="w-auto inline-flex items-center"
+                                />
+                                <RadioField
+                                    id="detail-status-inactive"
+                                    name="detail-user-status"
+                                    label="Nonaktif"
+                                    checked={values.isActive === false}
+                                    onChange={() => setValues({ ...values, isActive: false })}
+                                    inputClassName="h-5 w-5"
+                                    containerClassName="w-auto inline-flex items-center"
+                                />
+                            </div>
                         </div>
                     </div>
                 ) : (
@@ -478,9 +511,10 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
-                title="Hapus Pengguna"
-                message={`Apakah Anda yakin ingin menghapus pengguna "${values.name || values.email || values.phone}"?`}
-                confirmLabel="Hapus"
+                title="Konfirmasi"
+                message={`Apakah Anda yakin ingin menghapus pengguna "${userIdentifier}"?`}
+                confirmLabel="Ya"
+                cancelLabel="Batal"
                 tone="danger"
             />
         </>
