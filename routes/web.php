@@ -28,6 +28,10 @@ Route::get('/robots.txt', function () {
     return response(file_exists($path) ? file_get_contents($path) : '', 200, ['Content-Type' => 'text/plain']);
 });
 
+Route::get('/favicon.ico', function () {
+    return redirect('/assets/images/logo%20tb%20nur%20new.svg', 301);
+});
+
 Route::get('/auth/google', [GoogleLoginController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback'])->name('auth.google.callback');
 
