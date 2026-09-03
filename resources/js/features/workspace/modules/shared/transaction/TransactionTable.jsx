@@ -17,9 +17,9 @@ import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 import { TRANSACTION_LINE_TITLE_CLASS_NAME } from './transactionStyles';
 
-export function resolveTransactionAlignClassName(align) {
+export function resolveTransactionAlignClassName(align, column = null) {
     if (align === 'right') return 'text-right';
-    if (align === 'center') return 'text-center';
+    if (align === 'center' || column?.id === '__no' || column?.id === 'no' || column?.label === 'No.' || column?.label === 'No') return 'text-center';
     return 'text-left';
 }
 
@@ -97,7 +97,7 @@ export function TransactionDataTable({
                             return (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${isCheckbox ? 'w-px px-3 text-center' : column.widthClassName ?? ''} ${isCheckbox ? '' : 'px-3'} text-base font-light text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
+                                    className={`${isCheckbox ? 'w-px px-3 text-center' : column.widthClassName ?? ''} ${isCheckbox ? '' : 'px-3'} text-base font-light text-white ${resolveTransactionAlignClassName(column.align, column)}`.trim()}
                                     style={getCellStyle(column.id, {
                                         position: 'relative',
                                         ...(minWidth ? { minWidth } : {}),
@@ -173,7 +173,7 @@ export function TransactionDataTable({
                                         return (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`${isCheckbox ? 'w-px px-3 text-center' : 'px-3'} text-base text-text-workspace-dark ${resolveTransactionAlignClassName(isCheckbox ? 'center' : column.align)} ${cellClassName}`.trim()}
+                                                className={`${isCheckbox ? 'w-px px-3 text-center' : 'px-3'} text-base text-text-workspace-dark ${resolveTransactionAlignClassName(isCheckbox ? 'center' : column.align, column)} ${cellClassName}`.trim()}
                                                 style={getCellStyle(column.id, isCheckbox ? { minWidth: '0px', width: '1px' } : {})}
                                                 onResizeStart={(e) => handleResizeStart(e, column.id)}
                                             >
