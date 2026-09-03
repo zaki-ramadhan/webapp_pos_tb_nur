@@ -4,7 +4,8 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title inertia>{{ config('app.name', 'TB Nur POS') }}</title>
-        <link rel="icon" type="image/svg+xml" href="/assets/images/logo tb nur new.svg" />
+        <link rel="icon" type="image/svg+xml" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
+        <link rel="shortcut icon" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link
             href="https://fonts.bunny.net/css?family=montserrat:400,500,600,700,800"
