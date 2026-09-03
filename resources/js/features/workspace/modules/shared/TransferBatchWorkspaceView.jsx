@@ -78,8 +78,8 @@ export default function TransferBatchWorkspaceView({ config }) {
     const firstColumnIsCheckbox = config.table.columns[0]?.kind === 'checkbox';
 
     return (
-        <div className="flex min-h-full flex-col overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light">
-            <div className="border-b border-ui-border-medium px-3 py-3">
+        <div className="flex min-h-full flex-col">
+            <div className="px-1 py-2">
                 <div className="flex flex-col gap-3 lg:flex-row xl:items-center xl:justify-between">
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
                         {(config.controls ?? []).map((control) => (

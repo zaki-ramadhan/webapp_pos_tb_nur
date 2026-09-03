@@ -162,7 +162,7 @@ export default function DepositTableView({
     const { handleResizeStart, getCellStyle } = useColumnResize('deposit-workspace');
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+        <div className="flex min-h-full flex-col">
             <TableToolbar
                 size="compact"
                 className="space-y-3"

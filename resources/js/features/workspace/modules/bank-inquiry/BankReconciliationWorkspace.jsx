@@ -74,7 +74,7 @@ export default function BankReconciliationWorkspace({
     };
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light text-slate-900">
+        <div className="flex min-h-full flex-col text-slate-900">
             {/* Filter & Upload Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
@@ -195,7 +195,7 @@ export default function BankReconciliationWorkspace({
                         )}
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-white min-h-[360px]">
+                    <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[360px]">
                         <img
                             src={emptyStateImg}
                             alt="Pilih bank yang akan direkonsiliasi"

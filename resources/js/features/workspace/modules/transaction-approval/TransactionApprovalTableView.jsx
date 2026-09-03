@@ -83,7 +83,7 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
     const { handleResizeStart, getCellStyle } = useColumnResize('transaction-approval');
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+        <div className="flex min-h-full flex-col">
             <TableToolbar
                 filters={table.filters?.length ? <ApprovalFilterSlot filters={table.filters} values={filterValues} onChange={handleFilterChange} /> : null}
                 size="compact"

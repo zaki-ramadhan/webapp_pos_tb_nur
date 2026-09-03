@@ -106,7 +106,7 @@ export default function CashReceiptTableView({
     const sortedRows = isServerSort ? filteredRows : clientSortedRows;
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+        <div className="flex min-h-full flex-col">
             <TableToolbar
                 {...cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters, SelectField)}
                 filters={null}
