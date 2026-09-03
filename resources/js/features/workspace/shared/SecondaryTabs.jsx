@@ -1,7 +1,9 @@
+import { forwardRef, useEffect, useRef } from 'react';
+
 import { CloseIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import { renderTabLabel } from '@/features/workspace/dashboard/WorkspaceDraftState';
 
-export function SecondaryTab({ tab, active, onSelect, onClose, tabsCount = 1 }) {
+export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSelect, onClose, tabsCount = 1 }, ref) {
     const isViewTab = tab.kind === 'view';
     const useViewTabStyle = isViewTab && tabsCount > 1;
     const spacingClassName = tab.closable
@@ -25,6 +27,7 @@ export function SecondaryTab({ tab, active, onSelect, onClose, tabsCount = 1 }) 
 
     return (
         <div
+            ref={ref}
             role="button"
             tabIndex={canClick ? 0 : -1}
             onClick={() => {
@@ -61,7 +64,7 @@ export function SecondaryTab({ tab, active, onSelect, onClose, tabsCount = 1 }) 
             ) : null}
         </div>
     );
-}
+});
 
 export default function SecondaryTabs({
     tabs,
@@ -71,22 +74,79 @@ export default function SecondaryTabs({
     className = '',
     gapClassName = 'gap-[4px]',
 }) {
+    const containerRef = useRef(null);
+    const activeTabRef = useRef(null);
+
+    useEffect(() => {
+        const frameId = requestAnimationFrame(() => {
+            if (!activeTabRef.current || !containerRef.current) {
+                return;
+            }
+            const container = containerRef.current;
+            const tab = activeTabRef.current;
+
+            const containerLeft = container.scrollLeft;
+            const containerWidth = container.clientWidth;
+            const tabLeft = tab.offsetLeft;
+            const tabWidth = tab.offsetWidth;
+            const tabRight = tabLeft + tabWidth;
+            const buffer = 16;
+
+            if (tabLeft < containerLeft) {
+                container.scrollTo({
+                    left: Math.max(0, tabLeft - buffer),
+                    behavior: 'smooth',
+                });
+            } else if (tabRight > containerLeft + containerWidth) {
+                container.scrollTo({
+                    left: tabRight - containerWidth + buffer,
+                    behavior: 'smooth',
+                });
+            }
+        });
+
+        return () => cancelAnimationFrame(frameId);
+    }, [activeTabId, tabs]);
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) {
+            return;
+        }
+
+        const handleWheel = (e) => {
+            if (container.scrollWidth > container.clientWidth && e.deltaY !== 0 && !e.shiftKey) {
+                e.preventDefault();
+                container.scrollLeft += e.deltaY;
+            }
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+        return () => container.removeEventListener('wheel', handleWheel);
+    }, []);
+
     if (!tabs.length) {
         return null;
     }
 
     return (
-        <div className={`flex min-w-max items-end ${gapClassName} ${className}`.trim()}>
-            {tabs.map((tab) => (
-                <SecondaryTab
-                    key={tab.id}
-                    tab={tab}
-                    active={activeTabId === tab.id}
-                    onSelect={onSelectTab}
-                    onClose={onCloseTab}
-                    tabsCount={tabs.length}
-                />
-            ))}
+        <div
+            ref={containerRef}
+            className={`min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`.trim()}
+        >
+            <div className={`flex w-max min-w-full items-end ${gapClassName}`}>
+                {tabs.map((tab) => (
+                    <SecondaryTab
+                        key={tab.id}
+                        ref={activeTabId === tab.id ? activeTabRef : null}
+                        tab={tab}
+                        active={activeTabId === tab.id}
+                        onSelect={onSelectTab}
+                        onClose={onCloseTab}
+                        tabsCount={tabs.length}
+                    />
+                ))}
+            </div>
         </div>
     );
 }
