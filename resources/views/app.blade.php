@@ -40,41 +40,57 @@
 
         <!-- Favicon -->
         <link rel="icon" type="image/svg+xml" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
+        <link rel="apple-touch-icon" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
         <link rel="shortcut icon" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
 
-        <!-- Structured Data (JSON-LD): HardwareStore / LocalBusiness -->
+        <!-- Structured Data (JSON-LD): WebSite (for Google Site Name) & HardwareStore (for Business Profile) -->
         <script type="application/ld+json">
         {!! json_encode([
             chr(64) . 'context' => 'https://schema.org',
-            chr(64) . 'type' => 'HardwareStore',
-            chr(64) . 'id' => url('/') . '#store',
-            'name' => 'Toko Bangunan & Material TB Nur',
-            'alternateName' => ['TB Nur', 'Toko Bangunan TB Nur', 'TB Nur POS'],
-            'url' => url('/'),
-            'logo' => asset('assets/images/logo%20tb%20nur%20new.svg'),
-            'image' => asset('assets/images/logo%20tb%20nur%20new.svg'),
-            'description' => 'Toko Bangunan & Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat, dan perlengkapan material proyek lengkap di Kaliwedi, Cirebon.',
-            'telephone' => '+62-877-2498-5885',
-            'priceRange' => '$$',
-            'address' => [
-                chr(64) . 'type' => 'PostalAddress',
-                'streetAddress' => 'Jl. P. Anggabaya No.22, Guwa Kidul',
-                'addressLocality' => 'Kecamatan Kaliwedi',
-                'addressRegion' => 'Jawa Barat',
-                'postalCode' => '45165',
-                'addressCountry' => 'ID',
-            ],
-            'geo' => [
-                chr(64) . 'type' => 'GeoCoordinates',
-                'latitude' => -6.6115,
-                'longitude' => 108.4114,
-            ],
-            'openingHoursSpecification' => [
+            chr(64) . 'graph' => [
                 [
-                    chr(64) . 'type' => 'OpeningHoursSpecification',
-                    'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-                    'opens' => '07:30',
-                    'closes' => '17:00',
+                    chr(64) . 'type' => 'WebSite',
+                    chr(64) . 'id' => url('/') . '#website',
+                    'url' => url('/'),
+                    'name' => 'TB Nur',
+                    'alternateName' => ['Toko Bangunan TB Nur', 'Toko Bangunan & Material TB Nur'],
+                    'publisher' => [
+                        chr(64) . 'id' => url('/') . '#store',
+                    ],
+                ],
+                [
+                    chr(64) . 'type' => 'HardwareStore',
+                    chr(64) . 'id' => url('/') . '#store',
+                    'name' => 'Toko Bangunan & Material TB Nur',
+                    'alternateName' => ['TB Nur', 'Toko Bangunan TB Nur', 'Toko Bangunan Nur Guwa Kidul'],
+                    'url' => url('/'),
+                    'logo' => asset('assets/images/logo%20tb%20nur%20new.svg'),
+                    'image' => asset('assets/images/logo%20tb%20nur%20new.svg'),
+                    'description' => 'Toko Bangunan & Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat, dan perlengkapan material proyek lengkap di Kaliwedi, Cirebon.',
+                    'telephone' => '+62-877-2498-5885',
+                    'priceRange' => '$$',
+                    'hasMap' => 'https://maps.google.com/?q=Toko+Bangunan+Nur+Guwa+Kidul+Kaliwedi+Cirebon',
+                    'address' => [
+                        chr(64) . 'type' => 'PostalAddress',
+                        'streetAddress' => 'Jl. P. Anggabaya No.22, Guwa Kidul',
+                        'addressLocality' => 'Kecamatan Kaliwedi',
+                        'addressRegion' => 'Jawa Barat',
+                        'postalCode' => '45165',
+                        'addressCountry' => 'ID',
+                    ],
+                    'geo' => [
+                        chr(64) . 'type' => 'GeoCoordinates',
+                        'latitude' => -6.6115,
+                        'longitude' => 108.4114,
+                    ],
+                    'openingHoursSpecification' => [
+                        [
+                            chr(64) . 'type' => 'OpeningHoursSpecification',
+                            'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                            'opens' => '07:30',
+                            'closes' => '17:00',
+                        ],
+                    ],
                 ],
             ],
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
