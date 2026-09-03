@@ -144,6 +144,7 @@ export default function BankReconciliationWorkspace({
                     lastKnownBalance={lastKnownBalance}
                     rawBalanceNum={rawBalanceNum}
                     unreconciledCount={unreconciledCount}
+                    hasData={rows.length > 0}
                 />
 
                 {/* Body Section */}
@@ -160,10 +161,7 @@ export default function BankReconciliationWorkspace({
 
                                 return (
                                     <div key={key || index} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 items-stretch">
-                                        {/* Left Card: Jurnal Sistem */}
-                                        <JurnalCard row={row} />
-
-                                        {/* Right Column Card: Reconcile Action Button / Status */}
+                                        {/* Left Column Card: Rekening Bank */}
                                         <BankReconcileActionCard
                                             isReconciled={isReconciled}
                                             isReconciling={Boolean(reconcilingIds[key])}
@@ -173,36 +171,41 @@ export default function BankReconciliationWorkspace({
                                             }}
                                             onUnreconcile={() => handleReconcileSingle(key, false)}
                                         />
+
+                                        {/* Right Column Card: Jurnal Sistem */}
+                                        <JurnalCard row={row} />
                                     </div>
                                 );
                             })}
                         </div>
-                            {pagination && (
-                                <div className="bg-white">
-                                    <Pagination
-                                        page={pagination.page}
-                                        perPage={pagination.perPage}
-                                        total={pagination.total}
-                                        lastPage={pagination.lastPage}
-                                        from={pagination.from}
-                                        to={pagination.to}
-                                        onPageChange={pagination.onPageChange}
-                                        onPerPageChange={pagination.onPerPageChange}
-                                    />
-                                </div>
-                            )}
-                        </>
-                    ) : (
-                        <div className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-slate-50/30">
-                            <svg className="h-16 w-16 text-slate-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <div className="text-slate-500 text-sm font-medium mt-2">
-                                Tidak ada data mutasi kas/bank yang tersedia
+                        {pagination && (
+                            <div className="bg-white">
+                                <Pagination
+                                    page={pagination.page}
+                                    perPage={pagination.perPage}
+                                    total={pagination.total}
+                                    lastPage={pagination.lastPage}
+                                    from={pagination.from}
+                                    to={pagination.to}
+                                    onPageChange={pagination.onPageChange}
+                                    onPerPageChange={pagination.onPerPageChange}
+                                />
                             </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-white min-h-[360px]">
+                        <img
+                            src="/assets/images/rekonsiliasi_empty_state.png"
+                            alt="Pilih bank yang akan direkonsiliasi"
+                            className="w-32 h-auto max-h-32 object-contain mb-4 opacity-90"
+                        />
+                        <div className="text-slate-600 text-sm font-medium">
+                            Pilih bank yang akan direkonsiliasi
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
+            </div>
 
             {/* Confirmation Dialog */}
             <WorkspaceDialog
