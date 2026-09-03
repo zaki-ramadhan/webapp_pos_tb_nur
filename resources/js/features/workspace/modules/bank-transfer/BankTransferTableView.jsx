@@ -98,7 +98,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
 
     const columnsWithNo = useMemo(() => {
         return [
-            { id: '__no', label: 'No.', widthClassName: 'w-px', sortable: false },
+            { id: '__no', label: 'No.', widthClassName: 'w-[48px]', align: 'center', sortable: false },
             ...config.table.columns,
         ];
     }, [config.table.columns]);
@@ -156,7 +156,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                         const justifyClass = column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start';
 
                         if (!sortable) {
-                            return <span className="block truncate">{column.label}</span>;
+                            return <span className={`block truncate ${column.align === 'center' ? 'text-center' : ''}`}>{column.label}</span>;
                         }
 
                         return (

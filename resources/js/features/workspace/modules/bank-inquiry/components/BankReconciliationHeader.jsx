@@ -9,7 +9,7 @@ function HeaderColumn({ title, iconPath, borderColor = 'border-[#0c6b96]', child
                     <span>{title}</span>
                 </div>
             </div>
-            <div className="bg-[#f1f5f9] border border-slate-200 px-3 py-2 flex items-center justify-between text-sm min-h-[36px] rounded-[3px]">
+            <div className="bg-[#DEDEDE] border border-slate-300 px-3 py-2 flex items-center justify-between text-sm min-h-[36px] rounded-[3px]">
                 {children}
             </div>
         </div>
