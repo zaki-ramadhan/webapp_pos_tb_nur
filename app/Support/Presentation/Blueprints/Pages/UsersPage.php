@@ -19,7 +19,7 @@ class UsersPage
                     ],
                     'form' => [
                         'sectionLabel' => 'Pengguna',
-                        'title' => 'Tambahkan pengguna untuk mengakses aplikasi toko ini',
+                        'title' => 'Tambahkan pengguna untuk mengakses database ini dengan memasukkan no handphone/emailnya',
                         'saveLabel' => 'Simpan',
                         'actions' => [
                             [
