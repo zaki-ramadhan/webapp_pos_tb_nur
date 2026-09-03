@@ -33,14 +33,36 @@ export default function PortalDropdown({
         if (!open || !anchorEl) return;
 
         function updatePosition() {
+            if (!anchorEl || !anchorEl.isConnected) return;
             const rect = anchorEl.getBoundingClientRect();
-            setCoords({
-                top: rect.bottom,
-                left: rect.left,
-                right: rect.right,
-                width: rect.width,
-                spaceBelow: window.innerHeight - rect.bottom,
-                rectTop: rect.top,
+            setCoords((prev) => {
+                const nextTop = rect.bottom;
+                const nextLeft = rect.left;
+                const nextRight = rect.right;
+                const nextWidth = rect.width;
+                const nextSpaceBelow = window.innerHeight - rect.bottom;
+                const nextRectTop = rect.top;
+
+                if (
+                    prev &&
+                    prev.top === nextTop &&
+                    prev.left === nextLeft &&
+                    prev.right === nextRight &&
+                    prev.width === nextWidth &&
+                    prev.spaceBelow === nextSpaceBelow &&
+                    prev.rectTop === nextRectTop
+                ) {
+                    return prev;
+                }
+
+                return {
+                    top: nextTop,
+                    left: nextLeft,
+                    right: nextRight,
+                    width: nextWidth,
+                    spaceBelow: nextSpaceBelow,
+                    rectTop: nextRectTop,
+                };
             });
         }
 
@@ -49,9 +71,42 @@ export default function PortalDropdown({
         window.addEventListener('scroll', updatePosition, true);
         window.addEventListener('resize', updatePosition);
 
+        let resizeObserver = null;
+        if (typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver(() => {
+                updatePosition();
+            });
+            resizeObserver.observe(anchorEl);
+            if (anchorEl.parentElement) {
+                resizeObserver.observe(anchorEl.parentElement);
+            }
+        }
+
+        let mutationObserver = null;
+        if (typeof MutationObserver !== 'undefined') {
+            mutationObserver = new MutationObserver(() => {
+                updatePosition();
+            });
+            mutationObserver.observe(anchorEl, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+            });
+        }
+
+        let rafId = null;
+        const tick = () => {
+            updatePosition();
+            rafId = requestAnimationFrame(tick);
+        };
+        rafId = requestAnimationFrame(tick);
+
         return () => {
             window.removeEventListener('scroll', updatePosition, true);
             window.removeEventListener('resize', updatePosition);
+            if (resizeObserver) resizeObserver.disconnect();
+            if (mutationObserver) mutationObserver.disconnect();
+            if (rafId) cancelAnimationFrame(rafId);
         };
     }, [open, anchorEl]);
 
