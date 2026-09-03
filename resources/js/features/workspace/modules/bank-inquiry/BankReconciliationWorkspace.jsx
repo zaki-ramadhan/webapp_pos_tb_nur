@@ -10,6 +10,7 @@ import Pagination from '@/components/ui/Pagination';
 import JurnalCard from './components/JurnalCard';
 import BankReconcileActionCard from './components/BankReconcileActionCard';
 import BankReconciliationHeader from './components/BankReconciliationHeader';
+import emptyStateImg from './assets/rekonsiliasi_empty_state.png';
 
 export default function BankReconciliationWorkspace({
     rows = [],
@@ -196,11 +197,11 @@ export default function BankReconciliationWorkspace({
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-white min-h-[360px]">
                         <img
-                            src="/assets/images/rekonsiliasi_empty_state.png"
+                            src={emptyStateImg}
                             alt="Pilih bank yang akan direkonsiliasi"
-                            className="w-32 h-auto max-h-32 object-contain mb-4 opacity-90"
+                            className="w-36 h-auto max-h-36 object-contain mb-4 opacity-90"
                         />
-                        <div className="text-slate-600 text-sm font-medium">
+                        <div className="text-slate-700 text-base sm:text-lg font-semibold tracking-normal">
                             Pilih bank yang akan direkonsiliasi
                         </div>
                     </div>
