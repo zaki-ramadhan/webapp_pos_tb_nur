@@ -368,30 +368,33 @@ export function buildReportListConfig(records, fallbackConfig) {
 }
 
 export function mapUserRow(record) {
-    const roles = (record.roles ?? [])
-        .map((role) => {
-            const name = String(role.name ?? '');
-            if (name.toLowerCase().includes('super') || role.code === 'super_admin') {
-                return 'Administrator Sistem';
-            }
-            if (name.toLowerCase().includes('admin') || role.code === 'admin' || name.toLowerCase().includes('owner') || role.code === 'owner') {
-                return 'Owner';
-            }
-            if (name.toLowerCase().includes('operator') || role.code === 'operator' || name.toLowerCase().includes('kasir')) {
-                return 'Kasir';
-            }
-            return name;
-        })
-        .filter(Boolean)
-        .join(', ');
+    const developerEmails = ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'];
+    const email = String(record.email ?? '').toLowerCase();
+    const isDeveloper = developerEmails.includes(email);
+
+    let primaryRole = 'Kasir';
+    if (isDeveloper) {
+        primaryRole = 'Administrator Sistem';
+    } else {
+        const hasOwnerRole = (record.roles ?? []).some((role) => {
+            const code = String(role.code ?? '').toLowerCase();
+            const name = String(role.name ?? '').toLowerCase();
+            return code === 'super_admin' || code === 'admin' || code === 'owner' || name.includes('admin') || name.includes('super') || name.includes('owner');
+        });
+        const hasOwnerGroup = (record.accessGroups ?? []).some((g) => String(g.code ?? '').toUpperCase() === 'OWNER');
+
+        if (hasOwnerRole || hasOwnerGroup || email === 'nurhayati.karya@gmail.com') {
+            primaryRole = 'Owner';
+        } else {
+            primaryRole = 'Kasir';
+        }
+    }
 
     const accessGroups = (record.accessGroups ?? [])
         .map((group) => group.name)
         .filter(Boolean)
         .join(', ');
 
-    const isSuper = (record.roles ?? []).some((r) => r.code === 'super_admin') || record.is_super_admin;
-    const primaryRole = roles || (isSuper ? 'Administrator Sistem' : 'Kasir');
     const displayAccessType = accessGroups ? `${primaryRole} (${accessGroups})` : primaryRole;
 
     return {

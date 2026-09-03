@@ -46,13 +46,10 @@ class BackendResourceIndexQuery
                 'piscokpiscok2610@gmail.com',
                 'zakiram4dhan@gmail.com',
             ];
-            $isSuperAdminActor = $user && (in_array(strtolower((string) $user->email), $developerEmails, true) || $user->hasAnyRoleCodes(['super_admin']));
+            $isSuperAdminActor = $user && in_array(strtolower((string) $user->email), $developerEmails, true);
 
             if (! $isSuperAdminActor) {
-                $query->whereNotIn('users.email', $developerEmails)
-                      ->whereDoesntHave('roles', function ($q) {
-                          $q->where('code', 'super_admin');
-                      });
+                $query->whereNotIn('users.email', $developerEmails);
             }
         }
 

@@ -67,10 +67,18 @@ function AccessTypeField({ value, onChange, isActorSuperAdmin = false }) {
 }
 
 function buildInitialValues(detailRow) {
-    const roleIds = detailRow?.roleIds ?? [];
+    const developerEmails = ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'];
+    const rawEmail = (detailRow?.email ?? '').trim();
+    const normalizedEmail = rawEmail.toLowerCase();
+    const isSuperAdmin = developerEmails.includes(normalizedEmail);
     const accessTypeStr = String(detailRow?.accessType ?? '').toLowerCase();
-    const isSuperAdmin = roleIds.includes(1) || accessTypeStr.includes('administrator sistem') || accessTypeStr.includes('super');
-    const isOwner = !isSuperAdmin && (roleIds.includes(3) || accessTypeStr.includes('owner') || accessTypeStr.includes('admin'));
+    const isOwner = !isSuperAdmin && (
+        accessTypeStr.includes('owner') ||
+        accessTypeStr.includes('admin') ||
+        normalizedEmail === 'nurhayati.karya@gmail.com' ||
+        (detailRow?.roleIds ?? []).includes(1) ||
+        (detailRow?.roleIds ?? []).includes(3)
+    );
 
     let accessType = 'kasir';
     let accessTypeLabel = 'Kasir';
@@ -82,19 +90,18 @@ function buildInitialValues(detailRow) {
         accessTypeLabel = 'Owner';
     }
 
-    const email = detailRow?.email ?? '';
     const phone = detailRow?.phone ?? '';
 
     return {
         name: detailRow?.name ?? '',
-        email,
+        email: rawEmail,
         phone,
         password: '',
         isActive: detailRow?.isActive ?? true,
         accessGroupIds: detailRow?.accessGroupIds ?? [],
         accessType,
         accessTypeLabel: detailRow?.accessType || accessTypeLabel,
-        initialEmail: email.trim(),
+        initialEmail: rawEmail,
         initialPhone: phone.trim(),
     };
 }
@@ -159,16 +166,32 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
     const recordId = detailRow ? String(detailRow.id) : null;
     const isDetail = Boolean(recordId);
 
+    const developerEmails = ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'];
     const pageProps = usePage()?.props ?? {};
     const authUser = pageProps.auth?.user || pageProps.user;
-    const isActorSuperAdmin = Boolean(
-        authUser?.isSuperAdmin ||
-        authUser?.role === 'Administrator Sistem' ||
-        ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'].includes(String(authUser?.email ?? '').toLowerCase())
-    );
+    const actorEmail = String(authUser?.email ?? '').toLowerCase();
+    const isActorSuperAdmin = developerEmails.includes(actorEmail);
     const isSelf = Boolean(
         detailRow?.id && authUser?.id && String(detailRow.id) === String(authUser.id)
     );
+
+    const canDelete = useMemo(() => {
+        if (!isDetail || isSelf) return false;
+
+        const targetEmail = String(detailRow?.email ?? '').toLowerCase();
+        const isTargetAdmin = developerEmails.includes(targetEmail);
+
+        if (isTargetAdmin) {
+            if (!isActorSuperAdmin) return false;
+            const totalAdmins = tableRows.filter((r) => developerEmails.includes(String(r.email ?? '').toLowerCase())).length;
+            return totalAdmins > 1;
+        }
+
+        if (isActorSuperAdmin) return true;
+
+        const accessTypeStr = String(detailRow?.accessType ?? '').toLowerCase();
+        return accessTypeStr.includes('kasir') || accessTypeStr.includes('operator');
+    }, [isDetail, isSelf, detailRow, isActorSuperAdmin, tableRows]);
 
     const initialValues = useMemo(() => buildInitialValues(detailRow), [detailRow]);
     const [values, setValues] = useState(initialValues);
@@ -317,20 +340,14 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                 saveDisabled={saveDisabled}
                 onSave={handleSave}
                 actionsSlot={
-                    isDetail ? (
-                        !isSelf ? (
-                            <DockActionButton
-                                label={saving ? 'Memproses...' : 'Hapus'}
-                                tone="danger"
-                                icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                                disabled={saving}
-                                onClick={() => setDeleteConfirmationOpen(true)}
-                            />
-                        ) : (
-                            <div className="flex items-center text-xs text-slate-500 italic pr-3">
-                                Akun Anda sedang aktif digunakan
-                            </div>
-                        )
+                    canDelete ? (
+                        <DockActionButton
+                            label={saving ? 'Memproses...' : 'Hapus'}
+                            tone="danger"
+                            icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                            disabled={saving}
+                            onClick={() => setDeleteConfirmationOpen(true)}
+                        />
                     ) : null
                 }
             >

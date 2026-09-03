@@ -229,7 +229,7 @@ class SecuritySeeder extends Seeder
         DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $ownerGroupId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['nurhayati.karya@gmail.com']]);
+        DB::table('role_user')->insert(['role_id' => $adminRoleId, 'user_id' => $usersMap['nurhayati.karya@gmail.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $ownerGroupId, 'user_id' => $usersMap['nurhayati.karya@gmail.com']]);
 
         DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['ahmad.fauzi87@gmail.com']]);
