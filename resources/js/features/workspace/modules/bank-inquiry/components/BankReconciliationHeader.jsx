@@ -1,7 +1,7 @@
 function HeaderColumn({ title, iconPath, borderColor = 'border-[#0c6b96]', children }) {
     return (
         <div className="flex flex-col">
-            <div className={`border-t-[3px] ${borderColor} bg-white px-3 py-2.5 flex items-center justify-between`}>
+            <div className={`border-t-[7.5px] ${borderColor} bg-white px-3 py-2.5 flex items-center justify-between`}>
                 <div className="flex items-center gap-2.5 font-bold text-black text-base uppercase tracking-wider">
                     <svg className="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={iconPath} />
