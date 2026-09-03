@@ -255,9 +255,9 @@ class SecuritySeeder extends Seeder
         // Seed activity logs
         $logs = [];
         $logTemplates = [
-            ['group' => 'auth', 'res' => 'users', 'label' => 'Sistem Utama', 'perm' => 'login', 'action' => 'login', 'desc' => 'Pengguna berhasil masuk ke sistem POS TB Nur', 'subj' => 'Sistem POS'],
-            ['group' => 'sales', 'res' => 'sales-invoices', 'label' => 'Faktur Penjualan', 'perm' => 'sales-invoice', 'action' => 'create', 'desc' => 'Membuat Faktur Penjualan POS Kasir', 'subj' => 'Faktur Penjualan POS'],
-            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penjualan Kasir', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penjualan Kasir POS', 'subj' => 'Jurnal Penjualan POS'],
+            ['group' => 'auth', 'res' => 'users', 'label' => 'Sistem', 'perm' => 'login', 'action' => 'login', 'desc' => 'Pengguna berhasil masuk ke sistem', 'subj' => 'Sistem'],
+            ['group' => 'sales', 'res' => 'sales-invoices', 'label' => 'Faktur Penjualan', 'perm' => 'sales-invoice', 'action' => 'create', 'desc' => 'Membuat Faktur Penjualan Kasir', 'subj' => 'Faktur Penjualan'],
+            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penjualan Kasir', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penjualan Kasir', 'subj' => 'Jurnal Penjualan'],
             ['group' => 'purchasing', 'res' => 'purchase-orders', 'label' => 'Pesanan Pembelian', 'perm' => 'purchase-order', 'action' => 'create', 'desc' => 'Membuat Pesanan Pembelian Stok', 'subj' => 'Pesanan Pembelian'],
             ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Pembelian Supplier', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Faktur Pembelian Supplier', 'subj' => 'Jurnal Pembelian'],
             ['group' => 'inventory', 'res' => 'stock-opname', 'label' => 'Opname Persediaan', 'perm' => 'inventory-adjustment', 'action' => 'post', 'desc' => 'Memproses Penyesuaian Stok Gudang', 'subj' => 'Penyesuaian Stok'],
