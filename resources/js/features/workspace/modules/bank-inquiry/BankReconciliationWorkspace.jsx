@@ -139,7 +139,7 @@ export default function BankReconciliationWorkspace({
                 </div>
             </div>
 
-            <div className="flex flex-col flex-1 min-h-0 border border-slate-200 rounded-[4px] mt-3 overflow-hidden">
+            <div className="flex flex-col flex-1 min-h-0 mt-3">
                 {/* Column Headers */}
                 <BankReconciliationHeader
                     lastKnownBalance={lastKnownBalance}
@@ -155,7 +155,7 @@ export default function BankReconciliationWorkspace({
                     </div>
                 ) : rows.length > 0 ? (
                     <>
-                        <div className="overflow-y-auto p-3 flex flex-col gap-3 min-h-0 flex-1 bg-[#f8fafc]">
+                        <div className="overflow-y-auto py-3 flex flex-col gap-3 min-h-0 flex-1">
                             {rows.map((row, index) => {
                                 const isReconciled = row.status === 'Reconciled';
                                 const key = row.documentNumber || row.sourceNumber || row.document_number;
@@ -199,8 +199,8 @@ export default function BankReconciliationWorkspace({
                         <img
                             src={emptyStateImg}
                             alt="Pilih bank yang akan direkonsiliasi"
-                            className="w-48 h-auto max-h-48 object-contain mb-6 opacity-80 saturate-[0.5]"
-                            style={{ filter: 'saturate(0.5)' }}
+                            className="w-48 h-auto max-h-48 object-contain mb-6 opacity-60 saturate-[0.3]"
+                            style={{ filter: 'saturate(0.3)' }}
                         />
                         <div className="text-slate-700 text-base sm:text-lg font-normal tracking-normal">
                             Pilih bank yang akan direkonsiliasi
