@@ -10,13 +10,27 @@ import {
 
 export function isOwnerUser(user) {
     if (!user) return false;
+    const role = String(user.role ?? '').trim().toLowerCase();
     return Boolean(
         user.isSuperAdmin ||
         user.is_super_admin ||
-        user.role === 'Super Admin' ||
-        user.role === 'super_admin' ||
-        user.role === 'Owner' ||
-        (Array.isArray(user.roles) && user.roles.some((r) => r.code === 'super_admin' || r.code === 'admin'))
+        user.isPrivileged ||
+        user.is_privileged ||
+        user.isOwner ||
+        user.is_owner ||
+        role === 'administrator sistem' ||
+        role === 'administrator' ||
+        role === 'super admin' ||
+        role === 'owner' ||
+        role === 'pemilik' ||
+        (Array.isArray(user.roles) && user.roles.some((r) => [
+            'super_admin',
+            'system_admin',
+            'administrator_sistem',
+            'admin_sistem',
+            'owner',
+            'admin',
+        ].includes(r.code)))
     );
 }
 

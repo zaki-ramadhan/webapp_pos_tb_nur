@@ -124,8 +124,8 @@ class GoogleLoginController extends Controller
         }
 
         $email = strtolower((string) $user->email);
-        $developerEmails = ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'];
-        if (in_array($email, $developerEmails, true)) {
+        $developerEmails = \App\Models\User::DEVELOPER_EMAILS;
+        if ($user->isSystemAdmin() || in_array($email, $developerEmails, true)) {
             if (! (bool) $user->is_active) {
                 $user->forceFill(['is_active' => true])->save();
             }
@@ -146,10 +146,8 @@ class GoogleLoginController extends Controller
 
         $this->syncGoogleIdentity($user, $oauthUser);
 
-        $isSuperAdmin = in_array($email, $developerEmails, true) || $user->hasAnyRoleCodes(['super_admin']);
-        $isOwner = $isSuperAdmin
-            || $user->hasAnyRoleCodes(['admin', 'owner'])
-            || in_array($email, ['nurhayati.karya@gmail.com'], true);
+        $isSuperAdmin = $user->isSystemAdmin();
+        $isOwner = $user->isOwner();
         $user->loadMissing('accessGroups');
 
         if (! $isOwner && $user->accessGroups->isEmpty()) {

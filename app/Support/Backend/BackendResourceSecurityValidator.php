@@ -23,7 +23,7 @@ class BackendResourceSecurityValidator
      */
     public function validateBranchAssignment(User $user, array $payload): void
     {
-        if ($user->hasAnyRoleCodes(['super_admin'])) {
+        if ($user->isPrivileged() || $user->hasAnyRoleCodes(['super_admin', 'owner', 'admin'])) {
             return;
         }
 
@@ -48,7 +48,7 @@ class BackendResourceSecurityValidator
      */
     public function validatePrivilegeEscalation(User $user, string $resource, array $payload): void
     {
-        if ($user->hasAnyRoleCodes(['super_admin'])) {
+        if ($user->isSystemAdmin() || $user->hasAnyRoleCodes(['super_admin'])) {
             return;
         }
 
@@ -100,15 +100,12 @@ class BackendResourceSecurityValidator
             throw new AuthorizationException('Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif digunakan.');
         }
 
-        $developerEmails = [
-            'piscokpiscok2610@gmail.com',
-            'zakiram4dhan@gmail.com',
-        ];
+        $developerEmails = User::DEVELOPER_EMAILS;
         $targetEmail = strtolower((string) $target->email);
         $actorEmail = strtolower((string) $actor->email);
 
-        $isActorDeveloper = in_array($actorEmail, $developerEmails, true);
-        $isTargetDeveloper = in_array($targetEmail, $developerEmails, true);
+        $isActorDeveloper = $actor->isSystemAdmin() || in_array($actorEmail, $developerEmails, true);
+        $isTargetDeveloper = $target->isSystemAdmin() || in_array($targetEmail, $developerEmails, true);
 
         if ($isTargetDeveloper) {
             if (! $isActorDeveloper) {
@@ -122,9 +119,7 @@ class BackendResourceSecurityValidator
         }
 
         if (! $isActorDeveloper) {
-            $isTargetOwner = in_array($targetEmail, ['nurhayati.karya@gmail.com'], true)
-                || $target->hasAnyRoleCodes(['admin', 'owner', 'super_admin'])
-                || ($target->accessGroups()->where('code', 'OWNER')->exists());
+            $isTargetOwner = $target->isOwner() || in_array($targetEmail, User::OWNER_EMAILS, true);
 
             if ($isTargetOwner) {
                 throw new AuthorizationException('Owner tidak memiliki wewenang untuk menghapus akun sesama Owner.');

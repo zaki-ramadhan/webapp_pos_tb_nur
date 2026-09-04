@@ -13,15 +13,22 @@ final class AuthenticatedUserPresenter
             return null;
         }
 
-        $user->loadMissing('accessGroups');
-        $hasAccessGroup = self::resolveIsSuperAdmin($user) || $user->accessGroups->isNotEmpty();
+        if ($user->exists) {
+            $user->loadMissing('accessGroups');
+        }
+        $isSuperAdmin = $user->isSystemAdmin();
+        $isOwner = $user->isOwner();
+        $isPrivileged = $user->isPrivileged();
+        $hasAccessGroup = $isPrivileged || $user->accessGroups->isNotEmpty();
 
         return [
             'id' => $user->getKey(),
             'name' => $user->name,
             'email' => $user->email,
             'role' => self::resolveRole($user),
-            'isSuperAdmin' => self::resolveIsSuperAdmin($user),
+            'isSuperAdmin' => $isSuperAdmin,
+            'isOwner' => $isOwner,
+            'isPrivileged' => $isPrivileged,
             'hasAccessGroup' => $hasAccessGroup,
             'abilities' => self::resolveAbilities($user),
             'status' => self::resolveStatus($user),
@@ -32,8 +39,7 @@ final class AuthenticatedUserPresenter
     private static function resolveIsSuperAdmin(User $user): bool
     {
         try {
-            $email = strtolower((string) $user->email);
-            return in_array($email, ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'], true);
+            return $user->isSystemAdmin();
         } catch (Throwable) {
             return false;
         }
@@ -51,24 +57,19 @@ final class AuthenticatedUserPresenter
     private static function resolveRole(User $user): string
     {
         try {
-            $email = strtolower((string) $user->email);
-
-            // 1. Administrator Sistem (Eksklusif Developer Whitelist)
-            if (in_array($email, ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'], true)) {
+            // 1. Administrator Sistem (Eksklusif Developer / Super Admin)
+            if ($user->isSystemAdmin()) {
                 return 'Administrator Sistem';
             }
 
-            // 2. Owner Toko (berdasarkan role admin/owner/super_admin non-dev, access group OWNER, atau email owner awal)
-            $user->loadMissing('accessGroups');
-            $isOwner = $user->hasAnyRoleCodes(['admin', 'owner', 'super_admin'])
-                || ($user->accessGroups && $user->accessGroups->contains(fn ($g) => strtoupper($g->code ?? '') === 'OWNER'))
-                || (in_array($email, ['nurhayati.karya@gmail.com'], true));
-
-            if ($isOwner) {
+            // 2. Owner Toko
+            if ($user->isOwner()) {
                 return 'Owner';
             }
 
-            $groupName = $user->accessGroups->first()?->name;
+            $groupName = $user->relationLoaded('accessGroups')
+                ? $user->accessGroups->first()?->name
+                : ($user->exists ? $user->accessGroups()->value('name') : null);
             if ($groupName) {
                 return $groupName;
             }
