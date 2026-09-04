@@ -91,7 +91,7 @@ export function useToggleFieldError({ error, name, id, size, align, containerCla
 
     const feedbackMessage = typeof resolvedError === 'string' ? resolvedError : '';
 
-    const sizeClassName = size === 'md' ? 'h-5 w-5' : 'h-4 w-4';
+    const sizeClassName = size === 'lg' ? 'h-5 w-5' : (size === 'md' ? 'h-4 w-4' : 'h-3.5 w-3.5');
     const alignClassName = align === 'center' ? 'items-center' : 'items-start';
     const inputOffsetClassName = align === 'center' ? 'mt-0' : 'mt-1';
     const widthClass = (containerClassName ?? '').includes('w-') ? '' : 'w-full';

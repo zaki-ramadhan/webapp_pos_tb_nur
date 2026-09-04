@@ -22,7 +22,7 @@ export function GroupAccessAccessOption({ option, checked, onChange, children })
                         ) : null}
                     </span>
                 }
-                inputClassName="h-5 w-5 border-tab-view-active-border-x"
+                inputClassName="h-3.5 w-3.5 border-tab-view-active-border-x"
                 containerClassName="w-auto inline-flex items-center"
             />
             {checked && children}

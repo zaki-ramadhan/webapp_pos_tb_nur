@@ -30,7 +30,7 @@ function AccessTypeField({ value, onChange, isActorSuperAdmin = false }) {
                     label="Kasir"
                     checked={value === 'kasir' || value === 'operator'}
                     onChange={() => onChange('kasir')}
-                    inputClassName="h-5 w-5"
+                    inputClassName="h-3.5 w-3.5"
                     containerClassName="w-auto inline-flex items-center"
                 />
                 <RadioField
@@ -39,7 +39,7 @@ function AccessTypeField({ value, onChange, isActorSuperAdmin = false }) {
                     label="Owner"
                     checked={value === 'owner' || value === 'admin'}
                     onChange={() => onChange('owner')}
-                    inputClassName="h-5 w-5"
+                    inputClassName="h-3.5 w-3.5"
                     containerClassName="w-auto inline-flex items-center"
                 />
                 {isActorSuperAdmin && (
@@ -49,7 +49,7 @@ function AccessTypeField({ value, onChange, isActorSuperAdmin = false }) {
                         label="Administrator Sistem"
                         checked={value === 'super_admin'}
                         onChange={() => onChange('super_admin')}
-                        inputClassName="h-5 w-5"
+                        inputClassName="h-3.5 w-3.5"
                         containerClassName="w-auto inline-flex items-center"
                     />
                 )}
@@ -437,7 +437,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                                     label="Aktif"
                                     checked={values.isActive === true}
                                     onChange={() => setValues({ ...values, isActive: true })}
-                                    inputClassName="h-5 w-5"
+                                    inputClassName="h-3.5 w-3.5"
                                     containerClassName="w-auto inline-flex items-center"
                                 />
                                 <RadioField
@@ -446,7 +446,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                                     label="Nonaktif"
                                     checked={values.isActive === false}
                                     onChange={() => setValues({ ...values, isActive: false })}
-                                    inputClassName="h-5 w-5"
+                                    inputClassName="h-3.5 w-3.5"
                                     containerClassName="w-auto inline-flex items-center"
                                 />
                             </div>
@@ -489,7 +489,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                                     label="Aktif"
                                     checked={values.isActive === true}
                                     onChange={() => setValues({ ...values, isActive: true })}
-                                    inputClassName="h-5 w-5"
+                                    inputClassName="h-3.5 w-3.5"
                                     containerClassName="w-auto inline-flex items-center"
                                 />
                                 <RadioField
@@ -498,7 +498,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                                     label="Nonaktif"
                                     checked={values.isActive === false}
                                     onChange={() => setValues({ ...values, isActive: false })}
-                                    inputClassName="h-5 w-5"
+                                    inputClassName="h-3.5 w-3.5"
                                     containerClassName="w-auto inline-flex items-center"
                                 />
                             </div>

@@ -39,7 +39,7 @@ export default function DashboardActivePageContent({
 
                 const isCurrent = activePageId === page.id;
                 const hasLevel2Tabs = level2Tabs?.length > 0;
-                const ptClassName = hasLevel2Tabs ? 'pt-1.5 sm:pt-2' : 'pt-2 sm:pt-2.5';
+                const ptClassName = hasLevel2Tabs ? 'pt-0.5 sm:pt-0.5' : 'pt-2 sm:pt-2.5';
 
                 return (
                     <div

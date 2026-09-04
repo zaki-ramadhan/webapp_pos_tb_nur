@@ -24,7 +24,7 @@ export default function CustomerOthersTab({ config, values, onChange }) {
                         label="Per Pelanggan"
                         checked={values.receivableLimitMode === 'per-customer'}
                         onChange={() => onChange('receivableLimitMode', 'per-customer')}
-                        inputClassName="h-[18px] w-[18px]"
+                        inputClassName="h-3.5 w-3.5"
                         containerClassName="w-auto inline-flex items-center"
                     />
 
@@ -85,7 +85,7 @@ export default function CustomerOthersTab({ config, values, onChange }) {
                         label="Tergabung ke Pelanggan Induk"
                         checked={values.receivableLimitMode === 'merge-parent'}
                         onChange={() => onChange('receivableLimitMode', 'merge-parent')}
-                        inputClassName="h-[18px] w-[18px]"
+                        inputClassName="h-3.5 w-3.5"
                         containerClassName="w-auto inline-flex items-center"
                     />
                 </div>
@@ -96,32 +96,36 @@ export default function CustomerOthersTab({ config, values, onChange }) {
 
                 <div className="mt-4 space-y-3">
                     <FormFieldRow label={config.labels.defaultWarehouse}>
-                        <BackendLookupField
-                            resource="warehouses"
-                            values={(values.defaultWarehouse || []).map(item => typeof item === 'string' ? { name: item } : item)}
-                            placeholder={config.lookupPlaceholders.default}
-                            searchLabel="Cari gudang default"
-                            onSelect={(option) => {
-                                const current = values.defaultWarehouse || [];
-                                if (!current.includes(option.name)) {
-                                    onChange('defaultWarehouse', [...current, option.name]);
-                                }
-                            }}
-                            onRemove={(option) => {
-                                const current = values.defaultWarehouse || [];
-                                onChange('defaultWarehouse', current.filter(x => x !== option.name));
-                            }}
-                        />
+                        <div className="max-w-[420px] w-full">
+                            <BackendLookupField
+                                resource="warehouses"
+                                values={(values.defaultWarehouse || []).map(item => typeof item === 'string' ? { name: item } : item)}
+                                placeholder={config.lookupPlaceholders.default}
+                                searchLabel="Cari gudang default"
+                                onSelect={(option) => {
+                                    const current = values.defaultWarehouse || [];
+                                    if (!current.includes(option.name)) {
+                                        onChange('defaultWarehouse', [...current, option.name]);
+                                    }
+                                }}
+                                onRemove={(option) => {
+                                    const current = values.defaultWarehouse || [];
+                                    onChange('defaultWarehouse', current.filter(x => x !== option.name));
+                                }}
+                            />
+                        </div>
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.notes}>
-                        <TextareaField
-                            value={values.notes}
-                            onChange={(event) => onChange('notes', event.target.value)}
-                            rows={4}
-                            className="rounded-[4px] border-ui-border"
-                            textareaClassName="min-h-[98px] text-xs sm:text-sm text-brand-dark"
-                        />
+                        <div className="max-w-[420px] w-full">
+                            <TextareaField
+                                value={values.notes}
+                                onChange={(event) => onChange('notes', event.target.value)}
+                                rows={4}
+                                className="rounded-[4px] border-ui-border"
+                                textareaClassName="min-h-[98px] text-xs sm:text-sm text-brand-dark"
+                            />
+                        </div>
                     </FormFieldRow>
                 </div>
             </section>

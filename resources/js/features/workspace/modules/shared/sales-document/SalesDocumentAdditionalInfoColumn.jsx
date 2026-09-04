@@ -53,7 +53,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                                                 [field.valueKey]: event.target.value,
                                             }))
                                         }
-                                        className="h-4.5 w-4.5 text-input-brand focus:ring-2 focus:ring-input-focus/30"
+                                        className="h-3.5 w-3.5 text-input-brand focus:ring-2 focus:ring-input-focus/30"
                                     />
                                     <span>{option.label}</span>
                                     {option.showInfoIcon ? (
