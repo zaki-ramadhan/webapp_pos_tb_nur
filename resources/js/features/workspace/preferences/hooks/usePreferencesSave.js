@@ -2,6 +2,7 @@ import { router } from '@inertiajs/react';
 import { createBackendResource, getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 import { extractPreferencesFromTabs } from '../preferenceMapping';
 import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
+import { normalizePhoneNumber } from '@/features/workspace/shared/phoneFormatting';
 
 export default function usePreferencesSave(
     values,
@@ -44,10 +45,18 @@ export default function usePreferencesSave(
             message: 'Sedang menyimpan preferensi.',
         });
         try {
+            const cleanedValues = { ...values };
+            if (cleanedValues['phone']) {
+                cleanedValues['phone'] = normalizePhoneNumber(cleanedValues['phone']);
+            }
+            if (cleanedValues['fax']) {
+                cleanedValues['fax'] = normalizePhoneNumber(cleanedValues['fax']);
+            }
+
             const payload = {
-                company_info: values,
+                company_info: cleanedValues,
                 settings: {
-                    ...values,
+                    ...cleanedValues,
                     ...extractPreferencesFromTabs(Object.values(tabsData).filter(Boolean).flat())
                 }
             };

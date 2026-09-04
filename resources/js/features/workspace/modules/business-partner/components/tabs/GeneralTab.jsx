@@ -67,7 +67,7 @@ export default function GeneralTab({ config, values, isDetail, onChange }) {
                             id="mobilePhone"
                             name="mobilePhone"
                             value={values.mobilePhone}
-                            onChange={(event) => onChange('mobilePhone', event.target.value.replace(/[^\d+]/g, ''))}
+                            onChange={(event) => onChange('mobilePhone', event.target.value)}
                             className="h-[40px] rounded-[4px] border-ui-border"
                             inputClassName="text-xs sm:text-sm text-brand-dark"
                         />

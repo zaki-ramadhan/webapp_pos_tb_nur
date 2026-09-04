@@ -13,7 +13,7 @@ class CoreOrganizationSeeder extends Seeder
             [
                 'code' => 'JKT-01',
                 'name' => 'TOKO UTAMA',
-                'phone' => '0877-2498-5885',
+                'phone' => '087724985885',
                 'email' => 'toko.utama@tbnur.com',
                 'street' => 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi',
                 'city' => 'Kabupaten Cirebon',

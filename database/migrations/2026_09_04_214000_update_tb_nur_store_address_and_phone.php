@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         $settings = [
-            'phone' => '0877-2498-5885',
-            'fax' => '0877-2498-5885',
+            'phone' => '087724985885',
+            'fax' => '087724985885',
             'street' => 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi',
             'city' => 'Kabupaten Cirebon',
             'province' => 'Jawa Barat',
@@ -35,7 +35,7 @@ return new class extends Migration
                 ->where('code', 'JKT-01')
                 ->orWhere('name', 'like', '%Utama%')
                 ->update([
-                    'phone' => '0877-2498-5885',
+                    'phone' => '087724985885',
                     'street' => 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi',
                     'city' => 'Kabupaten Cirebon',
                     'postal_code' => '45165',

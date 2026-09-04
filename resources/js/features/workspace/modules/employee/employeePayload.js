@@ -1,4 +1,5 @@
 import { normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { normalizePhoneNumber } from '@/features/workspace/shared/phoneFormatting';
 import { emptyStringToNull, buildEmployeeCode, parseNullableCurrencyInput } from './employeeHelpers';
 
 export function buildEmployeePayload(values) {
@@ -17,9 +18,9 @@ export function buildEmployeePayload(values) {
         full_name: values.fullName.trim(),
         position: emptyStringToNull(values.position),
         email: emptyStringToNull(values.email),
-        mobile_phone: emptyStringToNull(values.mobilePhone),
-        home_phone: emptyStringToNull(values.homePhone),
-        whatsapp_phone: emptyStringToNull(values.whatsApp),
+        mobile_phone: emptyStringToNull(normalizePhoneNumber(values.mobilePhone)),
+        home_phone: emptyStringToNull(normalizePhoneNumber(values.homePhone)),
+        whatsapp_phone: emptyStringToNull(normalizePhoneNumber(values.whatsApp)),
         identity_number: emptyStringToNull(values.identityNumber),
         street: emptyStringToNull(values.street),
         city: emptyStringToNull(values.city),

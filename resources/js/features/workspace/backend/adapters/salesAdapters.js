@@ -1,4 +1,5 @@
 import { normalizeDisplayDate, formatIsoDate, formatDateTime, buildSelectOptions } from './dateHelpers';
+import { normalizePhoneNumber } from '@/features/workspace/shared/phoneFormatting';
 
 export function mapSalesCheckinRows(records) {
     return records.map((record) => {
@@ -110,9 +111,9 @@ export function toPartnerPayload(values) {
         name: values.name?.trim() ?? '',
         category_id: values.categoryId ?? values.category?.[0]?.id ?? null,
         currency_id: values.currencyId ?? values.defaultCurrency?.[0]?.id ?? values.currency?.[0]?.id ?? null,
-        business_phone: values.businessPhone?.trim() ?? values.phone?.trim() ?? '',
-        mobile_phone: values.mobilePhone?.trim() ?? '',
-        whatsapp_phone: values.whatsapp?.trim() ?? '',
+        business_phone: normalizePhoneNumber(values.businessPhone || values.phone || ''),
+        mobile_phone: normalizePhoneNumber(values.mobilePhone || ''),
+        whatsapp_phone: normalizePhoneNumber(values.whatsapp || ''),
         email: values.email?.trim() ?? '',
         fax: values.fax?.trim() ?? '',
         website: values.website?.trim() ?? '',
@@ -136,7 +137,10 @@ export function toPartnerPayload(values) {
         is_active: values.isActive !== false,
         branch_ids: values.branchIds ?? [],
         extended_details: {
-            contacts: values.contacts ?? [],
+            contacts: (values.contacts ?? []).map(c => ({
+                ...c,
+                mobilePhone: c.mobilePhone ? normalizePhoneNumber(c.mobilePhone) : '',
+            })),
             bankAccounts: values.bankAccounts ?? [],
             openingBalanceRows: values.openingBalanceRows ?? [],
             serviceVendor: Boolean(values.serviceVendor),

@@ -1,4 +1,5 @@
 import { formatDisplayValue } from '@/features/workspace/shared/amountFormatting';
+import { formatPhoneDisplay } from '@/features/workspace/shared/phoneFormatting';
 
 export default function formatTableTextValue(value, column = null) {
     const isEmpty = value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
@@ -12,29 +13,33 @@ export default function formatTableTextValue(value, column = null) {
                 return value.replace(/\s*\[[^\]]+\]|\[[^\]]+\]\s*/g, '').trim();
             }
 
-            const isPhoneOrCodeColumn = colId.includes('phone') || 
-                                        colId.includes('mobile') || 
-                                        colId.includes('whatsapp') || 
-                                        colId.includes('telp') || 
-                                        colId.includes('hp') || 
-                                        colId.includes('ktp') || 
-                                        colId.includes('nik') || 
-                                        colId.includes('npwp') || 
-                                        colId.includes('account_number') || 
-                                        colId.includes('rekening') || 
-                                        colId.includes('postal') || 
-                                        colLabel.includes('telepon') || 
-                                        colLabel.includes('handphone') || 
-                                        colLabel.includes('hp') || 
-                                        colLabel.includes('whatsapp') || 
-                                        colLabel.includes('wa') || 
-                                        colLabel.includes('rekening') || 
-                                        colLabel.includes('ktp') || 
-                                        colLabel.includes('nik') || 
-                                        colLabel.includes('npwp') || 
-                                        colLabel.includes('pos');
+            const isPhoneColumn = colId.includes('phone') || 
+                                  colId.includes('mobile') || 
+                                  colId.includes('whatsapp') || 
+                                  colId.includes('telp') || 
+                                  /\b(hp|wa)\b/i.test(colId) ||
+                                  colLabel.includes('telepon') || 
+                                  colLabel.includes('handphone') || 
+                                  colLabel.includes('whatsapp') || 
+                                  /\b(hp|wa)\b/i.test(colLabel);
 
-            if (isPhoneOrCodeColumn) {
+            if (isPhoneColumn) {
+                return formatPhoneDisplay(value);
+            }
+
+            const isCodeColumn = colId.includes('ktp') || 
+                                 colId.includes('nik') || 
+                                 colId.includes('npwp') || 
+                                 colId.includes('account_number') || 
+                                 colId.includes('rekening') || 
+                                 colId.includes('postal') || 
+                                 colLabel.includes('rekening') || 
+                                 colLabel.includes('ktp') || 
+                                 colLabel.includes('nik') || 
+                                 colLabel.includes('npwp') || 
+                                 colLabel.includes('pos');
+
+            if (isCodeColumn) {
                 return String(value ?? '').trim();
             }
             

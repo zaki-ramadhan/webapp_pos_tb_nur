@@ -23,6 +23,11 @@ export function sanitizeInput(val, type, id = '', name = '', placeholder = '', p
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
     const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
 
+    const isMultiOrEmail = searchStr.includes('identifier') ||
+                           searchStr.includes('email') ||
+                           searchStr.includes('mail') ||
+                           type === 'email';
+
     const isPostal = options.isPostal ?? (
         searchStr.includes('postal') ||
         searchStr.includes('kodepos') ||
@@ -31,17 +36,14 @@ export function sanitizeInput(val, type, id = '', name = '', placeholder = '', p
         searchStr.includes('kode pos')
     );
 
-    const isPhone = options.isPhone ?? (
+    const isPhone = !isMultiOrEmail && (options.isPhone ?? (
         searchStr.includes('phone') ||
         searchStr.includes('telp') ||
         searchStr.includes('telepon') ||
         searchStr.includes('whatsapp') ||
-        searchStr.includes('wa') ||
         searchStr.includes('fax') ||
-        searchStr.includes('hp') ||
-        searchStr.includes('kontak') ||
-        searchStr.includes('contact')
-    );
+        /\b(hp|wa)\b/i.test(searchStr)
+    ));
 
     const isCurrency = options.isCurrency ?? (
         searchStr.includes('price') ||
