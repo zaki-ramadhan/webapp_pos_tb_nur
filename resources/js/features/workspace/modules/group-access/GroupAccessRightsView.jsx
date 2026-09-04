@@ -28,7 +28,7 @@ function getAccessRightTooltip(rowId, label) {
 function FragmentSection({ section, columns, onTogglePermission }) {
     return (
         <>
-            <tr className="border-t border-table-row-border bg-white">
+            <tr className="border-t border-table-row-border bg-white table-row-empty" data-empty-row="true">
                 <td
                     colSpan={columns.length + 1}
                     className="px-4 py-1.5 text-base font-semibold text-table-row-text"
@@ -122,7 +122,7 @@ function PermissionMatrix({
                                 />
                             ))
                         ) : (
-                            <tr className="border-t border-table-row-border bg-white">
+                            <tr className="border-t border-table-row-border bg-white table-row-empty" data-empty-row="true">
                                 <td
                                     colSpan={columns.length + 1}
                                     className="px-6 py-2 text-center text-sm text-black"

@@ -777,12 +777,35 @@ th {
     background-color: #F8F8F8 !important;
 }
 
-/* Enforce global table row hover background color #EEEEEE */
-tbody tr:hover,
-tbody tr:hover > td,
-tr.hover\:bg-workspace-hover-bg:hover,
+/* Enforce global table row hover background color #EEEEEE (excluding empty state rows) */
+tbody tr:not(.table-row-empty):not([data-empty-row]):not(:has(> td[colspan])):hover,
+tbody tr:not(.table-row-empty):not([data-empty-row]):not(:has(> td[colspan])):hover > td,
+tr.hover\:bg-workspace-hover-bg:not(.table-row-empty):not([data-empty-row]):not(:has(> td[colspan])):hover,
 div.hover\:bg-workspace-hover-bg:hover {
     background-color: #EEEEEE !important;
+}
+
+/* Explicitly disable hover effect and pointer cursor on empty table rows globally */
+tbody tr.table-row-empty,
+tbody tr.table-row-empty > td,
+tbody tr[data-empty-row],
+tbody tr[data-empty-row] > td,
+tbody tr:has(> td[colspan]:only-child),
+tbody tr:has(> td[colspan]:only-child) > td,
+tbody tr:has(> td:nth-child(2)[colspan]),
+tbody tr:has(> td:nth-child(2)[colspan]) > td {
+    cursor: default !important;
+}
+
+tbody tr.table-row-empty:hover,
+tbody tr.table-row-empty:hover > td,
+tbody tr[data-empty-row]:hover,
+tbody tr[data-empty-row]:hover > td,
+tbody tr:has(> td[colspan]:only-child):hover,
+tbody tr:has(> td[colspan]:only-child):hover > td,
+tbody tr:has(> td:nth-child(2)[colspan]):hover,
+tbody tr:has(> td:nth-child(2)[colspan]):hover > td {
+    background-color: #ffffff !important;
 }
 
 

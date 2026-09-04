@@ -1,3 +1,5 @@
+import React from 'react';
+
 function getTextContent(node) {
     if (!node) return '';
     if (typeof node === 'string' || typeof node === 'number') return String(node);
@@ -44,8 +46,19 @@ export function DataTableBody({ className = '', children, ...props }) {
 }
 
 export function DataTableRow({ className = '', children, ...props }) {
+    const childArray = React.Children.toArray(children).filter(Boolean);
+    const hasColSpan = childArray.some(
+        (child) => React.isValidElement(child) && (Boolean(child.props?.colSpan) || child.props?.colSpan > 1)
+    );
+    const isExplicitEmpty = className.includes('table-row-empty') || Boolean(props['data-empty-row']);
+    const isEmpty = isExplicitEmpty || (hasColSpan && childArray.length <= 2);
+
     return (
-        <tr className={`border-b border-table-row-border text-table-row-text ${className}`.trim()} {...props}>
+        <tr
+            className={`border-b border-table-row-border text-table-row-text ${isEmpty ? 'table-row-empty' : ''} ${className}`.trim()}
+            {...(isEmpty ? { 'data-empty-row': 'true' } : {})}
+            {...props}
+        >
             {children}
         </tr>
     );

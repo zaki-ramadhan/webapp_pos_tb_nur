@@ -139,13 +139,13 @@ export default function SalesReturnFetchItemsModal({
                     </thead>
                     <tbody className="divide-y divide-gray-200 text-xs sm:text-sm text-zinc-700">
                         {loading ? (
-                            <tr>
+                            <tr className="table-row-empty" data-empty-row="true">
                                 <td colSpan={4} className="py-2 text-center text-black italic">
                                     Memuat rincian barang...
                                 </td>
                             </tr>
                         ) : items.length === 0 ? (
-                            <tr>
+                            <tr className="table-row-empty" data-empty-row="true">
                                 <td colSpan={4} className="py-2 text-center text-black font-normal">
                                     Belum ada data
                                 </td>

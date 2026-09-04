@@ -164,13 +164,13 @@ export default function BankLedgerTable({
 
             <DataTableBody>
                 {loading ? (
-                    <DataTableRow className="bg-white">
+                    <DataTableRow className="bg-white table-row-empty" data-empty-row="true">
                         <DataTableCell colSpan={totalHeadColSpan} className="py-2 text-center text-sm text-black">
                             Memuat data...
                         </DataTableCell>
                     </DataTableRow>
                 ) : !hasData ? (
-                    <DataTableRow className="bg-white">
+                    <DataTableRow className="bg-white table-row-empty" data-empty-row="true">
                         <DataTableCell colSpan={totalHeadColSpan} className="py-2 text-center text-sm text-black">
                             {emptyLabel}
                         </DataTableCell>
