@@ -157,7 +157,7 @@ class WorkspaceBackendResources
                           ->orderByDesc('activity_logs.id');
                 }
 
-                $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 100));
+                $perPage = max(1, min((int) ($filters['per_page'] ?? 25), 100));
 
                 return $query->paginate($perPage)->withQueryString();
             },
