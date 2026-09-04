@@ -26,7 +26,7 @@ class SmartlinkEbankingPage
             'table' => [
                 'createLabel' => 'Tambah Akun e-Banking',
                 'refreshLabel' => 'Muat ulang',
-                'searchPlaceholder' => 'Ketik dan [Enter]',
+                'searchPlaceholder' => 'Cari data...',
                 'columns' => [
                     [
                         'id' => 'accountNumber',

@@ -86,7 +86,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
             if (!matchesFilters) return false;
             if (!normalizedKeyword) return true;
 
-            const searchFields = ['number', 'date', 'fromBank', 'toBank', 'description', 'purchasePayment', 'fromTotal', 'toTotal'];
+            const searchFields = ['number', 'date', 'fromBank', 'toBank', 'description', 'fromTotal', 'feeTotal'];
             return searchFields.some((field) =>
                 String(row[field] ?? '').toLowerCase().includes(normalizedKeyword),
             );

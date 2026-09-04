@@ -75,7 +75,7 @@ export const supplierBusinessPartnerTemplate = createTemplate({
             { id: 'whatsapp', label: 'WhatsApp', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
             { id: 'email', label: 'Email', widthClassName: 'w-[180px]', align: 'left', defaultHidden: true },
             { id: 'taxNumber', label: 'NPWP / NIK', widthClassName: 'w-[150px]', align: 'left', defaultHidden: true },
-            { id: 'creditLimitText', label: 'Batas Piutang', widthClassName: 'w-[150px]', align: 'right', defaultHidden: true, noWrap: true },
+            { id: 'creditLimitText', label: 'Batas Utang', widthClassName: 'w-[150px]', align: 'right', defaultHidden: true, noWrap: true },
             { id: 'categoryName', label: 'Kategori', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true },
             { id: 'notes', label: 'Catatan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },
             { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true },

@@ -37,7 +37,6 @@ const salesReceiptListColumns = [
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[320px]', align: 'left' },
     { id: 'bank', label: 'Bank', widthClassName: 'w-[360px]', align: 'left' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[28%]', align: 'left' },
-    { id: 'useCredit', label: 'Pakai Kredit', widthClassName: 'w-[130px]', align: 'left' },
     { id: 'paymentAmount', label: 'Nilai Pembayaran', widthClassName: 'w-[160px]', align: 'right' },
 ];
 

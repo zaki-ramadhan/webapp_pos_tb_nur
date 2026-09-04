@@ -122,12 +122,6 @@ class EmployeesPage
                                 'defaultHidden' => true,
                             ],
                             [
-                                'id' => 'branch',
-                                'label' => 'Cabang',
-                                'widthClassName' => 'w-[150px]',
-                                'defaultHidden' => true,
-                            ],
-                            [
                                 'id' => 'hireDate',
                                 'label' => 'Tanggal Masuk',
                                 'widthClassName' => 'w-[150px]',

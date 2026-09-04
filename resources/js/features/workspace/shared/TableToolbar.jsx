@@ -293,11 +293,11 @@ export default function TableToolbar({
                 <div className={`flex flex-col justify-between gap-3 md:flex-row md:items-center ${bottomRowClassName}`.trim()}>
                     <div className="flex flex-wrap items-center gap-2">
                         {createButton && !isCreateForbidden ? (
-                            <Tooltip content={createButton.label || "Tambah"} portal>
+                            <Tooltip content="Tambah data" portal>
                                 <button
                                     type="button"
                                     onClick={createButton.onClick}
-                                    title={createButton.label}
+                                    aria-label="Tambah data"
                                     className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-sm transition hover:bg-brand-blue-darker ${size === 'compact' ? 'h-[40px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
                                 >
                                     <PlusIcon className={sizeStyle.createIcon} />

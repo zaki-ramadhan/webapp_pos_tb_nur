@@ -334,13 +334,10 @@ class ExpenseEntryPage
                         ['id' => 'documentNumber', 'label' => 'No. Beban', 'widthClassName' => 'w-[16%]', 'align' => 'left'],
                         ['id' => 'entryDate', 'label' => 'Tanggal', 'widthClassName' => 'w-[10%]', 'align' => 'left'],
                         ['id' => 'dueDate', 'label' => 'Jatuh Tempo', 'widthClassName' => 'w-[12%]', 'align' => 'left'],
-                        ['id' => 'total', 'label' => 'Total', 'widthClassName' => 'w-[12%]', 'align' => 'right'],
-                        ['id' => 'paid', 'label' => 'Dibayar', 'widthClassName' => 'w-[10%]', 'align' => 'right'],
-                        ['id' => 'status', 'label' => 'Status', 'widthClassName' => 'w-[12%]', 'align' => 'left'],
+                        ['id' => 'total', 'label' => 'Total', 'widthClassName' => 'w-[14%]', 'align' => 'right'],
+                        ['id' => 'paid', 'label' => 'Dibayar', 'widthClassName' => 'w-[12%]', 'align' => 'right'],
+                        ['id' => 'status', 'label' => 'Status', 'widthClassName' => 'w-[14%]', 'align' => 'left'],
                         ['id' => 'note', 'label' => 'Keterangan', 'align' => 'left'],
-                        ['id' => 'branch', 'label' => 'Cabang', 'widthClassName' => 'w-[150px]', 'align' => 'left', 'defaultHidden' => true],
-                        ['id' => 'paymentAccount', 'label' => 'Akun Kas/Bank', 'widthClassName' => 'w-[180px]', 'align' => 'left', 'defaultHidden' => true],
-                        ['id' => 'vendor', 'label' => 'Penerima Beban', 'widthClassName' => 'w-[160px]', 'align' => 'left', 'defaultHidden' => true],
                     ],
                     'rows' => [
                         [
