@@ -77,7 +77,7 @@ export const defaultAccountsConfig = {
     table: {
         createLabel: 'Tambah Akun Perkiraan',
         refreshLabel: 'Muat ulang',
-        searchPlaceholder: 'Cari...',
+        searchPlaceholder: 'Cari data...',
         pageValue: '315',
         columns: accountTableColumns,
         rows: accountRows,

@@ -105,7 +105,7 @@ export default function SmartlinkEbankingView({
         rows: accounts,
         createLabel: page?.table?.createLabel || 'Tambah Akun e-Banking',
         refreshLabel: 'Muat ulang',
-        searchPlaceholder: page?.table?.searchPlaceholder || 'Ketik dan [Enter]',
+        searchPlaceholder: 'Cari data...',
     }), [page?.table, accounts]);
 
     const handleOpenRowDetail = (detail) => {

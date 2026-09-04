@@ -132,7 +132,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
-                    placeholder: 'Cari No. Bukti, Bank (Keluar/Masuk), Keterangan...',
+                    placeholder: 'Cari data...',
                     widthClassName: 'sm:w-[342px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}

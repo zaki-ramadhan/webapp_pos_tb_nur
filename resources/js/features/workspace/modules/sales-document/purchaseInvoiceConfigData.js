@@ -157,7 +157,7 @@ export const defaultPurchaseInvoiceConfig = {
         createLabel: 'Tambah Faktur Pembelian',
         refreshLabel: 'Muat ulang',
         filterButtonLabel: 'Filter lanjutan',
-        searchPlaceholder: 'Cari...',
+        searchPlaceholder: 'Cari data...',
         pageValue: '56',
         columns: purchaseInvoiceListColumns,
         rows: purchaseInvoiceTableRows,

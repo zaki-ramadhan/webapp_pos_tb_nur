@@ -84,7 +84,7 @@ export const defaultPurchasePaymentConfig = {
         createLabel: 'Tambah Pembayaran',
         refreshLabel: 'Muat ulang',
         filterButtonLabel: 'Filter lanjutan',
-        searchPlaceholder: 'Cari...',
+        searchPlaceholder: 'Cari data...',
         pageValue: '9',
         columns: [
             { id: 'number', label: 'Nomor', widthClassName: 'w-[220px]', align: 'left' },

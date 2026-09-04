@@ -72,18 +72,11 @@ export default function TableToolbar({
     const resolvedRows = exportConfig?.rows ?? activeTableState?.rows ?? [];
     const searchPlaceholder = React.useMemo(() => {
         const rawPlaceholder = String(search?.placeholder ?? '').trim();
-        if (rawPlaceholder && rawPlaceholder.toLowerCase() !== 'cari...' && rawPlaceholder.toLowerCase() !== 'cari' && rawPlaceholder.toLowerCase() !== 'cari data...') {
+        if (rawPlaceholder && rawPlaceholder !== 'Ketik dan [Enter]' && !rawPlaceholder.toLowerCase().startsWith('cari')) {
             return rawPlaceholder;
         }
-        const searchCols = (resolvedColumns ?? []).filter(
-            (col) => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label
-        );
-        if (!searchCols.length) {
-            return 'Cari data...';
-        }
-        const labels = searchCols.map(col => col.label);
-        return `Cari ${labels.slice(0, 3).join(', ')}${labels.length > 3 ? '...' : ''}`;
-    }, [search?.placeholder, resolvedColumns]);
+        return 'Cari data...';
+    }, [search?.placeholder]);
     const rawResourceName = resourceName ?? activeTableState?.resource ?? (typeof window !== 'undefined' ? window.__activePageId : null) ?? null;
     const resolvedResourceName = PAGE_ID_TO_RESOURCE_MAP[rawResourceName] ?? rawResourceName;
 
