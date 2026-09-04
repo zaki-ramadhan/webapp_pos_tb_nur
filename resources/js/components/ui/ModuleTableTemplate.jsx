@@ -340,7 +340,7 @@ export default function ModuleTableTemplate({
                 </div>
             </div>
 
-            {paginationConfig && (hasExternalPagination || paginationConfig.total > 25) ? (
+            {paginationConfig ? (
                 <Pagination
                     page={paginationConfig.page}
                     perPage={paginationConfig.perPage}
