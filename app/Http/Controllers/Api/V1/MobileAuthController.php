@@ -41,7 +41,7 @@ class MobileAuthController extends Controller
 
         $email = strtolower((string) $user->email);
         $isPrivileged = $user->isPrivileged()
-            || in_array($email, array_merge(\App\Models\User::DEVELOPER_EMAILS, \App\Models\User::OWNER_EMAILS), true)
+            || in_array($email, array_merge(\App\Models\User::getDeveloperEmails(), \App\Models\User::getOwnerEmails()), true)
             || $user->hasAnyRoleCodes(['super_admin', 'owner', 'admin']);
         $hasActiveRole = $user->roles()->where('roles.is_active', true)->exists();
         $hasAccessGroup = $user->accessGroups()->exists();

@@ -51,7 +51,7 @@ class LoginController extends Controller
         }
 
         $email = strtolower((string) $user->email);
-        $developerEmails = \App\Models\User::DEVELOPER_EMAILS;
+        $developerEmails = \App\Models\User::getDeveloperEmails();
         if ($user->isSystemAdmin() || in_array($email, $developerEmails, true)) {
             if (! (bool) $user->is_active) {
                 $user->forceFill(['is_active' => true])->save();

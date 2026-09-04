@@ -48,11 +48,19 @@ class BackendResourceIndexQuery
         }
 
         if ($blueprint->key === 'users') {
-            $developerEmails = User::DEVELOPER_EMAILS;
+            $developerEmails = User::getDeveloperEmails();
             $isSuperAdminActor = $user && ($user->isSystemAdmin() || in_array(strtolower((string) $user->email), $developerEmails, true));
 
             if (! $isSuperAdminActor) {
-                $query->whereNotIn('users.email', $developerEmails);
+                $query->whereNotIn('users.email', $developerEmails)
+                      ->whereDoesntHave('roles', function ($roleQuery) {
+                          $roleQuery->whereIn('code', [
+                              'super_admin',
+                              'system_admin',
+                              'administrator_sistem',
+                              'admin_sistem',
+                          ]);
+                      });
             }
         }
 

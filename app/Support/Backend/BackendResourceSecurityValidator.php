@@ -109,7 +109,7 @@ class BackendResourceSecurityValidator
             throw new AuthorizationException('Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif digunakan.');
         }
 
-        $developerEmails = User::DEVELOPER_EMAILS;
+        $developerEmails = User::getDeveloperEmails();
         $targetEmail = strtolower((string) $target->email);
         $actorEmail = strtolower((string) $actor->email);
 
@@ -121,14 +121,23 @@ class BackendResourceSecurityValidator
                 throw new AuthorizationException('Anda tidak memiliki wewenang untuk menghapus akun Administrator Sistem.');
             }
 
-            $totalAdmins = User::whereIn('email', $developerEmails)->count();
+            $totalAdmins = User::where(function ($q) use ($developerEmails) {
+                $q->whereIn('email', $developerEmails)
+                  ->orWhereHas('roles', fn ($rq) => $rq->whereIn('code', [
+                      'super_admin',
+                      'system_admin',
+                      'administrator_sistem',
+                      'admin_sistem',
+                  ]));
+            })->count();
+
             if ($totalAdmins <= 1) {
                 throw new AuthorizationException('Tidak dapat menghapus akun Administrator Sistem terakhir.');
             }
         }
 
         if (! $isActorDeveloper) {
-            $isTargetOwner = $target->isOwner() || in_array($targetEmail, User::OWNER_EMAILS, true);
+            $isTargetOwner = $target->isOwner() || in_array($targetEmail, User::getOwnerEmails(), true);
 
             if ($isTargetOwner) {
                 throw new AuthorizationException('Owner tidak memiliki wewenang untuk menghapus akun sesama Owner.');
