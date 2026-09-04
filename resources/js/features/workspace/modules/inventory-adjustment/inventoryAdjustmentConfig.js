@@ -18,11 +18,11 @@ const inventoryAdjustmentSectionTabs = [
 const inventoryAdjustmentListColumns = [
     { id: 'number', label: 'Nomor', widthClassName: 'w-[200px]', align: 'left', noWrap: true },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left', noWrap: true },
-    { id: 'notes', label: 'Keterangan', widthClassName: 'w-[58%]', align: 'left' },
+    { id: 'notes', label: 'Keterangan', widthClassName: 'min-w-[240px] w-full', align: 'left' },
 ];
 
 const inventoryAdjustmentDetailColumns = [
-    { id: 'name', label: 'Nama Barang', widthClassName: 'w-[60%]', align: 'left' },
+    { id: 'name', label: 'Nama Barang', widthClassName: 'min-w-[200px] w-full', align: 'left' },
     { id: 'code', label: 'Kode Barang', widthClassName: 'w-[130px]', align: 'center' },
     { id: 'adjustmentType', label: 'Tipe', widthClassName: 'w-[130px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[100px]', align: 'right' },

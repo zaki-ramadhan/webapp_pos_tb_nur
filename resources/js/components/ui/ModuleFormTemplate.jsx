@@ -43,7 +43,7 @@ export default function ModuleFormTemplate({
                     </div>
                 </div>
 
-                <div className={`order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 ${hasTabs ? 'lg:pt-[39px]' : 'lg:pt-4'}`}>
+                <div className={`order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 ${hasTabs ? 'lg:pt-[35px]' : 'lg:pt-4'}`}>
                     <DockSaveButton
                         label={saving ? 'Memproses...' : (form.saveLabel ?? 'Simpan')}
                         disabled={saveDisabled}

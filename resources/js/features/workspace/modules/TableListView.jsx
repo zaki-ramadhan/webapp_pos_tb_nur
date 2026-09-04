@@ -232,7 +232,7 @@ export default function TableListView({
     const resolvedCreateButton = isAccessRestricted ? null : createButton;
 
     return (
-        <div className="flex flex-col flex-1 min-h-0 h-full">
+        <div className="min-h-full">
             <TableToolbar
                 size="compact"
                 filters={null}
@@ -269,10 +269,10 @@ export default function TableListView({
                 }}
             />
 
-            <div className="mt-3 flex flex-1 flex-col min-h-0 overflow-hidden">
+            <div className="mt-3 min-h-0 overflow-x-auto">
                 <DataTable
-                    className={table.tableClassName ?? 'min-w-[760px] sm:min-w-[960px] lg:min-w-[1200px]'}
-                    wrapperClassName="flex-1 min-h-0 overflow-auto border-table-wrapper-border"
+                    className={table.tableClassName ?? 'w-full min-w-[760px] sm:min-w-[960px] lg:min-w-[1200px]'}
+                    wrapperClassName="border-table-wrapper-border"
                 >
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>

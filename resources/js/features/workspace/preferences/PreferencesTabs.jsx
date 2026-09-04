@@ -40,7 +40,7 @@ export default function PreferencesTabs({
     return (
         <div className={`border-b border-border-tab-secondary-alt bg-transparent ${className}`.trim()}>
             <div
-                className={`overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5 sm:pt-1.5 ${leftPaddingClass} ${rightPaddingClass}`.trim()}
+                className={`overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-0.5 sm:pt-0.5 ${leftPaddingClass} ${rightPaddingClass}`.trim()}
             >
                 <div className="flex w-full items-end justify-between min-w-max">
                     <div className="flex items-end gap-[5px]">

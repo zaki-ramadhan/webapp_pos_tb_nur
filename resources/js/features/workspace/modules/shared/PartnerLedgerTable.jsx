@@ -31,60 +31,58 @@ export default function PartnerLedgerTable({
     className = 'w-full min-w-[800px]',
 }) {
     return (
-        <div className="overflow-x-auto rounded-md border border-table-wrapper-border bg-white">
-            <DataTable className={className}>
-                <DataTableHeader className="bg-[#476278]">
-                    <DataTableRow>
-                        <DataTableHead className="w-[120px] px-3 text-left text-base font-light text-white">Tanggal</DataTableHead>
-                        <DataTableHead className="w-[200px] px-3 text-left text-base font-light text-white">No. Sumber</DataTableHead>
-                        <DataTableHead className="w-[200px] px-3 text-left text-base font-light text-white">Tipe Transaksi</DataTableHead>
-                        <DataTableHead className="px-3 text-left text-base font-light text-white">Keterangan</DataTableHead>
-                        <DataTableHead className="w-[150px] px-3 text-right text-base font-light text-white">Nilai</DataTableHead>
-                        <DataTableHead className="w-[150px] px-3 text-right text-base font-light text-white">Saldo</DataTableHead>
+        <DataTable className={className} wrapperClassName="border-table-wrapper-border">
+            <DataTableHeader className="bg-table-header-bg">
+                <tr>
+                    <DataTableHead className="w-[120px] px-3 py-2.5 text-left text-base font-light text-white">Tanggal</DataTableHead>
+                    <DataTableHead className="w-[200px] px-3 py-2.5 text-left text-base font-light text-white">No. Sumber</DataTableHead>
+                    <DataTableHead className="w-[200px] px-3 py-2.5 text-left text-base font-light text-white">Tipe Transaksi</DataTableHead>
+                    <DataTableHead className="px-3 py-2.5 text-left text-base font-light text-white">Keterangan</DataTableHead>
+                    <DataTableHead className="w-[150px] px-3 py-2.5 text-right text-base font-light text-white">Nilai</DataTableHead>
+                    <DataTableHead className="w-[150px] px-3 py-2.5 text-right text-base font-light text-white">Saldo</DataTableHead>
+                </tr>
+            </DataTableHeader>
+            <DataTableBody>
+                {loading ? (
+                    <DataTableRow className="bg-white table-row-empty" data-empty-row="true">
+                        <DataTableCell colSpan={6} className="px-2.5 py-2 text-center text-base text-text-workspace-dark">
+                            Memuat data...
+                        </DataTableCell>
                     </DataTableRow>
-                </DataTableHeader>
-                <DataTableBody>
-                    {loading ? (
-                        <DataTableRow className="bg-white">
-                            <DataTableCell colSpan={6} className="px-2.5 py-2 text-center text-base text-black">
-                                Memuat data...
-                            </DataTableCell>
-                        </DataTableRow>
-                    ) : rows.length === 0 ? (
-                        <DataTableRow className="bg-white">
-                            <DataTableCell colSpan={6} className="px-2.5 py-2 text-center text-base text-black">
-                                {emptyLabel}
-                            </DataTableCell>
-                        </DataTableRow>
-                    ) : (
-                        rows.map((row, idx) => {
-                            const isOpening = row.is_opening_balance;
-                            const isClickable = !isOpening && row.document_id && row.document_type;
+                ) : rows.length === 0 ? (
+                    <DataTableRow className="bg-white table-row-empty" data-empty-row="true">
+                        <DataTableCell colSpan={6} className="px-2.5 py-2 text-center text-base text-text-workspace-dark">
+                            {emptyLabel}
+                        </DataTableCell>
+                    </DataTableRow>
+                ) : (
+                    rows.map((row, idx) => {
+                        const isOpening = row.is_opening_balance;
+                        const isClickable = !isOpening && row.document_id && row.document_type;
 
-                            return (
-                                <DataTableRow
-                                    key={row.id || idx}
-                                    className={`border-b border-slate-200 text-sm ${isClickable ? 'cursor-pointer hover:bg-slate-50' : ''}`}
-                                    onClick={isClickable && onRowClick ? () => onRowClick(row) : undefined}
-                                >
-                                    <DataTableCell className="px-3 py-2 text-slate-700">{row.date ?? ''}</DataTableCell>
-                                    <DataTableCell className="px-3 py-2 font-medium text-slate-800">
-                                        {isClickable ? (
-                                            <span className="text-blue-600 hover:underline">{row.source_number}</span>
-                                        ) : (
-                                            row.source_number ?? ''
-                                        )}
-                                    </DataTableCell>
-                                    <DataTableCell className="px-3 py-2 text-slate-700">{row.transaction_type}</DataTableCell>
-                                    <DataTableCell className="px-3 py-2 text-slate-700">{row.description}</DataTableCell>
-                                    <DataTableCell className="px-3 py-2 text-right">{formatPartnerLedgerAmount(row.amount)}</DataTableCell>
-                                    <DataTableCell className="px-3 py-2 text-right">{formatPartnerLedgerAmount(row.balance)}</DataTableCell>
-                                </DataTableRow>
-                            );
-                        })
-                    )}
-                </DataTableBody>
-            </DataTable>
-        </div>
+                        return (
+                            <DataTableRow
+                                key={row.id || idx}
+                                className={`border-ui-border-row ${idx % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} text-sm ${isClickable ? 'cursor-pointer hover:bg-workspace-hover-bg' : ''}`}
+                                onClick={isClickable && onRowClick ? () => onRowClick(row) : undefined}
+                            >
+                                <DataTableCell className="px-3 py-2 text-text-workspace-dark">{row.date ?? ''}</DataTableCell>
+                                <DataTableCell className="px-3 py-2 font-medium text-text-workspace-dark">
+                                    {isClickable ? (
+                                        <span className="text-blue-600 hover:underline">{row.source_number}</span>
+                                    ) : (
+                                        row.source_number ?? ''
+                                    )}
+                                </DataTableCell>
+                                <DataTableCell className="px-3 py-2 text-text-workspace-dark">{row.transaction_type}</DataTableCell>
+                                <DataTableCell className="px-3 py-2 text-text-workspace-dark">{row.description}</DataTableCell>
+                                <DataTableCell className="px-3 py-2 text-right">{formatPartnerLedgerAmount(row.amount)}</DataTableCell>
+                                <DataTableCell className="px-3 py-2 text-right">{formatPartnerLedgerAmount(row.balance)}</DataTableCell>
+                            </DataTableRow>
+                        );
+                    })
+                )}
+            </DataTableBody>
+        </DataTable>
     );
 }
