@@ -78,34 +78,44 @@ export default function SecondaryTabs({
     const activeTabRef = useRef(null);
 
     useEffect(() => {
-        const frameId = requestAnimationFrame(() => {
-            if (!activeTabRef.current || !containerRef.current) {
+        let cancelled = false;
+        const scrollToActive = () => {
+            if (cancelled || !activeTabRef.current || !containerRef.current) {
                 return;
             }
             const container = containerRef.current;
             const tab = activeTabRef.current;
 
-            const containerLeft = container.scrollLeft;
-            const containerWidth = container.clientWidth;
-            const tabLeft = tab.offsetLeft;
-            const tabWidth = tab.offsetWidth;
-            const tabRight = tabLeft + tabWidth;
+            const containerRect = container.getBoundingClientRect();
+            const tabRect = tab.getBoundingClientRect();
+
+            if (containerRect.width === 0 || tabRect.width === 0) {
+                requestAnimationFrame(scrollToActive);
+                return;
+            }
+
+            const tabLeftRelativeToContainer = tabRect.left - containerRect.left;
+            const tabRightRelativeToContainer = tabRect.right - containerRect.left;
             const buffer = 16;
 
-            if (tabLeft < containerLeft) {
+            if (tabLeftRelativeToContainer < buffer) {
                 container.scrollTo({
-                    left: Math.max(0, tabLeft - buffer),
+                    left: Math.max(0, container.scrollLeft + tabLeftRelativeToContainer - buffer),
                     behavior: 'smooth',
                 });
-            } else if (tabRight > containerLeft + containerWidth) {
+            } else if (tabRightRelativeToContainer > containerRect.width - buffer) {
                 container.scrollTo({
-                    left: tabRight - containerWidth + buffer,
+                    left: container.scrollLeft + (tabRightRelativeToContainer - containerRect.width) + buffer,
                     behavior: 'smooth',
                 });
             }
-        });
+        };
 
-        return () => cancelAnimationFrame(frameId);
+        const frameId = requestAnimationFrame(scrollToActive);
+        return () => {
+            cancelled = true;
+            cancelAnimationFrame(frameId);
+        };
     }, [activeTabId, tabs]);
 
     useEffect(() => {

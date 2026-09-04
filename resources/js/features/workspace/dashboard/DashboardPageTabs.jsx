@@ -45,6 +45,101 @@ const PrimaryTab = forwardRef(function PrimaryTab({ tab, active, onSelect, onClo
     );
 });
 
+function OverflowTabList({ tabs, activePage, onSelect, onClose }) {
+    const listRef = useRef(null);
+    const activeItemRef = useRef(null);
+
+    useEffect(() => {
+        let cancelled = false;
+        let timeoutId;
+        const scrollToActive = () => {
+            if (cancelled || !activeItemRef.current || !listRef.current) return;
+            const container = listRef.current;
+            const item = activeItemRef.current;
+
+            const containerRect = container.getBoundingClientRect();
+            const itemRect = item.getBoundingClientRect();
+
+            if (containerRect.height === 0 || itemRect.height === 0) {
+                timeoutId = setTimeout(scrollToActive, 30);
+                return;
+            }
+
+            const itemTopRelativeToContainer = itemRect.top - containerRect.top;
+            const itemBottomRelativeToContainer = itemRect.bottom - containerRect.top;
+            const buffer = 8;
+
+            if (itemTopRelativeToContainer < buffer) {
+                container.scrollTo({
+                    top: Math.max(0, container.scrollTop + itemTopRelativeToContainer - buffer),
+                    behavior: 'smooth',
+                });
+            } else if (itemBottomRelativeToContainer > containerRect.height - buffer) {
+                container.scrollTo({
+                    top: container.scrollTop + (itemBottomRelativeToContainer - containerRect.height) + buffer,
+                    behavior: 'smooth',
+                });
+            }
+        };
+
+        const frameId = requestAnimationFrame(scrollToActive);
+        return () => {
+            cancelled = true;
+            cancelAnimationFrame(frameId);
+            clearTimeout(timeoutId);
+        };
+    }, [activePage?.id, tabs]);
+
+    return (
+        <div
+            ref={listRef}
+            className="max-h-[280px] overflow-y-auto py-1 [scrollbar-width:thin] [scrollbar-color:#c7d0e0_transparent]"
+        >
+            {tabs.map((tab) => {
+                const active = activePage?.id === tab.id;
+                return (
+                    <div
+                        key={tab.id}
+                        ref={active ? activeItemRef : null}
+                        className={`group flex w-full items-center justify-between text-sm transition ${
+                            active
+                                ? 'border-y border-[#9dc2ec] bg-[#e8f2fc]'
+                                : 'border-y border-transparent hover:bg-brand-blue-lightest'
+                        }`.trim()}
+                    >
+                        <button
+                            type="button"
+                            onClick={() => onSelect(tab.id)}
+                            className={`flex-1 truncate px-3 py-2 text-left text-sm leading-5 font-normal ${
+                                active ? 'text-black font-medium' : 'text-abc-label-dark'
+                            }`.trim()}
+                        >
+                            {renderTabLabel(tab.label, active, false)}
+                        </button>
+                        {tab.closable ? (
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onClose(tab.id);
+                                }}
+                                className={`mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[3px] transition-colors ${
+                                    active
+                                        ? 'text-slate-600 hover:text-red-600'
+                                        : 'text-slate-400 hover:text-slate-700'
+                                }`}
+                                aria-label={`Tutup tab ${tab.label}`}
+                            >
+                                <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.6} />
+                            </button>
+                        ) : null}
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
 function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCloseAllPages }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
@@ -56,7 +151,6 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCl
 
     return (
         <div className="relative shrink-0 self-start">
-
             <button
                 ref={buttonRef}
                 type="button"
@@ -73,52 +167,17 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCl
                 open={open}
                 onClose={() => setOpen(false)}
                 anchorRef={buttonRef}
+                maxHeightLimit={380}
                 widthClassName="w-[min(18rem,calc(100vw-1rem))]"
                 className="z-[60]"
                 noPadding
             >
-                <div className="max-h-[280px] overflow-y-auto py-1 [scrollbar-width:thin] [scrollbar-color:#c7d0e0_transparent]">
-                    {tabs.map((tab) => {
-                        const active = activePage?.id === tab.id;
-                        return (
-                            <div
-                                key={tab.id}
-                                className={`group flex w-full items-center justify-between text-sm transition ${
-                                    active
-                                        ? 'border-y border-[#9dc2ec] bg-[#e8f2fc]'
-                                        : 'border-y border-transparent hover:bg-brand-blue-lightest'
-                                }`.trim()}
-                            >
-                                <button
-                                    type="button"
-                                    onClick={() => handleSelect(tab.id)}
-                                    className={`flex-1 truncate px-3 py-2 text-left text-sm leading-5 font-normal ${
-                                        active ? 'text-black' : 'text-abc-label-dark'
-                                    }`.trim()}
-                                >
-                                    {renderTabLabel(tab.label, active, false)}
-                                </button>
-                                {tab.closable ? (
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onClosePage(tab.id);
-                                        }}
-                                        className={`mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[3px] transition-colors ${
-                                            active
-                                                ? 'text-slate-600 hover:text-red-600'
-                                                : 'text-slate-400 hover:text-slate-700'
-                                        }`}
-                                        aria-label={`Tutup tab ${tab.label}`}
-                                    >
-                                        <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.6} />
-                                    </button>
-                                ) : null}
-                            </div>
-                        );
-                    })}
-                </div>
+                <OverflowTabList
+                    tabs={tabs}
+                    activePage={activePage}
+                    onSelect={handleSelect}
+                    onClose={onClosePage}
+                />
                 {tabs.length > 1 && onCloseAllPages ? (
                     <div className="border-t border-slate-200 bg-slate-50 p-1">
                         <button
@@ -176,34 +235,44 @@ export default function DashboardPageTabs({
     const activeTabRef = useRef(null);
 
     useEffect(() => {
-        const frameId = requestAnimationFrame(() => {
-            if (!activeTabRef.current || !scrollContainerRef.current) {
+        let cancelled = false;
+        const scrollToActive = () => {
+            if (cancelled || !activeTabRef.current || !scrollContainerRef.current) {
                 return;
             }
             const container = scrollContainerRef.current;
             const tab = activeTabRef.current;
 
-            const containerLeft = container.scrollLeft;
-            const containerWidth = container.clientWidth;
-            const tabLeft = tab.offsetLeft;
-            const tabWidth = tab.offsetWidth;
-            const tabRight = tabLeft + tabWidth;
+            const containerRect = container.getBoundingClientRect();
+            const tabRect = tab.getBoundingClientRect();
+
+            if (containerRect.width === 0 || tabRect.width === 0) {
+                requestAnimationFrame(scrollToActive);
+                return;
+            }
+
+            const tabLeftRelativeToContainer = tabRect.left - containerRect.left;
+            const tabRightRelativeToContainer = tabRect.right - containerRect.left;
             const buffer = 16;
 
-            if (tabLeft < containerLeft) {
+            if (tabLeftRelativeToContainer < buffer) {
                 container.scrollTo({
-                    left: Math.max(0, tabLeft - buffer),
+                    left: Math.max(0, container.scrollLeft + tabLeftRelativeToContainer - buffer),
                     behavior: 'smooth',
                 });
-            } else if (tabRight > containerLeft + containerWidth) {
+            } else if (tabRightRelativeToContainer > containerRect.width - buffer) {
                 container.scrollTo({
-                    left: tabRight - containerWidth + buffer,
+                    left: container.scrollLeft + (tabRightRelativeToContainer - containerRect.width) + buffer,
                     behavior: 'smooth',
                 });
             }
-        });
+        };
 
-        return () => cancelAnimationFrame(frameId);
+        const frameId = requestAnimationFrame(scrollToActive);
+        return () => {
+            cancelled = true;
+            cancelAnimationFrame(frameId);
+        };
     }, [activePage?.id, tabs]);
 
     useEffect(() => {

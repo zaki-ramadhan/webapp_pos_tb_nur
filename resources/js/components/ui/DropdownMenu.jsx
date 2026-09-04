@@ -7,6 +7,7 @@ export default function DropdownMenu({
     children,
     align = 'end',
     side = 'bottom',
+    maxHeightLimit = 260,
     widthClassName = 'w-[240px]',
     className = '',
     panelClassName = '',
@@ -21,6 +22,7 @@ export default function DropdownMenu({
             anchorRef={anchorRef}
             align={align}
             side={side}
+            maxHeightLimit={maxHeightLimit}
             className={`rounded-[6px] shadow-md ${paddingClass} ${widthClassName} ${className}`.trim()}
             panelClassName={panelClassName}
         >
