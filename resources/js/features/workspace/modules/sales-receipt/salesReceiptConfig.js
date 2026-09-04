@@ -113,7 +113,7 @@ export const defaultSalesReceiptConfig = {
         createLabel: 'Tambah Penerimaan Penjualan',
         refreshLabel: 'Muat ulang',
         filterButtonLabel: 'Filter lanjutan',
-        searchPlaceholder: 'Cari...',
+        searchPlaceholder: 'Cari data...',
         pageValue: '10',
         columns: salesReceiptListColumns,
         rows: salesReceiptTableRows,

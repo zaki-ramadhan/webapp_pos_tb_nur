@@ -122,7 +122,7 @@ const defaultSalesReturnConfig = {
         createLabel: 'Tambah Retur Penjualan',
         refreshLabel: 'Muat ulang',
         filterButtonLabel: 'Filter lanjutan',
-        searchPlaceholder: 'Cari nomor atau pelanggan...',
+        searchPlaceholder: 'Cari data...',
         pageValue: '17',
         columns: salesReturnListColumns,
         rows: salesReturnTableRows,

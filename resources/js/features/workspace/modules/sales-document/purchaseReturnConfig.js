@@ -122,7 +122,7 @@ const defaultPurchaseReturnConfig = {
         createLabel: 'Tambah Retur Pembelian',
         refreshLabel: 'Muat ulang',
         filterButtonLabel: 'Filter lanjutan',
-        searchPlaceholder: 'Cari...',
+        searchPlaceholder: 'Cari data...',
         pageValue: '18',
         columns: purchaseReturnListColumns,
         rows: purchaseReturnTableRows,

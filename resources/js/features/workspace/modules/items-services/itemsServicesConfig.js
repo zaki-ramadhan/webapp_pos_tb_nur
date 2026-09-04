@@ -148,7 +148,7 @@ const defaultConfig = {
     table: {
         createLabel: 'Tambah Barang',
         refreshLabel: 'Muat ulang',
-        searchPlaceholder: 'Cari...',
+        searchPlaceholder: 'Cari data...',
         searchWidthClassName: 'sm:w-[342px]',
         tableClassName: 'min-w-[1540px]',
         pageValue: '64',

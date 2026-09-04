@@ -89,7 +89,7 @@ export const defaultSalesDepositConfig = {
     table: {
         createLabel: 'Tambah Uang Muka Penjualan',
         refreshLabel: 'Muat ulang',
-        searchPlaceholder: 'Cari...',
+        searchPlaceholder: 'Cari data...',
         pageValue: '2',
         columns: salesDepositListColumns,
         rows: salesDepositTableRows,

@@ -97,7 +97,7 @@ export function createTableConfig({ createLabel, rows, filters, pageValue, colum
     return {
         createLabel,
         refreshLabel: 'Muat ulang',
-        searchPlaceholder: 'Cari...',
+        searchPlaceholder: 'Cari data...',
         settingsLabel: 'Pengaturan tabel',
         pageValue,
         tableClassName: 'min-w-[1320px]',

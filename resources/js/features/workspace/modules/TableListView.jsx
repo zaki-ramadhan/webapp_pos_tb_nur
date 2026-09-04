@@ -255,14 +255,7 @@ export default function TableListView({
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
-                    placeholder: (() => {
-                        const searchCols = (table.columns ?? []).filter(
-                            (col) => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label
-                        );
-                        if (!searchCols.length) return table.searchPlaceholder ?? 'Cari data...';
-                        const labels = searchCols.map((col) => col.label);
-                        return `Cari ${labels.slice(0, 3).join(', ')}${labels.length > 3 ? '...' : ''}`;
-                    })(),
+                    placeholder: 'Cari data...',
                     widthClassName: table.searchWidthClassName ?? 'w-full sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}

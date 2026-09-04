@@ -117,7 +117,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
-                    placeholder: 'Cari No. Akun, Nama, Tipe...',
+                    placeholder: 'Cari data...',
                     widthClassName: 'sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
