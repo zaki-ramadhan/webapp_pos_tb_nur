@@ -85,7 +85,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCl
                                 key={tab.id}
                                 className={`group flex w-full items-center justify-between text-sm transition ${
                                     active
-                                        ? 'border-y border-[#9dc2ec] bg-[#d3e5f8]'
+                                        ? 'border-y border-[#9dc2ec] bg-[#e8f2fc]'
                                         : 'border-y border-transparent hover:bg-brand-blue-lightest'
                                 }`.trim()}
                             >
@@ -230,7 +230,7 @@ export default function DashboardPageTabs({
 
     return (
         <div className={`bg-ui-bg-panel pt-[3px] ${hasLevel2 ? 'border-b border-ui-border-medium' : ''}`.trim()}>
-            <div className="border-b-[2px] border-brand-primary bg-ui-bg-panel-light px-1 pt-0 sm:px-1.5">
+            <div className="border-b border-brand-primary bg-ui-bg-panel-light px-1 pt-0 sm:px-1.5">
                 <div className="flex items-stretch justify-between gap-1 sm:gap-2">
                     <div
                         ref={scrollContainerRef}

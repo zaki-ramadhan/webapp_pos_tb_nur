@@ -196,7 +196,7 @@ export function TransactionDataTable({
                             );
                         })
                     ) : (
-                        <DataTableRow className="bg-white">
+                        <DataTableRow className="bg-white table-row-empty" data-empty-row="true">
                             {hasLeadingEmptyCell ? (
                                 <DataTableCell className="px-3 py-2 text-center text-black">
                                     {emptyLeadingCellContent}

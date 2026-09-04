@@ -350,7 +350,7 @@ export default function TableListView({
                                 </DataTableRow>
                             ))
                         ) : (
-                            <DataTableRow className="bg-white">
+                            <DataTableRow className="bg-white table-row-empty" data-empty-row="true">
                                 <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-2 text-center text-base text-black">
                                     {table.loading ? (
                                         'Memuat data...'
