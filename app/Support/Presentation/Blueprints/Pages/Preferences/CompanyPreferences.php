@@ -8,7 +8,7 @@ class CompanyPreferences
     {
         return [
             ['id' => 'company-name', 'label' => 'Nama', 'type' => 'text', 'value' => 'TB Nur', 'clearable' => true],
-            ['id' => 'phone', 'label' => 'Telepon', 'type' => 'text', 'value' => '0812-8273-6188', 'clearable' => true],
+            ['id' => 'phone', 'label' => 'Telepon', 'type' => 'text', 'value' => '0877-2498-5885', 'clearable' => true],
             ['id' => 'email', 'label' => 'Email', 'type' => 'text', 'value' => 'tb.nur.utama@gmail.com', 'clearable' => true],
         ];
     }
@@ -20,13 +20,13 @@ class CompanyPreferences
             'street' => [
                 'id' => 'street',
                 'label' => 'Jalan',
-                'value' => 'Jl. Tomang Raya No. 35',
+                'value' => 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi',
             ],
             'tokens' => [],
             'fields' => [
-                ['id' => 'city', 'label' => 'Kota', 'value' => 'Jakarta Barat', 'clearable' => true],
-                ['id' => 'province', 'label' => 'Provinsi', 'value' => 'DKI Jakarta', 'clearable' => true],
-                ['id' => 'postal-code', 'label' => 'K.Pos', 'value' => '11440', 'clearable' => true],
+                ['id' => 'city', 'label' => 'Kota', 'value' => 'Kabupaten Cirebon', 'clearable' => true],
+                ['id' => 'province', 'label' => 'Provinsi', 'value' => 'Jawa Barat', 'clearable' => true],
+                ['id' => 'postal-code', 'label' => 'K.Pos', 'value' => '45165', 'clearable' => true],
                 ['id' => 'country', 'label' => 'Negara', 'value' => 'Indonesia', 'clearable' => true],
             ],
         ];
