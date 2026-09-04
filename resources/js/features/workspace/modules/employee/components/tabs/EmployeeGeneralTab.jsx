@@ -21,7 +21,7 @@ export default function EmployeeGeneralTab({ form, values, errors, onChange }) {
                     <TextInput name="email" value={values.email} onChange={(event) => onChange('email', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
                 </EmployeeFieldRow>
                 <EmployeeFieldRow label="No. Handphone / WhatsApp">
-                    <TextInput name="mobile_phone" value={values.mobilePhone} onChange={(event) => onChange('mobilePhone', event.target.value.replace(/[^\d+]/g, ''))} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                    <TextInput name="mobile_phone" value={values.mobilePhone} onChange={(event) => onChange('mobilePhone', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
                 </EmployeeFieldRow>
             </div>
 

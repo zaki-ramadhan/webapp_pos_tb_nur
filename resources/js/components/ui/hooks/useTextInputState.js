@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useFormError } from '../FormErrorContext';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { formatPhoneDisplay } from '@/features/workspace/shared/phoneFormatting';
 import { sanitizeInput, unformatAmount } from '../utils/textInputHelpers';
 
 export default function useTextInputState({
@@ -25,21 +26,25 @@ export default function useTextInputState({
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
     const searchStr = `${id || ''} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
 
+    const isMultiOrEmail = searchStr.includes('identifier') ||
+                           searchStr.includes('email') ||
+                           searchStr.includes('mail') ||
+                           type === 'email';
+
     const isPostal = searchStr.includes('postal') ||
                      searchStr.includes('kodepos') ||
                      searchStr.includes('zip') ||
                      searchStr.includes('k.pos') ||
                      searchStr.includes('kode pos');
 
-    const isPhone = searchStr.includes('phone') ||
-                    searchStr.includes('telp') ||
-                    searchStr.includes('telepon') ||
-                    searchStr.includes('whatsapp') ||
-                    searchStr.includes('wa') ||
-                    searchStr.includes('fax') ||
-                    searchStr.includes('hp') ||
-                    searchStr.includes('kontak') ||
-                    searchStr.includes('contact');
+    const isPhone = !isMultiOrEmail && (
+        searchStr.includes('phone') ||
+        searchStr.includes('telp') ||
+        searchStr.includes('telepon') ||
+        searchStr.includes('whatsapp') ||
+        searchStr.includes('fax') ||
+        /\b(hp|wa)\b/i.test(searchStr)
+    );
 
     const isNpwp = searchStr.includes('npwp') ||
                    searchStr.includes('tax_number') ||
@@ -278,6 +283,25 @@ export default function useTextInputState({
         if (isCurrency && val !== '') {
             const formatted = formatAmountInput(val, { allowDecimal: true, isInput: true });
             setLocalValue(formatted);
+        } else if (isPhone && val !== '') {
+            const formatted = formatPhoneDisplay(val);
+            if (formatted !== val) {
+                setLocalValue(formatted);
+                if (onChange) {
+                    onChange({
+                        target: {
+                            id: id || '',
+                            name: props.name || '',
+                            value: formatted,
+                        },
+                        currentTarget: {
+                            id: id || '',
+                            name: props.name || '',
+                            value: formatted,
+                        },
+                    });
+                }
+            }
         }
 
         const name = props.name ?? '';

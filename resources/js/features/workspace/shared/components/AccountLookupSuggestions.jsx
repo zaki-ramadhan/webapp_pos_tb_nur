@@ -4,6 +4,7 @@ import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/featur
 import { buildAccountLookupLabel, buildAccountLookupMeta, translateAccountType } from '@/features/workspace/shared/hooks/useAccountLookupController';
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
+import { formatPhoneDisplay } from '@/features/workspace/shared/phoneFormatting';
 
 function resolveDocumentTypeLabel(record, resource) {
     if (record.numbering_type) return record.numbering_type;
@@ -130,8 +131,8 @@ export default function AccountLookupSuggestions({
                             const telp = String(record.business_phone ?? record.office_phone ?? record.phone ?? '').trim();
                             const contactParts = [];
                             if (code) contactParts.push(code);
-                            if (hp) contactParts.push(`HP:${hp}`);
-                            if (telp && telp !== hp) contactParts.push(`Telp:${telp}`);
+                            if (hp) contactParts.push(`HP:${formatPhoneDisplay(hp)}`);
+                            if (telp && telp !== hp) contactParts.push(`Telp:${formatPhoneDisplay(telp)}`);
                             subtitleLeft = contactParts.join(' - ');
                         } else if (resource === 'accounts') {
                             subtitleLeft = code;
