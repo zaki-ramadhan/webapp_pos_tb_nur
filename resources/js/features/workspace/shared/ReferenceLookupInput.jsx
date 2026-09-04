@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { CloseIcon, LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { useFormError } from '@/components/ui/FormErrorContext';
+import { sanitizeTextValue } from '@/utils/textSanitizer';
 
 function buildNormalizedSearchValue(value) {
     return String(value ?? '').trim().toLowerCase();
@@ -130,7 +131,7 @@ export default function ReferenceLookupInput({
     }
 
     function handleChange(event) {
-        const nextValue = event.target.value;
+        const nextValue = sanitizeTextValue(event.target.value);
         setQuery(nextValue);
         setOpen(true);
     }

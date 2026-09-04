@@ -1,4 +1,5 @@
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { sanitizeTextValue } from '@/utils/textSanitizer';
 
 export function unformatAmount(val) {
     if (val === null || val === undefined) return '';
@@ -11,6 +12,8 @@ export function unformatAmount(val) {
 
 export function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix = '', lettersOnly = false, options = {}) {
     if (typeof val !== 'string') return val;
+
+    val = sanitizeTextValue(val);
 
     if (val.startsWith(' ')) {
         val = val.trimStart();

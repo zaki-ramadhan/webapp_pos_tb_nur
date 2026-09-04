@@ -6,6 +6,7 @@ import { TransactionHeaderButton } from '@/features/workspace/modules/shared/Tra
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { PencilIcon } from '@/features/workspace/shared/Icons';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
+import { sanitizeTextValue } from '@/utils/textSanitizer';
 import { formatNum, parse, calculatePayrollTotals } from './payrollEntryEmployeeModalUtils';
 
 export default function PayrollEntryEmployeeModal({
@@ -149,7 +150,7 @@ export default function PayrollEntryEmployeeModal({
     const formatFieldChange = (key, val) => {
         setEmployeeModalValues(prev => ({
             ...prev,
-            [key]: val,
+            [key]: typeof val === 'string' ? sanitizeTextValue(val) : val,
         }));
     };
 
