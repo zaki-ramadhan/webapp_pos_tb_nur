@@ -25,7 +25,7 @@ class BackendResourceIndexQuery
         $tableName = $modelInstance->getTable();
         $search = trim((string) ($filters['search'] ?? ''));
         $page = max(1, (int) ($filters['page'] ?? request()->input('page', 1)));
-        $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 1000));
+        $perPage = max(1, min((int) ($filters['per_page'] ?? 25), 1000));
 
         if (! Schema::hasTable($tableName)) {
             return new \Illuminate\Pagination\LengthAwarePaginator([], 0, $perPage, $page);

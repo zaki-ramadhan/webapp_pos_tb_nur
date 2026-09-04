@@ -36,7 +36,7 @@ export default function ItemMutationTab({ productId }) {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(15);
+    const [perPage, setPerPage] = useState(25);
     const [paginationMeta, setPaginationMeta] = useState({
         total: 0,
         lastPage: 1,
@@ -218,7 +218,7 @@ export default function ItemMutationTab({ productId }) {
                         setPerPage(nextPerPage);
                         setPage(1);
                     }}
-                    perPageOptions={[10, 15, 25, 50, 100]}
+                    perPageOptions={[10, 25, 50, 100]}
                     className="mt-3"
                 />
             ) : null}

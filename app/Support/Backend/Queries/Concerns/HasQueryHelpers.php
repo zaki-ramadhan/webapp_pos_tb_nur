@@ -39,7 +39,7 @@ trait HasQueryHelpers
      */
     protected function paginateRows(Collection $rows, array $filters): LengthAwarePaginator
     {
-        $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 100));
+        $perPage = max(1, min((int) ($filters['per_page'] ?? 25), 100));
         $page = max(1, (int) ($filters['page'] ?? request()->query('page', 1)));
 
         return ArrayPaginatorFactory::make($rows, $perPage, $page);

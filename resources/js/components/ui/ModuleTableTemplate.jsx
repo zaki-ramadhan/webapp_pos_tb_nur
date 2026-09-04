@@ -133,6 +133,47 @@ export default function ModuleTableTemplate({
         return filteredRows;
     }, [filteredRows, activeSortKey, activeSortDir]);
 
+    const hasExternalPagination = Boolean(table.pagination);
+    const [localPage, setLocalPage] = useState(1);
+    const [localPerPage, setLocalPerPage] = useState(25);
+
+    useEffect(() => {
+        if (!hasExternalPagination) {
+            setLocalPage(1);
+        }
+    }, [keyword, inactiveFilter, hasExternalPagination]);
+
+    const displayRows = useMemo(() => {
+        if (hasExternalPagination) {
+            return sortedRows;
+        }
+        const start = (localPage - 1) * localPerPage;
+        return sortedRows.slice(start, start + localPerPage);
+    }, [sortedRows, hasExternalPagination, localPage, localPerPage]);
+
+    const paginationConfig = useMemo(() => {
+        if (hasExternalPagination) {
+            return table.pagination;
+        }
+        const total = sortedRows.length;
+        const lastPage = Math.max(1, Math.ceil(total / localPerPage));
+        const from = total > 0 ? (localPage - 1) * localPerPage + 1 : 0;
+        const to = Math.min(total, localPage * localPerPage);
+        return {
+            page: localPage,
+            perPage: localPerPage,
+            total,
+            lastPage,
+            from,
+            to,
+            onPageChange: setLocalPage,
+            onPerPageChange: (nextPerPage) => {
+                setLocalPerPage(nextPerPage);
+                setLocalPage(1);
+            },
+        };
+    }, [hasExternalPagination, table.pagination, sortedRows.length, localPage, localPerPage]);
+
     useEffect(() => {
         tableRegistry.setActiveTable(cleanedColumns, sortedRows, resourceName);
         return () => {
@@ -229,8 +270,8 @@ export default function ModuleTableTemplate({
                         </DataTableHeader>
 
                         <DataTableBody>
-                            {sortedRows.length ? (
-                                sortedRows.map((row, index) => (
+                            {displayRows.length ? (
+                                displayRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
                                         className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''}`.trim()}
@@ -246,7 +287,7 @@ export default function ModuleTableTemplate({
                                             className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 text-center text-base text-table-row-number whitespace-nowrap"
                                             style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
                                         >
-                                            {table.pagination?.from ? (table.pagination.from + index) : (index + 1)}
+                                            {paginationConfig?.from ? (paginationConfig.from + index) : (index + 1)}
                                         </DataTableCell>
                                          {visibleColumns.map((column) => {
                                              const isCheckbox = column.id === 'checkbox';
@@ -299,16 +340,16 @@ export default function ModuleTableTemplate({
                 </div>
             </div>
 
-            {table.pagination ? (
+            {paginationConfig && (hasExternalPagination || paginationConfig.total > 25) ? (
                 <Pagination
-                    page={table.pagination.page}
-                    perPage={table.pagination.perPage}
-                    total={table.pagination.total}
-                    lastPage={table.pagination.lastPage}
-                    from={table.pagination.from}
-                    to={table.pagination.to}
-                    onPageChange={table.pagination.onPageChange}
-                    onPerPageChange={table.pagination.onPerPageChange}
+                    page={paginationConfig.page}
+                    perPage={paginationConfig.perPage}
+                    total={paginationConfig.total}
+                    lastPage={paginationConfig.lastPage}
+                    from={paginationConfig.from}
+                    to={paginationConfig.to}
+                    onPageChange={paginationConfig.onPageChange}
+                    onPerPageChange={paginationConfig.onPerPageChange}
                     className="mt-3"
                 />
             ) : null}
