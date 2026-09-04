@@ -346,39 +346,12 @@ class InventoryInquiryQueryService
 
                 $currentStock = (float) $totals['stock_on_hand'];
                 $minimumStock = (float) ($product->minimum_stock ?? 0);
-                $itemCondition = $product->item_condition ?? 'normal';
-                $isActive = $product->is_active !== false;
-
-                $isProblematicCondition = in_array($itemCondition, ['damaged', 'expired', 'inactive'], true) || !$isActive;
-
-                // Restock required if current stock <= minimum stock OR item has a problematic condition (damaged, expired, inactive)
-                if ($currentStock > $minimumStock && !$isProblematicCondition) {
+                if ($currentStock > $minimumStock) {
                     return null;
                 }
 
                 $deficit = max(0.0, $minimumStock - $currentStock);
                 $purchasePrice = (float) ($product->default_purchase_price ?? 0);
-
-                // Determine Status Label & Status Badge
-                if ($itemCondition === 'damaged') {
-                    $statusLabel = 'Barang Rusak';
-                    $statusBadge = 'damaged';
-                } elseif ($itemCondition === 'expired') {
-                    $statusLabel = 'Barang Kedaluwarsa';
-                    $statusBadge = 'expired';
-                } elseif ($itemCondition === 'inactive' || !$isActive) {
-                    $statusLabel = 'Nonaktif';
-                    $statusBadge = 'inactive';
-                } elseif ($currentStock <= 0) {
-                    $statusLabel = 'Stok Habis';
-                    $statusBadge = 'critical';
-                } elseif ($currentStock <= $minimumStock) {
-                    $statusLabel = 'Stok Menipis';
-                    $statusBadge = 'warning';
-                } else {
-                    $statusLabel = 'Stok Normal';
-                    $statusBadge = 'normal';
-                }
 
                 $supplierModel = $product->preferredSupplier ?? $product->mainSupplier;
                 $supplierName = $supplierModel?->name ?? $supplierModel?->full_name ?? '-';
@@ -401,10 +374,6 @@ class InventoryInquiryQueryService
                     'minimum_stock' => $this->formatNumber($minimumStock),
                     'minimum_limit' => $this->formatNumber($minimumStock),
                     'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
-                    'status_label' => $statusLabel,
-                    'status_badge' => $statusBadge,
-                    'item_condition' => $itemCondition,
-                    'condition_notes' => $product->condition_notes ?? '',
                     'raw_cost_price' => $purchasePrice,
                     'raw_current_stock' => $currentStock,
                     'raw_available_stock' => $currentStock,

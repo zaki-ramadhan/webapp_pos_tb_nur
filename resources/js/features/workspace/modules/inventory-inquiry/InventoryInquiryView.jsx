@@ -50,10 +50,7 @@ function resolveCellAlignClassName(align) {
 
 function isInactiveRow(row) {
     if (!row) return false;
-    const cond = String(row.itemCondition ?? row.item_condition ?? '').toLowerCase();
-    const badge = String(row.statusBadge ?? '').toLowerCase();
-    const status = String(row.status ?? row.statusLabel ?? '').toLowerCase();
-    return cond === 'inactive' || badge === 'inactive' || status.includes('nonaktif') || row.is_active === false || row.isActive === false;
+    return row.is_active === false || row.isActive === false;
 }
 
 export default function InventoryInquiryView({ config, pageId }) {
@@ -297,9 +294,7 @@ export default function InventoryInquiryView({ config, pageId }) {
             const lineItems = selectedRows.map((row) => {
                 const minLimit = parseNumericInput(row.rawMinimumLimit ?? row.minimumLimit ?? row.minimumStock ?? 1);
                 const currentStock = parseNumericInput(row.rawAvailableStock ?? row.availableStock ?? 0);
-                const isProblematic = row.itemCondition === 'damaged' || row.itemCondition === 'expired' || row.itemCondition === 'inactive';
-                const effectiveStock = isProblematic ? 0 : currentStock;
-                const targetReplenishQty = isProblematic ? Math.max(minLimit, currentStock, 1) : Math.max(1, minLimit - effectiveStock);
+                const targetReplenishQty = Math.max(1, minLimit - currentStock);
                 const qtyNeeded = Math.max(minLimit > 0 ? minLimit : 1, targetReplenishQty);
 
                 const price = parseNumericInput(
