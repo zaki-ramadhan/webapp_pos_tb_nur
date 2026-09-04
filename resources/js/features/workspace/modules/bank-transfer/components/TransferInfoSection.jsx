@@ -24,15 +24,28 @@ export default function TransferInfoSection({ config, values, setValues, isDetai
                         <>
                             <TransactionFieldLabel label={config.labels.reconcileStatus} className="mt-6 sm:mt-8" />
                             <div className="space-y-3 pt-1 mt-6 sm:mt-8">
-                                {values.reconciliations.map((item) => (
-                                    <div key={item.id} className="grid gap-1 sm:grid-cols-[160px_1fr]">
-                                        <div className="text-xs sm:text-sm text-brand-dark">{item.bank}</div>
-                                        <div className="text-xs sm:text-sm text-brand-dark">
-                                            <span className="italic">{item.status}</span>
-                                            {item.date ? <span className="ml-8">{item.date}</span> : null}
+                                {values.reconciliations.map((item) => {
+                                    const isReconciled = item.status === 'Ya' || item.status?.startsWith('Ya');
+                                    const hasDateInStatus = item.status?.includes('(');
+                                    const statusLabel = isReconciled ? 'Ya' : (item.status || 'Belum');
+                                    const dateFromStatus = hasDateInStatus ? item.status.match(/\([^)]+\)/)?.[0] : null;
+                                    const rawDate = item.date || dateFromStatus;
+                                    const displayDate = rawDate
+                                        ? (rawDate.startsWith('(') ? rawDate : `(${rawDate})`)
+                                        : null;
+
+                                    return (
+                                        <div key={item.id} className="grid gap-1 sm:grid-cols-[160px_1fr]">
+                                            <div className="text-xs sm:text-sm text-brand-dark">{item.bank}</div>
+                                            <div className="text-xs sm:text-sm text-brand-dark">
+                                                <span className="italic">{statusLabel}</span>
+                                                {statusLabel === 'Ya' && displayDate ? (
+                                                    <span className="ml-2">{displayDate}</span>
+                                                ) : null}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </>
                     ) : null}

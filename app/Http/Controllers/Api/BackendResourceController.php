@@ -376,12 +376,85 @@ class BackendResourceController extends Controller
             'document_numbers' => ['required', 'array'],
             'document_numbers.*' => ['required', 'string'],
             'is_closed' => ['required', 'boolean'],
+            'account_id' => ['nullable', 'integer'],
+            'date' => ['nullable', 'string'],
         ]);
 
-        $affected = \App\Domain\Support\Models\OperationDocument::whereIn('document_number', $validated['document_numbers'])
-            ->update(['is_closed' => $validated['is_closed']]);
+        $isClosed = (bool) $validated['is_closed'];
+        $accountId = !empty($validated['account_id']) ? (int) $validated['account_id'] : null;
+        $reconcileDate = $validated['date'] ?? now()->format('d/m/Y');
+        $dateFormatted = str_starts_with($reconcileDate, '(') ? $reconcileDate : "({$reconcileDate})";
 
-      // Invalidate dashboard caches on mutation
+        $documents = \App\Domain\Support\Models\OperationDocument::whereIn('document_number', $validated['document_numbers'])
+            ->with(['primaryAccount', 'secondaryAccount'])
+            ->get();
+
+        $affected = 0;
+
+        foreach ($documents as $doc) {
+            $metadata = $doc->metadata ?? [];
+
+            if ($doc->document_type === 'bank_transfer') {
+                $primaryId = $doc->primary_account_id ? (int) $doc->primary_account_id : null;
+                $secondaryId = $doc->secondary_account_id ? (int) $doc->secondary_account_id : null;
+
+                $fromLabel = $metadata['from_bank_label'] ?? $doc->primaryAccount?->name ?? 'Kas/Bank Asal';
+                $toLabel = $metadata['to_bank_label'] ?? $doc->secondaryAccount?->name ?? 'Kas/Bank Tujuan';
+
+                $currentRecons = $metadata['reconciliations'] ?? [];
+                $fromRecon = collect($currentRecons)->firstWhere('id', 'from') ?? [
+                    'id' => 'from',
+                    'bank' => $fromLabel,
+                    'status' => 'Belum',
+                    'date' => null,
+                ];
+                $toRecon = collect($currentRecons)->firstWhere('id', 'to') ?? [
+                    'id' => 'to',
+                    'bank' => $toLabel,
+                    'status' => 'Belum',
+                    'date' => null,
+                ];
+
+                if ($accountId !== null) {
+                    if ($accountId === $primaryId) {
+                        $fromRecon['status'] = $isClosed ? 'Ya' : 'Belum';
+                        $fromRecon['date'] = $isClosed ? $dateFormatted : null;
+                    } elseif ($accountId === $secondaryId) {
+                        $toRecon['status'] = $isClosed ? 'Ya' : 'Belum';
+                        $toRecon['date'] = $isClosed ? $dateFormatted : null;
+                    } else {
+                        $fromRecon['status'] = $isClosed ? 'Ya' : 'Belum';
+                        $fromRecon['date'] = $isClosed ? $dateFormatted : null;
+                        $toRecon['status'] = $isClosed ? 'Ya' : 'Belum';
+                        $toRecon['date'] = $isClosed ? $dateFormatted : null;
+                    }
+                } else {
+                    $fromRecon['status'] = $isClosed ? 'Ya' : 'Belum';
+                    $fromRecon['date'] = $isClosed ? $dateFormatted : null;
+                    $toRecon['status'] = $isClosed ? 'Ya' : 'Belum';
+                    $toRecon['date'] = $isClosed ? $dateFormatted : null;
+                }
+
+                $bothReconciled = ($fromRecon['status'] === 'Ya' && $toRecon['status'] === 'Ya');
+                $doc->is_closed = $bothReconciled;
+
+                $metadata['reconciliations'] = [$fromRecon, $toRecon];
+                $metadata['reconcile_status'] = $bothReconciled ? 'Ya' : ($fromRecon['status'] === 'Ya' || $toRecon['status'] === 'Ya' ? 'Parsial' : 'Belum');
+                $metadata['reconcile_date'] = $isClosed ? $dateFormatted : null;
+                $metadata['reconciled_at'] = $isClosed ? now()->toIso8601String() : null;
+            } else {
+                $doc->is_closed = $isClosed;
+                $metadata['reconcile_status'] = $isClosed ? 'Ya' : 'Belum';
+                $metadata['reconcile_date'] = $isClosed ? $dateFormatted : null;
+                $metadata['reconciled_at'] = $isClosed ? now()->toIso8601String() : null;
+            }
+
+            $doc->metadata = $metadata;
+            $doc->save();
+            $affected++;
+        }
+
+        // Invalidate dashboard caches on mutation
 
         \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_retail');
         \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_trade-portal');
