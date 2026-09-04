@@ -6,32 +6,26 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
         return null;
     }
 
-    const maxWClass = items.length === 3
-        ? 'w-full sm:w-[720px] xl:w-[810px] 2xl:w-[900px] max-w-full'
-        : items.length === 1
-        ? 'w-full sm:w-[280px] xl:w-[320px] 2xl:w-[340px] max-w-full'
-        : 'w-full sm:w-[520px] md:w-[560px] xl:w-[600px] 2xl:w-[640px] max-w-full';
-
-    const gridColsClass = items.length === 3
-        ? 'grid-cols-1 sm:grid-cols-3'
-        : items.length === 2
-        ? 'grid-cols-1 sm:grid-cols-2'
-        : 'grid-cols-1';
+    const count = items.length;
+    const containerWidthClass =
+        count === 1
+            ? 'w-full sm:w-[280px] xl:w-[320px]'
+            : count === 2
+            ? 'w-full sm:w-[540px] md:w-[580px] xl:w-[620px]'
+            : count === 3
+            ? 'w-full sm:w-[780px] xl:w-[840px] 2xl:w-[900px]'
+            : 'w-full sm:w-auto max-w-full';
 
     return (
         <div
-            className={`grid ${gridColsClass} shrink-0 ${maxWClass} overflow-hidden rounded-[4px] border border-ui-border bg-white shadow-card-medium ${className}`.trim()}
+            className={`flex flex-col sm:flex-row shrink-0 ${containerWidthClass} max-w-full overflow-hidden rounded-[4px] border border-ui-border bg-white shadow-card-medium divide-y sm:divide-y-0 sm:divide-x divide-ui-border ${className}`.trim()}
         >
             {items.map((item, index) => {
                 const formattedValue = formatDisplayValue(item.value);
                 return (
                     <div
                         key={item.label || index}
-                        className={`px-4 py-2.5 min-w-0 flex flex-col justify-between ${
-                            index < items.length - 1
-                                ? 'border-b border-ui-border sm:border-b-0 sm:border-r'
-                                : ''
-                        }`.trim()}
+                        className="flex-1 min-w-0 px-4 py-2.5 flex flex-col justify-between"
                     >
                         <div className="text-xs sm:text-sm text-brand-dark truncate" title={item.label}>
                             {item.label}
