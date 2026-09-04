@@ -7,9 +7,17 @@ class SalaryAllowancePage
     public static function get(): array
     {
         return [
-                    'id' => 'salary-allowance',
-                    'label' => 'Gaji atau Tunjangan',
-                    'salaryAllowance' => [
+            'id' => 'salary-allowance',
+            'label' => 'Gaji atau Tunjangan',
+            'subtab' => [
+                'id' => 'salary-allowance-create',
+                'label' => 'Data Baru',
+            ],
+            'viewModes' => [
+                'form' => 'Form',
+                'table' => 'Tabel',
+            ],
+            'salaryAllowance' => [
                         'newTabLabel' => 'Data Baru',
                         'sectionLabel' => 'Gaji atau Tunjangan',
                         'tipActions' => [],
