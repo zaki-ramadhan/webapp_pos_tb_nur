@@ -43,10 +43,10 @@ class ForgotPasswordLinkController extends Controller
         if ($user === null || ! filled($user->email)) {
             RateLimiter::hit($this->throttleKey($request));
 
-            throw ValidationException::withMessages([
-                'email' => 'Email tidak terdaftar. Periksa kembali penulisan email Anda.',
-                'identifier' => 'Email tidak terdaftar. Periksa kembali penulisan email Anda.',
-            ]);
+            return redirect()->route('home')->with(
+                'status',
+                'Jika akun Anda terdaftar di sistem kami, tautan reset password telah dikirimkan ke email Anda.'
+            );
         }
 
         try {

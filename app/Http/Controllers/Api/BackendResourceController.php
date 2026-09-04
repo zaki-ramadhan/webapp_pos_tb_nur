@@ -197,6 +197,10 @@ class BackendResourceController extends Controller
         $this->validator->validateBranchAssignment($request->user(), $payload);
         $this->validator->validatePrivilegeEscalation($request->user(), $resource, $payload);
 
+        if ($resource === 'users' && $entity instanceof \App\Models\User) {
+            $this->validator->validateUserUpdate($request->user(), $entity, $payload);
+        }
+
         $entity = $this->writer->update($blueprint, $entity, $payload);
         if (!empty($blueprint->with)) {
             $entity->load($blueprint->with);
@@ -372,6 +376,9 @@ class BackendResourceController extends Controller
 
     public function reconcileDocuments(Request $request): JsonResponse
     {
+        $blueprint = $this->resolveBlueprint('bank-transfers');
+        $this->access->authorize($request->user(), $blueprint, 'update');
+
         $validated = $request->validate([
             'document_numbers' => ['required', 'array'],
             'document_numbers.*' => ['required', 'string'],

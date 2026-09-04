@@ -23,11 +23,15 @@ class AttachmentUploadController extends Controller
 
         try {
             $file = $request->file('file');
-            $originalName = $file->getClientOriginalName();
+            $rawName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $ext = strtolower($file->getClientOriginalExtension());
+            $sanitizedBaseName = preg_replace('/[^a-zA-Z0-9_\- ]/', '_', strip_tags($rawName));
+            $sanitizedBaseName = trim(substr($sanitizedBaseName, 0, 100)) ?: 'attachment';
+            $originalName = "{$sanitizedBaseName}.{$ext}";
+
             $mimeType = $file->getClientMimeType() ?: 'application/octet-stream';
             $fileSize = $file->getSize();
 
-            $ext = strtolower($file->getClientOriginalExtension());
             $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'jfif', 'pjpeg', 'pjp', 'bmp', 'avif']) 
                 || str_starts_with($mimeType, 'image/');
 

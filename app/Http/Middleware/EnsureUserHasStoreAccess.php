@@ -33,8 +33,14 @@ class EnsureUserHasStoreAccess
 
         $email = strtolower((string) $user->email);
 
+        $privilegedEmails = array_values(array_unique(array_merge(
+            $this->privilegedEmails,
+            \App\Models\User::getDeveloperEmails(),
+            \App\Models\User::getOwnerEmails()
+        )));
+
         // 1. Owner utama / Super admin / Administrator Sistem selalu lolos
-        if ($user->isPrivileged() || in_array($email, $this->privilegedEmails, true) || $user->hasAnyRoleCodes(['super_admin', 'owner', 'admin'])) {
+        if ($user->isPrivileged() || in_array($email, $privilegedEmails, true) || $user->hasAnyRoleCodes(['super_admin', 'owner', 'admin'])) {
             return $next($request);
         }
 

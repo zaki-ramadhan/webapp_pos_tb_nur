@@ -52,12 +52,21 @@ class BackendResourceSecurityValidator
             return;
         }
 
-      // Cegah non-super-admin atur role super_admin
-
+        // Cegah non-super-admin atur role super_admin
         if ($resource === 'users' && isset($payload['role_ids'])) {
             $superAdminRoleId = Role::where('code', 'super_admin')->value('id');
             if ($superAdminRoleId && in_array($superAdminRoleId, $payload['role_ids'])) {
                 throw new AuthorizationException('Hanya Super Admin yang berwenang menetapkan hak akses tingkat tertinggi.');
+            }
+        }
+
+        // Cegah non-super-admin / non-owner berikan grup akses OWNER
+        if ($resource === 'users' && isset($payload['access_group_ids'])) {
+            $ownerGroupId = \App\Domain\Identity\Models\AccessGroup::where('code', 'OWNER')->value('id');
+            if ($ownerGroupId && in_array($ownerGroupId, $payload['access_group_ids'])) {
+                if (! $user->isSystemAdmin() && ! $user->isOwner()) {
+                    throw new AuthorizationException('Hanya Pemilik Toko (Owner) atau Super Admin yang berwenang menetapkan grup akses Owner.');
+                }
             }
         }
 
@@ -123,6 +132,43 @@ class BackendResourceSecurityValidator
 
             if ($isTargetOwner) {
                 throw new AuthorizationException('Owner tidak memiliki wewenang untuk menghapus akun sesama Owner.');
+            }
+        }
+    }
+
+    /**
+     * Validasi kebijakan pembaruan pengguna (Anti-Account-Takeover).
+     *
+     * @throws AuthorizationException
+     */
+    public function validateUserUpdate(User $actor, User $target, array $payload): void
+    {
+        $developerEmails = User::getDeveloperEmails();
+        $targetEmail = strtolower((string) $target->email);
+        $actorEmail = strtolower((string) $actor->email);
+
+        $isActorDeveloper = $actor->isSystemAdmin() || in_array($actorEmail, $developerEmails, true);
+        $isTargetDeveloper = $target->isSystemAdmin() || in_array($targetEmail, $developerEmails, true);
+
+        // Jika target adalah Developer / Administrator Sistem, hanya Developer lain yang boleh mengedit
+        if ($isTargetDeveloper && ! $isActorDeveloper) {
+            throw new AuthorizationException('Anda tidak memiliki wewenang untuk mengubah data akun Administrator Sistem.');
+        }
+
+        // Jika target adalah Owner, hanya Developer atau akun Owner itu sendiri yang boleh mengedit
+        if (! $isActorDeveloper) {
+            $isTargetOwner = $target->isOwner() || in_array($targetEmail, User::getOwnerEmails(), true);
+            $isActorOwner = $actor->isOwner() || in_array($actorEmail, User::getOwnerEmails(), true);
+
+            if ($isTargetOwner && (! $isActorOwner || (int) $actor->id !== (int) $target->id)) {
+                throw new AuthorizationException('Anda tidak memiliki wewenang untuk mengubah data akun Pemilik Toko (Owner).');
+            }
+        }
+
+        // Jika bukan Super Admin / Owner, dan bukan akunnya sendiri, tidak boleh mengganti password user lain sembarangan
+        if (!empty($payload['password']) && (int) $actor->id !== (int) $target->id) {
+            if (! $actor->isSystemAdmin() && ! $actor->isOwner() && ! $actor->hasAnyRoleCodes(['super_admin', 'owner'])) {
+                throw new AuthorizationException('Hanya Administrator yang berwenang mengubah password pengguna lain.');
             }
         }
     }

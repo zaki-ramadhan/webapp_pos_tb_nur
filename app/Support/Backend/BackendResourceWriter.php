@@ -177,7 +177,7 @@ class BackendResourceWriter
                 }
 
                 if (in_array($blueprint->key, $itemKeys) && isset($payload['lines']) && is_array($payload['lines'])) {
-                    $subtotal = 0.0;
+                    $grossSubtotal = 0.0;
                     $discountTotal = 0.0;
                     $taxTotal = 0.0;
 
@@ -199,22 +199,27 @@ class BackendResourceWriter
                         $price = (float)($line['unit_price'] ?? 0.0);
                         $discount = (float)($line['discount_amount'] ?? 0.0);
 
-                        $lineTotal = max(0.0, ($qty * $price) - $discount);
+                        $lineGross = max(0.0, $qty * $price);
+                        $lineTotal = max(0.0, $lineGross - $discount);
                         $line['total_amount'] = $lineTotal;
 
-                        $subtotal += $lineTotal;
+                        $grossSubtotal += $lineGross;
                         $discountTotal += $discount;
                     }
                     unset($line);
 
                     $taxId = $payload['tax_id'] ?? null;
+                    $taxRate = 0.0;
                     if ($taxId) {
-                        $taxTotal = max(0.0, ($subtotal - $discountTotal) * 0.1);
+                        $taxRecord = \App\Domain\Finance\Models\Tax::find($taxId);
+                        $taxRate = $taxRecord ? ((float) $taxRecord->rate / 100.0) : 0.11;
                     }
 
-                    $totalAmount = max(0.0, $subtotal - $discountTotal + $taxTotal);
+                    $netTaxable = max(0.0, $grossSubtotal - $discountTotal);
+                    $taxTotal = $taxId ? round($netTaxable * $taxRate, 2) : 0.0;
+                    $totalAmount = max(0.0, $netTaxable + $taxTotal);
 
-                    $payload['subtotal'] = $subtotal;
+                    $payload['subtotal'] = $grossSubtotal;
                     $payload['discount_total'] = $discountTotal;
                     $payload['tax_total'] = $taxTotal;
                     $payload['total_amount'] = $totalAmount;
@@ -269,7 +274,7 @@ class BackendResourceWriter
                 foreach ($advancePayments as $adv) {
                     $depositId = $adv['__depositId'] ?? null;
                     if ($depositId) {
-                        $deposit = DB::table('operation_documents')->where('id', $depositId)->first();
+                        $deposit = DB::table('operation_documents')->where('id', $depositId)->lockForUpdate()->first();
                         if ($deposit && !empty($deposit->tax_id ?? null) && !$invoiceTaxId) {
                             throw \Illuminate\Validation\ValidationException::withMessages([
                                 'tax_id' => ["Uang Muka [{$deposit->document_number}] menggunakan PPN. Faktur Penjualan ini juga wajib menggunakan PPN."]
@@ -530,6 +535,13 @@ class BackendResourceWriter
                 $attachmentIds = $payload['attachment_ids'] ?? [];
 
                 \App\Domain\Support\Models\Attachment::whereIn('id', $attachmentIds)
+                    ->where(function ($q) use ($record) {
+                        $q->whereNull('attachable_id')
+                          ->orWhere(function ($sub) use ($record) {
+                              $sub->where('attachable_type', get_class($record))
+                                  ->where('attachable_id', $record->getKey());
+                          });
+                    })
                     ->update([
                         'attachable_type' => get_class($record),
                         'attachable_id' => $record->getKey(),
