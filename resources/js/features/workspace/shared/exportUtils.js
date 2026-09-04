@@ -2,6 +2,7 @@ import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { filenameMapper, titleMapper } from './exportMapper';
+import { TB_NUR_LOGO_PNG } from './logoBase64';
 
 // Ekspor
 
@@ -244,31 +245,39 @@ export function printTable(columns, rows, title = 'Laporan') {
 
     doc.setProperties({
         title: cleanTitle,
-        subject: `Laporan ${cleanTitle} - TB Nur`,
+        subject: `Laporan ${cleanTitle} - TB Nur POS`,
         creator: 'TB Nur POS System',
-        author: 'TB Nur'
+        author: 'TB Nur POS'
     });
 
   // Gambar header halaman 1
 
     const width = doc.internal.pageSize.width;
 
-  // Nama Toko
+  // Logo TB Nur
+    const logoW = 26;
+    const logoH = 32;
+    try {
+        doc.addImage(TB_NUR_LOGO_PNG, 'PNG', 36, 34, logoW, logoH);
+    } catch (err) {
+        console.warn('Gagal memuat logo pada PDF preview:', err);
+    }
 
+    const textX = 36 + logoW + 8;
+
+  // Nama Toko (Bold)
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
+    doc.setFontSize(11.5);
     doc.setTextColor(30, 58, 138);
-    doc.text('TB Nur', 36, 45);
+    doc.text('TB Nur POS', textX, 46);
 
-  // Judul laporan
-
-    doc.setFont('helvetica', 'bold');
+  // Judul laporan (Normal)
+    doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(71, 85, 105);
-    doc.text(cleanTitle, 36, 58);
+    doc.text(cleanTitle, textX, 59);
 
-  // Tampilkan info waktu & statistik
-
+  // Tampilkan info waktu & statistik (Normal)
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
@@ -285,17 +294,15 @@ export function printTable(columns, rows, title = 'Laporan') {
     const timestampStr = `Dibuat pada: ${localeDate} ${localeTime}`;
     const statsStr = `Total data: ${rows.length} data`;
 
-    doc.text(timestampStr, width - 36, 45, { align: 'right' });
-    doc.text(statsStr, width - 36, 58, { align: 'right' });
+    doc.text(timestampStr, width - 36, 46, { align: 'right' });
+    doc.text(statsStr, width - 36, 59, { align: 'right' });
 
   // Garis pembatas header
-
     doc.setDrawColor(35, 83, 160);
     doc.setLineWidth(1);
     doc.line(36, 75, width - 36, 75);
 
   // Sesuaikan kolom
-
     const columnStyles = {
         0: { halign: 'center' }
     };
@@ -305,14 +312,14 @@ export function printTable(columns, rows, title = 'Laporan') {
     });
 
   // Buat AutoTable
-
     autoTable(doc, {
         head: headers,
         body: data,
-        startY: 90,
+        startY: 88,
         margin: { top: 40, bottom: 40, left: 36, right: 36 },
         styles: {
             font: 'helvetica',
+            fontStyle: 'normal',
             fontSize: fontSize,
             cellPadding: cellPadding,
             valign: 'middle',
@@ -322,7 +329,7 @@ export function printTable(columns, rows, title = 'Laporan') {
         headStyles: {
             fillColor: [35, 83, 160],
             textColor: [255, 255, 255],
-            fontStyle: 'bold',
+            fontStyle: 'normal',
             halign: 'center',
         },
         alternateRowStyles: {
@@ -333,7 +340,6 @@ export function printTable(columns, rows, title = 'Laporan') {
     });
 
   // Tambah nomor halaman & header/footer
-
     const totalPages = doc.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
@@ -342,14 +348,12 @@ export function printTable(columns, rows, title = 'Laporan') {
         doc.setTextColor(100, 116, 139);
 
       // Nomor halaman footer
-
         const footerText = `Halaman ${i} dari ${totalPages}`;
         doc.text(footerText, width - 36, doc.internal.pageSize.height - 20, { align: 'right' });
 
       // Header halaman > 1
-
         if (i > 1) {
-            doc.text(`TB Nur — ${cleanTitle}`, 36, 25);
+            doc.text(`TB Nur POS — ${cleanTitle}`, 36, 25);
             doc.setDrawColor(226, 232, 240);
             doc.setLineWidth(0.5);
             doc.line(36, 28, width - 36, 28);
