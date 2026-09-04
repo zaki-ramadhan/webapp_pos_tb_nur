@@ -65,16 +65,16 @@ class ActivityLogPage
                         ],
                         'columns' => [
                             [
-                                'id' => 'transactionDateLabel',
-                                'label' => 'Tgl Transaksi',
-                                'align' => 'left',
-                                'widthClassName' => 'w-[220px]',
-                            ],
-                            [
                                 'id' => 'referenceName',
                                 'label' => 'No/Nama Referensi',
                                 'align' => 'left',
                                 'widthClassName' => 'w-[44%]',
+                            ],
+                            [
+                                'id' => 'transactionDateLabel',
+                                'label' => 'Tgl Transaksi',
+                                'align' => 'left',
+                                'widthClassName' => 'w-[220px]',
                             ],
                             [
                                 'id' => 'actionLabel',
