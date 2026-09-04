@@ -26,7 +26,7 @@ return new class extends Migration
                 DB::table('preference_settings')
                     ->where('group_key', 'company_info')
                     ->where('setting_key', $key)
-                    ->update(['value' => $val, 'updated_at' => now()]);
+                    ->update(['value' => json_encode($val), 'updated_at' => now()]);
             }
         }
 
@@ -38,6 +38,7 @@ return new class extends Migration
                     'phone' => '0877-2498-5885',
                     'street' => 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi',
                     'city' => 'Kabupaten Cirebon',
+                    'postal_code' => '45165',
                     'province' => 'Jawa Barat',
                     'country' => 'Indonesia',
                     'updated_at' => now(),
