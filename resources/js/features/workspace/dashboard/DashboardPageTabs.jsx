@@ -20,10 +20,10 @@ const PrimaryTab = forwardRef(function PrimaryTab({ tab, active, onSelect, onClo
             aria-label={tab.label}
             tabIndex={0}
             onClick={() => onSelect(tab.id)}
-            className={`relative -mb-px inline-flex h-7.5 items-center rounded-t-[5px] border text-xs leading-normal cursor-pointer select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
+            className={`relative -mb-[2px] inline-flex h-7.5 items-center rounded-t-[5px] text-xs leading-normal cursor-pointer select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
                 active
                     ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-normal text-white'
-                    : 'border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
+                    : 'border-x border-t border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
             } shrink-0 whitespace-nowrap`.trim()}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[90px] sm:max-w-[120px] md:max-w-[150px]">
@@ -61,7 +61,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCl
                 ref={buttonRef}
                 type="button"
                 onClick={() => setOpen((currentValue) => !currentValue)}
-                className="inline-flex h-7.5 min-w-[40px] items-center justify-center gap-1 border-l border-tab-overflow-border px-2 text-xs text-text-medium transition hover:bg-ui-bg-hover sm:h-8 sm:min-w-[44px] sm:px-2.5 sm:text-sm md:min-w-[46px] md:px-3 md:text-sm"
+                className="inline-flex h-7.5 min-w-[40px] items-center justify-center gap-1 border-l border-tab-overflow-border px-2 text-xs font-normal text-text-medium transition hover:bg-ui-bg-hover sm:h-8 sm:min-w-[44px] sm:px-2.5 sm:text-sm md:min-w-[46px] md:px-3 md:text-sm"
                 aria-label={`Buka daftar ${tabs.length} tab halaman`}
                 aria-expanded={open}
             >
@@ -83,15 +83,17 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCl
                         return (
                             <div
                                 key={tab.id}
-                                className={`group flex w-full items-center justify-between text-sm transition hover:bg-brand-blue-lightest ${
-                                    active ? 'bg-brand-blue-lightest' : ''
+                                className={`group flex w-full items-center justify-between text-sm transition ${
+                                    active
+                                        ? 'border-y border-[#9dc2ec] bg-[#d3e5f8]'
+                                        : 'border-y border-transparent hover:bg-brand-blue-lightest'
                                 }`.trim()}
                             >
                                 <button
                                     type="button"
                                     onClick={() => handleSelect(tab.id)}
-                                    className={`flex-1 truncate px-3 py-2 text-left text-sm leading-5 ${
-                                        active ? 'font-normal text-brand-blue-darker' : 'text-abc-label-dark font-normal'
+                                    className={`flex-1 truncate px-3 py-2 text-left text-sm leading-5 font-normal ${
+                                        active ? 'text-black' : 'text-abc-label-dark'
                                     }`.trim()}
                                 >
                                     {renderTabLabel(tab.label, active, false)}
@@ -103,7 +105,11 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCl
                                             e.stopPropagation();
                                             onClosePage(tab.id);
                                         }}
-                                        className="mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[3px] text-slate-400 hover:text-slate-700 transition-colors"
+                                        className={`mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[3px] transition-colors ${
+                                            active
+                                                ? 'text-slate-600 hover:text-red-600'
+                                                : 'text-slate-400 hover:text-slate-700'
+                                        }`}
                                         aria-label={`Tutup tab ${tab.label}`}
                                     >
                                         <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.6} />
@@ -124,7 +130,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCl
                             className="flex w-full items-center justify-center gap-1.5 rounded-[4px] px-3 py-2 text-xs sm:text-sm text-slate-700 hover:text-red-600 hover:bg-slate-100 font-normal transition cursor-pointer"
                         >
                             <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.2} />
-                            <span>Tutup Semua Halaman</span>
+                            <span className="font-normal">Tutup Semua Halaman</span>
                         </button>
                     </div>
                 ) : null}
@@ -217,9 +223,14 @@ export default function DashboardPageTabs({
         return () => container.removeEventListener('wheel', handleWheel);
     }, []);
 
+    const hasLevel2 = Boolean(
+        (activePage?.id !== 'dashboard' && activePage?.showViewIndicator && !level2Tabs.length) ||
+        (activePage?.id !== 'dashboard' && level2Tabs.length)
+    );
+
     return (
-        <div className="border-b border-ui-border-medium bg-ui-bg-panel pt-[3px]">
-            <div className="bg-ui-bg-panel-light px-1 pt-0 sm:px-1.5">
+        <div className={`bg-ui-bg-panel pt-[3px] ${hasLevel2 ? 'border-b border-ui-border-medium' : ''}`.trim()}>
+            <div className="border-b-[2px] border-brand-primary bg-ui-bg-panel-light px-1 pt-0 sm:px-1.5">
                 <div className="flex items-stretch justify-between gap-1 sm:gap-2">
                     <div
                         ref={scrollContainerRef}
@@ -244,7 +255,7 @@ export default function DashboardPageTabs({
             </div>
 
             {activePage?.id !== 'dashboard' && activePage?.showViewIndicator && !level2Tabs.length ? (
-                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5 mt-0.5">
+                <div className="bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                         <div
                             aria-disabled="true"
@@ -265,7 +276,7 @@ export default function DashboardPageTabs({
             ) : null}
 
             {activePage?.id !== 'dashboard' && level2Tabs.length ? (
-                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5 mt-0.5">
+                <div className="bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                         <SecondaryTabs
                             tabs={level2Tabs}
