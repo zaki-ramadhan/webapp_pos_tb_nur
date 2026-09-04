@@ -38,8 +38,8 @@ export default function DashboardActivePageContent({
                 if (page.id === 'dashboard') return null;
 
                 const isCurrent = activePageId === page.id;
-                const hasLevel2Tabs = level2Tabs?.length > 0;
-                const ptClassName = hasLevel2Tabs ? 'pt-0.5 sm:pt-0.5' : 'pt-2 sm:pt-2.5';
+                const isFormMode = mode === 'form';
+                const ptClassName = isFormMode ? 'pt-0.5 sm:pt-0.5' : 'pt-3 sm:pt-3';
 
                 return (
                     <div
