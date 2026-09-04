@@ -72,11 +72,6 @@ class TransactionApprovalPage
                         'widthClassName' => 'w-[24%]',
                     ],
                     [
-                        'id' => 'branchLabel',
-                        'label' => 'Cabang',
-                        'align' => 'left',
-                    ],
-                    [
                         'id' => 'approvalRule',
                         'label' => 'Atur Aturan Penyetujuan',
                         'align' => 'left',
