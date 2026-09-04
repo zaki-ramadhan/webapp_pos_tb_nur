@@ -217,7 +217,6 @@ export function ToolbarSquareButton({ label, onClick, className = '', children }
             type="button"
             onClick={onClick}
             aria-label={label}
-            title={label}
             className={`inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue ${className}`.trim()}
         >
             {children}

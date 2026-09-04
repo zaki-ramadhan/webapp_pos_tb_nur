@@ -53,7 +53,6 @@ export function InquiryActionButton({ action, onClick, loading = false }) {
     return (
         <Button
             aria-label={action.label}
-            title={action.label}
             onClick={onClick}
             variant="secondary"
             size="sm"

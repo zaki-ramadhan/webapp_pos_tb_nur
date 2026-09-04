@@ -522,7 +522,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     {firstColumnIsCheckbox ? (
                                         <DataTableCell className="w-px px-3 text-center" onClick={(e) => e.stopPropagation()}>
                                             {isInactive ? (
-                                                <div className="flex items-center justify-center py-0.5" title="Barang nonaktif tidak dapat dipesan / direstok">
+                                                <div className="flex items-center justify-center py-0.5" aria-label="Barang nonaktif tidak dapat dipesan / direstok">
                                                     <CircleX className="h-5 w-5 text-red-800 select-none" strokeWidth={1.2} />
                                                 </div>
                                             ) : (

@@ -134,7 +134,7 @@ export default function GeneralJournalHeader({ config, values, setValues, active
                                 type="button"
                                 onClick={openSourceTransaction}
                                 disabled={lookupLoading}
-                                title="Klik untuk membuka transaksi asal"
+                                aria-label="Buka transaksi asal"
                                 className={`flex items-center px-3 py-2 border rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-normal h-[40px] ${
                                     lookupLoading
                                         ? 'cursor-wait opacity-70 bg-emerald-50 border-emerald-400 text-emerald-600'

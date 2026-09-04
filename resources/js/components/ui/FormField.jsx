@@ -5,7 +5,7 @@ export default function FormField({ label, htmlFor, children, hint = null, requi
                 <span className="mb-2 block text-xs sm:text-sm font-medium text-layout-text">
                     {label}
                     {required ? (
-                        <span className="ml-0.5 text-tab-active-border-t" aria-hidden="true" title="Wajib diisi">*</span>
+                        <span className="ml-0.5 text-tab-active-border-t" aria-hidden="true">*</span>
                     ) : null}
                 </span>
             ) : null}

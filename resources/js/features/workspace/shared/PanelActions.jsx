@@ -44,7 +44,6 @@ function PanelActionButton({ action }) {
             type="button"
             className={`inline-flex h-12 shrink-0 items-center justify-center rounded-[4px] border sm:h-14 transition ${showLabel ? 'min-w-[110px] gap-2 px-3.5 sm:min-w-[126px] sm:gap-2.5 sm:px-4' : 'w-12 sm:w-14'} ${resolveToneClassName(action.tone, isDisabled)} ${isDisabled ? 'opacity-55 shadow-none' : ''}`.trim()}
             aria-label={action.label}
-            title={action.label}
             onClick={isDisabled ? undefined : action.onClick}
             disabled={isDisabled}
         >

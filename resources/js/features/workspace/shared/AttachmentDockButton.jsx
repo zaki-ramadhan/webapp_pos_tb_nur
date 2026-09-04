@@ -17,7 +17,6 @@ export default function AttachmentDockButton({
                 ref={buttonRef}
                 type="button"
                 aria-label={label}
-                title={label}
                 onClick={() => setOpen((currentOpen) => !currentOpen)}
                 className="inline-flex h-12 w-[80px] shrink-0 items-center justify-center gap-2 rounded-[8px] border border-border-dock-blue-alt bg-bg-dock-blue-alt text-text-dock-blue-alt shadow-attachment-dock sm:h-[52px] sm:w-[88px] md:h-[54px] md:w-[96px]"
             >

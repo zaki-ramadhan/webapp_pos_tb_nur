@@ -27,13 +27,10 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
                         key={item.label || index}
                         className="flex-1 min-w-0 px-4 py-2.5 flex flex-col justify-between"
                     >
-                        <div className="text-xs sm:text-sm text-brand-dark truncate" title={item.label}>
+                        <div className="text-xs sm:text-sm text-brand-dark truncate">
                             {item.label}
                         </div>
-                        <div
-                            className="mt-1 text-right text-base sm:text-lg font-semibold text-text-darkest whitespace-nowrap tabular-nums"
-                            title={formattedValue}
-                        >
+                        <div className="mt-1 text-right text-base sm:text-lg font-semibold text-text-darkest whitespace-nowrap tabular-nums">
                             {formattedValue}
                         </div>
                     </div>

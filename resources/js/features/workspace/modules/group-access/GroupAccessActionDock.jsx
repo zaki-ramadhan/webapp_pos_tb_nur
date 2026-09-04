@@ -39,7 +39,6 @@ export function GroupAccessActionButton({ action, disabled = false, onClick }) {
                 ref={buttonRef}
                 type="button"
                 aria-label={action.label}
-                title={action.label}
                 disabled={disabled || isLoading}
                 onClick={() => {
                     if (disabled || isLoading) {

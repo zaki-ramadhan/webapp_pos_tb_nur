@@ -142,7 +142,7 @@ export default function SalesDocumentAdvanceEditModal({
                 <button
                     type="button"
                     onClick={handleOpenSource}
-                    title="Klik untuk membuka transaksi asal"
+                    aria-label="Buka transaksi asal"
                     className="flex items-center px-3 py-2 border rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-normal h-[38px] bg-emerald-50 border-emerald-600 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-700 cursor-pointer"
                 >
                     <span className="truncate">{form.number || '-'}</span>
