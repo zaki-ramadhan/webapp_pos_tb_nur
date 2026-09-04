@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useFormError } from './FormErrorContext';
+import { sanitizeTextValue } from '@/utils/textSanitizer';
 
 export default function TextareaField({
     id,
@@ -42,6 +43,7 @@ export default function TextareaField({
     function handleChange(event) {
         let sanitized = event.target.value;
         if (typeof sanitized === 'string') {
+            sanitized = sanitizeTextValue(sanitized);
             if (sanitized.startsWith(' ')) {
                 sanitized = sanitized.trimStart();
             }
@@ -121,7 +123,8 @@ export default function TextareaField({
                         isFocusedRef.current = false;
                         let val = e.target.value;
                         if (typeof val === 'string') {
-                            const trimmed = val.trim();
+                            const cleaned = sanitizeTextValue(val);
+                            const trimmed = cleaned.trim();
                             if (trimmed !== val) {
                                 setLocalValue(trimmed);
                                 if (onChange) {

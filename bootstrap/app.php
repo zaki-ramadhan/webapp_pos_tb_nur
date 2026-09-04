@@ -30,6 +30,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleInertiaRequests::class,
             \App\Http\Middleware\SecureHeaders::class,
+            \App\Http\Middleware\SanitizeRequestInput::class,
+        ]);
+
+        $middleware->api(append: [
+            \App\Http\Middleware\SanitizeRequestInput::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
