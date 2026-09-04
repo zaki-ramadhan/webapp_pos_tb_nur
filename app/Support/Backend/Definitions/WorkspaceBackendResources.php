@@ -125,9 +125,16 @@ class WorkspaceBackendResources
             indexUsing: function (array $filters) use ($group) {
                 $query = ActivityLog::query()
                     ->with('actorUser')
+                    ->whereNotIn('action', ['login'])
                     ->when($group !== null, fn ($builder) => $builder->where('log_group', $group))
                     ->when(filled($filters['search'] ?? null), fn ($builder) => $builder->search((string) $filters['search']))
-                    ->when(filled($filters['action'] ?? null), fn ($builder) => $builder->where('action', (string) $filters['action']))
+                    ->when(filled($filters['action'] ?? null), function ($builder) use ($filters) {
+                        $action = strtolower((string) $filters['action']);
+                        if ($action === 'post') {
+                            $action = 'create';
+                        }
+                        $builder->where('action', $action);
+                    })
                     ->when(filled($filters['resource_key'] ?? null), fn ($builder) => $builder->where('resource_key', (string) $filters['resource_key']))
                     ->when(filled($filters['actor_user_id'] ?? null), fn ($builder) => $builder->where('actor_user_id', (int) $filters['actor_user_id']))
                     ->when(filled($filters['date_from'] ?? null), fn ($builder) => $builder->whereDate('occurred_at', '>=', (string) $filters['date_from']))
