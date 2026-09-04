@@ -10,7 +10,7 @@ import Pagination from '@/components/ui/Pagination';
 import JurnalCard from './components/JurnalCard';
 import BankReconcileActionCard from './components/BankReconcileActionCard';
 import BankReconciliationHeader from './components/BankReconciliationHeader';
-import emptyStateImg from './assets/rekonsiliasi_empty_state.png';
+import emptyStateImg from './assets/rekonsiliasi_empty_state.webp';
 
 export default function BankReconciliationWorkspace({
     rows = [],
