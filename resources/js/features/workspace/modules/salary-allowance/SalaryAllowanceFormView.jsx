@@ -9,7 +9,6 @@ import {
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
@@ -26,12 +25,14 @@ export default function SalaryAllowanceFormView({
     entry,
     actions,
     editableDetail = false,
+    onOpenDetail = null,
+    onCloseDetail = null,
     onPersist = null,
     onDelete = null,
     onRefresh = null,
 }) {
     const fields = config.fields;
-    const isDetail = Boolean(entry.name) && entry.id !== config.newEntry.id;
+    const isDetail = activeLevel2Tab?.tabType === 'detail' || (Boolean(entry?.id) && entry?.id !== config?.newEntry?.id);
     const [name, setName] = useState(entry.name ?? '');
     const [type, setType] = useState(entry.type || config.typeOptions[0] || '');
     const [expenseAccount, setExpenseAccount] = useState(entry.expenseAccount ?? '');
@@ -108,19 +109,50 @@ export default function SalaryAllowanceFormView({
                 return response?.data ?? null;
             },
             onSuccess: async (record) => {
+                const savedRecord = record ?? null;
                 await onRefresh?.();
-                if (isDetail && record && activeLevel2Tab?.id) {
+                if (savedRecord) {
+                    onPersist?.(savedRecord);
+                }
+
+                if (isDetail && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
                             detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                pageId: pageId ?? 'salary-allowance',
                                 tabId: activeLevel2Tab.id,
-                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
+                                label: savedRecord?.name ?? name.trim(),
                             },
                         })
                     );
                 }
-                onPersist?.(record);
+
+                if (!isDetail && savedRecord?.id) {
+                    if (onOpenDetail) {
+                        onOpenDetail({
+                            recordId: String(savedRecord.id),
+                            label: savedRecord.name ?? name.trim(),
+                            tabLabel: savedRecord.name ?? name.trim(),
+                        });
+                        if (activeLevel2Tab?.id) {
+                            window.dispatchEvent(
+                                new CustomEvent('workspace:close-tab', {
+                                    detail: { tabId: activeLevel2Tab.id },
+                                })
+                            );
+                        }
+                    } else if (activeLevel2Tab?.id) {
+                        window.dispatchEvent(
+                            new CustomEvent('workspace:update-tab-label', {
+                                detail: {
+                                    pageId: pageId ?? 'salary-allowance',
+                                    tabId: activeLevel2Tab.id,
+                                    label: savedRecord.name ?? name.trim(),
+                                },
+                            })
+                        );
+                    }
+                }
             },
         });
     }
@@ -148,6 +180,14 @@ export default function SalaryAllowanceFormView({
             execute: () => deleteBackendResource('salary-allowances', entry.id),
             onSuccess: async () => {
                 await onRefresh?.();
+                if (activeLevel2Tab?.id) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:close-tab', {
+                            detail: { tabId: activeLevel2Tab.id },
+                        })
+                    );
+                }
+                onCloseDetail?.(entry.id);
                 onDelete?.(entry.id);
             },
         });
