@@ -10,7 +10,8 @@ import Pagination from '@/components/ui/Pagination';
 import JurnalCard from './components/JurnalCard';
 import BankReconcileActionCard from './components/BankReconcileActionCard';
 import BankReconciliationHeader from './components/BankReconciliationHeader';
-import emptyStateImg from './assets/rekonsiliasi_empty_state.webp';
+import starterStateImg from './assets/rekonsiliasi_starter_state.webp';
+import emptyStateImg from './assets/rekonsiliasi_empty_state.png';
 
 export default function BankReconciliationWorkspace({
     rows = [],
@@ -160,7 +161,7 @@ export default function BankReconciliationWorkspace({
                 ) : !hasBankSelected ? (
                     <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[360px]">
                         <img
-                            src={emptyStateImg}
+                            src={starterStateImg}
                             alt="Pilih bank yang akan direkonsiliasi"
                             className="w-48 h-auto max-h-48 object-contain mb-6 opacity-60 saturate-[0.3]"
                             style={{ filter: 'saturate(0.3)' }}
@@ -212,11 +213,13 @@ export default function BankReconciliationWorkspace({
                     </>
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[300px]">
-                        <div className="text-emerald-700 font-semibold text-base mb-1">
-                            Semua transaksi telah dicocokkan
-                        </div>
-                        <div className="text-slate-500 text-sm">
-                            Tidak ada data transaksi yang perlu direkonsiliasi pada periode ini.
+                        <img
+                            src={emptyStateImg}
+                            alt="Tidak ada data mutasi kas/bank yang tersedia."
+                            className="w-48 h-auto max-h-48 object-contain mb-6 opacity-75"
+                        />
+                        <div className="text-slate-700 text-base sm:text-lg font-normal tracking-normal">
+                            Tidak ada data mutasi kas/bank yang tersedia.
                         </div>
                     </div>
                 )}
