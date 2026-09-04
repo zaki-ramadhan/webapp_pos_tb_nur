@@ -28,9 +28,11 @@ export default function BankReconciliationWorkspace({
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
 
-    const unreconciledCount = useMemo(() => {
-        return rows.filter((row) => row.status !== 'Reconciled').length;
+    const unreconciledRows = useMemo(() => {
+        return rows.filter((row) => row.status !== 'Reconciled');
     }, [rows]);
+
+    const unreconciledCount = unreconciledRows.length;
 
     const rawBalanceNum = useMemo(() => {
         if (rows && rows.length > 0) {
@@ -72,6 +74,8 @@ export default function BankReconciliationWorkspace({
             setReconcilingIds(prev => ({ ...prev, [docNumber]: false }));
         }
     };
+
+    const hasBankSelected = Boolean(keyword?.trim() || filters.search?.trim() || filters.account_id);
 
     return (
         <div className="flex min-h-full flex-col text-slate-900 pt-1">
@@ -145,7 +149,7 @@ export default function BankReconciliationWorkspace({
                     lastKnownBalance={lastKnownBalance}
                     rawBalanceNum={rawBalanceNum}
                     unreconciledCount={unreconciledCount}
-                    hasData={rows.length > 0}
+                    hasData={hasBankSelected}
                 />
 
                 {/* Body Section */}
@@ -153,16 +157,31 @@ export default function BankReconciliationWorkspace({
                     <div className="flex-1 flex items-center justify-center p-8 text-slate-900 font-normal">
                         Memuat data...
                     </div>
-                ) : rows.length > 0 ? (
+                ) : !hasBankSelected ? (
+                    <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[360px]">
+                        <img
+                            src={emptyStateImg}
+                            alt="Pilih bank yang akan direkonsiliasi"
+                            className="w-48 h-auto max-h-48 object-contain mb-6 opacity-60 saturate-[0.3]"
+                            style={{ filter: 'saturate(0.3)' }}
+                        />
+                        <div className="text-slate-700 text-base sm:text-lg font-normal tracking-normal">
+                            Pilih bank yang akan direkonsiliasi
+                        </div>
+                    </div>
+                ) : unreconciledRows.length > 0 ? (
                     <>
                         <div className="overflow-y-auto py-3 flex flex-col gap-3 min-h-0 flex-1">
-                            {rows.map((row, index) => {
+                            {unreconciledRows.map((row, index) => {
                                 const isReconciled = row.status === 'Reconciled';
                                 const key = row.documentNumber || row.sourceNumber || row.document_number;
 
                                 return (
                                     <div key={key || index} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 items-stretch">
-                                        {/* Left Column Card: Rekening Bank */}
+                                        {/* Left Column Card: Jurnal Sistem */}
+                                        <JurnalCard row={row} />
+
+                                        {/* Right Column Card: Rekening Bank */}
                                         <BankReconcileActionCard
                                             isReconciled={isReconciled}
                                             isReconciling={Boolean(reconcilingIds[key])}
@@ -172,9 +191,6 @@ export default function BankReconciliationWorkspace({
                                             }}
                                             onUnreconcile={() => handleReconcileSingle(key, false)}
                                         />
-
-                                        {/* Right Column Card: Jurnal Sistem */}
-                                        <JurnalCard row={row} />
                                     </div>
                                 );
                             })}
@@ -195,15 +211,12 @@ export default function BankReconciliationWorkspace({
                         )}
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[360px]">
-                        <img
-                            src={emptyStateImg}
-                            alt="Pilih bank yang akan direkonsiliasi"
-                            className="w-48 h-auto max-h-48 object-contain mb-6 opacity-60 saturate-[0.3]"
-                            style={{ filter: 'saturate(0.3)' }}
-                        />
-                        <div className="text-slate-700 text-base sm:text-lg font-normal tracking-normal">
-                            Pilih bank yang akan direkonsiliasi
+                    <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[300px]">
+                        <div className="text-emerald-700 font-semibold text-base mb-1">
+                            Semua transaksi telah dicocokkan
+                        </div>
+                        <div className="text-slate-500 text-sm">
+                            Tidak ada data transaksi yang perlu direkonsiliasi pada periode ini.
                         </div>
                     </div>
                 )}
@@ -237,6 +250,13 @@ export default function BankReconciliationWorkspace({
                 <div className="mt-6 flex justify-end gap-2.5">
                     <button
                         type="button"
+                        onClick={() => setConfirmOpen(false)}
+                        className="inline-flex items-center justify-center rounded-[4px] border border-slate-300 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 transition active:scale-[0.98] cursor-pointer"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="button"
                         onClick={async () => {
                             if (selectedRow) {
                                 setConfirmOpen(false);
@@ -249,13 +269,6 @@ export default function BankReconciliationWorkspace({
                         className="inline-flex items-center justify-center rounded-[4px] bg-[#1c558c] hover:bg-[#154370] px-4 py-2 text-xs font-semibold text-white shadow-sm transition active:scale-[0.98] cursor-pointer"
                     >
                         Ya
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setConfirmOpen(false)}
-                        className="inline-flex items-center justify-center rounded-[4px] border border-slate-300 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 transition active:scale-[0.98] cursor-pointer"
-                    >
-                        Batal
                     </button>
                 </div>
             </WorkspaceDialog>

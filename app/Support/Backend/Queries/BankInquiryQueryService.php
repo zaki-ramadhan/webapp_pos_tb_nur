@@ -396,12 +396,23 @@ class BankInquiryQueryService
     ): array {
         $account = $accountMap->get($accountId);
 
+        $description = (string) ($document->notes ?: '');
+        if ($document->document_type === 'bank_transfer') {
+            $fromName = $document->primaryAccount?->name ?? 'Kas/Bank Pengirim';
+            $toName = $document->secondaryAccount?->name ?? 'Kas/Bank Penerima';
+            if (empty($description) || $description === $document->document_number || str_starts_with($description, 'Transfer Bank TB.') || str_starts_with($description, 'Transfer Bank BT.')) {
+                $description = "Transfer Bank Dari {$fromName} Ke {$toName}";
+            }
+        } elseif (empty($description)) {
+            $description = (string) $document->document_number;
+        }
+
         return $this->makeLedgerRow(
             id: sprintf('synthetic:%d:%s', $document->id, $suffix),
             accountId: $accountId,
             accountName: (string) ($account?->name ?? $accountId),
             document: $document,
-            description: (string) ($document->notes ?: $document->document_number),
+            description: $description,
             debit: $debit,
             credit: $credit,
             date: $this->resolveDocumentDate($document),
