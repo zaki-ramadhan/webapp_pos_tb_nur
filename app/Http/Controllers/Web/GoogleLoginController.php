@@ -38,24 +38,32 @@ class GoogleLoginController extends Controller
                 ]);
         }
 
-        if ($usePopup) {
-            $request->session()->put('auth_use_popup', true);
-        } else {
-            $request->session()->forget('auth_use_popup');
-        }
-
-        $state = $usePopup ? 'popup' : 'standard';
+        $stateToken = Str::random(40);
+        $request->session()->put('google_oauth_state', $stateToken);
+        $request->session()->put('google_oauth_popup', $usePopup);
 
         return Socialite::driver('google')
             ->stateless()
-            ->with(['state' => $state])
+            ->with(['state' => $stateToken])
             ->redirect();
     }
 
     public function callback(Request $request): \Symfony\Component\HttpFoundation\Response
     {
-        $state = $request->query('state');
-        $usePopup = $state === 'popup' || $request->session()->pull('auth_use_popup', false);
+        $sessionState = $request->session()->pull('google_oauth_state');
+        $usePopup = (bool) $request->session()->pull('google_oauth_popup', false) || $request->query('state') === 'popup';
+
+        if ($sessionState && ! hash_equals($sessionState, (string) $request->query('state'))) {
+            $errorMsg = 'Sesi autentikasi Google tidak valid atau kedaluwarsa. Silakan coba lagi.';
+            if ($usePopup) {
+                return $this->respondWithPopupError($errorMsg);
+            }
+            return redirect()
+                ->route('home')
+                ->withErrors([
+                    'auth' => $errorMsg,
+                ]);
+        }
 
         if (Auth::check()) {
             if ($usePopup) {
@@ -80,11 +88,15 @@ class GoogleLoginController extends Controller
             $driver = Socialite::driver('google');
             $driver->stateless();
 
-            $guzzleClient = new \GuzzleHttp\Client([
-                'verify' => false,
+            $guzzleOptions = [
                 'timeout' => 15,
                 'connect_timeout' => 10,
-            ]);
+            ];
+            if (app()->environment('local') && (bool) config('services.google.insecure_skip_verify', false)) {
+                $guzzleOptions['verify'] = false;
+            }
+
+            $guzzleClient = new \GuzzleHttp\Client($guzzleOptions);
             $driver->setHttpClient($guzzleClient);
 
             /** @var OAuthUser $oauthUser */

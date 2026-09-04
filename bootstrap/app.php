@@ -125,7 +125,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ]);
 
             return response()->json([
-                'message' => config('app.debug') ? $exception->getMessage() : 'Terjadi kendala pada sistem. Silakan coba beberapa saat lagi.',
+                'message' => (config('app.debug') && !app()->isProduction()) ? $exception->getMessage() : 'Terjadi kendala pada sistem. Silakan coba beberapa saat lagi.',
             ], 500);
         });
 

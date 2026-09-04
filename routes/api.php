@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\BackendResourceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api', \App\Http\Middleware\EnsureUserHasStoreAccess::class])->group(function (): void {
-    Route::post('/attachments/upload', [\App\Http\Controllers\Api\AttachmentUploadController::class, 'upload']);
+    Route::post('/attachments/upload', [\App\Http\Controllers\Api\AttachmentUploadController::class, 'upload'])->middleware('throttle:30,1');
     Route::post('/currencies/sync', [BackendResourceController::class, 'syncCurrencies']);
     Route::get('/banks', function (): \Illuminate\Http\JsonResponse {
         $cacheKey = 'indonesian_banks_list';
@@ -65,11 +65,23 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api', \App\Http\M
     });
     Route::get('/live-updates', [BackendResourceController::class, 'liveUpdates']);
     Route::get('/resources', [BackendResourceController::class, 'resources']);
-    Route::get('/employees/{employee}/last-payroll-line', function ($employeeId) {
+    Route::get('/employees/{employee}/last-payroll-line', function (\Illuminate\Http\Request $request, $employeeId) {
+        $blueprint = \App\Support\Backend\BackendResourceRegistry::find('payroll-entries');
+        if ($blueprint) {
+            app(\App\Support\Backend\BackendResourceAccessService::class)->authorize($request->user(), $blueprint, 'view');
+        }
+
+        $user = $request->user();
         $line = \App\Domain\Support\Models\OperationDocumentLine::query()
-            ->whereHas('document', function ($query) {
+            ->whereHas('document', function ($query) use ($user) {
                 $query->where('document_type', 'payroll_entry')
                     ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+
+                if ($user && ! $user->isPrivileged() && ! $user->hasAnyRoleCodes(['super_admin', 'owner', 'admin'])) {
+                    if ($user->branches()->exists()) {
+                        $query->whereIn('branch_id', $user->branches->pluck('id')->all());
+                    }
+                }
             })
             ->where(function ($q) use ($employeeId) {
                 $q->where('attributes->employee_id', $employeeId)

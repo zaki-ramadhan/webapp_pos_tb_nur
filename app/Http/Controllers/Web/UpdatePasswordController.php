@@ -40,6 +40,11 @@ class UpdatePasswordController extends Controller
                 'remember_token' => Str::random(60),
             ])->save();
 
+            // Revoke all existing mobile personal access tokens on password change
+            if (method_exists($user, 'tokens')) {
+                $user->tokens()->delete();
+            }
+
             event(new PasswordReset($user));
         });
 

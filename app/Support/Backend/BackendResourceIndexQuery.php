@@ -104,6 +104,20 @@ class BackendResourceIndexQuery
                 }
                 continue;
             }
+            $blacklistedColumns = [
+                'password',
+                'remember_token',
+                'two_factor_secret',
+                'two_factor_recovery_codes',
+                'secret',
+                'api_token',
+                'token',
+            ];
+
+            if (in_array(strtolower($key), $blacklistedColumns, true)) {
+                continue;
+            }
+
             if (Schema::hasColumn($tableName, $key)) {
                 if (is_array($value)) {
                     $query->whereIn("{$tableName}.{$key}", $value);

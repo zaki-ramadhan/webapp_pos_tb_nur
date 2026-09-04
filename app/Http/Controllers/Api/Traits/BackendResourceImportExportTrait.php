@@ -16,6 +16,13 @@ trait BackendResourceImportExportTrait
         $blueprint = $this->resolveBlueprint($resource);
         $this->access->authorize($request->user(), $blueprint, 'create');
 
+        $disallowedImportResources = ['users', 'roles', 'access-groups'];
+        if (in_array($resource, $disallowedImportResources, true)) {
+            return response()->json([
+                'message' => "Modul [{$blueprint->label}] tidak mendukung fitur impor data massal demi alasan keamanan.",
+            ], 403);
+        }
+
         $rows = $request->input('rows', []);
         if (!is_array($rows) || empty($rows)) {
             return response()->json([
@@ -160,6 +167,8 @@ trait BackendResourceImportExportTrait
                     }
 
                     $payload = $this->payloadSanitizer->sanitize($cleanRow);
+                    $this->validator->validateBranchAssignment($request->user(), $payload);
+                    $this->validator->validatePrivilegeEscalation($request->user(), $resource, $payload);
                     $this->writer->create($blueprint, $payload);
                     $created++;
                 }

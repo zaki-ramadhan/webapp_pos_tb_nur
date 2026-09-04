@@ -114,6 +114,30 @@ class User extends Authenticatable
         'nurhayati.karya@gmail.com',
     ];
 
+    public static function getDeveloperEmails(): array
+    {
+        $configured = env('DEVELOPER_EMAILS');
+        if ($configured) {
+            $parsed = array_filter(array_map('trim', explode(',', strtolower($configured))));
+            if (!empty($parsed)) {
+                return array_values(array_unique(array_merge($parsed, self::DEVELOPER_EMAILS)));
+            }
+        }
+        return self::DEVELOPER_EMAILS;
+    }
+
+    public static function getOwnerEmails(): array
+    {
+        $configured = env('OWNER_EMAILS');
+        if ($configured) {
+            $parsed = array_filter(array_map('trim', explode(',', strtolower($configured))));
+            if (!empty($parsed)) {
+                return array_values(array_unique(array_merge($parsed, self::OWNER_EMAILS)));
+            }
+        }
+        return self::OWNER_EMAILS;
+    }
+
     /**
      * @param  list<string>  $codes
      */
