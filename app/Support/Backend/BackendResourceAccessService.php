@@ -291,6 +291,16 @@ class BackendResourceAccessService
 
     public function canAccessRecord(User $user, Model $record): bool
     {
+        if ($record instanceof User) {
+            $developerEmails = User::getDeveloperEmails();
+            $isTargetSuperAdmin = $record->isSystemAdmin() || in_array(strtolower((string) $record->email), $developerEmails, true);
+            $isActorSuperAdmin = $user->isSystemAdmin() || in_array(strtolower((string) $user->email), $developerEmails, true);
+
+            if ($isTargetSuperAdmin && ! $isActorSuperAdmin) {
+                return false;
+            }
+        }
+
         if ($user->isPrivileged() || $user->hasAnyRoleCodes($this->privilegedRoleCodes)) {
             return true;
         }

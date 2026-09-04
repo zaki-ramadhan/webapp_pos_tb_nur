@@ -167,7 +167,7 @@ class User extends Authenticatable
     public function isSystemAdmin(): bool
     {
         $email = strtolower(trim((string) $this->email));
-        if (in_array($email, self::DEVELOPER_EMAILS, true)) {
+        if (in_array($email, self::getDeveloperEmails(), true)) {
             return true;
         }
 
@@ -193,7 +193,7 @@ class User extends Authenticatable
         }
 
         $email = strtolower(trim((string) $this->email));
-        if (in_array($email, self::OWNER_EMAILS, true)) {
+        if (in_array($email, self::getOwnerEmails(), true)) {
             return true;
         }
 
