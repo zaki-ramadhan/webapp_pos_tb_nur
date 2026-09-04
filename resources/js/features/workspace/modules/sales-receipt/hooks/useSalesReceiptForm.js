@@ -153,6 +153,11 @@ export default function useSalesReceiptForm({
         }
     }, [isDetail, activeLevel2Tab]);
 
+    const validationMessage = useMemo(
+        () => validateSalesReceiptValues(values, config),
+        [values, config]
+    );
+
     const saveDisabled = saving || Boolean(validationMessage);
 
 

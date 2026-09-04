@@ -22,9 +22,6 @@ class Product extends DomainModel
         'barcode',
         'name',
         'product_type',
-        'item_condition',
-        'expiry_date',
-        'condition_notes',
         'minimum_stock',
         'default_purchase_price',
         'default_sale_price',
@@ -35,7 +32,7 @@ class Product extends DomainModel
         'use_group_price',
     ];
 
-    protected array $searchable = ['code', 'barcode', 'name', 'product_type', 'item_condition'];
+    protected array $searchable = ['code', 'barcode', 'name', 'product_type'];
 
     protected $appends = ['main_supplier', 'main_supplier_id'];
 
@@ -83,9 +80,6 @@ class Product extends DomainModel
                     $product->category_id = $defaultCat->id;
                 }
             }
-            if (is_null($product->item_condition)) {
-                $product->item_condition = 'normal';
-            }
             if (is_null($product->minimum_stock)) {
                 $product->minimum_stock = 0;
             }
@@ -94,10 +88,6 @@ class Product extends DomainModel
             }
             if (is_null($product->default_sale_price)) {
                 $product->default_sale_price = 0;
-            }
-
-            if (!\Illuminate\Support\Facades\Schema::hasColumn('products', 'item_condition')) {
-                unset($product->attributes['item_condition'], $product->attributes['expiry_date'], $product->attributes['condition_notes']);
             }
         });
     }
@@ -108,7 +98,6 @@ class Product extends DomainModel
             'minimum_stock' => 'decimal:2',
             'default_purchase_price' => 'decimal:2',
             'default_sale_price' => 'decimal:2',
-            'expiry_date' => 'date',
             'is_active' => 'boolean',
             'print_group_details' => 'boolean',
             'allow_edit_group_quantity' => 'boolean',

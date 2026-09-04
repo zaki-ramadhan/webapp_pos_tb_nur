@@ -67,10 +67,6 @@ export function mapInventoryRows(pageId, records) {
         requested: record.requested ?? '',
         minimumLimit: record.minimum_limit ?? '',
         rawMinimumLimit: Number(record.raw_minimum_limit ?? 0),
-        statusLabel: record.status_label ?? (Number(record.raw_available_stock ?? 0) <= 0 ? 'Stok Habis' : 'Stok Menipis'),
-        statusBadge: record.status_badge ?? 'warning',
-        itemCondition: record.item_condition ?? 'normal',
-        conditionNotes: record.condition_notes ?? '',
     }));
 }
 

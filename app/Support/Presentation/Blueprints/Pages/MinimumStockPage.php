@@ -55,7 +55,6 @@ class MinimumStockPage
                         ['id' => 'unit', 'label' => 'Satuan', 'widthClassName' => 'w-[170px]', 'align' => 'center'],
                         ['id' => 'availableStock', 'label' => 'Stok tersedia', 'widthClassName' => 'w-[190px]', 'align' => 'center'],
                         ['id' => 'minimumLimit', 'label' => 'Batas Minimum Stok', 'widthClassName' => 'w-[200px]', 'align' => 'center'],
-                        ['id' => 'statusLabel', 'label' => 'Status Kelayakan & Stok', 'widthClassName' => 'w-[250px]', 'align' => 'center'],
                     ],
                     'rows' => [],
                     'emptyLabel' => 'Tidak ada data',

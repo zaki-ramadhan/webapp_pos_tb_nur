@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
@@ -8,7 +8,6 @@ import {
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
@@ -111,6 +110,13 @@ export default function WarehouseFormView({
         () => !hasSaved && JSON.stringify(values) !== JSON.stringify(initialValues),
         [values, initialValues, hasSaved],
     );
+
+    const handleChange = useCallback((field, value) => {
+        setValues((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    }, []);
 
 
 
