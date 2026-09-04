@@ -255,10 +255,10 @@ export function printTable(columns, rows, title = 'Laporan') {
     const width = doc.internal.pageSize.width;
 
   // Logo TB Nur
-    const logoW = 26;
-    const logoH = 32;
+    const logoW = 19;
+    const logoH = 20.3;
     try {
-        doc.addImage(TB_NUR_LOGO_PNG, 'PNG', 36, 34, logoW, logoH);
+        doc.addImage(TB_NUR_LOGO_PNG, 'PNG', 36, 39, logoW, logoH);
     } catch (err) {
         console.warn('Gagal memuat logo pada PDF preview:', err);
     }
@@ -267,15 +267,15 @@ export function printTable(columns, rows, title = 'Laporan') {
 
   // Nama Toko (Bold)
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11.5);
+    doc.setFontSize(11);
     doc.setTextColor(30, 58, 138);
-    doc.text('TB Nur POS', textX, 46);
+    doc.text('TB Nur POS', textX, 46.5);
 
   // Judul laporan (Normal)
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
+    doc.setFontSize(8.5);
     doc.setTextColor(71, 85, 105);
-    doc.text(cleanTitle, textX, 59);
+    doc.text(cleanTitle, textX, 57.5);
 
   // Tampilkan info waktu & statistik (Normal)
     doc.setFont('helvetica', 'normal');
@@ -294,13 +294,13 @@ export function printTable(columns, rows, title = 'Laporan') {
     const timestampStr = `Dibuat pada: ${localeDate} ${localeTime}`;
     const statsStr = `Total data: ${rows.length} data`;
 
-    doc.text(timestampStr, width - 36, 46, { align: 'right' });
-    doc.text(statsStr, width - 36, 59, { align: 'right' });
+    doc.text(timestampStr, width - 36, 46.5, { align: 'right' });
+    doc.text(statsStr, width - 36, 57.5, { align: 'right' });
 
   // Garis pembatas header
     doc.setDrawColor(35, 83, 160);
     doc.setLineWidth(1);
-    doc.line(36, 75, width - 36, 75);
+    doc.line(36, 68, width - 36, 68);
 
   // Sesuaikan kolom
     const columnStyles = {
@@ -315,7 +315,7 @@ export function printTable(columns, rows, title = 'Laporan') {
     autoTable(doc, {
         head: headers,
         body: data,
-        startY: 88,
+        startY: 80,
         margin: { top: 40, bottom: 40, left: 36, right: 36 },
         styles: {
             font: 'helvetica',
