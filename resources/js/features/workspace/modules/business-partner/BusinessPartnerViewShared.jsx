@@ -77,7 +77,6 @@ export function ToolbarIconAction({ icon, label }) {
         <button
             type="button"
             aria-label={label}
-            title={label}
             className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
         >
             {renderedIcon}
@@ -221,7 +220,7 @@ export function PartnerInlineTableSection({
                     type="button"
                     onClick={handleOpen}
                     className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer relative z-10"
-                    title={addButtonTitle}
+                    aria-label={addButtonTitle}
                 >
                     <PlusIcon className="h-5 w-5 pointer-events-none" />
                 </button>

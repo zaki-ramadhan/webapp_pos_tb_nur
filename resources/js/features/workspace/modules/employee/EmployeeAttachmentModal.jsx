@@ -140,7 +140,6 @@ export default function EmployeeAttachmentModal({
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="text-xs sm:text-sm font-medium text-brand-blue-dark hover:underline truncate"
-                                                title="Buka dokumen"
                                             >
                                                 {item.file_name}
                                             </a>
@@ -158,7 +157,6 @@ export default function EmployeeAttachmentModal({
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="p-1 rounded text-brand-blue-dark hover:bg-info-bg transition"
-                                                title="Unduh dokumen"
                                                 aria-label="Unduh lampiran"
                                             >
                                                 <DownloadIcon className="h-4.5 w-4.5" />

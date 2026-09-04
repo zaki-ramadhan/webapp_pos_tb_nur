@@ -43,7 +43,6 @@ function ToolbarIconButton({ action }) {
         <button
             type="button"
             aria-label={action.label}
-            title={action.label}
             className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
         >
             {icon}

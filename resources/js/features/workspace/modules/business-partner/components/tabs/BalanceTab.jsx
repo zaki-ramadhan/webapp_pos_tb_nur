@@ -48,7 +48,7 @@ export default function BalanceTab({ config, values, onChange }) {
                         type="button"
                         onClick={handleOpen}
                         className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer"
-                        title="Tambah Data"
+                        aria-label="Tambah data"
                     >
                         <PlusIcon className="h-5 w-5 pointer-events-none" />
                     </button>

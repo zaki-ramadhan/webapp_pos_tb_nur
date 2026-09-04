@@ -66,7 +66,7 @@ export default function DashboardWidgetCard({
                     <div
                         {...dragHandleProps}
                         className="mr-2 flex shrink-0 cursor-grab items-center text-tab-active-text opacity-45 hover:opacity-100 active:cursor-grabbing py-1 px-0.5"
-                        title="Seret untuk mengubah urutan widget"
+                        aria-label="Seret untuk mengubah urutan widget"
                     >
                         <GripVertical className="h-4 w-4 fill-current text-slate-500" />
                     </div>

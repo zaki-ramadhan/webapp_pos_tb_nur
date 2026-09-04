@@ -328,7 +328,7 @@ export default function PayrollEntryEmployeeModal({
 function InputRow({ label, value, onChange, id, indent = false, disabled = false }) {
     return (
         <div className="grid grid-cols-[210px_minmax(0,1fr)] items-center gap-2">
-            <span className={`text-sm text-black font-normal truncate ${indent ? 'pl-6' : ''}`} title={label}>
+            <span className={`text-sm text-black font-normal truncate ${indent ? 'pl-6' : ''}`}>
                 {label}
             </span>
             <div className="flex items-center gap-1.5 max-w-[260px] w-full">

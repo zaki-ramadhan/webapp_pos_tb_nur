@@ -35,7 +35,6 @@ export default function DockActionButton({
             disabled={isDisabled}
             aria-disabled={isDisabled}
             aria-label={label}
-            title={label}
             className={`inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border transition sm:h-[54px] sm:w-[92px] md:h-[60px] md:w-[104px] shadow-dock-action ${toneClassName} ${className}`.trim()}
         >
             {loading ? (

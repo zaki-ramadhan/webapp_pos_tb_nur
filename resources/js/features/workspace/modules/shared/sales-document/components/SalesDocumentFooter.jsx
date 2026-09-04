@@ -123,7 +123,7 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
                                         type="button"
                                         onClick={toggleDiscountMode}
                                         className="ml-1 inline-flex cursor-pointer items-center rounded-[4px] border border-brand-blue-border-light bg-blue-50 px-1.5 py-0.5 text-xs font-bold text-brand-blue-accent hover:bg-blue-100 transition-colors select-none"
-                                        title="Klik untuk mengubah antara % (Persen) dan Rp (Rupiah)"
+                                        aria-label="Ubah mode diskon"
                                     >
                                         {currentMode}
                                     </button>
@@ -142,7 +142,7 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
                                         type="button"
                                         onClick={toggleDiscountMode}
                                         className="inline-flex cursor-pointer items-center border-r border-ui-border-medium bg-blue-50 px-2 text-xs sm:text-sm font-bold text-brand-blue-accent hover:bg-blue-100 transition-colors select-none"
-                                        title="Klik untuk mengubah antara % dan Rp"
+                                        aria-label="Ubah mode diskon"
                                     >
                                         {currentMode}
                                     </button>
