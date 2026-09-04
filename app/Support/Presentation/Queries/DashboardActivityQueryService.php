@@ -51,10 +51,10 @@ class DashboardActivityQueryService
         ];
 
         $actionMap = [
-            'create' => 'Membuat',
-            'update' => 'Mengubah',
-            'delete' => 'Menghapus',
-            'post' => 'Membuat',
+            'create' => 'Buat',
+            'update' => 'Ubah',
+            'delete' => 'Hapus',
+            'post' => 'Buat',
         ];
 
         $resourceMap = [
@@ -234,7 +234,11 @@ class DashboardActivityQueryService
             }
 
             // Normalisasi agar tidak ada kebocoran istilah bahasa Inggris dari log lama
-            $activityTitle = str_ireplace(['Memposting ', 'Posting '], ['Membuat ', 'Buat '], $activityTitle);
+            $activityTitle = str_ireplace(
+                ['Memposting ', 'Posting ', 'Membuat ', 'Mengubah ', 'Memperbarui ', 'Menghapus ', 'Mencatat ', 'Memproses '],
+                ['Buat ', 'Buat ', 'Buat ', 'Ubah ', 'Ubah ', 'Hapus ', 'Buat ', 'Buat '],
+                $activityTitle
+            );
             $activityTitle = str_ireplace(array_keys($englishReplacements), array_values($englishReplacements), $activityTitle);
             $activityTitle = str_ireplace(['ke sistem POS TB Nur', 'ke sistem POS', 'ke sistem TB Nur'], ['ke sistem', 'ke sistem', 'ke sistem'], $activityTitle);
             $activityTitle = str_ireplace(['UD. TB Nur', 'UD TB Nur', 'TB Nur', 'UD. '], ['', '', '', ''], $activityTitle);
