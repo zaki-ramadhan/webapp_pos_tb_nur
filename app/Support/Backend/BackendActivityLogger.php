@@ -42,6 +42,14 @@ class BackendActivityLogger
             return;
         }
 
+        if (strtolower($action) === 'login') {
+            return;
+        }
+
+        if (strtolower($action) === 'post') {
+            $action = 'create';
+        }
+
         $user = Auth::user();
         $metadata = [
             'resource_model' => $record::class,
@@ -132,8 +140,8 @@ class BackendActivityLogger
             'update' => 'Ubah',
             'delete' => 'Hapus',
             'void' => 'Batalkan',
-            'post' => 'Posting',
-            'unpost' => 'Batal Posting',
+            'post' => 'Buat',
+            'unpost' => 'Ubah',
             'approve' => 'Setujui',
             'reject' => 'Tolak',
         ];

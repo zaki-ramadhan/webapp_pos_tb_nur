@@ -255,15 +255,14 @@ class SecuritySeeder extends Seeder
         // Seed activity logs
         $logs = [];
         $logTemplates = [
-            ['group' => 'auth', 'res' => 'users', 'label' => 'Sistem', 'perm' => 'login', 'action' => 'login', 'desc' => 'Pengguna berhasil masuk ke sistem', 'subj' => 'Sistem'],
             ['group' => 'sales', 'res' => 'sales-invoices', 'label' => 'Faktur Penjualan', 'perm' => 'sales-invoice', 'action' => 'create', 'desc' => 'Membuat Faktur Penjualan Kasir', 'subj' => 'Faktur Penjualan'],
-            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penjualan Kasir', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penjualan Kasir', 'subj' => 'Jurnal Penjualan'],
+            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penjualan Kasir', 'perm' => 'general-journal', 'action' => 'create', 'desc' => 'Membuat Jurnal Penjualan Kasir', 'subj' => 'Jurnal Penjualan'],
             ['group' => 'purchasing', 'res' => 'purchase-orders', 'label' => 'Pesanan Pembelian', 'perm' => 'purchase-order', 'action' => 'create', 'desc' => 'Membuat Pesanan Pembelian Stok', 'subj' => 'Pesanan Pembelian'],
-            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Pembelian Supplier', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Faktur Pembelian Supplier', 'subj' => 'Jurnal Pembelian'],
-            ['group' => 'inventory', 'res' => 'stock-opname', 'label' => 'Opname Persediaan', 'perm' => 'inventory-adjustment', 'action' => 'post', 'desc' => 'Memproses Penyesuaian Stok Gudang', 'subj' => 'Penyesuaian Stok'],
-            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Kas & Bank', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penerimaan Kas Kecil', 'subj' => 'Jurnal Penerimaan Kas'],
+            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Pembelian Supplier', 'perm' => 'general-journal', 'action' => 'create', 'desc' => 'Membuat Jurnal Faktur Pembelian Supplier', 'subj' => 'Jurnal Pembelian'],
+            ['group' => 'inventory', 'res' => 'stock-opname', 'label' => 'Opname Persediaan', 'perm' => 'inventory-adjustment', 'action' => 'create', 'desc' => 'Membuat Penyesuaian Stok Gudang', 'subj' => 'Penyesuaian Stok'],
+            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Kas & Bank', 'perm' => 'general-journal', 'action' => 'create', 'desc' => 'Membuat Jurnal Penerimaan Kas Kecil', 'subj' => 'Jurnal Penerimaan Kas'],
             ['group' => 'finance', 'res' => 'cash-payments', 'label' => 'Pengeluaran Kas', 'perm' => 'cash-payment', 'action' => 'create', 'desc' => 'Mencatat Pengeluaran Kas Operasional Toko', 'subj' => 'Pengeluaran Kas Toko'],
-            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penyesuaian Operasional', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penyesuaian Beban Perlengkapan', 'subj' => 'Jurnal Penyesuaian'],
+            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penyesuaian Operasional', 'perm' => 'general-journal', 'action' => 'create', 'desc' => 'Membuat Jurnal Penyesuaian Beban Perlengkapan', 'subj' => 'Jurnal Penyesuaian'],
             ['group' => 'general', 'res' => 'products', 'label' => 'Data Barang', 'perm' => 'product', 'action' => 'update', 'desc' => 'Memperbarui Data & Harga Barang', 'subj' => 'Data Barang'],
             ['group' => 'finance', 'res' => 'sales-receipts', 'label' => 'Penerimaan Piutang', 'perm' => 'sales-receipt', 'action' => 'create', 'desc' => 'Mencatat Penerimaan Pelunasan Piutang', 'subj' => 'Penerimaan Piutang'],
         ];
@@ -289,7 +288,7 @@ class SecuritySeeder extends Seeder
                 'total_amount' => 1500000 + ($i * 100000),
             ] : null;
 
-            $afterData = ($tpl['action'] === 'create' || $tpl['action'] === 'update' || $tpl['action'] === 'post') ? [
+            $afterData = ($tpl['action'] === 'create' || $tpl['action'] === 'update') ? [
                 'document_number' => $docNum,
                 'status' => 'Posted',
                 'total_amount' => 1500000 + ($i * 100000),

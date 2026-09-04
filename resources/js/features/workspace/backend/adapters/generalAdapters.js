@@ -159,8 +159,8 @@ function mapActivityActionLabel(action) {
         update: 'Ubah',
         delete: 'Hapus',
         void: 'Batalkan',
-        post: 'Posting',
-        unpost: 'Batal Posting',
+        post: 'Buat',
+        unpost: 'Ubah',
         approve: 'Setujui',
         reject: 'Tolak',
     };
@@ -192,8 +192,8 @@ function translateDescription(desc) {
         'Update ': 'Ubah ',
         'Delete ': 'Hapus ',
         'Void ': 'Batalkan ',
-        'Post ': 'Posting ',
-        'Unpost ': 'Batal Posting ',
+        'Post ': 'Buat ',
+        'Unpost ': 'Ubah ',
         'Approve ': 'Setujui ',
         'Reject ': 'Tolak ',
     };
@@ -228,26 +228,30 @@ function translateDescription(desc) {
 }
 
 export function mapActivityLogRows(records) {
-    return records.map((record) => {
-        const transactionDate = normalizeDisplayDate(record.metadata?.transaction_date) || normalizeDisplayDate(record.occurred_at);
+    return records
+        .filter((record) => String(record.action).toLowerCase() !== 'login')
+        .map((record) => {
+            const rawAction = String(record.action ?? '').toLowerCase();
+            const normalizedAction = rawAction === 'post' ? 'create' : (record.action ?? '');
+            const transactionDate = normalizeDisplayDate(record.metadata?.transaction_date) || normalizeDisplayDate(record.occurred_at);
 
-        return {
-            id: record.id,
-            dateValue: normalizeDisplayDate(record.occurred_at),
-            transactionDateValue: transactionDate || 'empty',
-            transactionDateLabel: formatIsoDate(transactionDate),
-            referenceName: record.subject_label ?? record.document_number ?? '-',
-            actionTypeValue: record.action ?? '',
-            actionLabel: mapActivityActionLabel(record.action),
-            transactionTypeValue: record.resource_key ?? '',
-            transactionTypeLabel: mapResourceLabel(record.resource_key, record.permission_key, record.resource_label),
-            loggedAt: formatDateTimeVerbose(record.occurred_at),
-            userValue: String(record.actor_user_id ?? record.actor_email ?? ''),
-            userName: record.actor_name ?? record.actor_user?.name ?? '-',
-            email: record.actor_email ?? record.actor_user?.email ?? '-',
-            ipAddress: record.ip_address ?? '-',
-        };
-    });
+            return {
+                id: record.id,
+                dateValue: normalizeDisplayDate(record.occurred_at),
+                transactionDateValue: transactionDate || 'empty',
+                transactionDateLabel: formatIsoDate(transactionDate),
+                referenceName: record.subject_label ?? record.document_number ?? '-',
+                actionTypeValue: normalizedAction,
+                actionLabel: mapActivityActionLabel(normalizedAction),
+                transactionTypeValue: record.resource_key ?? '',
+                transactionTypeLabel: mapResourceLabel(record.resource_key, record.permission_key, record.resource_label),
+                loggedAt: formatDateTimeVerbose(record.occurred_at),
+                userValue: String(record.actor_user_id ?? record.actor_email ?? ''),
+                userName: record.actor_name ?? record.actor_user?.name ?? '-',
+                email: record.actor_email ?? record.actor_user?.email ?? '-',
+                ipAddress: record.ip_address ?? '-',
+            };
+        });
 }
 
 export function buildActivityLogFilters(rows) {
@@ -302,9 +306,10 @@ export function buildActivityLogFilters(rows) {
 }
 
 export function mapJournalActivityRows(records) {
-    const totalCount = records.length;
+    const filteredRecords = records.filter((record) => String(record.action).toLowerCase() !== 'login');
+    const totalCount = filteredRecords.length;
 
-    return records.map((record, index) => {
+    return filteredRecords.map((record, index) => {
         const transactionDate = normalizeDisplayDate(record.metadata?.transaction_date) || normalizeDisplayDate(record.occurred_at);
         const dateObj = record.occurred_at ? new Date(record.occurred_at) : new Date();
         const year = dateObj.getFullYear();
@@ -312,8 +317,9 @@ export function mapJournalActivityRows(records) {
         const seq = String(totalCount - index).padStart(5, '0');
         const jvNumber = record.metadata?.jv_number ?? `JV.${year}.${month}.${seq}`;
         const transNumber = record.document_number ?? record.subject_label ?? '-';
-        const actionStr = String(record.action ?? '').toLowerCase();
-        const isDeleted = actionStr === 'delete' || actionStr === 'void';
+        const rawAction = String(record.action ?? '').toLowerCase();
+        const normalizedAction = rawAction === 'post' ? 'create' : (record.action ?? '');
+        const isDeleted = String(normalizedAction).toLowerCase() === 'delete' || String(normalizedAction).toLowerCase() === 'void';
 
         return {
             id: record.id,
@@ -330,7 +336,7 @@ export function mapJournalActivityRows(records) {
             transactionDateValue: transactionDate || 'empty',
             transactionTypeValue: record.resource_key ?? '',
             userValue: String(record.actor_user_id ?? record.actor_email ?? ''),
-            actionTypeValue: record.action ?? '',
+            actionTypeValue: normalizedAction,
         };
     });
 }

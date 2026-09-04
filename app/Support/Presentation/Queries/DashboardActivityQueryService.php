@@ -21,12 +21,14 @@ class DashboardActivityQueryService
 
         $logs = DB::table('activity_logs')
             ->where('actor_user_id', $user->id)
+            ->whereNotIn('action', ['login'])
             ->orderBy('occurred_at', 'desc')
             ->limit(10)
             ->get();
 
         if ($logs->count() < 5) {
             $logs = DB::table('activity_logs')
+                ->whereNotIn('action', ['login'])
                 ->orderBy('occurred_at', 'desc')
                 ->limit(10)
                 ->get();
@@ -52,8 +54,7 @@ class DashboardActivityQueryService
             'create' => 'Membuat',
             'update' => 'Mengubah',
             'delete' => 'Menghapus',
-            'post' => 'Memproses',
-            'login' => 'Masuk',
+            'post' => 'Membuat',
         ];
 
         $resourceMap = [
@@ -233,6 +234,7 @@ class DashboardActivityQueryService
             }
 
             // Normalisasi agar tidak ada kebocoran istilah bahasa Inggris dari log lama
+            $activityTitle = str_ireplace(['Memposting ', 'Posting '], ['Membuat ', 'Buat '], $activityTitle);
             $activityTitle = str_ireplace(array_keys($englishReplacements), array_values($englishReplacements), $activityTitle);
             $activityTitle = str_ireplace(['ke sistem POS TB Nur', 'ke sistem POS', 'ke sistem TB Nur'], ['ke sistem', 'ke sistem', 'ke sistem'], $activityTitle);
             $activityTitle = str_ireplace(['UD. TB Nur', 'UD TB Nur', 'TB Nur', 'UD. '], ['', '', '', ''], $activityTitle);

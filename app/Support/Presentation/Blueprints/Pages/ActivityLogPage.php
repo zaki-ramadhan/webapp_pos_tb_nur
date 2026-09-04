@@ -56,6 +56,8 @@ class ActivityLogPage
                                 'options' => [
                                     ['value' => 'all', 'label' => 'Tipe Tindakan: Semua'],
                                     ['value' => 'create', 'label' => 'Tipe Tindakan: Buat'],
+                                    ['value' => 'update', 'label' => 'Tipe Tindakan: Ubah'],
+                                    ['value' => 'delete', 'label' => 'Tipe Tindakan: Hapus'],
                                 ],
                             ],
                         ],
