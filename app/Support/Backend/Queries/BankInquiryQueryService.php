@@ -459,12 +459,39 @@ class BankInquiryQueryService
             'credit' => $this->formatNumber($credit),
             'mutation' => $this->formatNumber(abs($netAmount)),
             'type' => $netAmount >= 0 ? 'Debit' : 'Kredit',
-            'status' => $document->is_closed ? 'Reconciled' : 'Open',
+            'status' => $this->resolveRowReconciled($document, $accountId) ? 'Reconciled' : 'Open',
             'date_label' => $date->format('Y-m-d'),
             'sortable_date' => $date->toDateString(),
             'net_amount' => $netAmount,
             'is_opening_balance' => (bool) ($document->metadata['is_opening_balance'] ?? false),
         ];
+    }
+
+    protected function resolveRowReconciled(OperationDocument $document, int $accountId): bool
+    {
+        if ($document->is_closed) {
+            return true;
+        }
+
+        if ($document->document_type === 'bank_transfer') {
+            $metadata = $document->metadata ?? [];
+            $reconciliations = $metadata['reconciliations'] ?? [];
+
+            $primaryId = $document->primary_account_id ? (int) $document->primary_account_id : null;
+            $secondaryId = $document->secondary_account_id ? (int) $document->secondary_account_id : null;
+
+            if ($accountId === $primaryId) {
+                $item = collect($reconciliations)->firstWhere('id', 'from');
+                return ($item['status'] ?? '') === 'Ya';
+            }
+
+            if ($accountId === $secondaryId) {
+                $item = collect($reconciliations)->firstWhere('id', 'to');
+                return ($item['status'] ?? '') === 'Ya';
+            }
+        }
+
+        return ($document->metadata['reconcile_status'] ?? '') === 'Ya';
     }
 
     protected function resolveSyntheticAmount(OperationDocument $document): float

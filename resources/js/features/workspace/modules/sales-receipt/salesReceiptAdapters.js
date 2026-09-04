@@ -199,7 +199,17 @@ export function buildSalesReceiptRecord(record = {}, config) {
         voided: Boolean(record.flags?.voided),
         branches: record.branch?.name ? [record.branch.name] : (record.metadata?.branch_label ? [record.metadata.branch_label] : []),
         notes: record.notes ?? '',
-        reconcileStatus: record.metadata?.reconcile_status ?? '',
+        reconcileStatus: (() => {
+            if (record.is_closed) {
+                const date = record.metadata?.reconcile_date || (record.updated_at ? `(${formatIsoDate(record.updated_at)})` : (record.entry_date ? `(${formatIsoDate(record.entry_date)})` : ''));
+                const status = record.metadata?.reconcile_status;
+                if (!status || status === 'Belum') {
+                    return date ? `Ya ${date}` : 'Ya';
+                }
+                return status.includes('(') ? status : (date ? `${status} ${date}` : status);
+            }
+            return record.metadata?.reconcile_status || 'Belum';
+        })(),
         printStatus: record.metadata?.print_status ?? '',
         amountButtons: ['refresh'],
         dockActions: config.detailRecords?.[record.document_number]?.dockActions ?? config.draft?.dockActions ?? [],

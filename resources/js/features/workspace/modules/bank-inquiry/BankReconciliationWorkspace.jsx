@@ -52,7 +52,7 @@ export default function BankReconciliationWorkspace({
         return new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(rawBalanceNum);
     }, [rawBalanceNum]);
 
-    const handleReconcileSingle = async (docNumber, isClosed) => {
+    const handleReconcileSingle = async (docNumber, isClosed, accountId = null) => {
         setReconcilingIds(prev => ({ ...prev, [docNumber]: true }));
         const toastId = showLoadingToast({ message: isClosed ? 'Merekonsiliasikan...' : 'Membatalkan rekonsiliasi...' });
 
@@ -60,6 +60,7 @@ export default function BankReconciliationWorkspace({
             await axios.post('/api/backend/bank-reconciliations/reconcile', {
                 document_numbers: [docNumber],
                 is_closed: isClosed,
+                account_id: accountId || filters.account_id || null,
             });
             showSuccessToast({
                 title: 'Berhasil',
@@ -190,7 +191,7 @@ export default function BankReconciliationWorkspace({
                                                 setSelectedRow(row);
                                                 setConfirmOpen(true);
                                             }}
-                                            onUnreconcile={() => handleReconcileSingle(key, false)}
+                                            onUnreconcile={() => handleReconcileSingle(key, false, row.account_id)}
                                         />
                                     </div>
                                 );
@@ -266,7 +267,8 @@ export default function BankReconciliationWorkspace({
                                 setConfirmOpen(false);
                                 await handleReconcileSingle(
                                     selectedRow.documentNumber || selectedRow.sourceNumber || selectedRow.document_number,
-                                    true
+                                    true,
+                                    selectedRow.account_id
                                 );
                             }
                         }}

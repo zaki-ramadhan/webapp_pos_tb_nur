@@ -102,8 +102,10 @@ export function buildCashReceiptRecord(record = {}, config) {
             notes: record.notes ?? '',
             lineLookup: '',
             saveTone: 'muted',
-            reconcileStatus: record.metadata?.reconcile_status ?? '',
-            reconcileDate: record.metadata?.reconcile_date ?? '',
+            reconcileStatus: record.is_closed ? (record.metadata?.reconcile_status || 'Ya') : (record.metadata?.reconcile_status || 'Belum'),
+            reconcileDate: record.is_closed
+                ? (record.metadata?.reconcile_date || (record.updated_at ? `(${formatIsoDate(record.updated_at)})` : (record.entry_date ? `(${formatIsoDate(record.entry_date)})` : '')))
+                : (record.metadata?.reconcile_date ?? ''),
             printStatus: record.metadata?.print_status ?? '',
         },
         lineItems,

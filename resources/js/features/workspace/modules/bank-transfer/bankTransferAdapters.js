@@ -136,12 +136,25 @@ export function buildBankTransferRecord(record = {}, config) {
         feeLookup: '',
         feeRows,
         saveTone: 'muted',
-        reconciliations: (metadata.reconciliations && metadata.reconciliations.length > 0)
-            ? metadata.reconciliations
-            : [
-                { id: 'from', bank: cleanFromBank || 'Kas/Bank Asal', status: 'Belum', date: null },
-                { id: 'to', bank: cleanToBank || 'Kas/Bank Tujuan', status: 'Belum', date: null }
-            ],
+        reconciliations: (() => {
+            let recons = (metadata.reconciliations && metadata.reconciliations.length > 0)
+                ? metadata.reconciliations
+                : [
+                    { id: 'from', bank: cleanFromBank || 'Kas/Bank Asal', status: 'Belum', date: null },
+                    { id: 'to', bank: cleanToBank || 'Kas/Bank Tujuan', status: 'Belum', date: null },
+                ];
+
+            if (record.is_closed) {
+                const defaultDate = metadata.reconcile_date
+                    || (record.updated_at ? `(${formatIsoDate(record.updated_at)})` : (record.entry_date ? `(${formatIsoDate(record.entry_date)})` : ''));
+                recons = recons.map((item) => ({
+                    ...item,
+                    status: item.status === 'Belum' ? 'Ya' : item.status,
+                    date: item.date || defaultDate,
+                }));
+            }
+            return recons;
+        })(),
     };
 
     return {
@@ -179,12 +192,24 @@ export function buildDetailRecordFromRow(row = {}, config) {
         feeLookup: '',
         feeRows: row.feeRows ?? [],
         saveTone: 'muted',
-        reconciliations: (row.reconciliations && row.reconciliations.length > 0)
-            ? row.reconciliations
-            : [
-                { id: 'from', bank: (row.fromBankFull ? extractCleanAccountName(row.fromBankFull) : '') || 'Kas/Bank Asal', status: 'Belum', date: null },
-                { id: 'to', bank: (row.toBankFull ? extractCleanAccountName(row.toBankFull) : '') || 'Kas/Bank Tujuan', status: 'Belum', date: null }
-            ],
+        reconciliations: (() => {
+            let recons = (row.reconciliations && row.reconciliations.length > 0)
+                ? row.reconciliations
+                : [
+                    { id: 'from', bank: (row.fromBankFull ? extractCleanAccountName(row.fromBankFull) : '') || 'Kas/Bank Asal', status: 'Belum', date: null },
+                    { id: 'to', bank: (row.toBankFull ? extractCleanAccountName(row.toBankFull) : '') || 'Kas/Bank Tujuan', status: 'Belum', date: null },
+                ];
+
+            if (row.is_closed) {
+                const defaultDate = row.date ? `(${row.date})` : '';
+                recons = recons.map((item) => ({
+                    ...item,
+                    status: item.status === 'Belum' ? 'Ya' : item.status,
+                    date: item.date || defaultDate,
+                }));
+            }
+            return recons;
+        })(),
     });
 }
 
