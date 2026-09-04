@@ -166,7 +166,7 @@ export default function BankReconciliationWorkspace({
                             className="w-48 h-auto max-h-48 object-contain mb-6 opacity-60 saturate-[0.3]"
                             style={{ filter: 'saturate(0.3)' }}
                         />
-                        <div className="text-base sm:text-lg font-normal tracking-normal" style={{ color: '#DEDEDE' }}>
+                        <div className="text-base sm:text-lg font-medium tracking-normal text-slate-600">
                             Pilih bank yang akan direkonsiliasi
                         </div>
                     </div>
@@ -219,7 +219,7 @@ export default function BankReconciliationWorkspace({
                             className="w-48 h-auto max-h-48 object-contain mb-6 opacity-60 saturate-[0.3]"
                             style={{ filter: 'saturate(0.3)' }}
                         />
-                        <div className="text-base sm:text-lg font-normal tracking-normal" style={{ color: '#DEDEDE' }}>
+                        <div className="text-base sm:text-lg font-medium tracking-normal text-slate-600">
                             Tidak ada data mutasi kas/bank yang tersedia.
                         </div>
                     </div>
