@@ -57,6 +57,7 @@ const DETAIL_TAB_PAGE_IDS = [
     'shipping-master',
     'users',
     'payroll-entry',
+    'salary-allowance',
 ];
 
 export function buildInitialLevel2TabsState(pages) {

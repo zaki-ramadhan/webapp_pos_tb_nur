@@ -39,7 +39,6 @@ export const STATIC_PAGE_RENDERERS = {
     'activity-log': (page) => <ActivityLogView page={page} />,
     'minimum-stock': (page) => <InventoryInquiryView config={page.minimumStock} pageId="minimum-stock" />,
     'item-location': (page) => <InventoryInquiryView config={page.itemLocation} pageId="item-location" />,
-    'salary-allowance': (page) => <SalaryAllowanceView page={page} />,
 };
 
 export const CONTENT_PAGE_COMPONENTS = {
@@ -83,6 +82,7 @@ export const LEVEL2_DETAIL_PAGE_COMPONENTS = {
     'general-journal': GeneralJournalView,
     customers: (props) => <BusinessPartnerView {...props} partnerType="customer" />,
     suppliers: (props) => <BusinessPartnerView {...props} partnerType="supplier" />,
+    'salary-allowance': SalaryAllowanceView,
 };
 
 export const BANK_INQUIRY_PAGE_IDS = new Set([

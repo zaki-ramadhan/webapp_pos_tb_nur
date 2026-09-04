@@ -232,7 +232,7 @@ export default function TableListView({
     const resolvedCreateButton = isAccessRestricted ? null : createButton;
 
     return (
-        <div className="flex flex-col flex-1 min-h-0 h-full rounded-[6px] border border-ui-border bg-white p-3 shadow-panel-subtle overflow-hidden">
+        <div className="flex flex-col flex-1 min-h-0 h-full">
             <TableToolbar
                 size="compact"
                 filters={null}
