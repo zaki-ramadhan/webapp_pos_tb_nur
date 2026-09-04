@@ -2,6 +2,7 @@
 
 namespace App\Support\Backend;
 
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
@@ -33,7 +34,7 @@ class BackendResourceIndexQuery
         $query = $modelClass::query()->with($blueprint->with);
 
         $user = auth()->user();
-        if ($user && ! $user->hasAnyRoleCodes(['super_admin'])) {
+        if ($user && ! $user->isPrivileged() && ! $user->hasAnyRoleCodes(['super_admin', 'owner', 'admin'])) {
             if (Schema::hasColumn($tableName, 'branch_id')) {
                 if ($user->branches()->exists()) {
                     $allowedBranchIds = $user->branches->pluck('id')->toArray();
@@ -47,11 +48,8 @@ class BackendResourceIndexQuery
         }
 
         if ($blueprint->key === 'users') {
-            $developerEmails = [
-                'piscokpiscok2610@gmail.com',
-                'zakiram4dhan@gmail.com',
-            ];
-            $isSuperAdminActor = $user && in_array(strtolower((string) $user->email), $developerEmails, true);
+            $developerEmails = User::DEVELOPER_EMAILS;
+            $isSuperAdminActor = $user && ($user->isSystemAdmin() || in_array(strtolower((string) $user->email), $developerEmails, true));
 
             if (! $isSuperAdminActor) {
                 $query->whereNotIn('users.email', $developerEmails);

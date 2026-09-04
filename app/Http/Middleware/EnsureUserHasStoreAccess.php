@@ -33,8 +33,8 @@ class EnsureUserHasStoreAccess
 
         $email = strtolower((string) $user->email);
 
-        // 1. Owner utama / Super admin selalu lolos
-        if (in_array($email, $this->privilegedEmails, true) || $user->hasAnyRoleCodes(['super_admin'])) {
+        // 1. Owner utama / Super admin / Administrator Sistem selalu lolos
+        if ($user->isPrivileged() || in_array($email, $this->privilegedEmails, true) || $user->hasAnyRoleCodes(['super_admin', 'owner', 'admin'])) {
             return $next($request);
         }
 

@@ -15,7 +15,14 @@ class BackendResourceAccessService
     /**
      * @var list<string>
      */
-    protected array $privilegedRoleCodes = ['super_admin'];
+    protected array $privilegedRoleCodes = [
+        'super_admin',
+        'system_admin',
+        'administrator_sistem',
+        'admin_sistem',
+        'owner',
+        'admin',
+    ];
 
     protected ?bool $bootstrapMode = null;
 
@@ -36,12 +43,13 @@ class BackendResourceAccessService
             return true;
         }
 
-        if ($this->supportsUserActivation() && ! (bool) $user->getAttribute('is_active')) {
-            return false;
+        // Administrator Sistem & Owner selalu memiliki akses penuh tanpa pembatasan
+        if ($user->isPrivileged() || $user->hasAnyRoleCodes($this->privilegedRoleCodes)) {
+            return true;
         }
 
-        if ($user->hasAnyRoleCodes($this->privilegedRoleCodes)) {
-            return true;
+        if ($this->supportsUserActivation() && ! (bool) $user->getAttribute('is_active')) {
+            return false;
         }
 
         $permissions = $this->permissionsFor($user, $blueprint->permissionKey());
@@ -184,7 +192,7 @@ class BackendResourceAccessService
 
     public function getUserTimeRestrictionMessage(User $user): ?string
     {
-        if ($user->hasAnyRoleCodes(['super_admin'])) {
+        if ($user->isPrivileged() || $user->hasAnyRoleCodes($this->privilegedRoleCodes)) {
             return null;
         }
 
@@ -283,7 +291,7 @@ class BackendResourceAccessService
 
     public function canAccessRecord(User $user, Model $record): bool
     {
-        if ($user->hasAnyRoleCodes($this->privilegedRoleCodes)) {
+        if ($user->isPrivileged() || $user->hasAnyRoleCodes($this->privilegedRoleCodes)) {
             return true;
         }
 
