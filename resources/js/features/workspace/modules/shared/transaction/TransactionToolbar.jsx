@@ -217,7 +217,7 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
             className="absolute right-0 top-[calc(100%+8px)] z-50 w-[240px] rounded-[4px] border border-chart-border bg-white shadow-menu-dropdown overflow-hidden"
         >
             {}
-            <div className="px-2 pt-2 pb-1.5 border-b border-table-row-border">
+            <div className={`px-2 pt-2 ${filtered.length > 0 ? 'pb-1.5 border-b border-table-row-border' : 'pb-2'}`}>
                 <div className="flex items-center gap-1.5 rounded-[4px] border border-border-info-card bg-bg-info-card px-2.5 py-1.5">
                     <SearchIcon className="h-3.5 w-3.5 shrink-0 text-text-light" />
                     <input
@@ -238,37 +238,36 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
                 </div>
             </div>
 
-            {}
-            <div className="flex max-h-[280px] flex-col gap-0 overflow-y-auto py-1.5">
-                {filtered.length === 0 ? (
-                    <p className="px-3 py-2 text-xs text-text-light">Tidak ada kolom ditemukan.</p>
-                ) : filtered.map(col => {
-                    const visible = visibleIds.includes(col.id);
-                    return (
-                        <button
-                            key={col.id}
-                            type="button"
-                            onClick={() => onToggle(col.id)}
-                            className="flex items-center gap-2.5 px-3 py-[7px] text-left text-sm text-brand-dark transition hover:bg-workspace-hover-bg"
-                        >
-                            <span
-                                className={`flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-[3px] border transition ${
-                                    visible
-                                        ? 'border-brand-blue bg-brand-blue text-white'
-                                        : 'border-border-input-hover-alt bg-white'
-                                }`}
+            {filtered.length > 0 ? (
+                <div className="flex max-h-[280px] flex-col gap-0 overflow-y-auto py-1.5">
+                    {filtered.map(col => {
+                        const visible = visibleIds.includes(col.id);
+                        return (
+                            <button
+                                key={col.id}
+                                type="button"
+                                onClick={() => onToggle(col.id)}
+                                className="flex items-center gap-2.5 px-3 py-[7px] text-left text-sm text-brand-dark transition hover:bg-workspace-hover-bg"
                             >
-                                {visible ? (
-                                    <svg viewBox="0 0 10 8" fill="none" className="h-[9px] w-[9px]">
-                                        <path d="M1 4l2.5 2.5L9 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                ) : null}
-                            </span>
-                            {col.label}
-                        </button>
-                    );
-                })}
-            </div>
+                                <span
+                                    className={`flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-[3px] border transition ${
+                                        visible
+                                            ? 'border-brand-blue bg-brand-blue text-white'
+                                            : 'border-border-input-hover-alt bg-white'
+                                    }`}
+                                >
+                                    {visible ? (
+                                        <svg viewBox="0 0 10 8" fill="none" className="h-[9px] w-[9px]">
+                                            <path d="M1 4l2.5 2.5L9 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    ) : null}
+                                </span>
+                                {col.label}
+                            </button>
+                        );
+                    })}
+                </div>
+            ) : null}
         </div>
     );
 }
