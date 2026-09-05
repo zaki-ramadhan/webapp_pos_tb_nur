@@ -103,7 +103,40 @@ export default function CashReceiptFormView({
         onDeleteMessage: 'Rincian penerimaan dihapus.',
     });
 
+    const applyInitialValues = useCallback((initVals) => {
+        if (!initVals || isDetail) return;
+        setValues((current) => {
+            const nextLineItems = initVals.lineItems?.length
+                ? initVals.lineItems
+                : (current.lineItems ?? []);
+            const updated = applyCashReceiptLineItems(current, nextLineItems);
+            return {
+                ...updated,
+                entryDate: initVals.entryDate || updated.entryDate,
+                notes: initVals.notes || updated.notes,
+                bankAccounts: initVals.bankAccounts?.length ? initVals.bankAccounts : updated.bankAccounts,
+                __primaryAccountId: initVals.__primaryAccountId ?? updated.__primaryAccountId,
+            };
+        });
+    }, [isDetail, setValues]);
 
+    useEffect(() => {
+        if (!isDetail && typeof window !== 'undefined' && window.__pendingInitialValues?.['cash-receipt']) {
+            const pending = window.__pendingInitialValues['cash-receipt'];
+            window.__pendingInitialValues['cash-receipt'] = null;
+            applyInitialValues(pending);
+        }
+    }, [isDetail, applyInitialValues, activeLevel2Tab]);
+
+    useEffect(() => {
+        function handleInitialValues(e) {
+            if (e.detail?.pageId === 'cash-receipt' && e.detail?.initialValues && !isDetail) {
+                applyInitialValues(e.detail.initialValues);
+            }
+        }
+        window.addEventListener('workspace:set-initial-values', handleInitialValues);
+        return () => window.removeEventListener('workspace:set-initial-values', handleInitialValues);
+    }, [isDetail, applyInitialValues]);
 
     const dockActions = useMemo(
         () => buildWorkspaceDockActions({

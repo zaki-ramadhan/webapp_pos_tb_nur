@@ -118,6 +118,39 @@ export default function BankTransferFormView({
         setFeeModalCurrentItem(null);
     }, [updateValues]);
 
+    const applyInitialValues = useCallback((initVals) => {
+        if (!initVals || isDetail) return;
+        updateValues((current) => ({
+            ...current,
+            entryDate: initVals.entryDate || current.entryDate,
+            notes: initVals.notes || current.notes,
+            transferValue: initVals.transferValue || current.transferValue,
+            blurredTransferValue: initVals.blurredTransferValue || initVals.transferValue || current.blurredTransferValue,
+            fromBankAccounts: initVals.fromBankAccounts?.length ? initVals.fromBankAccounts : current.fromBankAccounts,
+            __fromAccountId: initVals.__fromAccountId ?? current.__fromAccountId,
+            toBankAccounts: initVals.toBankAccounts?.length ? initVals.toBankAccounts : current.toBankAccounts,
+            __toAccountId: initVals.__toAccountId ?? current.__toAccountId,
+        }));
+    }, [isDetail, updateValues]);
+
+    useEffect(() => {
+        if (!isDetail && typeof window !== 'undefined' && window.__pendingInitialValues?.['bank-transfer']) {
+            const pending = window.__pendingInitialValues['bank-transfer'];
+            window.__pendingInitialValues['bank-transfer'] = null;
+            applyInitialValues(pending);
+        }
+    }, [isDetail, applyInitialValues, activeLevel2Tab]);
+
+    useEffect(() => {
+        function handleInitialValues(e) {
+            if (e.detail?.pageId === 'bank-transfer' && e.detail?.initialValues && !isDetail) {
+                applyInitialValues(e.detail.initialValues);
+            }
+        }
+        window.addEventListener('workspace:set-initial-values', handleInitialValues);
+        return () => window.removeEventListener('workspace:set-initial-values', handleInitialValues);
+    }, [isDetail, applyInitialValues]);
+
     const onSave = useCallback(async () => {
         await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui transfer bank.' : 'Sedang menyimpan transfer bank.',
