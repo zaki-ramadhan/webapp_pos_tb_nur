@@ -1,73 +1,88 @@
 <?php
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+namespace Tests\Feature\Security;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
-test('authenticated user can load all accounting and system pages via dashboard', function () {
-    $user = testAdmin();
-    $pages = [
-        'general-journal',
-        'journal-activity-log',
-        'activity-log',
-        'expense-entry',
-        'delivery-order',
-        'preferences',
-        'group-access',
-        'users',
-    ];
+class AccountingAndSystemSecurityTest extends TestCase
+{
+    use RefreshDatabase;
 
-    foreach ($pages as $pageId) {
-        $response = $this->actingAs($user)->get("/dashboard/{$pageId}");
-        $response->assertOk();
-        $response->assertInertia(fn ($page) => $page->component('DashboardPage'));
+    public function test_authenticated_user_can_load_all_accounting_and_system_pages_via_dashboard(): void
+    {
+        $user = $this->createAuthorizedUser();
+        $pages = [
+            'general-journal',
+            'journal-activity-log',
+            'activity-log',
+            'expense-entry',
+            'delivery-order',
+            'preferences',
+            'group-access',
+            'users',
+        ];
+
+        foreach ($pages as $pageId) {
+            $response = $this->actingAs($user)->get("/dashboard/{$pageId}");
+            $response->assertOk();
+            $response->assertInertia(fn (Assert $page) => $page->component('DashboardPage'));
+        }
     }
-});
 
-test('general journal rejects unbalanced debit and credit entries', function () {
-    $user = testAdmin();
+    public function test_general_journal_rejects_unbalanced_debit_and_credit_entries(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $response = $this->actingAs($user)->postJson('/api/backend/general-journals', [
-        'transaction_date' => now()->toDateString(),
-        'items' => [
-            ['account_id' => 1, 'debit' => 100000, 'credit' => 0],
-            ['account_id' => 2, 'debit' => 0, 'credit' => 50000], // Unbalanced: 100k vs 50k
-        ],
-    ]);
-    expect($response->status())->toBeIn([422, 400]);
-});
+        $response = $this->actingAs($user)->postJson('/api/backend/general-journals', [
+            'transaction_date' => now()->toDateString(),
+            'items' => [
+                ['account_id' => 1, 'debit' => 100000, 'credit' => 0],
+                ['account_id' => 2, 'debit' => 0, 'credit' => 50000],
+            ],
+        ]);
 
-test('expense entry rejects zero or negative expense amount', function () {
-    $user = testAdmin();
+        $this->assertContains($response->status(), [422, 400]);
+    }
 
-    $response = $this->actingAs($user)->postJson('/api/backend/expense-entries', [
-        'account_id' => 1,
-        'amount' => -50000,
-        'transaction_date' => now()->toDateString(),
-    ]);
-    expect($response->status())->toBeIn([422, 400]);
-});
+    public function test_expense_entry_rejects_zero_or_negative_expense_amount(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-test('unauthorized non-admin user cannot modify access groups or preferences', function () {
-    // Create unprivileged user
-    $regularUser = User::factory()->create(['is_active' => true]);
+        $response = $this->actingAs($user)->postJson('/api/backend/expense-entries', [
+            'account_id' => 1,
+            'amount' => -50000,
+            'transaction_date' => now()->toDateString(),
+        ]);
 
-    $groupResponse = $this->actingAs($regularUser)->postJson('/api/backend/access-groups', [
-        'name' => 'Hacker Admin Group',
-        'is_active' => true,
-    ]);
-    expect($groupResponse->status())->toBeIn([403, 401]);
+        $this->assertContains($response->status(), [422, 400]);
+    }
 
-    $prefResponse = $this->actingAs($regularUser)->postJson('/api/backend/preferences', [
-        'store_name' => 'Compromised Store',
-    ]);
-    expect($prefResponse->status())->toBeIn([403, 401]);
-});
+    public function test_unauthorized_non_admin_user_cannot_modify_access_groups_or_preferences(): void
+    {
+        $regularUser = User::factory()->create(['is_active' => true]);
 
-test('delivery order requires valid customer and items payload', function () {
-    $user = testAdmin();
+        $groupResponse = $this->actingAs($regularUser)->postJson('/api/backend/access-groups', [
+            'name' => 'Hacker Admin Group',
+            'is_active' => true,
+        ]);
+        $this->assertContains($groupResponse->status(), [403, 401]);
 
-    $response = $this->actingAs($user)->postJson('/api/backend/delivery-orders', []);
-    expect($response->status())->toBeIn([422, 400]);
-});
+        $prefResponse = $this->actingAs($regularUser)->postJson('/api/backend/preferences', [
+            'store_name' => 'Compromised Store',
+        ]);
+        $this->assertContains($prefResponse->status(), [403, 401]);
+    }
+
+    public function test_delivery_order_requires_valid_customer_and_items_payload(): void
+    {
+        $user = $this->createAuthorizedUser();
+
+        $response = $this->actingAs($user)->postJson('/api/backend/delivery-orders', []);
+        $this->assertContains($response->status(), [422, 400]);
+    }
+}
+
 

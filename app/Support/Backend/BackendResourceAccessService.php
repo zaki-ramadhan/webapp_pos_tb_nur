@@ -301,6 +301,22 @@ class BackendResourceAccessService
             }
         }
 
+        if ($record instanceof \App\Domain\Identity\Models\Role) {
+            $isTargetSuperAdminRole = in_array(strtolower((string) $record->code), [
+                'super_admin',
+                'system_admin',
+                'administrator_sistem',
+                'admin_sistem',
+            ], true)
+                || str_contains(strtolower((string) $record->name), 'administrator sistem')
+                || str_contains(strtolower((string) $record->name), 'system admin');
+            $isActorSuperAdmin = $user->isSystemAdmin() || in_array(strtolower((string) $user->email), User::getDeveloperEmails(), true);
+
+            if ($isTargetSuperAdminRole && ! $isActorSuperAdmin) {
+                return false;
+            }
+        }
+
         if ($user->isPrivileged() || $user->hasAnyRoleCodes($this->privilegedRoleCodes)) {
             return true;
         }
