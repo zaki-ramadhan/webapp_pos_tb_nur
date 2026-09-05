@@ -31,14 +31,14 @@ export default function JurnalCard({ row }) {
         >
             <div className="flex justify-between items-center text-sm font-normal text-slate-900">
                 <span>{displayDate}</span>
-                <span className="font-bold text-slate-900 text-sm">
+                <span className="font-normal text-slate-900 text-sm">
                     {typeLabel} {formattedAmount}
                 </span>
             </div>
             <div className="text-sm font-normal text-slate-900 leading-snug text-left my-2">
                 {row.description || row.transactionType || row.transaction_type}
             </div>
-            <div className={`text-sm text-left ${isClickable ? 'text-brand-blue font-medium hover:underline' : 'text-slate-900 font-normal'}`}>
+            <div className={`text-sm text-left ${isClickable ? 'text-brand-blue font-normal hover:underline' : 'text-slate-900 font-normal'}`}>
                 {docNumber}
             </div>
         </div>
