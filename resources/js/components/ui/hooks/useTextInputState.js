@@ -87,7 +87,7 @@ export default function useTextInputState({
                            searchStr.includes('npwp') ||
                            type === 'number';
 
-    const defaultMaxLength = isPostal ? 5 : (isPhone ? 30 : (isCurrency ? 18 : (isCodeOrNumber ? 120 : 255)));
+    const defaultMaxLength = isPostal ? 10 : (isPhone ? 30 : (isCurrency ? 18 : (isCodeOrNumber ? 120 : 255)));
     const resolvedMaxLength = props.maxLength ?? defaultMaxLength;
 
     const inputRef = useRef(null);

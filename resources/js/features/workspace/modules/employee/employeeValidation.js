@@ -30,8 +30,8 @@ export function validateEmployeeFields(values) {
 
     if (values.postalCode) {
         const postalClean = String(values.postalCode).trim();
-        if (!/^\d{5}$/.test(postalClean)) {
-            errors.postal_code = 'Kode pos harus terdiri dari 5 digit angka.';
+        if (!/^\d{5,10}$/.test(postalClean)) {
+            errors.postal_code = 'Kode pos harus terdiri dari 5 hingga 10 digit angka.';
         }
     }
 
