@@ -1,5 +1,8 @@
-import { useState, useRef } from 'react';
-import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import { useState, useRef, useEffect } from 'react';
+import ModalBase from '@/components/ui/ModalBase';
+import { CloseIcon } from '@/features/workspace/shared/Icons';
+import StatementDropzone from './StatementDropzone';
+import StatementFileProgressCard from './StatementFileProgressCard';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
 import { showWarningToast } from '@/components/feedback/toast';
 
@@ -8,7 +11,31 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
     const [parsedData, setParsedData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const fileInputRef = useRef(null);
+    const [progress, setProgress] = useState(0);
+    const [showPreview, setShowPreview] = useState(false);
+    const [showHelp, setShowHelp] = useState(false);
+    const progressTimerRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            if (progressTimerRef.current) {
+                clearInterval(progressTimerRef.current);
+            }
+        };
+    }, []);
+
+    const handleReset = () => {
+        if (progressTimerRef.current) {
+            clearInterval(progressTimerRef.current);
+            progressTimerRef.current = null;
+        }
+        setFile(null);
+        setParsedData(null);
+        setLoading(false);
+        setError('');
+        setProgress(0);
+        setShowPreview(false);
+    };
 
     const handleFileSelect = async (selectedFile) => {
         if (!selectedFile) return;
@@ -25,194 +52,204 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
         setFile(selectedFile);
         setLoading(true);
         setError('');
+        setProgress(20);
+
+        if (progressTimerRef.current) clearInterval(progressTimerRef.current);
+        progressTimerRef.current = setInterval(() => {
+            setProgress((prev) => {
+                if (prev >= 85) {
+                    clearInterval(progressTimerRef.current);
+                    return 85;
+                }
+                return prev + 15;
+            });
+        }, 70);
 
         try {
             const result = await parseBankStatementFile(selectedFile);
             if (!result.rows || result.rows.length === 0) {
                 throw new Error('Tidak ada baris transaksi yang berhasil dibaca dari file ini.');
             }
+            if (progressTimerRef.current) clearInterval(progressTimerRef.current);
+            setProgress(100);
             setParsedData(result);
         } catch (err) {
+            if (progressTimerRef.current) clearInterval(progressTimerRef.current);
             setError(err.message || 'Gagal memproses file rekening koran.');
             setParsedData(null);
+            setProgress(100);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDrop = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            handleFileSelect(e.dataTransfer.files[0]);
-        }
-    };
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-    };
-
-    const handleReset = () => {
-        setFile(null);
-        setParsedData(null);
-        setError('');
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    };
-
     const handleConfirm = () => {
-        if (!parsedData || !parsedData.rows.length) return;
+        if (!parsedData || !parsedData.rows?.length) return;
         onImportSuccess?.(parsedData);
         handleReset();
         onClose?.();
     };
 
+    const handleClose = () => {
+        handleReset();
+        onClose?.();
+    };
+
     return (
-        <WorkspaceDialog
+        <ModalBase
             open={open}
-            onClose={() => {
-                handleReset();
-                onClose?.();
-            }}
-            title="Impor Rekening Koran (Bank Statement)"
-            maxWidthClassName="max-w-[700px]"
-            contentClassName="bg-white p-5 sm:p-6"
-            footer={
-                <div className="flex items-center justify-between gap-3 border-t border-slate-200 pt-3">
+            onBackdropClick={handleClose}
+            className="bg-slate-900/40 backdrop-blur-xs p-3 sm:p-5"
+            panelClassName="max-w-[560px] rounded-[24px] sm:rounded-[28px] bg-[#F8F7FF] border border-[#EBEBF8] p-5 sm:p-7 shadow-2xl overflow-hidden"
+        >
+            <div className="flex flex-col gap-5 sm:gap-6">
+                {/* Header */}
+                <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                        <h2 className="text-lg sm:text-xl font-medium text-slate-800 truncate">
+                            Unggah Rekening Koran
+                        </h2>
+                        {bankName ? (
+                            <span
+                                className="hidden sm:inline-flex items-center rounded-full bg-white px-2.5 py-0.5 text-xs font-normal text-indigo-700 border border-[#ECEBFA] truncate max-w-[200px]"
+                                title={bankName}
+                            >
+                                {bankName}
+                            </span>
+                        ) : null}
+                    </div>
+
                     <button
                         type="button"
-                        onClick={() => {
-                            handleReset();
-                            onClose?.();
-                        }}
-                        className="rounded-[4px] border border-slate-300 bg-white px-4 py-2 text-xs font-normal text-slate-700 transition hover:bg-slate-50 cursor-pointer"
+                        onClick={handleClose}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#9B99DA] hover:bg-white hover:text-slate-700 transition cursor-pointer"
+                        title="Tutup dialog"
                     >
-                        Batal
-                    </button>
-                    <button
-                        type="button"
-                        disabled={!parsedData || !parsedData.rows.length || loading}
-                        onClick={handleConfirm}
-                        className="inline-flex items-center justify-center rounded-[4px] bg-brand-blue hover:bg-brand-blue-hover px-4 py-2 text-xs font-normal text-white shadow-xs transition active:scale-[0.98] disabled:opacity-50 cursor-pointer"
-                    >
-                        Lanjutkan Rekonsiliasi ({parsedData?.rows?.length || 0} Mutasi)
+                        <CloseIcon className="h-4 w-4" strokeWidth={2.2} />
                     </button>
                 </div>
-            }
-        >
-            <div className="flex flex-col gap-4">
-                {bankName ? (
-                    <div className="flex items-center gap-2 rounded-[4px] bg-blue-50 px-3 py-2 border border-blue-200 text-xs text-blue-900">
-                        <span className="font-medium text-blue-800">Kas/Bank Sasaran:</span>
-                        <span className="rounded bg-white px-2 py-0.5 font-normal border border-blue-200 text-blue-950">{bankName}</span>
+
+                {/* Dropzone */}
+                <StatementDropzone onFileSelect={handleFileSelect} disabled={loading} />
+
+                {/* File Progress Card */}
+                {file ? (
+                    <StatementFileProgressCard
+                        file={file}
+                        progress={progress}
+                        parsedData={parsedData}
+                        loading={loading}
+                        error={error}
+                        onRemove={handleReset}
+                    />
+                ) : null}
+
+                {/* Optional Expandable Preview Table */}
+                {parsedData && parsedData.rows?.length ? (
+                    <div className="flex flex-col gap-2 rounded-[16px] bg-white p-3.5 border border-[#ECEBFA]">
+                        <button
+                            type="button"
+                            onClick={() => setShowPreview((prev) => !prev)}
+                            className="flex items-center justify-between text-xs font-medium text-indigo-700 hover:text-indigo-900 cursor-pointer"
+                        >
+                            <span>
+                                {showPreview ? 'Sembunyikan Pratinjau Mutasi' : `Lihat Pratinjau Mutasi (${parsedData.rows.length} Baris)`}
+                            </span>
+                            <span className="text-[11px] text-slate-500">
+                                {showPreview ? '▲ Tutup' : '▼ Buka'}
+                            </span>
+                        </button>
+
+                        {showPreview ? (
+                            <div className="max-h-[190px] overflow-y-auto border border-slate-100 rounded-lg mt-1">
+                                <table className="w-full text-left text-xs border-collapse">
+                                    <thead className="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200">
+                                        <tr>
+                                            <th className="px-2.5 py-1.5 font-medium">Tanggal</th>
+                                            <th className="px-2.5 py-1.5 font-medium">Keterangan</th>
+                                            <th className="px-2.5 py-1.5 font-medium text-right">Nominal</th>
+                                            <th className="px-2.5 py-1.5 font-medium text-center">Tipe</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 text-slate-700">
+                                        {parsedData.rows.slice(0, 5).map((row, idx) => (
+                                            <tr key={row.id || idx} className="hover:bg-slate-50/70">
+                                                <td className="px-2.5 py-1.5 whitespace-nowrap text-[11px]">{row.date}</td>
+                                                <td className="px-2.5 py-1.5 truncate max-w-[200px] text-[11px]" title={row.description}>
+                                                    {row.description}
+                                                </td>
+                                                <td className="px-2.5 py-1.5 whitespace-nowrap text-right font-medium text-[11px]">
+                                                    Rp {new Intl.NumberFormat('id-ID').format(row.amount)}
+                                                </td>
+                                                <td className="px-2.5 py-1.5 whitespace-nowrap text-center">
+                                                    <span
+                                                        className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                                            row.type === 'CR'
+                                                                ? 'bg-emerald-100 text-emerald-800'
+                                                                : 'bg-rose-100 text-rose-800'
+                                                        }`}
+                                                    >
+                                                        {row.type === 'CR' ? 'Masuk' : 'Keluar'}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : null}
                     </div>
                 ) : null}
-                <p className="text-xs text-slate-600 leading-relaxed">
-                    Unggah berkas mutasi rekening koran dari internet banking (BCA, Mandiri, BRI, BNI, dll) dalam format <strong>.CSV</strong> atau <strong>.XLSX</strong> untuk dicocokkan otomatis dengan buku bank sistem.
-                </p>
 
-                {/* Upload Drag & Drop Zone */}
-                <div
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                    onClick={() => fileInputRef.current?.click()}
-                    className={`flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-[6px] cursor-pointer transition ${
-                        file ? 'border-blue-400 bg-blue-50/40' : 'border-slate-300 hover:border-slate-400 bg-slate-50/60'
-                    }`}
-                >
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".csv,.xlsx,.xls"
-                        className="hidden"
-                        onChange={(e) => {
-                            if (e.target.files && e.target.files[0]) {
-                                handleFileSelect(e.target.files[0]);
-                            }
-                        }}
-                    />
+                {/* Help tip popover / box */}
+                {showHelp ? (
+                    <div className="rounded-[16px] bg-white p-3.5 border border-indigo-100 text-xs text-slate-700 space-y-1.5 animate-fadeIn">
+                        <div className="font-semibold text-indigo-900">Format Rekening Koran yang Didukung:</div>
+                        <ul className="list-disc pl-4 space-y-0.5 text-slate-600">
+                            <li><strong>e-Statement BRImo</strong> (.csv/.xlsx) - otomatis mengenali format transaksi BRI.</li>
+                            <li><strong>BCA KlikBCA Bisnis / Individu</strong> (.csv/.xlsx) dengan kolom Tanggal, Keterangan, Mutasi, Saldo.</li>
+                            <li><strong>Mandiri Kopra / Livin</strong> &amp; <strong>BNI Direct</strong>.</li>
+                            <li>Format standar dengan kolom Tanggal, Deskripsi, Debet / Kredit.</li>
+                        </ul>
+                    </div>
+                ) : null}
 
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700 mb-2">
-                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                {/* Footer */}
+                <div className="flex items-center justify-between gap-3 pt-1">
+                    <button
+                        type="button"
+                        onClick={() => setShowHelp((prev) => !prev)}
+                        className={`h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-[14px] bg-white border border-[#E7E6F8] shadow-2xs flex items-center justify-center text-[#736AE9] hover:bg-slate-50 transition cursor-pointer ${
+                            showHelp ? 'bg-indigo-50 border-indigo-300' : ''
+                        }`}
+                        title="Panduan format file rekening koran"
+                    >
+                        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                            <path d="M12 17h.01" />
                         </svg>
-                    </div>
+                    </button>
 
-                    <div className="text-xs font-semibold text-slate-700">
-                        {file ? file.name : 'Klik untuk memilih file atau seret file ke sini'}
-                    </div>
-                    <div className="text-[11px] text-slate-600 mt-0.5">
-                        Mendukung format .CSV, .XLSX, .XLS (Maks. 10MB)
+                    <div className="flex items-center gap-2.5 sm:gap-3">
+                        <button
+                            type="button"
+                            onClick={handleClose}
+                            className="rounded-[14px] bg-white border border-[#E7E6F8] text-[#655CE5] hover:bg-indigo-50/40 px-5 sm:px-6 py-2.5 text-sm font-medium transition cursor-pointer shadow-2xs"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            type="button"
+                            disabled={!parsedData || !parsedData.rows?.length || loading}
+                            onClick={handleConfirm}
+                            className="rounded-[14px] bg-gradient-to-r from-[#7B75F7] to-[#645CEB] hover:from-[#726BF5] hover:to-[#5B53E3] text-white px-6 sm:px-7 py-2.5 text-sm font-medium shadow-md shadow-indigo-400/25 active:scale-[0.98] transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {parsedData?.rows?.length ? `Lanjutkan (${parsedData.rows.length} Mutasi)` : 'Lanjutkan'}
+                        </button>
                     </div>
                 </div>
-
-                {loading && (
-                    <div className="py-4 text-center text-xs text-slate-900 font-medium">
-                        Sedang membaca dan memetakan baris mutasi bank...
-                    </div>
-                )}
-
-                {error && (
-                    <div className="rounded-[4px] border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
-                        {error}
-                    </div>
-                )}
-
-                {parsedData && (
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center justify-between text-xs text-slate-700 font-semibold pt-1">
-                            <span>Pratinjau Data Rekening Koran ({parsedData.rows.length} mutasi ditemukan)</span>
-                            <button
-                                type="button"
-                                onClick={handleReset}
-                                className="text-blue-600 hover:underline text-xs cursor-pointer"
-                            >
-                                Ganti Berkas
-                            </button>
-                        </div>
-
-                        <div className="max-h-[220px] overflow-y-auto border border-slate-200 rounded-[4px]">
-                            <table className="w-full text-left text-xs border-collapse">
-                                <thead className="bg-slate-100 text-slate-900 sticky top-0 border-b border-slate-200">
-                                    <tr>
-                                        <th className="px-2.5 py-1.5 font-semibold">Tgl</th>
-                                        <th className="px-2.5 py-1.5 font-semibold">Keterangan</th>
-                                        <th className="px-2.5 py-1.5 font-semibold text-right">Nominal</th>
-                                        <th className="px-2.5 py-1.5 font-semibold text-center">Tipe</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100 text-slate-800">
-                                    {parsedData.rows.slice(0, 5).map((row, idx) => (
-                                        <tr key={row.id || idx} className="hover:bg-slate-50">
-                                            <td className="px-2.5 py-1.5 whitespace-nowrap">{row.date}</td>
-                                            <td className="px-2.5 py-1.5 truncate max-w-[280px]" title={row.description}>
-                                                {row.description}
-                                            </td>
-                                            <td className="px-2.5 py-1.5 whitespace-nowrap text-right font-medium">
-                                                Rp {new Intl.NumberFormat('id-ID').format(row.amount)}
-                                            </td>
-                                            <td className="px-2.5 py-1.5 whitespace-nowrap text-center">
-                                                <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                                                    row.type === 'CR' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
-                                                }`}>
-                                                    {row.type === 'CR' ? 'Masuk' : 'Keluar'}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        {parsedData.rows.length > 5 && (
-                            <p className="text-[11px] text-slate-600 italic text-right">
-                                Menampilkan 5 dari {parsedData.rows.length} baris transaksi.
-                            </p>
-                        )}
-                    </div>
-                )}
             </div>
-        </WorkspaceDialog>
+        </ModalBase>
     );
 }
