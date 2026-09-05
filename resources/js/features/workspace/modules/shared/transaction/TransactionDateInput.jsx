@@ -41,6 +41,7 @@ export default function TransactionDateInput({
     clearable = false,
     format = 'DD/MM/YYYY',
     align = 'start',
+    closeOnSelect = false,
     className = '',
     inputClassName = 'text-sm text-brand-dark',
     trailingClassName = 'w-[42px] shrink-0 justify-center px-0',
@@ -162,7 +163,9 @@ export default function TransactionDateInput({
         const nextDate = parseDate(ymd);
         if (!nextDate) return;
         applyDate(nextDate);
-        setCalendarOpen(false);
+        if (closeOnSelect) {
+            setCalendarOpen(false);
+        }
     }
 
     function handleClear() {
