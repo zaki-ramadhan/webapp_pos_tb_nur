@@ -1,5 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import {
+    DataTable,
+    DataTableHeader,
+    DataTableBody,
+    DataTableRow,
+    DataTableCell,
+} from '@/components/ui/DataTable';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
 import { Check } from 'lucide-react';
@@ -23,7 +31,46 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [progress, setProgress] = useState(0);
+    const [sortKey, setSortKey] = useState('date');
+    const [sortDir, setSortDir] = useState('asc');
     const progressTimerRef = useRef(null);
+
+    const handleSort = (key) => {
+        if (sortKey === key) {
+            setSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+        } else {
+            setSortKey(key);
+            setSortDir('asc');
+        }
+    };
+
+    const sortedRows = useMemo(() => {
+        if (!parsedData?.rows) return [];
+        const list = [...parsedData.rows];
+        list.sort((a, b) => {
+            if (sortKey === 'amount') {
+                const numA = a.type === 'DB' ? -a.amount : a.amount;
+                const numB = b.type === 'DB' ? -b.amount : b.amount;
+                return sortDir === 'asc' ? numA - numB : numB - numA;
+            }
+            if (sortKey === 'date') {
+                return sortDir === 'asc'
+                    ? String(a.date).localeCompare(String(b.date))
+                    : String(b.date).localeCompare(String(a.date));
+            }
+            return sortDir === 'asc'
+                ? String(a[sortKey] || '').localeCompare(String(b[sortKey] || ''))
+                : String(b[sortKey] || '').localeCompare(String(a[sortKey] || ''));
+        });
+        return list;
+    }, [parsedData?.rows, sortKey, sortDir]);
+
+    const summary = useMemo(() => {
+        if (!parsedData?.rows) return null;
+        const inCount = parsedData.rows.filter((r) => r.type === 'CR').length;
+        const outCount = parsedData.rows.filter((r) => r.type === 'DB').length;
+        return { inCount, outCount };
+    }, [parsedData?.rows]);
 
     useEffect(() => {
         return () => {
@@ -175,67 +222,98 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         <div className="flex flex-wrap items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                                 <span className="text-sm font-semibold text-slate-800">Pratinjau Hasil Ekstraksi</span>
-                                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-3 py-1 text-xs font-medium text-white shadow-2xs leading-tight">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 pl-2 pr-3 py-1 text-xs font-medium text-white shadow-2xs leading-tight">
                                     <Check className="h-3.5 w-3.5 stroke-[2.5]" />
                                     <span>{parsedData.rows.length} Mutasi Ditemukan</span>
                                 </span>
                             </div>
-                            {parsedData.summary ? (
+                            {summary ? (
                                 <div className="flex items-center gap-2 text-xs font-normal">
                                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 text-emerald-800">
-                                        Kredit: {parsedData.summary.inCount || 0}
+                                        Kredit: {summary.inCount || 0}
                                     </span>
                                     <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 border border-rose-200/80 px-2.5 py-0.5 text-rose-800">
-                                        Debit: {parsedData.summary.outCount || 0}
+                                        Debit: {summary.outCount || 0}
                                     </span>
                                 </div>
                             ) : null}
                         </div>
 
-                        <div className="max-h-[260px] overflow-y-auto rounded-lg border border-slate-200">
-                            <table className="w-full text-left text-sm border-collapse">
-                                <thead className="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200">
-                                    <tr>
-                                        <th className="px-3.5 py-2.5 font-medium w-[120px]">Tanggal</th>
-                                        <th className="px-3.5 py-2.5 font-medium">Keterangan</th>
-                                        <th className="px-3.5 py-2.5 font-medium text-right w-[140px]">Nominal (Rp)</th>
-                                        <th className="px-3.5 py-2.5 font-medium text-center w-[90px]">Tipe</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100 text-slate-800">
-                                    {parsedData.rows.slice(0, 10).map((row, idx) => (
-                                        <tr key={row.id || idx} className="hover:bg-slate-50/70 transition-colors">
-                                            <td className="px-3.5 py-2 whitespace-nowrap text-sm font-normal text-slate-800">
-                                                {formatDisplayDate(row.date)}
-                                            </td>
-                                            <td className="px-3.5 py-2 truncate max-w-[280px] text-sm font-normal text-slate-800" title={row.description}>
-                                                {row.description}
-                                            </td>
-                                            <td className="px-3.5 py-2 whitespace-nowrap text-right text-sm font-normal text-slate-900">
-                                                {new Intl.NumberFormat('id-ID').format(row.amount)}
-                                            </td>
-                                            <td className="px-3.5 py-2 whitespace-nowrap text-center">
-                                                <span
-                                                    className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                        row.type === 'CR'
-                                                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                                            : 'bg-rose-50 text-rose-700 border border-rose-200'
-                                                    }`}
-                                                >
-                                                    {row.type === 'CR' ? 'Kredit' : 'Debit'}
+                        <DataTable wrapperClassName="max-h-[280px] overflow-auto">
+                            <DataTableHeader>
+                                <DataTableRow>
+                                    <SortableTableHeaderCell
+                                        label="Tanggal"
+                                        align="left"
+                                        widthClassName="w-[120px]"
+                                        sortable={true}
+                                        sortDirection={sortKey === 'date' ? sortDir : null}
+                                        onSort={() => handleSort('date')}
+                                    />
+                                    <SortableTableHeaderCell
+                                        label="Keterangan"
+                                        align="left"
+                                        sortable={true}
+                                        sortDirection={sortKey === 'description' ? sortDir : null}
+                                        onSort={() => handleSort('description')}
+                                    />
+                                    <SortableTableHeaderCell
+                                        label="Nominal (Rp)"
+                                        align="right"
+                                        widthClassName="w-[140px]"
+                                        sortable={true}
+                                        sortDirection={sortKey === 'amount' ? sortDir : null}
+                                        onSort={() => handleSort('amount')}
+                                    />
+                                    <SortableTableHeaderCell
+                                        label="Tipe"
+                                        align="center"
+                                        widthClassName="w-[90px]"
+                                        sortable={true}
+                                        sortDirection={sortKey === 'type' ? sortDir : null}
+                                        onSort={() => handleSort('type')}
+                                    />
+                                </DataTableRow>
+                            </DataTableHeader>
+                            <DataTableBody>
+                                {sortedRows.slice(0, 10).map((row, idx) => (
+                                    <DataTableRow key={row.id || idx} className="hover:bg-slate-50">
+                                        <DataTableCell className="w-[120px] px-3 py-2 text-left text-sm font-normal text-slate-800 whitespace-nowrap">
+                                            {formatDisplayDate(row.date)}
+                                        </DataTableCell>
+                                        <DataTableCell className="px-3 py-2 text-left text-sm font-normal text-slate-800" title={row.description}>
+                                            {row.description}
+                                        </DataTableCell>
+                                        <DataTableCell className="w-[140px] px-3 py-2 text-right text-sm whitespace-nowrap">
+                                            {row.type === 'DB' ? (
+                                                <span className="font-medium text-red-600">
+                                                    -{new Intl.NumberFormat('id-ID').format(row.amount)}
                                                 </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                            ) : (
+                                                <span className="font-medium text-emerald-700">
+                                                    +{new Intl.NumberFormat('id-ID').format(row.amount)}
+                                                </span>
+                                            )}
+                                        </DataTableCell>
+                                        <DataTableCell className="w-[90px] px-3 py-2 text-center whitespace-nowrap">
+                                            <span
+                                                className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                    row.type === 'CR'
+                                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                        : 'bg-rose-50 text-rose-700 border border-rose-200'
+                                                }`}
+                                            >
+                                                {row.type === 'CR' ? 'Kredit' : 'Debit'}
+                                            </span>
+                                        </DataTableCell>
+                                    </DataTableRow>
+                                ))}
+                            </DataTableBody>
+                        </DataTable>
 
-                        {parsedData.rows.length > 10 && (
-                            <p className="text-sm font-normal text-slate-600 text-right pt-0.5">
-                                Menampilkan 10 baris teratas dari total {parsedData.rows.length} baris transaksi mutasi
-                            </p>
-                        )}
+                        <p className="text-sm font-normal text-slate-600 text-right pt-0.5">
+                            Menampilkan {Math.min(10, parsedData.rows.length)}/{parsedData.rows.length} transaksi mutasi
+                        </p>
                     </div>
                 ) : null}
             </div>
