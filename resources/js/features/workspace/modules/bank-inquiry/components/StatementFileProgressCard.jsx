@@ -10,7 +10,7 @@ function formatBytes(bytes) {
 
 export function FileBadgeIcon({ ext = 'CSV' }) {
     return (
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[6px] bg-brand-blue text-white font-bold text-xs shadow-2xs">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[6px] bg-blue-100 border border-blue-200 text-brand-blue font-bold text-xs shadow-2xs">
             {ext.slice(0, 4)}
         </div>
     );
