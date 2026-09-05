@@ -23,7 +23,7 @@ import {
     Plus,
     Printer,
     Loader2,
-    RefreshCw,
+    RotateCw,
     Rows3,
     Save,
     Search,
@@ -63,8 +63,10 @@ export function CloseIcon({ className = 'h-4 w-4', strokeWidth = 2.8 }) {
 }
 
 export function RefreshIcon({ className = 'h-4 w-4' }) {
-    return <AppIcon icon={RefreshCw} className={className} />;
+    return <AppIcon icon={RotateCw} className={className} />;
 }
+
+export const RotateCwIcon = RefreshIcon;
 
 export function LoadingIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={Loader2} className={className} />;

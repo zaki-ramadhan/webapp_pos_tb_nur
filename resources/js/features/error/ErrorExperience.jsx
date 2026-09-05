@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { AlertTriangle, ArrowLeft, Compass, Home, LifeBuoy, LogIn, RefreshCw, ShieldAlert, TimerReset, TrafficCone, TriangleAlert } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Compass, Home, LifeBuoy, LogIn, RotateCw, ShieldAlert, TimerReset, TrafficCone, TriangleAlert } from 'lucide-react';
 
 const STATE_BY_STATUS = {
     400: {
@@ -70,7 +70,7 @@ function resolveState(status, isClientCrash) {
             title: 'Halaman perlu dimuat ulang',
             description: 'Terjadi kendala saat menampilkan halaman. Silakan muat ulang browser Anda.',
             tone: 'danger',
-            icon: RefreshCw,
+            icon: RotateCw,
         };
     }
 
@@ -116,14 +116,14 @@ export function buildErrorActions({ hasAuthSession = false, status = 500, fallba
 
     if (status === 419) {
         return [
-            { label: 'Muat Ulang', onClick: () => window.location.reload(), variant: 'primary', icon: RefreshCw },
+            { label: 'Muat Ulang', onClick: () => window.location.reload(), variant: 'primary', icon: RotateCw },
             { label: hasAuthSession ? 'Masuk Ulang' : 'Ke Beranda', href: hasAuthSession ? loginHref : '/', variant: 'secondary', icon: hasAuthSession ? LogIn : Home },
         ];
     }
 
     if (status === 503 || status >= 500) {
         return [
-            { label: 'Muat Ulang', onClick: () => window.location.reload(), variant: 'primary', icon: RefreshCw },
+            { label: 'Muat Ulang', onClick: () => window.location.reload(), variant: 'primary', icon: RotateCw },
             { label: hasAuthSession ? 'Ke Dashboard' : 'Ke Beranda', href: primaryHref, variant: 'secondary', icon: hasAuthSession ? Compass : Home },
         ];
     }

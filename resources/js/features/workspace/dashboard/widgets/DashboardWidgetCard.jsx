@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { RefreshCw, GripVertical } from 'lucide-react';
+import { RotateCw, GripVertical } from 'lucide-react';
 
 import Panel from '@/components/ui/Panel';
 import WidgetLoadingOverlay from './components/WidgetLoadingOverlay';
@@ -89,7 +89,7 @@ export default function DashboardWidgetCard({
                             onClick={() => onRefresh?.(widget)}
                             disabled={isRefreshing}
                         >
-                            <RefreshCw className={`h-4 w-4 text-slate-500 ${isRefreshing ? 'animate-spin text-brand-blue' : ''}`} />
+                            <RotateCw className={`h-4 w-4 text-slate-500 ${isRefreshing ? 'animate-spin text-brand-blue' : ''}`} />
                         </WidgetHeaderAction>
                     </div>
                 )}
