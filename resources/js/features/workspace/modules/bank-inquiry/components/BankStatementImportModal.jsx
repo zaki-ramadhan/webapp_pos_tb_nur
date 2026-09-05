@@ -170,9 +170,10 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
             onClose={handleClose}
             title="Impor Rekening Koran"
             maxWidthClassName="max-w-[720px]"
-            contentClassName="bg-white p-5 sm:p-6"
+            contentClassName="bg-white px-5 pt-5 pb-3 sm:px-6 sm:pt-6 sm:pb-3"
+            footerClassName="bg-white px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-200"
             footer={
-                <div className="flex items-center justify-between gap-3 border-t border-slate-200 pt-3.5 pb-1">
+                <div className="flex items-center justify-between gap-3 w-full">
                     <button
                         type="button"
                         onClick={handleClose}
@@ -284,14 +285,14 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                                         <DataTableCell className="px-3 py-2 text-left text-sm font-normal text-slate-800" title={row.description}>
                                             {row.description}
                                         </DataTableCell>
-                                        <DataTableCell className="w-[140px] px-3 py-2 text-right text-sm whitespace-nowrap">
+                                        <DataTableCell className="w-[140px] px-3 py-2 text-right text-sm whitespace-nowrap font-normal">
                                             {row.type === 'DB' ? (
-                                                <span className="font-medium text-red-600">
+                                                <span className="font-normal text-red-600">
                                                     -{new Intl.NumberFormat('id-ID').format(row.amount)}
                                                 </span>
                                             ) : (
-                                                <span className="font-medium text-emerald-700">
-                                                    +{new Intl.NumberFormat('id-ID').format(row.amount)}
+                                                <span className="font-normal text-slate-800">
+                                                    {new Intl.NumberFormat('id-ID').format(row.amount)}
                                                 </span>
                                             )}
                                         </DataTableCell>
