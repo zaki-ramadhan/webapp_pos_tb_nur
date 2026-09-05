@@ -102,11 +102,11 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
 
     const widthClassName =
         footerParts.length >= 6
-            ? 'w-full sm:w-[1020px] xl:w-[1140px] 2xl:w-[1260px] max-w-full'
+            ? 'w-full sm:w-[1080px] xl:w-[1200px] 2xl:w-[1320px] max-w-full'
             : footerParts.length === 5
-              ? 'w-full sm:w-[850px] xl:w-[950px] 2xl:w-[1050px] max-w-full'
+              ? 'w-full sm:w-[900px] xl:w-[1000px] 2xl:w-[1100px] max-w-full'
               : footerParts.length === 4
-                ? 'w-full sm:w-[700px] xl:w-[780px] 2xl:w-[860px] max-w-full'
+                ? 'w-full sm:w-[720px] xl:w-[800px] 2xl:w-[880px] max-w-full'
                 : footerParts.length === 3
                   ? 'w-full sm:w-[540px] xl:w-[600px] 2xl:w-[660px] max-w-full'
                   : footerParts.length === 2
@@ -114,10 +114,10 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
                     : 'w-full sm:w-[180px] xl:w-[200px] 2xl:w-[220px] max-w-full';
 
     return (
-        <div className="flex w-full justify-end">
+        <div className="flex w-full justify-end overflow-x-auto">
             <div className={`grid w-full shrink-0 ${widthClassName} overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
                 {footerParts.map((part) => (
-                    <div key={part.id} className="border-b border-ui-border-light px-3.5 sm:px-4 py-2.5 sm:py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 flex flex-col justify-between min-h-[68px] sm:min-h-[76px]">
+                    <div key={part.id} className="border-b border-ui-border-light px-3.5 sm:px-4 py-2.5 sm:py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 flex flex-col justify-between min-h-[68px] sm:min-h-[76px] sm:min-w-[180px] xl:min-w-[200px] 2xl:min-w-[220px]">
                         <div className="flex items-start justify-between gap-3">
                             <span className="text-xs sm:text-sm text-brand-dark">
                                 {part.label}
