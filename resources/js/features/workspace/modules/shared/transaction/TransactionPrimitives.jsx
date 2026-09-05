@@ -62,7 +62,6 @@ export function TransactionSectionRail({ tabs, activeTabId, onSelectTab }) {
                         type="button"
                         onClick={() => onSelectTab(tab.id)}
                         aria-label={tab.label}
-                        title={tab.label}
                         className={`relative inline-flex items-center justify-center border border-r-0 px-2 py-2.5 transition ${
                             active
                                 ? 'z-10 -mr-px border-tab-overflow-panel-border border-l-[3px] border-l-tab-active-border-t bg-white text-text-pink-active'
