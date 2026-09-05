@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
+import { Check } from 'lucide-react';
 
 export default function BankStatementImportModal({ open, onClose, onImportSuccess, bankName = '' }) {
     const [file, setFile] = useState(null);
@@ -157,12 +158,13 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
 
                 {/* Pratinjau Mutasi jika sudah terbaca */}
                 {parsedData && parsedData.rows?.length ? (
-                    <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
-                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                    <div className="flex flex-col gap-2.5 pt-1">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                                 <span className="text-sm font-semibold text-slate-800">Pratinjau Hasil Ekstraksi</span>
-                                <span className="rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-xs font-normal text-slate-700">
-                                    {parsedData.rows.length} Mutasi Ditemukan
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-2.5 py-0.5 text-xs font-medium text-white shadow-2xs">
+                                    <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                                    <span>{parsedData.rows.length} Mutasi Ditemukan</span>
                                 </span>
                             </div>
                             {parsedData.summary ? (
@@ -217,7 +219,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         </div>
 
                         {parsedData.rows.length > 5 && (
-                            <p className="text-xs font-normal text-slate-600 text-right pt-0.5">
+                            <p className="text-sm font-normal text-slate-600 text-right pt-0.5">
                                 Menampilkan 5 baris teratas dari total {parsedData.rows.length} baris transaksi mutasi
                             </p>
                         )}
