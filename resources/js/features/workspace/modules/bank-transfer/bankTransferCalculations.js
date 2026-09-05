@@ -66,9 +66,9 @@ export function buildTotals(values) {
 
     const cleanPrefix = (p) => p && p.trim() !== 'Rp' ? `${p.trim()} ` : '';
     return {
-        fromTotalLabel: fromAccountName ? `Total ${fromAccountName}` : 'Total',
+        fromTotalLabel: fromAccountName ? `Total ${fromAccountName}` : 'Total Dari Kas/Bank',
         fromTotalValue: fromVal > 0 ? `${cleanPrefix(transferPrefix)}${formatCurrencyValue(fromVal)}`.trim() : '0',
-        toTotalLabel: toAccountName ? `Total ${toAccountName}` : 'Total',
+        toTotalLabel: toAccountName ? `Total ${toAccountName}` : 'Total Ke Kas/Bank',
         toTotalValue: toVal > 0 ? `${cleanPrefix(resultPrefix)}${formatCurrencyValue(toVal)}`.trim() : '0',
     };
 }

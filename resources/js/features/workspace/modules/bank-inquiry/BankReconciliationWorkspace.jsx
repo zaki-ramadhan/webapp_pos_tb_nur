@@ -13,9 +13,8 @@ import BankReconciliationHeader from './components/BankReconciliationHeader';
 import BankStatementImportModal from './components/BankStatementImportModal';
 import BankReconciliationMatchedRow from './components/BankReconciliationMatchedRow';
 import { runReconciliationMatching } from './reconciliationExcelParser';
-import starterStateImg from './assets/rekonsiliasi_starter_state.webp';
-import emptyStateImg from './assets/rekonsiliasi_empty_state.png';
-import { FileSpreadsheet, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
+import { FileFormatBadgeIcon } from '@/components/ui/FileUpload';
 
 export default function BankReconciliationWorkspace({
     rows = [],
@@ -258,24 +257,16 @@ export default function BankReconciliationWorkspace({
                     <div className="mb-3 rounded-[4px] border border-slate-200 bg-white p-3.5 shadow-2xs">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] border border-slate-200 bg-slate-50 text-[#1c558c]">
-                                    <FileSpreadsheet className="h-5 w-5 stroke-[1.5]" />
-                                </div>
+                                <FileFormatBadgeIcon
+                                    ext={statementData.fileName?.split('.').pop() || 'CSV'}
+                                    className="shrink-0"
+                                />
                                 <div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm font-normal text-slate-800">
-                                            {statementData.fileName}
-                                        </span>
-                                        <span className="rounded-[3px] bg-slate-100 border border-slate-200 px-2 py-0.5 text-xs font-normal text-slate-600">
-                                            {statementData.rows.length} Mutasi
-                                        </span>
-                                    </div>
-                                    <div className="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-3">
-                                        <span>Cocok: <strong className="font-normal text-emerald-700">{matchedCount}</strong></span>
-                                        <span className="text-slate-300">|</span>
-                                        <span>Hanya di Bank: <strong className="font-normal text-slate-700">{excelOnlyCount}</strong></span>
-                                        <span className="text-slate-300">|</span>
-                                        <span>Hanya di Sistem: <strong className="font-normal text-slate-700">{systemOnlyCount}</strong></span>
+                                    <span className="text-sm font-normal text-slate-800">
+                                        {statementData.fileName}
+                                    </span>
+                                    <div className="text-xs text-slate-500 mt-0.5 font-normal">
+                                        {statementData.rows.length} Mutasi
                                     </div>
                                 </div>
                             </div>
@@ -318,7 +309,7 @@ export default function BankReconciliationWorkspace({
                                     onClick={() => setActiveMatchTab(tab.id)}
                                     className={`px-3 py-1 rounded-[4px] text-sm font-normal transition cursor-pointer ${
                                         activeMatchTab === tab.id
-                                            ? 'bg-[#1c558c] text-white shadow-2xs'
+                                            ? 'bg-brand-blue text-white shadow-2xs'
                                             : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
                                     }`}
                                 >
