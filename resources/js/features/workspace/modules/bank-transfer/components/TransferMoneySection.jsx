@@ -40,10 +40,12 @@ export default function TransferMoneySection({ config, values, setValues, handle
                                     blurredTransferValue: nextVal,
                                 }));
                             }}
-                            onBlur={() => {
+                            onBlur={(event) => {
+                                const nextVal = event.target.value;
                                 setValues((current) => ({
                                     ...current,
-                                    blurredTransferValue: values.transferValue,
+                                    transferValue: nextVal,
+                                    blurredTransferValue: nextVal,
                                 }));
                             }}
                         />
