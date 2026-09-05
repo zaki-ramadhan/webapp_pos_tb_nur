@@ -150,7 +150,7 @@ class GroupAccessPage
                             'nameField' => [
                                 'id' => 'group-name',
                                 'label' => 'Nama Grup',
-                                'value' => 'Data Baru',
+                                'value' => '',
                                 'clearable' => true,
                             ],
                             'accessLimitations' => [

@@ -14,19 +14,11 @@ function resolveActionIcon(icon) {
 
 function resolveToneClassName(tone, isDisabled) {
     if (isDisabled) {
-        switch (tone) {
-            case 'primary':
-                return 'border-blue-570/60 bg-blue-570/60 text-white/60 pointer-events-none cursor-default';
-            case 'warning':
-                return 'border-warning/60 bg-warning/60 text-white/60 pointer-events-none cursor-default';
-            case 'muted':
-            default:
-                return 'border-border-disabled-btn/60 bg-bg-disabled-btn/60 text-text-disabled-btn/60 pointer-events-none cursor-default';
-        }
+        return 'border-disabled-border bg-tab-view-active-border-t text-disabled-border-t cursor-default opacity-55 shadow-none pointer-events-none';
     }
     switch (tone) {
         case 'primary':
-            return 'border-blue-570 bg-blue-570 text-white shadow-button-glow-blue hover:bg-bg-import-action-hover cursor-pointer';
+            return 'border-brand-blue-darker bg-blue-570 text-white shadow-button-glow-blue hover:bg-bg-import-action-hover cursor-pointer';
         case 'warning':
             return 'border-warning bg-warning text-white shadow-button-glow-orange hover:bg-warning cursor-pointer';
         case 'muted':
@@ -42,7 +34,7 @@ function PanelActionButton({ action }) {
     return (
         <button
             type="button"
-            className={`inline-flex h-12 shrink-0 items-center justify-center rounded-[4px] border sm:h-14 transition ${showLabel ? 'min-w-[110px] gap-2 px-3.5 sm:min-w-[126px] sm:gap-2.5 sm:px-4' : 'w-12 sm:w-14'} ${resolveToneClassName(action.tone, isDisabled)} ${isDisabled ? 'opacity-55 shadow-none' : ''}`.trim()}
+            className={`inline-flex h-12 shrink-0 items-center justify-center rounded-[4px] border sm:h-14 transition ${showLabel ? 'min-w-[110px] gap-2 px-3.5 sm:min-w-[126px] sm:gap-2.5 sm:px-4' : 'w-12 sm:w-14'} ${resolveToneClassName(action.tone, isDisabled)}`.trim()}
             aria-label={action.label}
             onClick={isDisabled ? undefined : action.onClick}
             disabled={isDisabled}
