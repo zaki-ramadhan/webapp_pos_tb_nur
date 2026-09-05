@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import { showSuccessToast, showErrorToast, showLoadingToast, dismissToast } from '@/components/feedback/toast';
+import { showSuccessToast, showErrorToast, showLoadingToast, showWarningToast, dismissToast } from '@/components/feedback/toast';
 import axios from 'axios';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Pagination from '@/components/ui/Pagination';
@@ -10,6 +10,9 @@ import Pagination from '@/components/ui/Pagination';
 import JurnalCard from './components/JurnalCard';
 import BankReconcileActionCard from './components/BankReconcileActionCard';
 import BankReconciliationHeader from './components/BankReconciliationHeader';
+import BankStatementImportModal from './components/BankStatementImportModal';
+import BankReconciliationMatchedRow from './components/BankReconciliationMatchedRow';
+import { runReconciliationMatching } from './reconciliationExcelParser';
 import starterStateImg from './assets/rekonsiliasi_starter_state.webp';
 import emptyStateImg from './assets/rekonsiliasi_empty_state.png';
 
@@ -51,6 +54,80 @@ export default function BankReconciliationWorkspace({
     const lastKnownBalance = useMemo(() => {
         return new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(rawBalanceNum);
     }, [rawBalanceNum]);
+
+    const [statementData, setStatementData] = useState(null);
+    const [importModalOpen, setImportModalOpen] = useState(false);
+    const [activeMatchTab, setActiveMatchTab] = useState('all');
+
+    const matchedResults = useMemo(() => {
+        if (!statementData?.rows || !statementData.rows.length) return null;
+        return runReconciliationMatching(statementData.rows, rows);
+    }, [statementData, rows]);
+
+    const matchedCount = useMemo(() => {
+        if (!matchedResults) return 0;
+        return matchedResults.filter((r) => r.status === 'matched').length;
+    }, [matchedResults]);
+
+    const excelOnlyCount = useMemo(() => {
+        if (!matchedResults) return 0;
+        return matchedResults.filter((r) => r.status === 'excel_only').length;
+    }, [matchedResults]);
+
+    const systemOnlyCount = useMemo(() => {
+        if (!matchedResults) return 0;
+        return matchedResults.filter((r) => r.status === 'system_only').length;
+    }, [matchedResults]);
+
+    const pendingMatchCount = useMemo(() => {
+        if (!matchedResults) return 0;
+        return matchedResults.filter((r) => r.status === 'matched' && r.system && r.system.status !== 'Reconciled').length;
+    }, [matchedResults]);
+
+    const filteredMatchedResults = useMemo(() => {
+        if (!matchedResults) return [];
+        if (activeMatchTab === 'matched') return matchedResults.filter((r) => r.status === 'matched');
+        if (activeMatchTab === 'excel_only') return matchedResults.filter((r) => r.status === 'excel_only');
+        if (activeMatchTab === 'system_only') return matchedResults.filter((r) => r.status === 'system_only');
+        return matchedResults;
+    }, [matchedResults, activeMatchTab]);
+
+    const handleReconcileBatch = async () => {
+        if (!matchedResults) return;
+        const pendingMatched = matchedResults
+            .filter((item) => item.status === 'matched' && item.system && item.system.status !== 'Reconciled')
+            .map((item) => item.system.documentNumber || item.system.sourceNumber || item.system.document_number)
+            .filter(Boolean);
+
+        if (pendingMatched.length === 0) {
+            showWarningToast({
+                title: 'Tidak Ada Transaksi',
+                message: 'Semua transaksi yang cocok sudah direkonsiliasi.',
+            });
+            return;
+        }
+
+        const toastId = showLoadingToast({ message: `Merekonsiliasikan ${pendingMatched.length} transaksi...` });
+        try {
+            await axios.post('/api/backend/bank-reconciliations/reconcile', {
+                document_numbers: pendingMatched,
+                is_closed: true,
+                account_id: filters.account_id || null,
+            });
+            showSuccessToast({
+                title: 'Berhasil',
+                message: `${pendingMatched.length} transaksi berhasil direkonsiliasikan secara otomatis.`,
+            });
+            onRefresh?.();
+        } catch (err) {
+            showErrorToast({
+                title: 'Gagal',
+                message: err.response?.data?.message || 'Terjadi kesalahan saat rekonsiliasi massal.',
+            });
+        } finally {
+            dismissToast(toastId);
+        }
+    };
 
     const handleReconcileSingle = async (docNumber, isClosed, accountId = null) => {
         setReconcilingIds(prev => ({ ...prev, [docNumber]: true }));
@@ -142,10 +219,110 @@ export default function BankReconciliationWorkspace({
                             loading={loading}
                         />
                     ) : null}
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (!hasBankSelected) {
+                                showWarningToast({
+                                    title: 'Pilih Bank Terlebih Dahulu',
+                                    message: 'Silakan cari dan pilih kas/bank terlebih dahulu sebelum mengimpor rekening koran.',
+                                });
+                                return;
+                            }
+                            setImportModalOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 h-[40px] px-3.5 rounded-[4px] border border-[#1c558c] bg-white hover:bg-blue-50/70 text-[#1c558c] text-xs sm:text-sm font-semibold shadow-2xs transition active:scale-[0.98] cursor-pointer shrink-0"
+                    >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        <span>Impor Rekening Koran (CSV)</span>
+                    </button>
                 </div>
             </div>
 
             <div className="flex flex-col flex-1 min-h-0 mt-3">
+                {/* Statement Summary Banner */}
+                {statementData && (
+                    <div className="mb-3 rounded-[4px] border border-blue-200 bg-blue-50/50 p-3.5 shadow-2xs">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] bg-[#1c558c] text-white">
+                                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs sm:text-sm font-bold text-slate-800">
+                                            {statementData.fileName}
+                                        </span>
+                                        <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-semibold text-blue-800">
+                                            {statementData.rows.length} Mutasi Bank
+                                        </span>
+                                    </div>
+                                    <div className="text-[11px] text-slate-600 mt-0.5 flex flex-wrap items-center gap-3">
+                                        <span className="text-emerald-700 font-medium">Cocok: {matchedCount}</span>
+                                        <span className="text-slate-400">•</span>
+                                        <span className="text-sky-700 font-medium">Hanya di Bank: {excelOnlyCount}</span>
+                                        <span className="text-slate-400">•</span>
+                                        <span className="text-slate-600 font-medium">Hanya di Sistem: {systemOnlyCount}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    disabled={pendingMatchCount === 0}
+                                    onClick={handleReconcileBatch}
+                                    className="inline-flex items-center gap-1.5 rounded-[4px] bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-[0.98] disabled:opacity-40 cursor-pointer"
+                                >
+                                    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                    <span>Rekonsiliasi Semua Cocok ({pendingMatchCount})</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setStatementData(null);
+                                        setActiveMatchTab('all');
+                                    }}
+                                    className="rounded-[4px] border border-slate-300 bg-white hover:bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700 transition cursor-pointer"
+                                >
+                                    Tutup Impor
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Filter Sub-Tabs */}
+                        <div className="flex flex-wrap items-center gap-2 mt-3 pt-2.5 border-t border-blue-100 text-xs">
+                            <span className="text-slate-500 text-[11px] font-medium">Filter Tampilan:</span>
+                            {[
+                                { id: 'all', label: `Semua (${matchedResults.length})` },
+                                { id: 'matched', label: `Cocok (${matchedCount})` },
+                                { id: 'excel_only', label: `Hanya di Bank (${excelOnlyCount})` },
+                                { id: 'system_only', label: `Hanya di Sistem (${systemOnlyCount})` },
+                            ].map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setActiveMatchTab(tab.id)}
+                                    className={`px-2.5 py-1 rounded text-xs font-medium transition cursor-pointer ${
+                                        activeMatchTab === tab.id
+                                            ? 'bg-[#1c558c] text-white shadow-2xs'
+                                            : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                                    }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Column Headers */}
                 <BankReconciliationHeader
                     lastKnownBalance={lastKnownBalance}
@@ -171,6 +348,32 @@ export default function BankReconciliationWorkspace({
                             Pilih bank yang akan direkonsiliasi
                         </div>
                     </div>
+                ) : statementData ? (
+                    <>
+                        {filteredMatchedResults.length > 0 ? (
+                            <div className="overflow-y-auto py-3 flex flex-col gap-3 min-h-0 flex-1">
+                                {filteredMatchedResults.map((item) => {
+                                    const key = item.id;
+                                    const docNum = item.system?.documentNumber || item.system?.sourceNumber || item.system?.document_number;
+                                    return (
+                                        <BankReconciliationMatchedRow
+                                            key={key}
+                                            item={item}
+                                            isReconciling={Boolean(docNum && reconcilingIds[docNum])}
+                                            onReconcile={(doc, isClosed, acctId) => handleReconcileSingle(doc, isClosed, acctId)}
+                                            onUnreconcile={(doc, isClosed, acctId) => handleReconcileSingle(doc, isClosed, acctId)}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[250px]">
+                                <p className="text-sm text-slate-500 font-medium">
+                                    Tidak ada mutasi yang sesuai dengan filter ini.
+                                </p>
+                            </div>
+                        )}
+                    </>
                 ) : unreconciledRows.length > 0 ? (
                     <>
                         <div className="overflow-y-auto py-3 flex flex-col gap-3 min-h-0 flex-1">
@@ -278,6 +481,20 @@ export default function BankReconciliationWorkspace({
                     </button>
                 </div>
             </WorkspaceDialog>
+
+            {/* Bank Statement Import Modal */}
+            <BankStatementImportModal
+                open={importModalOpen}
+                onClose={() => setImportModalOpen(false)}
+                onImportSuccess={(data) => {
+                    setStatementData(data);
+                    setActiveMatchTab('all');
+                    showSuccessToast({
+                        title: 'Impor Berhasil',
+                        message: `${data.rows.length} baris mutasi bank berhasil dimuat dan dicocokkan.`,
+                    });
+                }}
+            />
         </div>
     );
 }
