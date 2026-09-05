@@ -293,8 +293,7 @@ export default function DashboardPageTabs({
     }, []);
 
     const hasLevel2 = Boolean(
-        (activePage?.id !== 'dashboard' && activePage?.showViewIndicator && !level2Tabs.length) ||
-        (activePage?.id !== 'dashboard' && level2Tabs.length)
+        activePage?.id !== 'dashboard' && level2Tabs.length
     );
 
     return (
@@ -322,27 +321,6 @@ export default function DashboardPageTabs({
                     <PageTabOverflowMenu tabs={tabs} activePage={activePage} onSelectPage={onSelectPage} onClosePage={onClosePage} onCloseAllPages={onCloseAllPages} />
                 </div>
             </div>
-
-            {activePage?.id !== 'dashboard' && activePage?.showViewIndicator && !level2Tabs.length ? (
-                <div className="bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5">
-                    <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-                        <div
-                            aria-disabled="true"
-                            className="relative -mb-px inline-flex h-9 cursor-default select-none items-center rounded-t-[5px] border-x border-t-2 border-b-0 border-l-disabled-border border-r-disabled-border border-t-disabled-border-t bg-disabled-bg px-3 text-disabled-text sm:h-9.5 sm:px-4"
-                        >
-                            <ViewModeIcon />
-                        </div>
-
-                        {level2Actions.filter(action => action.id !== 'tips' && action.icon !== 'idea' && action.id !== 'settings' && action.icon !== 'settings').length ? (
-                            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 pt-0.5">
-                                {level2Actions.filter(action => action.id !== 'tips' && action.icon !== 'idea' && action.id !== 'settings' && action.icon !== 'settings').map((action) => (
-                                    <HeaderActionButton key={action.id} action={action} />
-                                ))}
-                            </div>
-                        ) : null}
-                    </div>
-                </div>
-            ) : null}
 
             {activePage?.id !== 'dashboard' && level2Tabs.length ? (
                 <div className="bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5">

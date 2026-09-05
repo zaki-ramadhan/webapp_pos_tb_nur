@@ -104,7 +104,7 @@ export function resolveLevel2State(activePage, activePageContentTabs = [], activ
 
     const shouldShowLevel2Tabs =
         activePage.id !== 'dashboard' &&
-        (activePage.subtab || (activePage.detailTabsOnly && contentTabs.length));
+        (activePage.subtab || activePage.showViewIndicator || (activePage.detailTabsOnly && contentTabs.length));
 
     const level2Tabs = shouldShowLevel2Tabs
         ? [
@@ -123,7 +123,7 @@ export function resolveLevel2State(activePage, activePageContentTabs = [], activ
     const activeLevel2TabId = activeLevel2Tabs[activePage.id] ?? getDefaultLevel2TabId(activePage);
     const activeLevel2Tab =
         level2Tabs.find((tab) => tab.id === activeLevel2TabId) ??
-        (activePage.detailTabsOnly && !contentTabs.length
+        ((activePage.detailTabsOnly || activePage.showViewIndicator) && !contentTabs.length
             ? {
                   id: `${activePage.id}-view`,
                   kind: 'view',

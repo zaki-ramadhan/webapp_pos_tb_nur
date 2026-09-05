@@ -80,7 +80,7 @@ export default function BankReconciliationWorkspace({
     const hasBankSelected = Boolean(keyword?.trim() || filters.search?.trim() || filters.account_id);
 
     return (
-        <div className="flex min-h-full flex-col text-slate-900 pt-1">
+        <div className="flex min-h-full flex-col text-slate-900">
             {/* Filter & Upload Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
