@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 
-import { CloseIcon, LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { LookupChip } from '@/features/workspace/shared/LookupPrimitives';
 
 export default function ChipLookupField({
     value = '',
@@ -13,16 +14,32 @@ export default function ChipLookupField({
     chipClassName = '',
     heightClassName = 'h-[40px]',
     disabled = false,
-    onSearch = null,
-    searching = false,
     error = false,
+    loading = false,
+    searching = false,
     id,
+    onSearch,
+    contentRef = null,
     containerRef = null,
 }) {
+    const internalContentRef = useRef(null);
     const searchButtonRef = useRef(null);
-    const items = Array.isArray(values) ? values.filter(Boolean) : value ? [value] : [];
+    const resolvedContentRef = containerRef || contentRef || internalContentRef;
+    const isSearching = Boolean(searching || loading);
 
-    function focusLookup(event) {
+    const items = Array.isArray(values)
+        ? values.filter(Boolean)
+        : value
+          ? [value]
+          : [];
+
+    const handleSearch = () => {
+        if (!disabled) {
+            onSearch?.();
+        }
+    };
+
+    function focusSearchButton(event) {
         if (disabled) {
             return;
         }
@@ -36,50 +53,31 @@ export default function ChipLookupField({
             return;
         }
 
-        event.preventDefault();
         searchButtonRef.current?.focus();
-        onSearch?.();
     }
-
-    function handleSearch() {
-        if (!disabled) {
-            onSearch?.();
-        }
-    }
-
-    const toneClassName = error
-        ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
-        : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
         <div
-            ref={containerRef}
-            onMouseDown={focusLookup}
+            ref={resolvedContentRef}
+            onMouseDown={focusSearchButton}
             aria-invalid={error}
-            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} bg-white transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 cursor-default' : 'cursor-text'} ${heightClassName} ${className}`.trim()}
+            className={`flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${error ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus' : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]'} ${disabled ? 'bg-slate-100 text-slate-400 cursor-default' : 'bg-white cursor-text'} ${heightClassName} ${className}`.trim()}
         >
             <div className={`flex min-w-0 flex-1 flex-wrap items-center gap-2 pl-1.5 pr-2 py-1.5 ${disabled ? 'cursor-default' : 'cursor-text'} ${contentClassName}`.trim()}>
                 {items.length ? (
                     items.map((item) => (
-                        <span
+                        <LookupChip
                             key={item}
-                            className={`inline-flex min-w-0 max-w-full items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark ${chipClassName}`.trim()}
-                        >
-                            <span className="truncate">{item}</span>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    if (!disabled) {
-                                        onRemove?.(item);
-                                    }
-                                }}
-                                disabled={disabled}
-                                aria-label={`Hapus ${item}`}
-                                className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark hover:text-red-600 active:text-red-800 transition-colors disabled:text-slate-300 cursor-pointer"
-                            >
-                                <CloseIcon className="h-4 w-4" />
-                            </button>
-                        </span>
+                            label={item}
+                            onClear={() => {
+                                if (!disabled) {
+                                    onRemove?.(item);
+                                }
+                            }}
+                            disabled={disabled}
+                            clearAriaLabel={`Hapus ${item}`}
+                            className={chipClassName}
+                        />
                     ))
                 ) : (
                     <span className={`block truncate px-1 text-xs sm:text-sm ${error ? 'text-red-400' : 'text-disabled-border-t'}`.trim()}>{placeholder}</span>
@@ -95,7 +93,7 @@ export default function ChipLookupField({
                 aria-label={searchLabel}
                 className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-ui-border-medium text-text-darkest disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none focus:outline-none"
             >
-                {searching ? (
+                {isSearching ? (
                     <LoadingIcon className="h-5 w-5 animate-spin text-text-darkest" />
                 ) : (
                     <SearchIcon className="h-5 w-5 text-text-darkest" />
