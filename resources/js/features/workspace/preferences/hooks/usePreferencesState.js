@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePage } from '@inertiajs/react';
 import { mergeValuesIntoTabs } from '../preferenceMapping';
 
@@ -8,9 +8,15 @@ export default function usePreferencesState(workspace, backendRows) {
 
     const [values, setValues] = useState(initialPrefs);
     const [isDirty, setIsDirty] = useState(false);
+    const isDirtyRef = useRef(false);
+    isDirtyRef.current = isDirty;
 
     useEffect(() => {
         if (backendRows.length > 0) {
+            // Jangan timpa jika user sudah melakukan perubahan/input aktif (dirty)
+            if (isDirtyRef.current) {
+                return;
+            }
             const initialValues = {};
             backendRows.forEach(row => {
                 initialValues[row.setting_key] = row.value;
