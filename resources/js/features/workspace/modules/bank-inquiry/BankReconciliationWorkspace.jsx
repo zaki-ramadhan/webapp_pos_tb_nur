@@ -15,6 +15,8 @@ import BankReconciliationMatchedRow from './components/BankReconciliationMatched
 import { runReconciliationMatching } from './reconciliationExcelParser';
 import { Check } from 'lucide-react';
 import { FileFormatBadgeIcon } from '@/components/ui/FileUpload';
+import starterStateImg from './assets/rekonsiliasi_starter_state.webp';
+import emptyStateImg from './assets/rekonsiliasi_empty_state.png';
 
 export default function BankReconciliationWorkspace({
     rows = [],
