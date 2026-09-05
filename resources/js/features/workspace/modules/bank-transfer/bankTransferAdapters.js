@@ -207,7 +207,7 @@ export function buildFormState(source = {}, config) {
         __toBranchId: source.__toBranchId ?? null,
         entryDate: source.entryDate ?? config.draft?.entryDate ?? '',
         autoNumber: source.autoNumber ?? config.draft?.autoNumber ?? true,
-        numberingType: source.numberingType ?? config.draft?.numberingType ?? '',
+        numberingType: (config.numberingOptions?.includes(source.numberingType) ? source.numberingType : (config.numberingOptions?.includes(config.draft?.numberingType) ? config.draft?.numberingType : config.numberingOptions?.[0])) ?? 'Transfer Bank',
         documentNumber: source.documentNumber ?? config.draft?.documentNumber ?? '',
         fromBankAccounts: [...(source.fromBankAccounts ?? config.draft?.fromBankAccounts ?? [])],
         fromBranches: [...(source.fromBranches ?? config.draft?.fromBranches ?? [])],

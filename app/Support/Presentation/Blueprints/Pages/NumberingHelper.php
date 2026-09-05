@@ -6,7 +6,7 @@ class NumberingHelper
 {
     /**
      * Get the standardized numbering options for cash/bank transactions.
-     * Shared across Cash Receipt, Cash Payment, and Bank Transfer pages.
+     * Shared across Cash Receipt and Cash Payment pages.
      *
      * @return array<string>
      */
