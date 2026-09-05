@@ -46,7 +46,7 @@ export function AccountLookupField({
     const resolvedDialogTitle = dialogTitle ?? (isProducts ? 'Pilih Barang' : 'Pilih Akun Perkiraan');
 
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
-    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
+    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : (error || ''));
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
 
     const controller = useAccountLookupController({ value, values, disabled, queryParams, resource });
@@ -145,6 +145,8 @@ export function AccountLookupTextInput({
     trailingClassName = '',
     onSelectAccount = null,
     onBeforeOpen = null,
+    onFocus = null,
+    onChange = null,
     queryParams = {},
     showType = false,
     resource = 'accounts',
@@ -155,7 +157,7 @@ export function AccountLookupTextInput({
     const resolvedDialogTitle = dialogTitle ?? (isProducts ? 'Pilih Barang' : 'Pilih Akun Perkiraan');
 
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
-    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
+    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : (error || ''));
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
 
     const controller = useAccountLookupController({ value, disabled, queryParams, resource, onBeforeOpen });
@@ -176,8 +178,14 @@ export function AccountLookupTextInput({
                 trailingClassName={trailingClassName}
                 loading={controller.loading && controller.open}
                 onBeforeOpen={onBeforeOpen}
-                onFocus={controller.handleInputFocus}
-                onChange={controller.handleInputChange}
+                onFocus={(e) => {
+                    controller.handleInputFocus(e);
+                    onFocus?.(e);
+                }}
+                onChange={(e) => {
+                    controller.handleInputChange(e);
+                    onChange?.(e);
+                }}
                 error={Boolean(resolvedError)}
                 onClear={() =>
                     controller.handleRemove(() => {
