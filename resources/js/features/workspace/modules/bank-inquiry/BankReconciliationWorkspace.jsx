@@ -15,6 +15,7 @@ import BankReconciliationMatchedRow from './components/BankReconciliationMatched
 import { runReconciliationMatching } from './reconciliationExcelParser';
 import starterStateImg from './assets/rekonsiliasi_starter_state.webp';
 import emptyStateImg from './assets/rekonsiliasi_empty_state.png';
+import { FileSpreadsheet, Check } from 'lucide-react';
 
 export default function BankReconciliationWorkspace({
     rows = [],
@@ -254,29 +255,27 @@ export default function BankReconciliationWorkspace({
             <div className="flex flex-col flex-1 min-h-0 mt-3">
                 {/* Statement Summary Banner */}
                 {statementData && (
-                    <div className="mb-3 rounded-[4px] border border-blue-200 bg-blue-50/50 p-3.5 shadow-2xs">
+                    <div className="mb-3 rounded-[4px] border border-slate-200 bg-white p-3.5 shadow-2xs">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] bg-[#1c558c] text-white">
-                                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] border border-slate-200 bg-slate-50 text-[#1c558c]">
+                                    <FileSpreadsheet className="h-5 w-5 stroke-[1.5]" />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs sm:text-sm font-bold text-slate-800">
+                                        <span className="text-sm font-normal text-slate-800">
                                             {statementData.fileName}
                                         </span>
-                                        <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-semibold text-blue-800">
-                                            {statementData.rows.length} Mutasi Bank
+                                        <span className="rounded-[3px] bg-slate-100 border border-slate-200 px-2 py-0.5 text-xs font-normal text-slate-600">
+                                            {statementData.rows.length} Mutasi
                                         </span>
                                     </div>
-                                    <div className="text-[11px] text-slate-600 mt-0.5 flex flex-wrap items-center gap-3">
-                                        <span className="text-emerald-700 font-medium">Cocok: {matchedCount}</span>
-                                        <span className="text-slate-400">•</span>
-                                        <span className="text-sky-700 font-medium">Hanya di Bank: {excelOnlyCount}</span>
-                                        <span className="text-slate-400">•</span>
-                                        <span className="text-slate-600 font-medium">Hanya di Sistem: {systemOnlyCount}</span>
+                                    <div className="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-3">
+                                        <span>Cocok: <strong className="font-normal text-emerald-700">{matchedCount}</strong></span>
+                                        <span className="text-slate-300">|</span>
+                                        <span>Hanya di Bank: <strong className="font-normal text-slate-700">{excelOnlyCount}</strong></span>
+                                        <span className="text-slate-300">|</span>
+                                        <span>Hanya di Sistem: <strong className="font-normal text-slate-700">{systemOnlyCount}</strong></span>
                                     </div>
                                 </div>
                             </div>
@@ -286,11 +285,9 @@ export default function BankReconciliationWorkspace({
                                     type="button"
                                     disabled={pendingMatchCount === 0}
                                     onClick={handleReconcileBatch}
-                                    className="inline-flex items-center gap-1.5 rounded-[4px] bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 text-xs font-semibold shadow-2xs transition active:scale-[0.98] disabled:opacity-40 cursor-pointer"
+                                    className="inline-flex items-center gap-1.5 rounded-[4px] bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-sm font-normal shadow-button-primary transition active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                                 >
-                                    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                    </svg>
+                                    <Check className="h-4 w-4 stroke-[2]" />
                                     <span>Rekonsiliasi Semua Cocok ({pendingMatchCount})</span>
                                 </button>
                                 <button
@@ -299,7 +296,7 @@ export default function BankReconciliationWorkspace({
                                         setStatementData(null);
                                         setActiveMatchTab('all');
                                     }}
-                                    className="rounded-[4px] border border-slate-300 bg-white hover:bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700 transition cursor-pointer"
+                                    className="inline-flex items-center justify-center rounded-[4px] border border-slate-300 bg-white hover:bg-slate-50 px-4 py-2 text-sm font-normal text-slate-700 shadow-2xs transition active:scale-[0.98] cursor-pointer"
                                 >
                                     Tutup Impor
                                 </button>
@@ -307,8 +304,8 @@ export default function BankReconciliationWorkspace({
                         </div>
 
                         {/* Filter Sub-Tabs */}
-                        <div className="flex flex-wrap items-center gap-2 mt-3 pt-2.5 border-t border-blue-100 text-xs">
-                            <span className="text-slate-500 text-[11px] font-medium">Filter Tampilan:</span>
+                        <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t border-slate-100 text-sm">
+                            <span className="text-slate-500 text-sm font-normal mr-1">Filter:</span>
                             {[
                                 { id: 'all', label: `Semua (${matchedResults.length})` },
                                 { id: 'matched', label: `Cocok (${matchedCount})` },
@@ -319,10 +316,10 @@ export default function BankReconciliationWorkspace({
                                     key={tab.id}
                                     type="button"
                                     onClick={() => setActiveMatchTab(tab.id)}
-                                    className={`px-2.5 py-1 rounded text-xs font-medium transition cursor-pointer ${
+                                    className={`px-3 py-1 rounded-[4px] text-sm font-normal transition cursor-pointer ${
                                         activeMatchTab === tab.id
                                             ? 'bg-[#1c558c] text-white shadow-2xs'
-                                            : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                                            : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
                                     }`}
                                 >
                                     {tab.label}
