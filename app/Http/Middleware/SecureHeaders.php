@@ -23,6 +23,12 @@ class SecureHeaders
         $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
+        $response->headers->remove('X-Powered-By');
+        $response->headers->remove('Server');
+        if (function_exists('header_remove')) {
+            header_remove('X-Powered-By');
+        }
+
         return $response;
     }
 }
