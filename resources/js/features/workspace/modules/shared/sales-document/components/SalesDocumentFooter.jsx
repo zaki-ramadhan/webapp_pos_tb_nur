@@ -117,7 +117,7 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
         <div className="flex w-full justify-end">
             <div className={`grid w-full shrink-0 ${widthClassName} overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
                 {footerParts.map((part) => (
-                    <div key={part.id} className="border-b border-ui-border-light px-3.5 py-2 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 flex flex-col justify-between min-h-[64px]">
+                    <div key={part.id} className="border-b border-ui-border-light px-3.5 sm:px-4 py-2.5 sm:py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 flex flex-col justify-between min-h-[68px] sm:min-h-[76px]">
                         <div className="flex items-start justify-between gap-3">
                             <span className="text-xs sm:text-sm text-brand-dark">
                                 {part.label}
