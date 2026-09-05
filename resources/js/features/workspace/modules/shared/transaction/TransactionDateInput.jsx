@@ -205,8 +205,8 @@ export default function TransactionDateInput({
                 anchorRef={wrapperRef}
                 align={align}
                 side="auto"
-                minHeightNeeded={380}
-                maxHeightLimit={520}
+                minHeightNeeded={420}
+                maxHeightLimit={560}
                 className="border border-slate-200 rounded-[8px] shadow-2xl bg-white overflow-hidden"
                 panelClassName="overflow-hidden"
             >
