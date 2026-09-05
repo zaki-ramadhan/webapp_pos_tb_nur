@@ -28,6 +28,7 @@ export default function BankReconciliationWorkspace({
 }) {
     const [reconcilingIds, setReconcilingIds] = useState({});
     const [keyword, setKeyword] = useState(filters.search || '');
+    const [selectedAccount, setSelectedAccount] = useState(null);
     const [bankError, setBankError] = useState('');
     const [startDate, setStartDate] = useState(filters.start_date || '');
     const [endDate, setEndDate] = useState(filters.end_date || '');
@@ -182,12 +183,14 @@ export default function BankReconciliationWorkspace({
                             onSelectAccount={(record, label) => {
                                 setBankError('');
                                 setKeyword(label);
-                                onFiltersChange?.((prev) => ({ ...prev, search: label }));
+                                setSelectedAccount(record);
+                                onFiltersChange?.((prev) => ({ ...prev, search: label, account_id: record?.id }));
                             }}
                             onClear={() => {
                                 setBankError('');
                                 setKeyword('');
-                                onFiltersChange?.((prev) => ({ ...prev, search: '' }));
+                                setSelectedAccount(null);
+                                onFiltersChange?.((prev) => ({ ...prev, search: '', account_id: null }));
                             }}
                         />
                     </div>
@@ -361,6 +364,12 @@ export default function BankReconciliationWorkspace({
                                             isReconciling={Boolean(docNum && reconcilingIds[docNum])}
                                             onReconcile={(doc, isClosed, acctId) => handleReconcileSingle(doc, isClosed, acctId)}
                                             onUnreconcile={(doc, isClosed, acctId) => handleReconcileSingle(doc, isClosed, acctId)}
+                                            onRequestConfirmReconcile={(row) => {
+                                                setSelectedRow(row);
+                                                setConfirmOpen(true);
+                                            }}
+                                            selectedAccount={selectedAccount}
+                                            bankLabel={keyword}
                                         />
                                     );
                                 })}
