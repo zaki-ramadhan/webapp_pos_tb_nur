@@ -56,14 +56,17 @@ export default function AccountLookupSearchInput({
         ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
+    // Kalau ada chip, wrapper non-interaktif (kursor pointer biasa) — harus clear dulu
+    const wrapperCursor = disabled ? 'cursor-default' : hasSelectedValue ? 'cursor-default' : 'cursor-text';
+
     return (
         <div
             ref={containerRef}
-            onMouseDown={focusInputFromWrapper}
+            onMouseDown={hasSelectedValue ? undefined : focusInputFromWrapper}
             aria-invalid={error}
-            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400 cursor-default' : 'bg-white cursor-text'} ${className}`.trim()}
+            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400 cursor-default' : `bg-white ${wrapperCursor}`} ${className}`.trim()}
         >
-            <div className={`flex h-full min-w-0 flex-1 items-center gap-2 pl-1 pr-3 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
+            <div className={`flex h-full min-w-0 flex-1 items-center gap-2 pl-1 pr-3 ${wrapperCursor}`.trim()}>
                 {hasSelectedValue ? (
                     <span className="inline-flex max-w-full items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark">
                         <span className="truncate">{extractCleanAccountName(selectedValue)}</span>
