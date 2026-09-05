@@ -1,39 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import Calendar from 'react-calendar';
 
+import PortalDropdown from '@/components/ui/PortalDropdown';
 import TextInput from '@/components/ui/TextInput';
-import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import { CalendarIcon } from '@/features/workspace/shared/Icons';
+import DatePickerPopover from './DatePickerPopover';
+import {
+    formatYmd,
+    normalizeDateValue,
+    parseDate,
+} from './datePickerUtils';
 
-function normalizeDateValue(value) {
-    const normalizedValue = String(value ?? '').trim();
-
-    if (!normalizedValue) {
-        return '';
-    }
-
-    if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedValue)) {
-        return normalizedValue;
-    }
-
-    const isoMatch = normalizedValue.match(/^(\d{4})-(\d{2})-(\d{2})[T ]/);
-    if (isoMatch) {
-        const [, year, month, day] = isoMatch;
-        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    }
-
-    const dateParts = normalizedValue.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
-
-    if (!dateParts) {
-        return '';
-    }
-
-    const [, day, month, year] = dateParts;
-
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-}
-
-function formatDateValue(value) {
+function formatDateValue(value, format = 'DD/MM/YYYY') {
     const normalizedValue = normalizeDateValue(value);
 
     if (!normalizedValue) {
@@ -42,41 +19,16 @@ function formatDateValue(value) {
 
     const [year, month, day] = normalizedValue.split('-');
 
-    return `${day}/${month}/${year}`;
-}
-
-function parseNormalizedDate(value) {
-    const normalizedValue = normalizeDateValue(value);
-
-    if (!normalizedValue) {
-        return null;
+    if (format === 'YYYY-MM-DD') {
+        return normalizedValue;
     }
 
-    const [year, month, day] = normalizedValue.split('-').map(Number);
-
-    return new Date(year, month - 1, day);
-}
-
-function toNativeDateValue(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
+    return `${day}/${month}/${year}`;
 }
 
 function buildTodayDate() {
     const today = new Date();
-
     return new Date(today.getFullYear(), today.getMonth(), today.getDate());
-}
-
-function resolveCalendarDate(value) {
-    if (Array.isArray(value)) {
-        return value[0] ?? null;
-    }
-
-    return value ?? null;
 }
 
 export default function TransactionDateInput({
@@ -85,6 +37,10 @@ export default function TransactionDateInput({
     onChange,
     minDate,
     maxDate,
+    presets = true,
+    clearable = false,
+    format = 'DD/MM/YYYY',
+    align = 'start',
     className = '',
     inputClassName = 'text-sm text-brand-dark',
     trailingClassName = 'w-[42px] shrink-0 justify-center px-0',
@@ -93,8 +49,8 @@ export default function TransactionDateInput({
     disableAutoInit = false,
     ...props
 }) {
-    const parsedMinDate = minDate instanceof Date ? minDate : (minDate ? parseNormalizedDate(minDate) : null);
-    const parsedMaxDate = maxDate instanceof Date ? maxDate : (maxDate ? parseNormalizedDate(maxDate) : null);
+    const parsedMinDate = minDate instanceof Date ? minDate : (minDate ? parseDate(minDate) : null);
+    const parsedMaxDate = maxDate instanceof Date ? maxDate : (maxDate ? parseDate(maxDate) : null);
 
     const classes = className.split(' ').filter(Boolean);
     const layoutClasses = [];
@@ -134,26 +90,21 @@ export default function TransactionDateInput({
         ...styleClasses,
     ])].filter(Boolean).join(' ');
 
-    const [displayValue, setDisplayValue] = useState(() => formatDateValue(value));
+    const wrapperRef = useRef(null);
+    const [displayValue, setDisplayValue] = useState(() => formatDateValue(value, format));
     const [nativeValue, setNativeValue] = useState(() => normalizeDateValue(value));
     const [calendarOpen, setCalendarOpen] = useState(false);
-    const [activeStartDate, setActiveStartDate] = useState(() => parseNormalizedDate(value) ?? buildTodayDate());
     const autoInitializedRef = useRef(false);
-    const selectedDate = parseNormalizedDate(nativeValue);
-    const calendarValue = selectedDate ?? buildTodayDate();
+    const selectedDate = parseDate(nativeValue);
 
     useEffect(() => {
-        setDisplayValue(formatDateValue(value));
+        setDisplayValue(formatDateValue(value, format));
         setNativeValue(normalizeDateValue(value));
-    }, [value]);
-
-    useEffect(() => {
-        setActiveStartDate(parseNormalizedDate(value) ?? buildTodayDate());
-    }, [value]);
+    }, [value, format]);
 
     useEffect(() => {
         if (parsedMinDate && nativeValue) {
-            const current = parseNormalizedDate(nativeValue);
+            const current = parseDate(nativeValue);
             if (current && current < parsedMinDate) {
                 applyDate(parsedMinDate);
             }
@@ -162,7 +113,7 @@ export default function TransactionDateInput({
 
     useEffect(() => {
         if (parsedMaxDate && nativeValue) {
-            const current = parseNormalizedDate(nativeValue);
+            const current = parseDate(nativeValue);
             if (current && current > parsedMaxDate) {
                 applyDate(parsedMaxDate);
             }
@@ -199,33 +150,31 @@ export default function TransactionDateInput({
             clampedDate = parsedMaxDate;
         }
 
-        const nextNativeValue = toNativeDateValue(clampedDate);
-        const nextDisplayValue = formatDateValue(nextNativeValue);
+        const nextNativeValue = formatYmd(clampedDate);
+        const nextDisplayValue = formatDateValue(nextNativeValue, format);
 
         setDisplayValue(nextDisplayValue);
         setNativeValue(nextNativeValue);
         onChange?.(nextDisplayValue, nextNativeValue);
     }
 
-    function handleCalendarChange(nextValue) {
-        const nextDate = resolveCalendarDate(nextValue);
-
-        if (!nextDate) {
-            return;
-        }
-
+    function handleDateSelect(ymd) {
+        const nextDate = parseDate(ymd);
+        if (!nextDate) return;
         applyDate(nextDate);
         setCalendarOpen(false);
     }
 
-    function handleCalendarOpen() {
-        setActiveStartDate(parseNormalizedDate(nativeValue) ?? buildTodayDate());
-        setCalendarOpen(true);
+    function handleClear() {
+        setDisplayValue('');
+        setNativeValue('');
+        onChange?.('', '');
+        setCalendarOpen(false);
     }
 
     return (
         <>
-            <div className={wrapperClassName}>
+            <div ref={wrapperRef} className={wrapperClassName}>
                 <TextInput
                     value={displayValue}
                     readOnly
@@ -240,38 +189,38 @@ export default function TransactionDateInput({
                 <button
                     id={id}
                     type="button"
-                    onClick={handleCalendarOpen}
+                    onClick={() => !disabled && setCalendarOpen((prev) => !prev)}
                     disabled={disabled}
                     aria-label={ariaLabel}
+                    aria-expanded={calendarOpen}
                     className="absolute inset-0 z-10 h-full w-full cursor-pointer rounded-[4px] disabled:cursor-not-allowed"
                 >
                     <span className="sr-only">{ariaLabel}</span>
                 </button>
             </div>
-            <WorkspaceDialog
+
+            <PortalDropdown
                 open={calendarOpen}
                 onClose={() => setCalendarOpen(false)}
-                title="Pilih Tanggal"
-                closeLabel="Tutup pemilih tanggal"
-                maxWidthClassName="w-fit max-w-[352px]"
-                contentClassName="flex justify-center bg-white px-0 pt-0 pb-4"
+                anchorRef={wrapperRef}
+                align={align}
+                side="auto"
+                minHeightNeeded={380}
+                maxHeightLimit={520}
+                className="border border-slate-200 rounded-[8px] shadow-2xl bg-white overflow-hidden"
+                panelClassName="overflow-hidden"
             >
-                <Calendar
-                    locale="id-ID"
-                    value={calendarValue}
-                    minDate={parsedMinDate ?? undefined}
-                    maxDate={parsedMaxDate ?? undefined}
-                    activeStartDate={activeStartDate}
-                    next2Label={null}
-                    prev2Label={null}
-                    onChange={handleCalendarChange}
-                    onActiveStartDateChange={({ activeStartDate: nextActiveStartDate }) => {
-                        if (nextActiveStartDate) {
-                            setActiveStartDate(nextActiveStartDate);
-                        }
-                    }}
+                <DatePickerPopover
+                    selectedDate={selectedDate}
+                    onSelect={handleDateSelect}
+                    onClose={() => setCalendarOpen(false)}
+                    minDate={parsedMinDate}
+                    maxDate={parsedMaxDate}
+                    presets={presets}
+                    clearable={clearable}
+                    onClear={handleClear}
                 />
-            </WorkspaceDialog>
+            </PortalDropdown>
         </>
     );
 }

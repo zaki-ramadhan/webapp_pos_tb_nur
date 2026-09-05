@@ -2,6 +2,8 @@ import {
     Bell,
     CalendarDays,
     ChevronDown,
+    ChevronLeft,
+    ChevronRight,
     CircleCheck,
     CircleX,
     Columns3,
@@ -188,4 +190,12 @@ export function ArrowRightLeftIcon({ className = 'h-4 w-4' }) {
 
 export function CalculatorIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={Calculator} className={className} />;
+}
+
+export function ChevronLeftIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={ChevronLeft} className={className} strokeWidth={2.2} />;
+}
+
+export function ChevronRightIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={ChevronRight} className={className} strokeWidth={2.2} />;
 }
