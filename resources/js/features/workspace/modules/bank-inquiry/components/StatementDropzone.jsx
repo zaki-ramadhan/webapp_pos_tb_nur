@@ -26,7 +26,7 @@ export default function StatementDropzone({ onFileSelect, disabled = false }) {
                     fileInputRef.current?.click();
                 }
             }}
-            className={`group flex flex-col items-center justify-center p-7 sm:p-8 border-2 border-dashed rounded-[6px] transition-all cursor-pointer select-none bg-slate-50/70 hover:bg-blue-50/40 ${
+            className={`group flex flex-col items-center justify-center w-full aspect-video p-6 sm:p-8 border-2 border-dashed rounded-[6px] transition-all cursor-pointer select-none bg-slate-50/70 hover:bg-blue-50/40 ${
                 disabled
                     ? 'border-slate-200 opacity-60 cursor-not-allowed'
                     : 'border-slate-300 hover:border-brand-blue'
@@ -45,8 +45,8 @@ export default function StatementDropzone({ onFileSelect, disabled = false }) {
                 }}
             />
 
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-brand-blue mb-3 shadow-2xs group-hover:scale-105 transition-transform">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 border-2 border-blue-200 text-brand-blue mb-3.5 shadow-2xs group-hover:scale-105 group-hover:bg-blue-100 transition-all">
+                <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
             </div>
