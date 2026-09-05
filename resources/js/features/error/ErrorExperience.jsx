@@ -1,86 +1,76 @@
-import { AlertTriangle, ArrowLeft, Compass, Home, LifeBuoy, LogIn, RefreshCw, ShieldAlert, TimerReset, TrafficCone, TriangleAlert } from 'lucide-react';
+import { useState } from 'react';
+import { AlertTriangle, ArrowLeft, Check, Compass, Copy, Home, LifeBuoy, LogIn, RefreshCw, ShieldAlert, TimerReset, TrafficCone, TriangleAlert } from 'lucide-react';
 
 const STATE_BY_STATUS = {
     400: {
-        title: 'Permintaan tidak dapat diproses',
-        description: 'Permintaan yang dikirim tidak lengkap atau formatnya tidak sesuai. Coba ulangi dari halaman sebelumnya.',
+        title: 'Permintaan tidak sesuai',
+        description: 'Data yang dikirim belum lengkap atau tidak valid. Silakan periksa kembali.',
         tone: 'warning',
         icon: TriangleAlert,
-        label: 'Bad Request',
     },
     401: {
-        title: 'Akses membutuhkan autentikasi',
-        description: 'Sesi Anda belum dikenali. Masuk kembali agar proses dapat dilanjutkan dengan aman.',
+        title: 'Silakan masuk terlebih dahulu',
+        description: 'Anda perlu masuk (login) untuk membuka halaman ini.',
         tone: 'warning',
         icon: LogIn,
-        label: 'Unauthorized',
     },
     403: {
-        title: 'Akses ke halaman ini dibatasi',
-        description: 'Anda berhasil masuk, tetapi tidak memiliki izin untuk membuka halaman atau aksi yang diminta.',
+        title: 'Akses terbatas',
+        description: 'Akun Anda belum memiliki izin membuka menu ini. Hubungi pemilik toko jika butuh akses.',
         tone: 'warning',
         icon: ShieldAlert,
-        label: 'Forbidden',
     },
     404: {
         title: 'Halaman tidak ditemukan',
-        description: 'Alamat yang dibuka sudah berubah, tidak tersedia, atau belum pernah dibuat. Gunakan navigasi di bawah agar tidak tersesat.',
+        description: 'Alamat yang Anda tuju salah atau telah dipindahkan.',
         tone: 'danger',
         icon: Compass,
-        label: 'Page Not Found',
     },
     405: {
-        title: 'Metode akses tidak didukung',
-        description: 'Aksi yang Anda kirim tidak sesuai dengan alur halaman ini. Kembali ke halaman sebelumnya lalu coba lagi.',
+        title: 'Aksi tidak dapat diproses',
+        description: 'Aksi yang diminta tidak valid atau telah kedaluwarsa.',
         tone: 'warning',
         icon: AlertTriangle,
-        label: 'Method Not Allowed',
     },
     409: {
-        title: 'Data bertabrakan dengan kondisi terbaru',
-        description: 'Perubahan tidak dapat disimpan karena data sudah berubah atau melanggar batasan sistem. Muat ulang data lalu ulangi.',
+        title: 'Data telah berubah',
+        description: 'Data telah diperbarui oleh proses lain. Muat ulang halaman untuk melihat data terkini.',
         tone: 'danger',
         icon: AlertTriangle,
-        label: 'Conflict',
     },
     419: {
         title: 'Sesi telah berakhir',
-        description: 'Untuk menjaga keamanan, sesi Anda telah kedaluwarsa. Muat ulang atau masuk kembali sebelum melanjutkan.',
+        description: 'Waktu sesi Anda telah habis. Silakan muat ulang atau masuk kembali.',
         tone: 'warning',
         icon: TimerReset,
-        label: 'Session Expired',
     },
     429: {
-        title: 'Terlalu banyak permintaan',
-        description: 'Sistem menahan permintaan beruntun agar tetap stabil. Tunggu sebentar, lalu coba kembali secara bertahap.',
+        title: 'Terlalu banyak aktivitas',
+        description: 'Mohon tunggu beberapa saat sebelum mencoba kembali.',
         tone: 'warning',
         icon: TrafficCone,
-        label: 'Too Many Requests',
     },
     500: {
-        title: 'Terjadi gangguan pada sistem',
-        description: 'Permintaan Anda sudah sampai ke server, tetapi prosesnya gagal diselesaikan. Muat ulang halaman atau kembali ke beranda.',
+        title: 'Terjadi kendala sistem',
+        description: 'Layanan sedang mengalami gangguan sementara. Silakan coba beberapa saat lagi.',
         tone: 'danger',
         icon: LifeBuoy,
-        label: 'Server Error',
     },
     503: {
-        title: 'Layanan sedang dalam pemeliharaan',
-        description: 'Aplikasi sedang disiapkan atau diperbarui. Coba lagi beberapa saat lagi melalui tombol muat ulang.',
+        title: 'Pemeliharaan sistem',
+        description: 'Aplikasi sedang dalam proses pembaruan. Silakan coba beberapa saat lagi.',
         tone: 'warning',
         icon: TrafficCone,
-        label: 'Under Maintenance',
     },
 };
 
 function resolveState(status, isClientCrash) {
     if (isClientCrash) {
         return {
-            title: 'Aplikasi perlu dimuat ulang',
-            description: 'Terjadi crash di sisi browser saat halaman sedang berjalan. Muat ulang halaman untuk memulihkan tampilan terbaru.',
+            title: 'Halaman perlu dimuat ulang',
+            description: 'Terjadi kendala saat menampilkan halaman. Silakan muat ulang browser Anda.',
             tone: 'danger',
             icon: RefreshCw,
-            label: 'Client Runtime Error',
         };
     }
 
@@ -146,18 +136,43 @@ export function buildErrorActions({ hasAuthSession = false, status = 500, fallba
 
 export default function ErrorExperience({
     status = 500,
+    errorId = null,
     appName = 'TB Nur POS',
     subtitle,
     actions = [],
     isClientCrash = false,
+    technicalMessage = null,
+    isDevOrStaging = false,
 }) {
     const state = resolveState(status, isClientCrash);
-    const Icon = state.icon;
     const code = String(status);
+    const [showDiagnostics, setShowDiagnostics] = useState(false);
+    const [copied, setCopied] = useState(false);
+    const [resolvedErrorId] = useState(() => {
+        if (errorId) return errorId;
+        return 'ERR-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    });
+
+    function handleCopyDiagnostics() {
+        const payload = [
+            '--- LAPORAN KENDALA (ANTIGRAVITY) ---',
+            `Status: ${code} (${state.title})`,
+            `ID Kendala: #${resolvedErrorId}`,
+            `URL: ${typeof window !== 'undefined' ? window.location.href : '-'}`,
+            `Waktu: ${new Date().toLocaleString('id-ID')}`,
+            technicalMessage ? `Detail Teknis: ${technicalMessage}` : null,
+        ].filter(Boolean).join('\n');
+
+        if (navigator?.clipboard?.writeText) {
+            navigator.clipboard.writeText(payload);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    }
 
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-ui-bg-panel-lighter p-4 sm:p-6 lg:p-8 text-ink overflow-hidden">
-            {/* Background ornament circles — fluid via vw so they scale on all viewports */}
+            {/* Background ornament circles */}
             <div className="pointer-events-none absolute inset-0 opacity-30" aria-hidden="true">
                 <div className="absolute -left-[20vw] -top-[20vw] h-[60vw] w-[60vw] max-h-[700px] max-w-[700px] rounded-full border border-slate-200/40" />
                 <div className="absolute -right-[20vw] -bottom-[20vw] h-[60vw] w-[60vw] max-h-[700px] max-w-[700px] rounded-full border border-slate-200/40" />
@@ -193,6 +208,13 @@ export default function ErrorExperience({
                         {state.description}
                     </p>
 
+                    {resolvedErrorId && (
+                        <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-0.5 text-[11px] font-mono text-slate-500">
+                            <span>ID Kendala:</span>
+                            <span className="font-semibold text-slate-700">#{resolvedErrorId}</span>
+                        </div>
+                    )}
+
                     {subtitle && (
                         <div className="mt-4 inline-flex text-xs tracking-wider text-slate-400 uppercase border border-slate-100 bg-slate-50/30 px-2 py-0.5 rounded">
                             {subtitle}
@@ -205,9 +227,41 @@ export default function ErrorExperience({
                         ))}
                     </div>
 
-                    <p className="mt-4 text-xs text-slate-400 leading-relaxed">
-                        Jika masalah berlanjut, hubungi administrator atau muat ulang halaman ini secara bertahap.
-                    </p>
+                    {isDevOrStaging && (
+                        <div className="mt-5 w-full border-t border-slate-100 pt-3 text-left">
+                            <button
+                                type="button"
+                                onClick={() => setShowDiagnostics((prev) => !prev)}
+                                className="flex w-full items-center justify-between text-[11px] font-medium text-slate-500 hover:text-slate-800 transition-colors"
+                            >
+                                <span>{showDiagnostics ? '▲ Sembunyikan Diagnostik' : '▼ Diagnostik Teknis (Khusus Pengujian)'}</span>
+                                <span className="text-[10px] text-amber-700 font-mono bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">
+                                    Staging / Dev
+                                </span>
+                            </button>
+
+                            {showDiagnostics && (
+                                <div className="mt-2.5 rounded border border-slate-200 bg-slate-50 p-3 text-[11px] text-slate-700 space-y-2 font-mono">
+                                    <div className="truncate">
+                                        <span className="text-slate-400">Path:</span> {typeof window !== 'undefined' ? window.location.pathname : '-'}
+                                    </div>
+                                    {technicalMessage && (
+                                        <div className="break-all whitespace-pre-wrap rounded bg-white p-2 border border-slate-200 text-rose-700 text-[10px] font-sans leading-relaxed">
+                                            {technicalMessage}
+                                        </div>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={handleCopyDiagnostics}
+                                        className="mt-1 inline-flex w-full items-center justify-center gap-1.5 rounded border border-slate-300 bg-white px-2 py-1.5 text-[11px] font-sans font-medium text-slate-700 hover:bg-slate-100 transition-colors shadow-xs"
+                                    >
+                                        {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
+                                        <span>{copied ? 'Tersalin ke Clipboard!' : 'Salin Detail untuk Antigravity'}</span>
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </section>
         </div>

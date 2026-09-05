@@ -35,15 +35,23 @@ Route::get('/favicon.ico', function () {
 Route::get('/auth/google', [GoogleLoginController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback'])->name('auth.google.callback');
 
-Route::get('/preview-error/{status?}', function ($status = 404) {
+Route::get('/preview-error/{status?}', function (\Illuminate\Http\Request $request, $status = 404) {
     $allowed = [400, 401, 403, 404, 405, 409, 419, 429, 500, 503];
     $code = (int) $status;
     if (! in_array($code, $allowed, true)) {
         $code = 404;
     }
 
+    $user = $request->user();
+    $isDevOrAdmin = config('app.env') !== 'production'
+        || ($user && method_exists($user, 'isSystemAdmin') && $user->isSystemAdmin());
+
+    $errorId = 'ERR-' . strtoupper(substr(md5(microtime() . $code), 0, 6));
+
     return \Inertia\Inertia::render('ErrorPage', [
         'status' => $code,
+        'errorId' => $errorId,
+        'technicalMessage' => $isDevOrAdmin ? "Simulasi preview error status {$code} via rute /preview-error/{$code}." : null,
     ]);
 })->name('preview.error');
 

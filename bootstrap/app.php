@@ -140,8 +140,25 @@ return Application::configure(basePath: dirname(__DIR__))
                 return $response;
             }
 
+            $errorId = 'ERR-' . strtoupper(substr(md5(microtime() . $exception->getMessage() . $exception->getFile()), 0, 6));
+
+            $user = $request->user();
+            $isDevOrAdmin = config('app.env') !== 'production'
+                || ($user && method_exists($user, 'isSystemAdmin') && $user->isSystemAdmin());
+
+            if ($status >= 500) {
+                \Illuminate\Support\Facades\Log::error("[{$errorId}] Web Error {$status}: {$exception->getMessage()}", [
+                    'url' => $request->fullUrl(),
+                    'method' => $request->method(),
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                ]);
+            }
+
             return Inertia::render('ErrorPage', [
                 'status' => $status,
+                'errorId' => $errorId,
+                'technicalMessage' => $isDevOrAdmin ? $exception->getMessage() : null,
             ])->toResponse($request)->setStatusCode($status);
         });
     })->create();
