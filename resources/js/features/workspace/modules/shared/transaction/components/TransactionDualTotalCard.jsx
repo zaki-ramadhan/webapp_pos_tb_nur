@@ -15,10 +15,10 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
             : count === 3
             ? 'w-full sm:w-[540px] xl:w-[600px] 2xl:w-[660px]'
             : count === 4
-            ? 'w-full sm:w-[700px] xl:w-[780px] 2xl:w-[860px]'
+            ? 'w-full sm:w-[720px] xl:w-[800px] 2xl:w-[880px]'
             : count === 5
-            ? 'w-full sm:w-[850px] xl:w-[950px] 2xl:w-[1050px]'
-            : 'w-full sm:w-[1020px] xl:w-[1140px] 2xl:w-[1260px]';
+            ? 'w-full sm:w-[900px] xl:w-[1000px] 2xl:w-[1100px]'
+            : 'w-full sm:w-[1080px] xl:w-[1200px] 2xl:w-[1320px]';
 
     return (
         <div
@@ -29,7 +29,7 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
                 return (
                     <div
                         key={item.label || index}
-                        className="flex-1 min-w-0 px-3.5 sm:px-4 py-2.5 sm:py-3 min-h-[68px] sm:min-h-[76px] flex flex-col justify-between"
+                        className="flex-1 min-w-0 sm:min-w-[180px] xl:min-w-[200px] 2xl:min-w-[220px] px-3.5 sm:px-4 py-2.5 sm:py-3 min-h-[68px] sm:min-h-[76px] flex flex-col justify-between"
                     >
                         <div className="text-xs sm:text-sm text-brand-dark truncate" title={item.label}>
                             {item.label}

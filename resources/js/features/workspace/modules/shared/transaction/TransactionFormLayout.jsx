@@ -43,7 +43,7 @@ export default function TransactionFormLayout({
                                 <TransactionDock actions={dockActions} />
                             </div>
                             {footer ? (
-                                <div className="ml-auto">
+                                <div className="ml-auto max-w-full overflow-x-auto">
                                     {footer}
                                 </div>
                             ) : null}
