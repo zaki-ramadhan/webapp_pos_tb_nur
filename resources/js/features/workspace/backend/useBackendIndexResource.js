@@ -93,6 +93,7 @@ export default function useBackendIndexResource({
     filters = {},
     enabled = true,
     initialPerPage = 25,
+    revalidateOnPageActivated = true,
 }) {
     const inertiaPage = usePage();
     const authUser = inertiaPage?.props?.auth?.user ?? null;
@@ -283,7 +284,7 @@ export default function useBackendIndexResource({
     }, [enabled, requestFilters, resource, revalidateVersion]);
 
     useEffect(() => {
-        if (typeof window === 'undefined') return;
+        if (typeof window === 'undefined' || !revalidateOnPageActivated) return;
 
         function handlePageActivated(e) {
             const { activePageId } = e.detail || {};
@@ -296,7 +297,7 @@ export default function useBackendIndexResource({
 
         window.addEventListener('workspace:page-activated', handlePageActivated);
         return () => window.removeEventListener('workspace:page-activated', handlePageActivated);
-    }, [resource]);
+    }, [resource, revalidateOnPageActivated]);
 
   // Real-time live update sync via singleton listener
 

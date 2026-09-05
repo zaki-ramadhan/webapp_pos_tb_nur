@@ -20,6 +20,7 @@ export default function PreferencesView({ page }) {
         resource: 'preferences',
         filters: { per_page: 500 },
         initialPerPage: 500,
+        revalidateOnPageActivated: false,
     });
 
     const state = usePreferencesState(workspace, backendRows);
