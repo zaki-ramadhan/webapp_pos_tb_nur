@@ -4,7 +4,7 @@ import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
 import { showSuccessToast } from '@/components/feedback/toast';
-import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
+import { parseNumericInput, buildLookupLabel } from '@/features/workspace/shared/transactionFormatters';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -208,7 +208,10 @@ export default function BankTransferFormView({
         () => ({
             onSelectFromBankAccount: (record, label) =>
                 updateValues((current) => {
-                    const cleanLabel = extractCleanAccountName(label);
+                    const resolvedLabel = typeof label === 'string' && label.trim()
+                        ? label.trim()
+                        : (record ? buildLookupLabel(record) || record.name || '' : '');
+                    const cleanLabel = extractCleanAccountName(resolvedLabel);
                     const currentRecons = current.reconciliations ?? [];
                     const nextRecons = currentRecons.map(item =>
                         item.id === 'from' ? { ...item, bank: cleanLabel } : item
@@ -219,7 +222,7 @@ export default function BankTransferFormView({
                     return {
                         ...current,
                         __fromAccountId: record ? record.id : null,
-                        fromBankAccounts: record ? [label] : [],
+                        fromBankAccounts: resolvedLabel ? [resolvedLabel] : (record ? [buildLookupLabel(record)] : []),
                         reconciliations: nextRecons,
                     };
                 }),
@@ -231,7 +234,10 @@ export default function BankTransferFormView({
                 })),
             onSelectToBankAccount: (record, label) =>
                 updateValues((current) => {
-                    const cleanLabel = extractCleanAccountName(label);
+                    const resolvedLabel = typeof label === 'string' && label.trim()
+                        ? label.trim()
+                        : (record ? buildLookupLabel(record) || record.name || '' : '');
+                    const cleanLabel = extractCleanAccountName(resolvedLabel);
                     const currentRecons = current.reconciliations ?? [];
                     const nextRecons = currentRecons.map(item =>
                         item.id === 'to' ? { ...item, bank: cleanLabel } : item
@@ -242,7 +248,7 @@ export default function BankTransferFormView({
                     return {
                         ...current,
                         __toAccountId: record ? record.id : null,
-                        toBankAccounts: record ? [label] : [],
+                        toBankAccounts: resolvedLabel ? [resolvedLabel] : (record ? [buildLookupLabel(record)] : []),
                         reconciliations: nextRecons,
                     };
                 }),

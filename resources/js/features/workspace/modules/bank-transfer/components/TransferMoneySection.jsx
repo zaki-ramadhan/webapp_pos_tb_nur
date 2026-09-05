@@ -33,9 +33,11 @@ export default function TransferMoneySection({ config, values, setValues, handle
                             value={values.transferValue}
                             maxWidthClassName=""
                             onChange={(event) => {
+                                const nextVal = event.target.value;
                                 setValues((current) => ({
                                     ...current,
-                                    transferValue: event.target.value,
+                                    transferValue: nextVal,
+                                    blurredTransferValue: nextVal,
                                 }));
                             }}
                             onBlur={() => {
