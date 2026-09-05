@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { buildCurrencyValue } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { formatCardNominal } from '@/features/workspace/shared/amountFormatting';
 import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
 import { formatCurrencyValue, applyComputedTotals } from '@/features/workspace/modules/sales-document/salesDocumentFormShared';
 
@@ -159,7 +160,7 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
                             </div>
                         ) : (
                             <div className={`mt-1 text-sm sm:text-base font-semibold text-text-darkest ${part.align === 'right' ? 'text-right' : (part.align === 'center' ? 'text-center' : 'text-left')}`.trim()}>
-                                {part.value}
+                                {formatCardNominal(part.value)}
                             </div>
                         )}
                     </div>

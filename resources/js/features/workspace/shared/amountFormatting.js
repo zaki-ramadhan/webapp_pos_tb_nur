@@ -195,4 +195,34 @@ export function formatFileSize(bytes) {
     return `${(numBytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+export function formatCardNominal(val) {
+    if (val === null || val === undefined || val === '') return 'Rp 0';
+    const str = String(val).trim();
+    if (!str) return 'Rp 0';
+    if (str === '-') return '-';
+
+    if (/^Rp\s?/i.test(str)) {
+        return str;
+    }
+    if (/^[$€¥£]|^(USD|SGD|EUR|JPY|AUD|GBP)\b/i.test(str)) {
+        return str;
+    }
+
+    if (!/\d/.test(str)) {
+        return str;
+    }
+
+    const formatted = formatDisplayValue(val);
+    const formattedStr = String(formatted ?? '').trim();
+    if (!formattedStr) return 'Rp 0';
+
+    if (/^Rp\s?/i.test(formattedStr)) {
+        return formattedStr;
+    }
+    if (formattedStr.startsWith('-')) {
+        return `Rp -${formattedStr.slice(1).trim()}`;
+    }
+    return `Rp ${formattedStr}`;
+}
+
 
