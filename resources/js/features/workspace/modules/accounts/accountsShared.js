@@ -265,3 +265,75 @@ export function buildAccountPayload(values) {
         user_ids: values.allUsers ? [] : (Array.isArray(values.userIds) ? values.userIds : []),
     };
 }
+
+export function buildHierarchicalAccounts(accounts = []) {
+    if (!Array.isArray(accounts) || accounts.length === 0) return [];
+
+    const map = new Map();
+    const roots = [];
+
+    const sorted = [...accounts].sort((a, b) => {
+        const codeA = String(a.code ?? a.id ?? '');
+        const codeB = String(b.code ?? b.id ?? '');
+        return codeA.localeCompare(codeB, undefined, { numeric: true });
+    });
+
+    sorted.forEach((acc) => {
+        const key = String(acc.id);
+        map.set(key, { ...acc, children: [] });
+    });
+
+    sorted.forEach((acc) => {
+        const key = String(acc.id);
+        const node = map.get(key);
+        const parentId = acc.parent_id != null ? String(acc.parent_id) : (acc.parentId != null ? String(acc.parentId) : null);
+        if (parentId && map.has(parentId) && parentId !== key) {
+            map.get(parentId).children.push(node);
+        } else {
+            roots.push(node);
+        }
+    });
+
+    const result = [];
+    const visited = new Set();
+
+    function traverse(nodes, depth = 0) {
+        nodes.forEach((node) => {
+            const key = String(node.id);
+            if (visited.has(key)) return;
+            visited.add(key);
+
+            const level = depth;
+            const prefix = level > 0 ? `${'- '.repeat(level)}` : '';
+            result.push({
+                ...node,
+                level,
+                hierarchicalPrefix: prefix,
+                hierarchicalName: `${prefix}${node.name}`,
+            });
+            if (node.children && node.children.length > 0) {
+                traverse(node.children, depth + 1);
+            }
+        });
+    }
+
+    traverse(roots, 0);
+
+    if (result.length < accounts.length) {
+        sorted.forEach((acc) => {
+            const key = String(acc.id);
+            if (!visited.has(key)) {
+                visited.add(key);
+                result.push({
+                    ...acc,
+                    level: 0,
+                    hierarchicalPrefix: '',
+                    hierarchicalName: String(acc.name ?? ''),
+                });
+            }
+        });
+    }
+
+    return result;
+}
+

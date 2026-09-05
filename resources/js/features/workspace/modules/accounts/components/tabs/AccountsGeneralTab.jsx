@@ -7,7 +7,7 @@ import {
     AccountsFieldLabel,
     AccountsFormFieldRow,
 } from '../../accountsViewShared';
-import { mapDbToUiType, mapUiToDbType } from '../../accountsShared';
+import { mapDbToUiType, mapUiToDbType, buildHierarchicalAccounts } from '../../accountsShared';
 
 export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData, excludeId }) {
     const selectedParentAccount = useMemo(() => {
@@ -79,20 +79,26 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                             placeholder="Cari/Pilih..."
                             searchLabel="Cari akun perkiraan"
                             queryParams={{
+                                per_page: 250,
                                 ...(excludeId ? { exclude_id: excludeId, exclude_children: true } : {}),
                                 ...(values.type ? { account_type: mapUiToDbType(values.type) } : {}),
                             }}
+                            transformItems={buildHierarchicalAccounts}
                             getOptionLabel={(option) => option ? (option.code ? `${option.code} - ${option.name}` : option.name) : ''}
-                            renderOption={(option) => (
-                                <div className="flex flex-col gap-0.5 w-full py-0.5 select-none">
-                                    <span className="truncate text-xs sm:text-sm font-normal text-brand-dark">
-                                        {option.name}
-                                    </span>
-                                    <div className="flex justify-end text-[11px] sm:text-xs font-normal text-text-workspace-dark">
-                                        <span>{option.code || option.id}</span>
+                            getOptionSearchText={(option) => option ? `${option.code ?? ''} ${option.name ?? ''}` : ''}
+                            renderOption={(option) => {
+                                const prefix = option.hierarchicalPrefix ?? (option.level > 0 ? `${'- '.repeat(option.level)}` : '');
+                                return (
+                                    <div className="flex flex-col gap-0.5 w-full py-0.5 select-none">
+                                        <span className="truncate text-xs sm:text-sm font-normal text-brand-dark">
+                                            {prefix}{option.name}
+                                        </span>
+                                        <div className="flex justify-end text-[11px] sm:text-xs font-normal text-text-workspace-dark">
+                                            <span>{option.code || option.id}</span>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                );
+                            }}
                             onSelect={(option) => {
                                 onChange('parentId', option.id);
                                 onChange('parentAccount', [option.name]);

@@ -13,6 +13,7 @@ export default function BackendLookupField({
     filterOption = null,
     renderOption = null,
     queryParams = {},
+    transformItems = null,
     onSelect,
     onRemove,
     emptyTitle,
@@ -54,7 +55,8 @@ export default function BackendLookupField({
         }
     };
 
-    const resolvedItems = filterOption ? items.filter(filterOption) : items;
+    const filteredItems = filterOption ? items.filter(filterOption) : items;
+    const resolvedItems = transformItems ? transformItems(filteredItems) : filteredItems;
 
     return (
         <div
