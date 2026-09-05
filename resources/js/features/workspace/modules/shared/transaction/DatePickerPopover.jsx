@@ -80,17 +80,25 @@ export default function DatePickerPopover({
 
     function handleDateClick(cell) {
         if (cell.isDisabled) return;
+        if (!cell.isCurrentMonth) {
+            setViewYear(cell.date.getFullYear());
+            setViewMonth(cell.date.getMonth());
+        }
         onSelect(cell.ymd);
     }
 
     function handlePresetClick(preset) {
         const date = preset.getDate();
         if (!date || isNaN(date.getTime())) return;
+        setViewYear(date.getFullYear());
+        setViewMonth(date.getMonth());
         const ymd = formatYmd(date);
         onSelect(ymd);
     }
 
     function handleSelectToday() {
+        setViewYear(today.getFullYear());
+        setViewMonth(today.getMonth());
         onSelect(formatYmd(today));
     }
 
@@ -130,11 +138,11 @@ export default function DatePickerPopover({
                                     key={idx}
                                     type="button"
                                     onClick={() => handlePresetClick(preset)}
-                                    className={`shrink-0 w-auto sm:w-full text-left px-3 py-2 text-[13px] rounded-[6px] transition cursor-pointer ${
-                                    isSelected
-                                        ? 'bg-[#e8f2fc] text-slate-900 font-medium border border-[#9dc2ec]'
-                                        : 'text-slate-700 hover:bg-slate-100/80 hover:text-slate-900 border border-transparent font-normal'
-                                }`.trim()}
+                                    className={`shrink-0 w-auto sm:w-full text-left px-3 py-2 text-[13px] text-slate-700 rounded-[6px] transition cursor-pointer ${
+                                        isSelected
+                                            ? 'bg-[#e8f2fc] font-medium border border-[#9dc2ec]'
+                                            : 'hover:bg-slate-100/80 hover:text-slate-800 border border-transparent font-normal'
+                                    }`.trim()}
                                 >
                                     {preset.label}
                                 </button>
