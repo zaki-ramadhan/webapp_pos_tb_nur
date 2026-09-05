@@ -97,7 +97,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
 
             <div className="flex-1 overflow-y-auto max-h-[280px] border border-table-row-border rounded-[4px] divide-y divide-table-row-border">
                 {loading && rows.length === 0 ? (
-                    <div className="p-4 text-center text-slate-500 text-xs">
+                    <div className="p-4 text-center text-text-workspace-dark text-xs font-normal">
                         Memuat data...
                     </div>
                 ) : error ? (
@@ -118,7 +118,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                         </button>
                     ))
                 ) : (
-                    <div className="p-4 text-center text-slate-400 text-xs italic">
+                    <div className="p-4 text-center text-text-workspace-dark text-xs font-normal">
                         Tidak ada data yang cocok.
                     </div>
                 )}
