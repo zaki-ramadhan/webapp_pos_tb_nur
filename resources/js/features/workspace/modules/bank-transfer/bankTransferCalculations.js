@@ -39,16 +39,11 @@ export function extractCleanAccountName(val) {
         const inner = val.name ?? val.accountName ?? val.label ?? val.title ?? val.code ?? '';
         return extractCleanAccountName(inner);
     }
-    const str = String(val).trim();
+    let str = String(val).trim();
     if (!str) return '';
-    const match = str.match(/^\[.*?\]\s*(.*)$/);
-    if (match) {
-        const extracted = match[1].trim();
-        if (extracted) return extracted;
-        const bracketContent = str.replace(/^\[(.*?)\]$/, '$1').trim();
-        return bracketContent || str;
-    }
-    return str;
+    str = str.replace(/^[\[\(].*?[\]\)]\s*/, '').trim();
+    str = str.replace(/^[0-9]+([.-][0-9]+)*\s*[-–—:]?\s*/, '').trim();
+    return str || String(val).trim();
 }
 
 export function buildTotals(values) {

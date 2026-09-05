@@ -31,12 +31,12 @@ export default function BankReconciliationMatchedRow({
             </div>
 
             {/* Right Column: REKENING KORAN BANK */}
-            <div className="border border-[#a8d4e7] rounded-[4px] bg-white p-3 flex flex-col justify-between min-h-[110px] h-full shadow-xs">
+            <div className="border border-[#72b1cb] rounded-[4px] bg-white p-3 flex flex-col justify-between min-h-[110px] h-full shadow-xs">
                 {excel ? (
                     <div className="flex flex-col h-full justify-between">
-                        <div className="flex justify-between items-center text-sm font-normal text-slate-900">
-                            <span>{formatDisplayDate(excel.date)}</span>
-                            <span className="font-normal text-slate-900 text-sm">
+                        <div className="flex justify-between items-start text-sm text-slate-900 gap-2">
+                            <span className="font-normal">{formatDisplayDate(excel.date)}</span>
+                            <span className="font-semibold text-base text-slate-900 whitespace-nowrap">
                                 {typeLabel} {formattedExcelAmt}
                             </span>
                         </div>

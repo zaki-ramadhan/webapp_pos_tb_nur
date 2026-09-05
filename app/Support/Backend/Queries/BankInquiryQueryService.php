@@ -419,6 +419,14 @@ class BankInquiryQueryService
         );
     }
 
+    protected function cleanDescription(string $description): string
+    {
+        $cleaned = preg_replace('/\[.*?\]\s*/', '', $description);
+        $cleaned = preg_replace('/\(\d+([.-]\d+)*\)\s*/', '', $cleaned);
+        $cleaned = preg_replace('/^\d+([.-]\d+)*\s*[-–—:]?\s*/', '', $cleaned);
+        return trim((string) preg_replace('/\s{2,}/', ' ', $cleaned));
+    }
+
     protected function makeLedgerRow(
         string $id,
         int $accountId,
@@ -429,6 +437,7 @@ class BankInquiryQueryService
         float $credit,
         CarbonInterface $date,
     ): array {
+        $description = $this->cleanDescription($description);
         $netAmount = $debit - $credit;
 
         $typeTranslations = [

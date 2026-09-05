@@ -29,18 +29,20 @@ export default function BankReconciliationHeader({ lastKnownBalance = '0', rawBa
             >
                 {hasData ? (
                     <>
-                        <span className="font-normal text-slate-900">
-                            Saldo &nbsp;
+                        <span className="font-normal text-slate-900 inline-flex items-center gap-3">
+                            <span>Saldo</span>
                             <span className={`font-semibold ${isNegative ? 'text-red-600' : 'text-slate-900'}`}>
                                 Rp {lastKnownBalance}
                             </span>
                         </span>
                         {unreconciledCount > 0 && (
-                            <span className="text-red-700 font-medium flex items-center gap-1.5 text-sm">
-                                <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
-                                    <path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
+                            <span className="text-red-700 font-normal flex items-center gap-1.5 text-sm">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 shrink-0">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                    <line x1="12" y1="9" x2="12" y2="13" />
+                                    <line x1="12" y1="17" x2="12.01" y2="17" />
                                 </svg>
-                                {unreconciledCount} data belum cocok
+                                <span>{unreconciledCount} data belum cocok</span>
                             </span>
                         )}
                     </>

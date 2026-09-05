@@ -10,6 +10,15 @@ export function formatDisplayDate(dateStr) {
     return str;
 }
 
+export function cleanAccountDescription(desc) {
+    if (!desc) return '';
+    return String(desc)
+        .replace(/\[.*?\]\s*/g, '')
+        .replace(/\(\d+([.-]\d+)*\)\s*/g, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+}
+
 export default function JurnalCard({ row }) {
     const debitNum = row.debit ? (parseFloat(String(row.debit).replace(/\./g, '').replace(/,/g, '.')) || 0) : 0;
     const creditNum = row.credit ? (parseFloat(String(row.credit).replace(/\./g, '').replace(/,/g, '.')) || 0) : 0;
@@ -21,26 +30,28 @@ export default function JurnalCard({ row }) {
     const displayDate = formatDisplayDate(row.date);
     const isClickable = Boolean(row.document_id && row.document_type);
     const docNumber = row.documentNumber || row.sourceNumber || row.document_number;
+    const rawDesc = row.description || row.transactionType || row.transaction_type;
+    const displayDesc = cleanAccountDescription(rawDesc);
 
     return (
         <div
             onClick={isClickable ? () => openSourceDocument(row) : undefined}
-            className={`border border-[#a8d4e7] rounded-[4px] overflow-hidden flex flex-col justify-between min-h-[110px] h-full shadow-xs ${
+            className={`border border-[#72b1cb] rounded-[4px] overflow-hidden flex flex-col justify-between min-h-[110px] h-full shadow-xs ${
                 isClickable ? 'cursor-pointer transition hover:brightness-[0.98]' : ''
             }`.trim()}
         >
-            <div className="bg-[#D3F4FF] p-3 flex-1 flex flex-col justify-between">
-                <div className="flex justify-between items-center text-sm font-normal text-slate-900">
-                    <span>{displayDate}</span>
-                    <span className="font-normal text-slate-900 text-sm">
+            <div className="bg-[#D3F4FF] px-3.5 pt-3 pb-2 flex-1 flex flex-col justify-start">
+                <div className="flex justify-between items-start text-sm text-slate-900 gap-2">
+                    <span className="font-normal">{displayDate}</span>
+                    <span className="font-semibold text-base text-slate-900 whitespace-nowrap">
                         {typeLabel} {formattedAmount}
                     </span>
                 </div>
-                <div className="text-sm font-normal text-slate-900 leading-snug text-left my-2">
-                    {row.description || row.transactionType || row.transaction_type}
+                <div className="text-sm font-normal text-slate-900 leading-snug text-left mt-1 line-clamp-2">
+                    {displayDesc}
                 </div>
             </div>
-            <div className="bg-[#F4FCFF] px-3 py-2.5">
+            <div className="bg-[#F4FCFF] px-3.5 py-2.5">
                 <div className={`text-sm text-left ${isClickable ? 'text-brand-blue font-normal hover:underline' : 'text-slate-900 font-normal'}`}>
                     {docNumber}
                 </div>
