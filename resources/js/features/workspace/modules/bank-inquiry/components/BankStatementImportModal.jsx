@@ -139,7 +139,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         onClick={handleConfirm}
                         className="inline-flex h-[40px] items-center justify-center rounded-[4px] bg-brand-blue hover:bg-brand-blue-hover px-6 text-sm font-medium text-white shadow-button-primary transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
-                        Lanjut Rekonsiliasi
+                        Mulai Rekonsiliasi
                     </button>
                 </div>
             }
