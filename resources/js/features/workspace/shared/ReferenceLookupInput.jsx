@@ -189,7 +189,7 @@ export default function ReferenceLookupInput({
                                             }}
                                             disabled={disabled}
                                             aria-label={`Hapus ${item}`}
-                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 text-text-chip-blue-dark hover:text-red-600 active:text-red-800 hover:bg-red-50 rounded-sm transition-colors cursor-pointer"
+                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 text-text-chip-blue-dark hover:text-red-600 active:text-red-800 transition-colors cursor-pointer"
                                         >
                                             <CloseIcon className="h-4 w-4" />
                                         </button>
@@ -246,7 +246,7 @@ export default function ReferenceLookupInput({
                                             }}
                                             disabled={disabled}
                                             aria-label={`Hapus ${item}`}
-                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 text-text-chip-blue-dark hover:text-red-600 active:text-red-800 hover:bg-red-50 rounded-sm transition-colors cursor-pointer"
+                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 text-text-chip-blue-dark hover:text-red-600 active:text-red-800 transition-colors cursor-pointer"
                                         >
                                             <CloseIcon className="h-4 w-4" />
                                         </button>
