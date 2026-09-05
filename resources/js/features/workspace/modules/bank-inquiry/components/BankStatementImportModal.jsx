@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import ModalBase from '@/components/ui/ModalBase';
-import { CloseIcon } from '@/features/workspace/shared/Icons';
+import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import StatementDropzone from './StatementDropzone';
 import StatementFileProgressCard from './StatementFileProgressCard';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
@@ -13,7 +12,6 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
     const [error, setError] = useState('');
     const [progress, setProgress] = useState(0);
     const [showPreview, setShowPreview] = useState(false);
-    const [showHelp, setShowHelp] = useState(false);
     const progressTimerRef = useRef(null);
 
     useEffect(() => {
@@ -96,43 +94,48 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
     };
 
     return (
-        <ModalBase
+        <WorkspaceDialog
             open={open}
-            onBackdropClick={handleClose}
-            className="bg-slate-900/40 backdrop-blur-xs p-3 sm:p-5"
-            panelClassName="max-w-[560px] rounded-[24px] sm:rounded-[28px] bg-[#F8F7FF] border border-[#EBEBF8] p-5 sm:p-7 shadow-2xl overflow-hidden"
-        >
-            <div className="flex flex-col gap-5 sm:gap-6">
-                {/* Header */}
-                <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                        <h2 className="text-lg sm:text-xl font-medium text-slate-800 truncate">
-                            Unggah Rekening Koran
-                        </h2>
-                        {bankName ? (
-                            <span
-                                className="hidden sm:inline-flex items-center rounded-full bg-white px-2.5 py-0.5 text-xs font-normal text-indigo-700 border border-[#ECEBFA] truncate max-w-[200px]"
-                                title={bankName}
-                            >
-                                {bankName}
-                            </span>
-                        ) : null}
-                    </div>
-
+            onClose={handleClose}
+            title="Impor Rekening Koran (Bank Statement)"
+            maxWidthClassName="max-w-[660px]"
+            contentClassName="bg-white p-5 sm:p-6"
+            footer={
+                <div className="flex items-center justify-between gap-3 border-t border-slate-200 pt-3">
                     <button
                         type="button"
                         onClick={handleClose}
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#9B99DA] hover:bg-white hover:text-slate-700 transition cursor-pointer"
-                        title="Tutup dialog"
+                        className="rounded-[4px] border border-slate-300 bg-white px-4 py-2 text-xs font-normal text-slate-700 transition hover:bg-slate-50 cursor-pointer"
                     >
-                        <CloseIcon className="h-4 w-4" strokeWidth={2.2} />
+                        Batal
+                    </button>
+                    <button
+                        type="button"
+                        disabled={!parsedData || !parsedData.rows?.length || loading}
+                        onClick={handleConfirm}
+                        className="inline-flex items-center justify-center rounded-[4px] bg-brand-blue hover:bg-brand-blue-hover px-4 py-2 text-xs font-normal text-white shadow-xs transition active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                    >
+                        Lanjutkan Rekonsiliasi ({parsedData?.rows?.length || 0} Mutasi)
                     </button>
                 </div>
+            }
+        >
+            <div className="flex flex-col gap-4">
+                {bankName ? (
+                    <div className="flex items-center gap-2 rounded-[4px] bg-blue-50 px-3 py-2 border border-blue-200 text-xs text-blue-900">
+                        <span className="font-medium text-blue-800">Kas/Bank Sasaran:</span>
+                        <span className="rounded bg-white px-2 py-0.5 font-normal border border-blue-200 text-blue-950">{bankName}</span>
+                    </div>
+                ) : null}
 
-                {/* Dropzone */}
+                <p className="text-xs text-slate-600 leading-relaxed">
+                    Unggah berkas mutasi rekening koran dari internet banking (BCA, Mandiri, BRI, BNI, dll) dalam format <strong>.CSV</strong> atau <strong>.XLSX</strong> untuk dicocokkan otomatis dengan buku bank sistem.
+                </p>
+
+                {/* Dropzone Area */}
                 <StatementDropzone onFileSelect={handleFileSelect} disabled={loading} />
 
-                {/* File Progress Card */}
+                {/* File Progress Card (di bawah dropzone) */}
                 {file ? (
                     <StatementFileProgressCard
                         file={file}
@@ -144,13 +147,13 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                     />
                 ) : null}
 
-                {/* Optional Expandable Preview Table */}
+                {/* Pratinjau Mutasi jika sudah terbaca */}
                 {parsedData && parsedData.rows?.length ? (
-                    <div className="flex flex-col gap-2 rounded-[16px] bg-white p-3.5 border border-[#ECEBFA]">
+                    <div className="flex flex-col gap-2 rounded-[4px] border border-slate-200 bg-white p-3">
                         <button
                             type="button"
                             onClick={() => setShowPreview((prev) => !prev)}
-                            className="flex items-center justify-between text-xs font-medium text-indigo-700 hover:text-indigo-900 cursor-pointer"
+                            className="flex items-center justify-between text-xs font-medium text-brand-blue hover:underline cursor-pointer"
                         >
                             <span>
                                 {showPreview ? 'Sembunyikan Pratinjau Mutasi' : `Lihat Pratinjau Mutasi (${parsedData.rows.length} Baris)`}
@@ -161,21 +164,21 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         </button>
 
                         {showPreview ? (
-                            <div className="max-h-[190px] overflow-y-auto border border-slate-100 rounded-lg mt-1">
+                            <div className="max-h-[190px] overflow-y-auto border border-slate-200 rounded-[4px] mt-1">
                                 <table className="w-full text-left text-xs border-collapse">
-                                    <thead className="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200">
+                                    <thead className="bg-slate-100 text-slate-900 sticky top-0 border-b border-slate-200">
                                         <tr>
-                                            <th className="px-2.5 py-1.5 font-medium">Tanggal</th>
-                                            <th className="px-2.5 py-1.5 font-medium">Keterangan</th>
-                                            <th className="px-2.5 py-1.5 font-medium text-right">Nominal</th>
-                                            <th className="px-2.5 py-1.5 font-medium text-center">Tipe</th>
+                                            <th className="px-2.5 py-1.5 font-semibold">Tgl</th>
+                                            <th className="px-2.5 py-1.5 font-semibold">Keterangan</th>
+                                            <th className="px-2.5 py-1.5 font-semibold text-right">Nominal</th>
+                                            <th className="px-2.5 py-1.5 font-semibold text-center">Tipe</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100 text-slate-700">
+                                    <tbody className="divide-y divide-slate-100 text-slate-800">
                                         {parsedData.rows.slice(0, 5).map((row, idx) => (
-                                            <tr key={row.id || idx} className="hover:bg-slate-50/70">
+                                            <tr key={row.id || idx} className="hover:bg-slate-50">
                                                 <td className="px-2.5 py-1.5 whitespace-nowrap text-[11px]">{row.date}</td>
-                                                <td className="px-2.5 py-1.5 truncate max-w-[200px] text-[11px]" title={row.description}>
+                                                <td className="px-2.5 py-1.5 truncate max-w-[260px] text-[11px]" title={row.description}>
                                                     {row.description}
                                                 </td>
                                                 <td className="px-2.5 py-1.5 whitespace-nowrap text-right font-medium text-[11px]">
@@ -200,56 +203,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         ) : null}
                     </div>
                 ) : null}
-
-                {/* Help tip popover / box */}
-                {showHelp ? (
-                    <div className="rounded-[16px] bg-white p-3.5 border border-indigo-100 text-xs text-slate-700 space-y-1.5 animate-fadeIn">
-                        <div className="font-semibold text-indigo-900">Format Rekening Koran yang Didukung:</div>
-                        <ul className="list-disc pl-4 space-y-0.5 text-slate-600">
-                            <li><strong>e-Statement BRImo</strong> (.csv/.xlsx) - otomatis mengenali format transaksi BRI.</li>
-                            <li><strong>BCA KlikBCA Bisnis / Individu</strong> (.csv/.xlsx) dengan kolom Tanggal, Keterangan, Mutasi, Saldo.</li>
-                            <li><strong>Mandiri Kopra / Livin</strong> &amp; <strong>BNI Direct</strong>.</li>
-                            <li>Format standar dengan kolom Tanggal, Deskripsi, Debet / Kredit.</li>
-                        </ul>
-                    </div>
-                ) : null}
-
-                {/* Footer */}
-                <div className="flex items-center justify-between gap-3 pt-1">
-                    <button
-                        type="button"
-                        onClick={() => setShowHelp((prev) => !prev)}
-                        className={`h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-[14px] bg-white border border-[#E7E6F8] shadow-2xs flex items-center justify-center text-[#736AE9] hover:bg-slate-50 transition cursor-pointer ${
-                            showHelp ? 'bg-indigo-50 border-indigo-300' : ''
-                        }`}
-                        title="Panduan format file rekening koran"
-                    >
-                        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                            <path d="M12 17h.01" />
-                        </svg>
-                    </button>
-
-                    <div className="flex items-center gap-2.5 sm:gap-3">
-                        <button
-                            type="button"
-                            onClick={handleClose}
-                            className="rounded-[14px] bg-white border border-[#E7E6F8] text-[#655CE5] hover:bg-indigo-50/40 px-5 sm:px-6 py-2.5 text-sm font-medium transition cursor-pointer shadow-2xs"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            type="button"
-                            disabled={!parsedData || !parsedData.rows?.length || loading}
-                            onClick={handleConfirm}
-                            className="rounded-[14px] bg-gradient-to-r from-[#7B75F7] to-[#645CEB] hover:from-[#726BF5] hover:to-[#5B53E3] text-white px-6 sm:px-7 py-2.5 text-sm font-medium shadow-md shadow-indigo-400/25 active:scale-[0.98] transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {parsedData?.rows?.length ? `Lanjutkan (${parsedData.rows.length} Mutasi)` : 'Lanjutkan'}
-                        </button>
-                    </div>
-                </div>
             </div>
-        </ModalBase>
+        </WorkspaceDialog>
     );
 }
