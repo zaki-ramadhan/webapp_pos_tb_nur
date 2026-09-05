@@ -29,7 +29,7 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
                 return (
                     <div
                         key={item.label || index}
-                        className="flex-1 min-w-0 px-3.5 py-2 flex flex-col justify-between"
+                        className="flex-1 min-w-0 px-3.5 sm:px-4 py-2.5 sm:py-3 min-h-[68px] sm:min-h-[76px] flex flex-col justify-between"
                     >
                         <div className="text-xs sm:text-sm text-brand-dark truncate" title={item.label}>
                             {item.label}
