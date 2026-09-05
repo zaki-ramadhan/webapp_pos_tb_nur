@@ -15,6 +15,7 @@ export default function SelectField({
     selectClassName = '',
     iconClassName = '',
     messageClassName = '',
+    options: rawOptions,
     children,
     onChange,
     placeholder = '',
@@ -48,9 +49,27 @@ export default function SelectField({
     const [localValue, setLocalValue] = useState(defaultValue ?? '');
     const currentValue = isControlled ? value : localValue;
 
-  // Ambil opsi dari children
-
     const options = useMemo(() => {
+        if (Array.isArray(rawOptions) && rawOptions.length > 0) {
+            return rawOptions.map((opt) => {
+                if (typeof opt === 'object' && opt !== null) {
+                    const optVal = opt.value !== undefined ? String(opt.value) : (opt.id !== undefined ? String(opt.id) : '');
+                    const optLabel = opt.label !== undefined ? String(opt.label) : (opt.name !== undefined ? String(opt.name) : optVal);
+                    return {
+                        value: optVal,
+                        label: optLabel,
+                        disabled: Boolean(opt.disabled),
+                    };
+                }
+                const str = String(opt ?? '');
+                return {
+                    value: str,
+                    label: str,
+                    disabled: false,
+                };
+            });
+        }
+
         const list = [];
         const traverse = (nodes) => {
             React.Children.forEach(nodes, (node) => {
@@ -73,7 +92,7 @@ export default function SelectField({
         };
         traverse(children);
         return list;
-    }, [children]);
+    }, [rawOptions, children]);
 
     const hasEmptyOption = useMemo(() => {
         return options.some((opt) => String(opt.value) === '');
@@ -218,14 +237,18 @@ export default function SelectField({
             <select
                 id={id ? `${id}-select` : undefined}
                 name={props.name}
-                value={currentValue}
+                value={effectiveValue}
                 disabled={disabled}
                 onChange={(e) => handleSelect(e.target.value)}
                 className="sr-only"
                 tabIndex={-1}
                 aria-hidden="true"
             >
-                {children}
+                {children ?? options.map((opt) => (
+                    <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+                        {opt.label}
+                    </option>
+                ))}
             </select>
 
             <div

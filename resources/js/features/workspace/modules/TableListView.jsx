@@ -84,7 +84,9 @@ export default function TableListView({
     const [keyword, setKeyword] = useState(table.search ?? table.pagination?.search ?? '');
     const [filters, setFilters] = useState(() =>
         (table.filters ?? []).reduce((result, filter) => {
-            result[filter.id] = filter.options?.[0]?.value ?? 'all';
+            const firstOpt = filter.options?.[0];
+            const firstVal = typeof firstOpt === 'object' && firstOpt !== null ? (firstOpt.value ?? firstOpt.id) : firstOpt;
+            result[filter.id] = firstVal ?? 'all';
             return result;
         }, {}),
     );

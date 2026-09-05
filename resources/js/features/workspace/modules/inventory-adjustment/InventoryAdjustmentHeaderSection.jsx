@@ -21,7 +21,11 @@ export default function InventoryAdjustmentHeader({ config = {}, values, setValu
     const isPriceAdjustment = pageId === 'price-adjustment';
     const labels = config.labels ?? {};
     const numberingOptions = config.numberingOptions ?? ['Penyesuaian Persediaan', 'Manual'];
-    const adjustmentTypeOptions = config.adjustmentTypeOptions ?? ['Pengurangan Stok', 'Penambahan Stok', 'Penyesuaian Nilai'];
+    const adjustmentTypeOptions = config.adjustmentTypeOptions ?? (
+        isPriceAdjustment
+            ? ['Harga', 'Diskon (%)']
+            : ['Pengurangan Stok', 'Penambahan Stok', 'Penyesuaian Nilai']
+    );
 
     if (isPriceAdjustment) {
         return (

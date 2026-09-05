@@ -19,7 +19,7 @@ import useTableSort from '@/features/workspace/shared/useTableSort';
 
 function buildInitialValues(config) {
     return (config.controls ?? []).reduce((result, control) => {
-        result[control.id] = control.value ?? '';
+        result[control.id] = control.value ?? (typeof control.options?.[0] === 'object' ? control.options[0]?.value : control.options?.[0]) ?? '';
         return result;
     }, {});
 }

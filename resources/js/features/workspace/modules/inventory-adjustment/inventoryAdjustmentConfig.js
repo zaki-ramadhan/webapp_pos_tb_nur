@@ -92,16 +92,25 @@ const baseInventoryAdjustmentConfig = {
 
 export function buildInventoryAdjustmentConfig(page = {}) {
     const isNew = page?.mode !== 'detail';
+    const isPriceAdjustment = page?.id === 'price-adjustment';
 
     return {
         ...baseInventoryAdjustmentConfig,
         id: page?.id,
-        title: isNew ? baseInventoryAdjustmentConfig.newTitle : (page?.label || baseInventoryAdjustmentConfig.title),
-        tabLabel: isNew ? 'Penyesuaian Persediaan' : (page?.tabLabel || page?.label || baseInventoryAdjustmentConfig.title),
+        adjustmentTypeOptions: isPriceAdjustment
+            ? ['Harga', 'Diskon (%)']
+            : baseInventoryAdjustmentConfig.adjustmentTypeOptions,
+        title: isNew
+            ? (isPriceAdjustment ? 'Penyesuaian Harga Baru' : baseInventoryAdjustmentConfig.newTitle)
+            : (page?.label || (isPriceAdjustment ? 'Penyesuaian Harga' : baseInventoryAdjustmentConfig.title)),
+        tabLabel: isNew
+            ? (isPriceAdjustment ? 'Penyesuaian Harga' : 'Penyesuaian Persediaan')
+            : (page?.tabLabel || page?.label || (isPriceAdjustment ? 'Penyesuaian Harga' : baseInventoryAdjustmentConfig.title)),
         isNew,
         dockActions: isNew ? createDockActions : detailDockActions,
         formDefaults: {
             ...draftRecord,
+            adjustmentType: isPriceAdjustment ? 'Harga' : 'Pengurangan Stok',
             date: page?.date || draftRecord.date,
         },
     };

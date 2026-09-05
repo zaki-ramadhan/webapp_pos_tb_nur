@@ -17,6 +17,10 @@ export default function PurchaseInvoiceView({ page, mode, activeLevel2Tab, level
                 },
                 showPurchaseOrderNumber: false,
                 numberingOptions: ['Pesanan Pembelian'],
+                draft: {
+                    ...baseConfig.draft,
+                    numberingType: 'Pesanan Pembelian',
+                },
                 headerSelectLookupField: null,
                 takeOptions: [
                     'Barang perlu dipesan',

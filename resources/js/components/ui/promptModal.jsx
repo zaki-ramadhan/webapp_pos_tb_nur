@@ -12,7 +12,7 @@ function PromptModalContainer({ title, fields, resolve, onDestroy, showDelete })
     const [values, setValues] = useState(() => {
         const initial = {};
         fields.forEach(f => {
-            initial[f.name] = f.defaultValue ?? '';
+            initial[f.name] = f.defaultValue ?? (f.type === 'select' ? (f.options?.[0]?.value ?? f.options?.[0] ?? '') : '');
         });
         return initial;
     });
