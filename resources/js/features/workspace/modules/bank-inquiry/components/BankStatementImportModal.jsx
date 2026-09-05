@@ -3,6 +3,7 @@ import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import {
     DataTable,
     DataTableHeader,
+    DataTableHead,
     DataTableBody,
     DataTableRow,
     DataTableCell,
@@ -243,6 +244,12 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         <DataTable wrapperClassName="max-h-[280px] overflow-auto">
                             <DataTableHeader>
                                 <DataTableRow>
+                                    <DataTableHead
+                                        className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 py-2 text-center text-sm font-normal text-white whitespace-nowrap"
+                                        style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
+                                    >
+                                        No.
+                                    </DataTableHead>
                                     <SortableTableHeaderCell
                                         label="Tanggal"
                                         align="left"
@@ -279,10 +286,13 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                             <DataTableBody>
                                 {sortedRows.slice(0, 10).map((row, idx) => (
                                     <DataTableRow key={row.id || idx} className="hover:bg-slate-50">
+                                        <DataTableCell className="w-[48px] px-2.5 py-2 text-center text-sm font-normal text-slate-500 whitespace-nowrap">
+                                            {idx + 1}
+                                        </DataTableCell>
                                         <DataTableCell className="w-[120px] px-3 py-2 text-left text-sm font-normal text-slate-800 whitespace-nowrap">
                                             {formatDisplayDate(row.date)}
                                         </DataTableCell>
-                                        <DataTableCell className="px-3 py-2 text-left text-sm font-normal text-slate-800" title={row.description}>
+                                        <DataTableCell className="px-3 py-2 text-left text-sm font-normal text-slate-800">
                                             {row.description}
                                         </DataTableCell>
                                         <DataTableCell className="w-[140px] px-3 py-2 text-right text-sm whitespace-nowrap font-normal">
@@ -313,7 +323,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         </DataTable>
 
                         <p className="text-sm font-normal text-slate-600 text-right pt-0.5">
-                            Menampilkan {Math.min(10, parsedData.rows.length)}/{parsedData.rows.length} transaksi mutasi
+                            Menampilkan {Math.min(10, parsedData.rows.length)}/{parsedData.rows.length} transaksi
                         </p>
                     </div>
                 ) : null}
