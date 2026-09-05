@@ -5,8 +5,10 @@ import { LookupChip } from '@/features/workspace/shared/LookupPrimitives';
 
 function extractCleanAccountName(label) {
     if (!label) return '';
-    const match = label.match(/^\[.*?\]\s*(.*)$/);
-    return match ? match[1].trim() : label.trim();
+    let str = String(label).trim();
+    str = str.replace(/^[\[\(].*?[\]\)]\s*/, '').trim();
+    str = str.replace(/^[0-9]+([.-][0-9]+)*\s*[-–—:]?\s*/, '').trim();
+    return str || label.trim();
 }
 
 export default function AccountLookupSearchInput({

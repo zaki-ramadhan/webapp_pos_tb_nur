@@ -26,7 +26,7 @@ export function buildBankTransferPayload(values) {
     const defaultNotes = `Transfer dari ${fromCleanName} ke ${toCleanName}`;
     const resolvedNotes = String(values.notes ?? '').trim() ? values.notes.trim() : defaultNotes;
     const transferLine = {
-        description: `Transfer ke ${toBankLabel ?? 'kas/bank tujuan'}`,
+        description: `Transfer ke ${toCleanName || 'kas/bank tujuan'}`,
         account_id: values.__toAccountId ?? null,
         total_amount: transferAmount,
         sort_order: 0,
