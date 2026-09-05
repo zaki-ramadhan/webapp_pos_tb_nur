@@ -88,27 +88,29 @@ export default function SalesDocumentFooter({ values, setValues, isDetail, pageI
         { id: 'total', label: 'Total', value: buildCurrencyValue(values.total), align: 'right' },
     ];
     const gridClassName =
-        footerParts.length >= 5
-            ? 'grid-cols-1 sm:grid-cols-3 md:grid-cols-5'
-            : footerParts.length === 4
-              ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4'
-              : footerParts.length === 3
-                ? 'grid-cols-1 sm:grid-cols-3'
-                : footerParts.length === 2
-                  ? 'grid-cols-1 sm:grid-cols-2'
-                  : 'grid-cols-1';
+        footerParts.length >= 6
+            ? 'grid-cols-1 sm:grid-cols-3 md:grid-cols-6'
+            : footerParts.length === 5
+              ? 'grid-cols-1 sm:grid-cols-3 md:grid-cols-5'
+              : footerParts.length === 4
+                ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4'
+                : footerParts.length === 3
+                  ? 'grid-cols-1 sm:grid-cols-3'
+                  : footerParts.length === 2
+                    ? 'grid-cols-1 sm:grid-cols-2'
+                    : 'grid-cols-1';
 
     const widthClassName =
         footerParts.length >= 6
-            ? 'w-full sm:w-[900px] xl:w-[1020px] 2xl:w-[1140px] max-w-full'
+            ? 'w-full sm:w-[1020px] xl:w-[1140px] 2xl:w-[1260px] max-w-full'
             : footerParts.length === 5
-              ? 'w-full sm:w-[780px] xl:w-[880px] 2xl:w-[980px] max-w-full'
+              ? 'w-full sm:w-[950px] xl:w-[1050px] 2xl:w-[1150px] max-w-full'
               : footerParts.length === 4
-                ? 'w-full sm:w-[640px] xl:w-[720px] 2xl:w-[800px] max-w-full'
+                ? 'w-full sm:w-[880px] xl:w-[980px] 2xl:w-[1080px] max-w-full'
                 : footerParts.length === 3
-                  ? 'w-full sm:w-[540px] xl:w-[600px] 2xl:w-[680px] max-w-full'
+                  ? 'w-full sm:w-[760px] xl:w-[840px] 2xl:w-[920px] max-w-full'
                   : footerParts.length === 2
-                    ? 'w-full sm:w-[360px] xl:w-[400px] 2xl:w-[460px] max-w-full'
+                    ? 'w-full sm:w-[520px] xl:w-[580px] 2xl:w-[640px] max-w-full'
                     : 'w-full sm:w-[264px] xl:w-[290px] 2xl:w-[320px] max-w-full';
 
     return (

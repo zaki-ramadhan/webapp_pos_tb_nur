@@ -13,10 +13,12 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
             : count === 2
             ? 'w-full sm:w-[520px] xl:w-[580px] 2xl:w-[640px]'
             : count === 3
-            ? 'w-full sm:w-[780px] xl:w-[870px] 2xl:w-[960px]'
+            ? 'w-full sm:w-[760px] xl:w-[840px] 2xl:w-[920px]'
             : count === 4
-            ? 'w-full sm:w-[960px] xl:w-[1080px] 2xl:w-[1200px]'
-            : 'w-full sm:w-auto max-w-full';
+            ? 'w-full sm:w-[880px] xl:w-[980px] 2xl:w-[1080px]'
+            : count === 5
+            ? 'w-full sm:w-[950px] xl:w-[1050px] 2xl:w-[1150px]'
+            : 'w-full sm:w-[1020px] xl:w-[1140px] 2xl:w-[1260px]';
 
     return (
         <div
