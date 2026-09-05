@@ -26,7 +26,7 @@ class SecuritySeeder extends Seeder
             ['group_key' => 'company_info', 'setting_key' => 'accounting-period', 'value' => 'Januari - Desember', 'label' => 'Periode Akuntansi'],
             ['group_key' => 'company_info', 'setting_key' => 'currency', 'value' => 'Indonesian Rupiah', 'label' => 'Mata Uang Dasar'],
             ['group_key' => 'company_info', 'setting_key' => 'street', 'value' => 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi', 'label' => 'Jalan'],
-            ['group_key' => 'company_info', 'setting_key' => 'city', 'value' => 'Kabupaten Cirebon', 'label' => 'Kota'],
+            ['group_key' => 'company_info', 'setting_key' => 'city', 'value' => 'Kab. Cirebon', 'label' => 'Kota'],
             ['group_key' => 'company_info', 'setting_key' => 'province', 'value' => 'Jawa Barat', 'label' => 'Provinsi'],
             ['group_key' => 'company_info', 'setting_key' => 'postal-code', 'value' => '45165', 'label' => 'Kode Pos'],
             ['group_key' => 'company_info', 'setting_key' => 'country', 'value' => 'Indonesia', 'label' => 'Negara'],
