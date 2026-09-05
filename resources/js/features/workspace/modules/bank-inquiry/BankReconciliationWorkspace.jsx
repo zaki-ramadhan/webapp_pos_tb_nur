@@ -4,7 +4,7 @@ import { TransactionDateInput } from '@/features/workspace/modules/shared/Transa
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { showSuccessToast, showErrorToast, showLoadingToast, showWarningToast, dismissToast } from '@/components/feedback/toast';
 import axios from 'axios';
-import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import Pagination from '@/components/ui/Pagination';
 
 import JurnalCard from './components/JurnalCard';
@@ -430,56 +430,33 @@ export default function BankReconciliationWorkspace({
             </div>
 
             {/* Confirmation Dialog */}
-            <WorkspaceDialog
+            <ConfirmationModal
                 open={confirmOpen}
-                onClose={() => setConfirmOpen(false)}
+                onClose={() => {
+                    setConfirmOpen(false);
+                    setSelectedRow(null);
+                }}
+                onConfirm={async () => {
+                    if (selectedRow) {
+                        const rowToReconcile = selectedRow;
+                        setConfirmOpen(false);
+                        setSelectedRow(null);
+                        await handleReconcileSingle(
+                            rowToReconcile.documentNumber || rowToReconcile.sourceNumber || rowToReconcile.document_number,
+                            true,
+                            rowToReconcile.account_id
+                        );
+                    }
+                }}
                 title="Konfirmasi"
+                message="Apakah histori ini ada tercetak dalam rekening koran?"
+                confirmLabel="Ya"
+                cancelLabel="Batal"
+                actionsAlign="end"
+                hideCloseButton={true}
+                iconVariant="warning"
                 maxWidthClassName="max-w-[440px]"
-                contentClassName="bg-white p-6"
-            >
-                <div className="flex items-start gap-4">
-                    {/* Yellow Exclamation Warning Icon */}
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-500">
-                        <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-                            <path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
-                        </svg>
-                    </div>
-
-                    {/* Message */}
-                    <div className="flex-1 text-left">
-                        <p className="text-sm font-semibold text-rose-800 mt-1 leading-relaxed">
-                            Apakah histori ini ada tercetak dalam rekening koran?
-                        </p>
-                    </div>
-                </div>
-
-                {/* Footer Buttons */}
-                <div className="mt-6 flex justify-end gap-2.5">
-                    <button
-                        type="button"
-                        onClick={() => setConfirmOpen(false)}
-                        className="inline-flex items-center justify-center rounded-[4px] border border-slate-300 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 transition active:scale-[0.98] cursor-pointer"
-                    >
-                        Batal
-                    </button>
-                    <button
-                        type="button"
-                        onClick={async () => {
-                            if (selectedRow) {
-                                setConfirmOpen(false);
-                                await handleReconcileSingle(
-                                    selectedRow.documentNumber || selectedRow.sourceNumber || selectedRow.document_number,
-                                    true,
-                                    selectedRow.account_id
-                                );
-                            }
-                        }}
-                        className="inline-flex items-center justify-center rounded-[4px] bg-[#1c558c] hover:bg-[#154370] px-4 py-2 text-xs font-semibold text-white shadow-sm transition active:scale-[0.98] cursor-pointer"
-                    >
-                        Ya
-                    </button>
-                </div>
-            </WorkspaceDialog>
+            />
 
             {/* Bank Statement Import Modal */}
             <BankStatementImportModal
