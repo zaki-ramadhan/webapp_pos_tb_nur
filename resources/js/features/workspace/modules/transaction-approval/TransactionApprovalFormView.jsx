@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
@@ -98,10 +99,13 @@ export default function TransactionApprovalFormView({
     const [saving, setSaving] = useState(false);
     const [status, setStatus] = useState({ tone: '', message: '' });
 
-    useEffect(() => {
-        setValues(initialValues);
-        setStatus({ tone: '', message: '' });
-    }, [initialValues]);
+    useFormValuesSync({
+        initialValues,
+        recordId: detailRecordId,
+        values,
+        setValues,
+        onSync: () => setStatus({ tone: '', message: '' }),
+    });
 
     const isDirty = useMemo(() => (
         values.ruleName !== initialValues.ruleName ||

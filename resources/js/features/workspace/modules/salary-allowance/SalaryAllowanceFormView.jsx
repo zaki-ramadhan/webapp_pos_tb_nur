@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import SelectField from '@/components/ui/SelectField';
@@ -42,16 +42,6 @@ export default function SalaryAllowanceFormView({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
-    useEffect(() => {
-        setName(entry.name ?? '');
-        setType(entry.type || config.typeOptions[0] || '');
-        setExpenseAccount(entry.expenseAccount ?? '');
-        setExpenseAccountId(entry.expenseAccountId ?? null);
-        setActive(!entry.inactive);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
-    }, [config.typeOptions, entry.expenseAccount, entry.expenseAccountId, entry.inactive, entry.name, entry.type]);
-
     const initialComparable = useMemo(
         () => ({
             name: entry.name ?? '',
@@ -80,6 +70,30 @@ export default function SalaryAllowanceFormView({
     ]);
     const isDirty = !areComparableValuesEqual(initialComparable, currentComparable);
     const resolvedSaveDisabled = Boolean(validationMessage) || saving;
+
+    const prevEntryIdRef = useRef(entry?.id);
+    const isDirtyRef = useRef(false);
+    isDirtyRef.current = isDirty;
+
+    useEffect(() => {
+        const idChanged = entry?.id !== prevEntryIdRef.current;
+        if (idChanged) {
+            prevEntryIdRef.current = entry?.id;
+            setName(entry.name ?? '');
+            setType(entry.type || config.typeOptions[0] || '');
+            setExpenseAccount(entry.expenseAccount ?? '');
+            setExpenseAccountId(entry.expenseAccountId ?? null);
+            setActive(!entry.inactive);
+            setStatus({ tone: '', message: '' });
+            setDeleteConfirmationOpen(false);
+        } else if (!isDirtyRef.current) {
+            setName(entry.name ?? '');
+            setType(entry.type || config.typeOptions[0] || '');
+            setExpenseAccount(entry.expenseAccount ?? '');
+            setExpenseAccountId(entry.expenseAccountId ?? null);
+            setActive(!entry.inactive);
+        }
+    }, [config.typeOptions, entry.expenseAccount, entry.expenseAccountId, entry.inactive, entry.name, entry.type, entry?.id]);
 
 
 
