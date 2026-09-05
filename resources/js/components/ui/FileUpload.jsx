@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { CloudUpload, CheckCircle2, AlertCircle, Trash2 } from 'lucide-react';
+import { CloudUpload, CheckCircle2, AlertCircle, Trash2, File } from 'lucide-react';
 
 export function getReadableFileSize(bytes) {
     if (!bytes || bytes === 0) return '0 B';
@@ -21,11 +21,11 @@ export function FileFormatBadgeIcon({ ext = 'csv', className = '' }) {
     }
 
     return (
-        <div className={`relative flex h-10 w-8 shrink-0 flex-col items-center justify-end rounded-xs border border-slate-200 bg-white p-0.5 shadow-2xs ${className}`}>
-            {/* Dog-ear folded corner */}
-            <div className="absolute top-0 right-0 h-2 w-2 rounded-bl-xs border-b border-l border-slate-200 bg-slate-100" />
-            {/* Extension Badge */}
-            <span className={`w-full truncate text-center text-[8px] font-bold rounded-[2px] py-0.5 leading-none tracking-tight ${badgeBg}`}>
+        <div className={`relative flex items-center justify-center shrink-0 w-9 h-10 ${className}`}>
+            <File className="h-9 w-9 text-slate-300 stroke-[1.5]" />
+            <span
+                className={`absolute -bottom-0.5 -left-1.5 px-1 py-0.5 text-[9px] font-bold tracking-tight rounded-[3px] shadow-xs leading-none select-none ${badgeBg}`}
+            >
                 {cleanExt.slice(0, 4)}
             </span>
         </div>
@@ -87,12 +87,27 @@ export function FileUploadDropZone({
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`flex flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center transition cursor-pointer select-none ${
+            className={`group relative flex flex-col items-center justify-center rounded-xl p-6 text-center transition cursor-pointer select-none ${
                 isDragging
-                    ? 'border-brand-blue bg-blue-50/50'
-                    : 'border-slate-200 bg-white hover:border-brand-blue hover:bg-slate-50/50'
+                    ? 'bg-blue-50/50 text-brand-blue'
+                    : 'bg-white text-slate-300 hover:text-brand-blue hover:bg-slate-50/50'
             } ${isDisabled ? 'opacity-60 cursor-not-allowed pointer-events-none' : ''} ${className}`}
         >
+            {/* SVG border with custom elongated dashed lines */}
+            <svg className="absolute inset-0 h-full w-full pointer-events-none rounded-xl overflow-visible">
+                <rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    rx="12"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeDasharray="9 6"
+                />
+            </svg>
+
             <input
                 ref={fileInputRef}
                 type="file"
@@ -101,8 +116,8 @@ export function FileUploadDropZone({
                 disabled={isDisabled}
                 className="hidden"
             />
-            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-2xs text-slate-500">
-                <CloudUpload className="h-5 w-5 text-slate-600" />
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-2xs text-slate-500 group-hover:border-brand-blue/40 group-hover:text-brand-blue transition-colors">
+                <CloudUpload className="h-5 w-5" />
             </div>
             <p className="text-sm text-slate-700">
                 <span className="font-semibold text-brand-blue hover:underline">Klik untuk unggah</span> atau seret dan lepas
@@ -146,22 +161,22 @@ export function FileUploadListItemProgressBar({
 
                 {/* Info & progress section */}
                 <div className="min-w-0 flex-1 flex flex-col gap-1">
-                    <p className="text-sm font-medium text-slate-800 truncate" title={name}>
+                    <p className="text-sm font-medium text-slate-700 truncate" title={name}>
                         {name}
                     </p>
 
                     {failed ? (
                         <div className="flex flex-col">
-                            <div className="flex items-center gap-1.5 text-xs">
-                                <span className="text-slate-600">{formattedSize}</span>
-                                <span className="text-slate-300">•</span>
-                                <div className="flex items-center gap-1 text-red-600 font-medium">
-                                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                                    <span>Gagal</span>
+                            <div className="flex items-center gap-2 text-xs">
+                                <span className="text-slate-500">{formattedSize}</span>
+                                <span className="h-3 w-px bg-slate-200 self-center" />
+                                <div className="flex items-center gap-1.5 text-red-600 font-medium text-sm">
+                                    <AlertCircle className="h-4.5 w-4.5 shrink-0" />
+                                    <span>Upload failed, please try again</span>
                                 </div>
                             </div>
                             {errorMessage ? (
-                                <p className="text-xs text-red-600 mt-0.5 font-normal">{errorMessage}</p>
+                                <p className="text-xs text-red-600 mt-1 font-normal">{errorMessage}</p>
                             ) : null}
                             {onRetry ? (
                                 <button
@@ -172,17 +187,17 @@ export function FileUploadListItemProgressBar({
                                     }}
                                     className="mt-1.5 text-sm font-semibold text-red-600 hover:text-red-700 cursor-pointer self-start transition"
                                 >
-                                    Coba lagi
+                                    Try again
                                 </button>
                             ) : null}
                         </div>
                     ) : progress < 100 ? (
                         <div className="flex flex-col">
-                            <div className="flex items-center gap-1.5 text-xs">
-                                <span className="text-slate-600">{formattedSize}</span>
-                                <span className="text-slate-300">•</span>
-                                <div className="flex items-center gap-1 text-slate-600 font-normal">
-                                    <CloudUpload className="h-3.5 w-3.5 text-brand-blue animate-pulse shrink-0" />
+                            <div className="flex items-center gap-2 text-xs">
+                                <span className="text-slate-500">{formattedSize}</span>
+                                <span className="h-3 w-px bg-slate-200 self-center" />
+                                <div className="flex items-center gap-1.5 text-slate-600 font-medium text-sm">
+                                    <CloudUpload className="h-4.5 w-4.5 text-brand-blue animate-pulse shrink-0" />
                                     <span>Mengunggah...</span>
                                 </div>
                             </div>
@@ -200,11 +215,11 @@ export function FileUploadListItemProgressBar({
                         </div>
                     ) : (
                         <div className="flex flex-col">
-                            <div className="flex items-center gap-1.5 text-xs">
-                                <span className="text-slate-600">{formattedSize}</span>
-                                <span className="text-slate-300">•</span>
-                                <div className="flex items-center gap-1 text-emerald-600 font-medium">
-                                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                            <div className="flex items-center gap-2 text-xs">
+                                <span className="text-slate-500">{formattedSize}</span>
+                                <span className="h-3 w-px bg-slate-200 self-center" />
+                                <div className="flex items-center gap-1.5 text-emerald-600 font-medium text-sm">
+                                    <CheckCircle2 className="h-4.5 w-4.5 shrink-0" />
                                     <span>Selesai</span>
                                 </div>
                             </div>
@@ -231,10 +246,10 @@ export function FileUploadListItemProgressBar({
                             e.stopPropagation();
                             onDelete?.();
                         }}
-                        className="text-slate-400 hover:text-slate-600 p-1 rounded transition cursor-pointer self-start"
+                        className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg transition cursor-pointer self-start"
                         title="Hapus berkas"
                     >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-5 w-5" />
                     </button>
                 ) : null}
             </div>

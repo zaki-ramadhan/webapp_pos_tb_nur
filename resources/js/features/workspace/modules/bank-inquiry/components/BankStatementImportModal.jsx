@@ -131,6 +131,10 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
             }
         >
             <div className="flex flex-col gap-4">
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    Unggah berkas mutasi rekening koran dari internet banking (BCA, Mandiri, BRI, BNI, dll) dalam format <strong>.CSV</strong> atau <strong>.XLSX</strong> untuk dicocokkan otomatis dengan buku bank sistem.
+                </p>
+
                 <FileUpload.Root>
                     <FileUpload.DropZone
                         isDisabled={loading}
@@ -154,10 +158,6 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         </FileUpload.List>
                     ) : null}
                 </FileUpload.Root>
-
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    Unggah berkas mutasi rekening koran dari internet banking (BCA, Mandiri, BRI, BNI, dll) dalam format <strong>.CSV</strong> atau <strong>.XLSX</strong> untuk dicocokkan otomatis dengan buku bank sistem.
-                </p>
 
                 {/* Pratinjau Mutasi jika sudah terbaca */}
                 {parsedData && parsedData.rows?.length ? (
