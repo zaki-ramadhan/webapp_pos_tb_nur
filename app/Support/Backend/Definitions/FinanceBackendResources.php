@@ -71,7 +71,7 @@ class FinanceBackendResources
                 indexRules: [
                     'account_type' => ['sometimes'],
                     'exclude_type' => ['sometimes'],
-                    'exclude_id' => ['sometimes', 'integer'],
+                    'exclude_id' => ['sometimes', 'nullable', 'integer'],
                 ],
                 storeRules: [
                     'parent_id' => ['nullable', 'integer', 'exists:accounts,id'],

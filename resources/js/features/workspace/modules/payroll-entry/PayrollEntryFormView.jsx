@@ -500,7 +500,7 @@ export default function PayrollEntryFormView({
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
-                footer={<TransactionDualTotalCard items={resolvedConfig.summaryItems} className="min-w-[360px] sm:min-w-[565px]" />}
+                footer={<TransactionDualTotalCard items={resolvedConfig.summaryItems} />}
                 dockActions={dockActions}
             >
                 {activeSectionId === 'additional-info' ? (

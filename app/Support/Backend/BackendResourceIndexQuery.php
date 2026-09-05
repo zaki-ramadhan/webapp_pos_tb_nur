@@ -128,11 +128,23 @@ class BackendResourceIndexQuery
                 continue;
             }
             if ($key === 'exclude_type' && Schema::hasColumn($tableName, 'account_type')) {
-                if (is_array($value)) {
-                    $query->whereNotIn("{$tableName}.account_type", $value);
-                } else {
-                    $query->where("{$tableName}.account_type", '!=', $value);
+                $excludeTypeMap = [
+                    'kas dan bank' => ['Cash/Bank', 'Kas dan Bank', 'Kas & Bank', 'Cash and Bank'],
+                    'kas & bank' => ['Cash/Bank', 'Kas dan Bank', 'Kas & Bank', 'Cash and Bank'],
+                    'cash/bank' => ['Cash/Bank', 'Kas dan Bank', 'Kas & Bank', 'Cash and Bank'],
+                    'cash and bank' => ['Cash/Bank', 'Kas dan Bank', 'Kas & Bank', 'Cash and Bank'],
+                ];
+                $valuesToExclude = [];
+                $rawValues = is_array($value) ? $value : [$value];
+                foreach ($rawValues as $v) {
+                    $lower = strtolower(trim((string) $v));
+                    if (isset($excludeTypeMap[$lower])) {
+                        $valuesToExclude = array_merge($valuesToExclude, $excludeTypeMap[$lower]);
+                    } else {
+                        $valuesToExclude[] = $v;
+                    }
                 }
+                $query->whereNotIn("{$tableName}.account_type", array_unique($valuesToExclude));
                 continue;
             }
             if ($key === 'account_type' && Schema::hasColumn($tableName, 'account_type')) {
