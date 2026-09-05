@@ -3,7 +3,7 @@ import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
 import { showWarningToast } from '@/components/feedback/toast';
 
-export default function BankStatementImportModal({ open, onClose, onImportSuccess }) {
+export default function BankStatementImportModal({ open, onClose, onImportSuccess, bankName = '' }) {
     const [file, setFile] = useState(null);
     const [parsedData, setParsedData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -87,7 +87,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                             handleReset();
                             onClose?.();
                         }}
-                        className="rounded-[4px] border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 cursor-pointer"
+                        className="rounded-[4px] border border-slate-300 bg-white px-4 py-2 text-xs font-normal text-slate-700 transition hover:bg-slate-50 cursor-pointer"
                     >
                         Batal
                     </button>
@@ -95,7 +95,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         type="button"
                         disabled={!parsedData || !parsedData.rows.length || loading}
                         onClick={handleConfirm}
-                        className="inline-flex items-center justify-center rounded-[4px] bg-[#1c558c] hover:bg-[#154370] px-4 py-2 text-xs font-semibold text-white shadow-xs transition active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                        className="inline-flex items-center justify-center rounded-[4px] bg-brand-blue hover:bg-brand-blue-hover px-4 py-2 text-xs font-normal text-white shadow-xs transition active:scale-[0.98] disabled:opacity-50 cursor-pointer"
                     >
                         Lanjutkan Rekonsiliasi ({parsedData?.rows?.length || 0} Mutasi)
                     </button>
@@ -103,6 +103,12 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
             }
         >
             <div className="flex flex-col gap-4">
+                {bankName ? (
+                    <div className="flex items-center gap-2 rounded-[4px] bg-blue-50 px-3 py-2 border border-blue-200 text-xs text-blue-900">
+                        <span className="font-medium text-blue-800">Kas/Bank Sasaran:</span>
+                        <span className="rounded bg-white px-2 py-0.5 font-normal border border-blue-200 text-blue-950">{bankName}</span>
+                    </div>
+                ) : null}
                 <p className="text-xs text-slate-600 leading-relaxed">
                     Unggah berkas mutasi rekening koran dari internet banking (BCA, Mandiri, BRI, BNI, dll) dalam format <strong>.CSV</strong> atau <strong>.XLSX</strong> untuk dicocokkan otomatis dengan buku bank sistem.
                 </p>
