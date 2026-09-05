@@ -24,7 +24,7 @@ class CompanyPreferences
             ],
             'tokens' => [],
             'fields' => [
-                ['id' => 'city', 'label' => 'Kota', 'value' => 'Kabupaten Cirebon', 'clearable' => true],
+                ['id' => 'city', 'label' => 'Kota', 'value' => 'Kab. Cirebon', 'clearable' => true],
                 ['id' => 'province', 'label' => 'Provinsi', 'value' => 'Jawa Barat', 'clearable' => true],
                 ['id' => 'postal-code', 'label' => 'K.Pos', 'value' => '45165', 'clearable' => true],
                 ['id' => 'country', 'label' => 'Negara', 'value' => 'Indonesia', 'clearable' => true],

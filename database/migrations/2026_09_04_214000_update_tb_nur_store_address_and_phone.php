@@ -15,7 +15,7 @@ return new class extends Migration
             'phone' => '087724985885',
             'fax' => '087724985885',
             'street' => 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi',
-            'city' => 'Kabupaten Cirebon',
+            'city' => 'Kab. Cirebon',
             'province' => 'Jawa Barat',
             'postal-code' => '45165',
             'country' => 'Indonesia',
@@ -37,7 +37,7 @@ return new class extends Migration
                 ->update([
                     'phone' => '087724985885',
                     'street' => 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi',
-                    'city' => 'Kabupaten Cirebon',
+                    'city' => 'Kab. Cirebon',
                     'postal_code' => '45165',
                     'province' => 'Jawa Barat',
                     'country' => 'Indonesia',

@@ -16,7 +16,7 @@ class CoreOrganizationSeeder extends Seeder
                 'phone' => '087724985885',
                 'email' => 'toko.utama@tbnur.com',
                 'street' => 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi',
-                'city' => 'Kabupaten Cirebon',
+                'city' => 'Kab. Cirebon',
                 'postal_code' => '45165',
                 'province' => 'Jawa Barat',
                 'country' => 'Indonesia',
