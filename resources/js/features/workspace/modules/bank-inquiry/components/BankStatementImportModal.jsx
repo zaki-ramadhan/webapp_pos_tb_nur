@@ -126,21 +126,21 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         onClick={handleConfirm}
                         className="inline-flex h-[40px] items-center justify-center rounded-[4px] bg-brand-blue hover:bg-brand-blue-hover px-6 text-sm font-medium text-white shadow-button-primary transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
-                        Lanjutkan Rekonsiliasi {parsedData?.rows?.length ? `(${parsedData.rows.length} Mutasi)` : ''}
+                        Lanjut Rekonsiliasi
                     </button>
                 </div>
             }
         >
             <div className="flex flex-col gap-4">
                 <FileUpload.Root>
-                    <FileUpload.DropZone
-                        isDisabled={loading}
-                        onDropFiles={handleDropFiles}
-                        accept=".csv,.xlsx,.xls"
-                        maxSizeText="CSV, XLSX, atau XLS (maks. 10MB)"
-                    />
-
-                    {file ? (
+                    {!file ? (
+                        <FileUpload.DropZone
+                            isDisabled={loading}
+                            onDropFiles={handleDropFiles}
+                            accept=".csv,.xlsx,.xls"
+                            maxSizeText="CSV, XLSX, atau XLS (maks. 10MB)"
+                        />
+                    ) : (
                         <FileUpload.List>
                             <FileUpload.ListItemProgressBar
                                 name={file.name}
@@ -153,7 +153,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                                 onRetry={handleRetry}
                             />
                         </FileUpload.List>
-                    ) : null}
+                    )}
                 </FileUpload.Root>
 
                 {/* Pratinjau Mutasi jika sudah terbaca */}
