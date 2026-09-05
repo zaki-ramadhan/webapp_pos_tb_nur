@@ -7,6 +7,7 @@ import {
     AccountsFieldLabel,
     AccountsFormFieldRow,
 } from '../../accountsViewShared';
+import { mapDbToUiType, mapUiToDbType } from '../../accountsShared';
 
 export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData, excludeId }) {
     const selectedParentAccount = useMemo(() => {
@@ -79,7 +80,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                             searchLabel="Cari akun perkiraan"
                             queryParams={{
                                 ...(excludeId ? { exclude_id: excludeId, exclude_children: true } : {}),
-                                ...(values.type ? { account_type: values.type } : {}),
+                                ...(values.type ? { account_type: mapUiToDbType(values.type) } : {}),
                             }}
                             getOptionLabel={(option) => option ? (option.code ? `${option.code} - ${option.name}` : option.name) : ''}
                             renderOption={(option) => (
@@ -87,7 +88,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                                     <span className="truncate text-xs sm:text-sm font-normal text-brand-dark">
                                         {option.name}
                                     </span>
-                                    <div className="flex justify-end text-[11px] sm:text-xs font-normal italic text-slate-500">
+                                    <div className="flex justify-end text-[11px] sm:text-xs font-normal text-text-workspace-dark">
                                         <span>{option.code || option.id}</span>
                                     </div>
                                 </div>
@@ -99,7 +100,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                                 onChange('parentAccountCode', option.code);
                                 onChange('parentAccountName', option.name);
                                 if (option.account_type && !values.type) {
-                                    onChange('type', option.account_type);
+                                    onChange('type', mapDbToUiType(option.account_type));
                                 }
                             }}
                             onRemove={() => {

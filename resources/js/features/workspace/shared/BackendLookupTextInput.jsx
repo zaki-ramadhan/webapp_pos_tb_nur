@@ -186,7 +186,7 @@ export default function BackendLookupTextInput({
                 <LookupDropdownSurface anchorRef={inputWrapperRef}>
                     <div className="max-h-[260px] overflow-y-auto flex-1 min-h-0 bg-white">
                         {ctrl.loading ? (
-                            <div className="p-4 text-center text-xs sm:text-sm text-slate-500">
+                            <div className="p-4 text-center text-xs sm:text-sm text-text-workspace-dark font-normal">
                                 Memuat data...
                             </div>
                         ) : filteredRows.length ? (

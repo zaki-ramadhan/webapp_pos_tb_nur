@@ -135,6 +135,45 @@ class BackendResourceIndexQuery
                 }
                 continue;
             }
+            if ($key === 'account_type' && Schema::hasColumn($tableName, 'account_type')) {
+                $typeMap = [
+                    'kas dan bank' => 'Cash/Bank',
+                    'piutang usaha' => 'Receivable',
+                    'persediaan' => 'Inventory',
+                    'aset lancar lainnya' => 'Other Current Asset',
+                    'aset tetap' => 'Fixed Asset',
+                    'akumulasi penyusutan' => 'Accumulated Depreciation',
+                    'aset lainnya' => 'Other Asset',
+                    'utang usaha' => 'Payable',
+                    'liabilitas jangka pendek' => 'Other Current Liability',
+                    'liabilitas jangka panjang' => 'Long Term Liability',
+                    'modal' => 'Equity',
+                    'pendapatan' => 'Revenue',
+                    'beban pokok penjualan' => 'Cost of Sales',
+                    'beban' => 'Expense',
+                    'beban lainnya' => 'Other Expense',
+                    'pendapatan lainnya' => 'Other Revenue',
+                ];
+                $normalizeType = function ($t) use ($typeMap) {
+                    $lower = strtolower(trim((string)$t));
+                    return $typeMap[$lower] ?? $t;
+                };
+                if (is_array($value)) {
+                    $allValues = [];
+                    foreach ($value as $v) {
+                        $allValues[] = $v;
+                        $allValues[] = $normalizeType($v);
+                    }
+                    $query->whereIn("{$tableName}.account_type", array_unique($allValues));
+                } else {
+                    $mapped = $normalizeType($value);
+                    $query->where(function ($q) use ($tableName, $value, $mapped) {
+                        $q->where("{$tableName}.account_type", $value)
+                          ->orWhere("{$tableName}.account_type", $mapped);
+                    });
+                }
+                continue;
+            }
             if ($key === 'exclude_id' && Schema::hasColumn($tableName, 'id')) {
                 if (empty($value) && $value !== 0 && $value !== '0') {
                     continue;

@@ -130,7 +130,7 @@ export default function CityAutocompleteInput({
                                     type="button"
                                     onClick={handleClear}
                                     aria-label="Hapus kota"
-                                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark hover:opacity-70 transition-opacity cursor-pointer"
+                                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark hover:text-red-600 active:text-red-800 hover:bg-red-50 rounded-sm transition-colors cursor-pointer"
                                 >
                                     <CloseIcon className="h-3.5 w-3.5" />
                                 </button>
