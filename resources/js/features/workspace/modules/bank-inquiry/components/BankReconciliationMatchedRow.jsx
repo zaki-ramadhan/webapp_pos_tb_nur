@@ -15,7 +15,7 @@ export default function BankReconciliationMatchedRow({
     const formattedExcelAmt = excel
         ? new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(excel.amount)
         : '0';
-    const typeLabel = excel ? (excel.type === 'DB' ? '(Db)' : '(Cr)') : '';
+    const typeLabel = excel ? (excel.type === 'DB' ? '(Dr)' : '(Cr)') : '';
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 items-stretch">

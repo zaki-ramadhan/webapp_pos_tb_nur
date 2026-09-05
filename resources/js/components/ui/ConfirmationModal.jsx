@@ -50,43 +50,74 @@ export default function ConfirmationModal({
     confirmLoading = false,
     cancelDisabled = false,
     iconVariant = 'warning',
+    actionsAlign = 'between',
+    hideCloseButton = false,
 }) {
     return (
         <WorkspaceDialog
             open={open}
             onClose={onClose}
             disableClose={confirmLoading}
+            hideCloseButton={hideCloseButton}
             title={title}
             closeLabel={closeLabel}
             maxWidthClassName={maxWidthClassName}
-            footerClassName="bg-white px-3.5 py-2.5 sm:px-4"
+            footerClassName="bg-white px-4 py-3 sm:px-5"
             footer={(
-            <div className="flex items-center justify-between w-full">
-                    {cancelLabel ? (
-                        <Button
-                            variant="secondary"
-                            size="md"
-                            onClick={onClose}
-                            disabled={cancelDisabled || confirmLoading}
-                            className="min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
-                        >
-                            {cancelLabel}
-                        </Button>
+                <div className={`flex items-center ${actionsAlign === 'end' ? 'justify-end gap-3' : 'justify-between'} w-full`}>
+                    {actionsAlign === 'end' ? (
+                        <>
+                            <Button
+                                variant={confirmVariant}
+                                size="md"
+                                onClick={onConfirm}
+                                disabled={confirmDisabled}
+                                loading={confirmLoading}
+                                loadingLabel={confirmLabel}
+                                className="min-w-[64px] rounded-[4px] shadow-none font-normal"
+                            >
+                                {confirmLabel}
+                            </Button>
+                            {cancelLabel ? (
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    disabled={cancelDisabled || confirmLoading}
+                                    className="text-sm font-normal text-brand-blue hover:underline px-2 py-1 transition cursor-pointer"
+                                >
+                                    {cancelLabel}
+                                </button>
+                            ) : null}
+                        </>
                     ) : (
-                        <span />
-                    )}
+                        <>
+                            {cancelLabel ? (
+                                <Button
+                                    variant="secondary"
+                                    size="md"
+                                    onClick={onClose}
+                                    disabled={cancelDisabled || confirmLoading}
+                                    className="min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
+                                >
+                                    {cancelLabel}
+                                </Button>
+                            ) : (
+                                <span />
+                            )}
 
-                    <Button
-                        variant={confirmVariant}
-                        size="md"
-                        onClick={onConfirm}
-                        disabled={confirmDisabled}
-                        loading={confirmLoading}
-                        loadingLabel={confirmLabel}
-                        className="min-w-[60px] rounded-[4px] shadow-none"
-                    >
-                        {confirmLabel}
-                    </Button>
+                            <Button
+                                variant={confirmVariant}
+                                size="md"
+                                onClick={onConfirm}
+                                disabled={confirmDisabled}
+                                loading={confirmLoading}
+                                loadingLabel={confirmLabel}
+                                className="min-w-[60px] rounded-[4px] shadow-none"
+                            >
+                                {confirmLabel}
+                            </Button>
+                        </>
+                    )}
                 </div>
             )}
         >
