@@ -4,6 +4,19 @@ import { FileUpload } from '@/components/ui/FileUpload';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
 import { Check } from 'lucide-react';
 
+function formatDisplayDate(dateStr) {
+    if (!dateStr) return '-';
+    const parts = String(dateStr).split('-');
+    if (parts.length === 3 && parts[0].length === 4) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    const dmyMatch = String(dateStr).match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (dmyMatch) {
+        return `${dmyMatch[1].padStart(2, '0')}/${dmyMatch[2].padStart(2, '0')}/${dmyMatch[3]}`;
+    }
+    return dateStr;
+}
+
 export default function BankStatementImportModal({ open, onClose, onImportSuccess, bankName = '' }) {
     const [file, setFile] = useState(null);
     const [parsedData, setParsedData] = useState(null);
@@ -162,7 +175,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         <div className="flex flex-wrap items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                                 <span className="text-sm font-semibold text-slate-800">Pratinjau Hasil Ekstraksi</span>
-                                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-2.5 py-0.5 text-xs font-medium text-white shadow-2xs">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-3 py-1 text-xs font-medium text-white shadow-2xs leading-tight">
                                     <Check className="h-3.5 w-3.5 stroke-[2.5]" />
                                     <span>{parsedData.rows.length} Mutasi Ditemukan</span>
                                 </span>
@@ -170,36 +183,36 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                             {parsedData.summary ? (
                                 <div className="flex items-center gap-2 text-xs font-normal">
                                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 text-emerald-800">
-                                        Masuk: {parsedData.summary.inCount || 0}
+                                        Kredit: {parsedData.summary.inCount || 0}
                                     </span>
                                     <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 border border-rose-200/80 px-2.5 py-0.5 text-rose-800">
-                                        Keluar: {parsedData.summary.outCount || 0}
+                                        Debit: {parsedData.summary.outCount || 0}
                                     </span>
                                 </div>
                             ) : null}
                         </div>
 
-                        <div className="max-h-[220px] overflow-y-auto rounded-lg border border-slate-200">
+                        <div className="max-h-[260px] overflow-y-auto rounded-lg border border-slate-200">
                             <table className="w-full text-left text-sm border-collapse">
                                 <thead className="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200">
                                     <tr>
                                         <th className="px-3.5 py-2.5 font-medium w-[120px]">Tanggal</th>
                                         <th className="px-3.5 py-2.5 font-medium">Keterangan</th>
-                                        <th className="px-3.5 py-2.5 font-medium text-right w-[140px]">Nominal</th>
+                                        <th className="px-3.5 py-2.5 font-medium text-right w-[140px]">Nominal (Rp)</th>
                                         <th className="px-3.5 py-2.5 font-medium text-center w-[90px]">Tipe</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 text-slate-800">
-                                    {parsedData.rows.slice(0, 5).map((row, idx) => (
+                                    {parsedData.rows.slice(0, 10).map((row, idx) => (
                                         <tr key={row.id || idx} className="hover:bg-slate-50/70 transition-colors">
                                             <td className="px-3.5 py-2 whitespace-nowrap text-sm font-normal text-slate-800">
-                                                {row.date}
+                                                {formatDisplayDate(row.date)}
                                             </td>
                                             <td className="px-3.5 py-2 truncate max-w-[280px] text-sm font-normal text-slate-800" title={row.description}>
                                                 {row.description}
                                             </td>
                                             <td className="px-3.5 py-2 whitespace-nowrap text-right text-sm font-normal text-slate-900">
-                                                Rp {new Intl.NumberFormat('id-ID').format(row.amount)}
+                                                {new Intl.NumberFormat('id-ID').format(row.amount)}
                                             </td>
                                             <td className="px-3.5 py-2 whitespace-nowrap text-center">
                                                 <span
@@ -209,7 +222,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                                                             : 'bg-rose-50 text-rose-700 border border-rose-200'
                                                     }`}
                                                 >
-                                                    {row.type === 'CR' ? 'Masuk' : 'Keluar'}
+                                                    {row.type === 'CR' ? 'Kredit' : 'Debit'}
                                                 </span>
                                             </td>
                                         </tr>
@@ -218,9 +231,9 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                             </table>
                         </div>
 
-                        {parsedData.rows.length > 5 && (
+                        {parsedData.rows.length > 10 && (
                             <p className="text-sm font-normal text-slate-600 text-right pt-0.5">
-                                Menampilkan 5 baris teratas dari total {parsedData.rows.length} baris transaksi mutasi
+                                Menampilkan 10 baris teratas dari total {parsedData.rows.length} baris transaksi mutasi
                             </p>
                         )}
                     </div>
