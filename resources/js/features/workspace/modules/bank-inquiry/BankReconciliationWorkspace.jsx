@@ -6,6 +6,7 @@ import { showSuccessToast, showErrorToast, showLoadingToast, showWarningToast, d
 import axios from 'axios';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Pagination from '@/components/ui/Pagination';
+import Tooltip from '@/components/ui/Tooltip';
 
 import JurnalCard from './components/JurnalCard';
 import BankReconcileActionCard from './components/BankReconcileActionCard';
@@ -220,25 +221,34 @@ export default function BankReconciliationWorkspace({
                         />
                     ) : null}
 
-                    <button
-                        type="button"
-                        onClick={() => {
-                            if (!hasBankSelected) {
-                                showWarningToast({
-                                    title: 'Pilih Bank Terlebih Dahulu',
-                                    message: 'Silakan cari dan pilih kas/bank terlebih dahulu sebelum mengimpor rekening koran.',
-                                });
-                                return;
-                            }
-                            setImportModalOpen(true);
-                        }}
-                        className="inline-flex items-center gap-1.5 h-[40px] px-3.5 rounded-[4px] border border-[#1c558c] bg-white hover:bg-blue-50/70 text-[#1c558c] text-xs sm:text-sm font-semibold shadow-2xs transition active:scale-[0.98] cursor-pointer shrink-0"
+                    <Tooltip
+                        content={!hasBankSelected ? 'Pilih kas/bank terlebih dahulu untuk mengimpor rekening koran' : `Impor data mutasi CSV atau Excel untuk ${keyword}`}
+                        side="bottom"
                     >
-                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                        </svg>
-                        <span>Impor Rekening Koran (CSV)</span>
-                    </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (!hasBankSelected) {
+                                    showWarningToast({
+                                        title: 'Pilih Bank Terlebih Dahulu',
+                                        message: 'Silakan cari dan pilih kas/bank terlebih dahulu sebelum mengimpor rekening koran.',
+                                    });
+                                    return;
+                                }
+                                setImportModalOpen(true);
+                            }}
+                            className={`inline-flex items-center gap-1.5 h-[40px] px-3.5 rounded-[4px] text-xs sm:text-sm font-normal transition shrink-0 ${
+                                hasBankSelected
+                                    ? 'bg-brand-blue hover:bg-brand-blue-hover text-white border border-transparent shadow-button-primary cursor-pointer active:scale-[0.98]'
+                                    : 'bg-slate-100 text-slate-400 border border-slate-300 cursor-not-allowed shadow-none'
+                            }`}
+                        >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            <span>Impor Rekening Koran (CSV)</span>
+                        </button>
+                    </Tooltip>
                 </div>
             </div>
 
@@ -485,6 +495,7 @@ export default function BankReconciliationWorkspace({
             {/* Bank Statement Import Modal */}
             <BankStatementImportModal
                 open={importModalOpen}
+                bankName={keyword}
                 onClose={() => setImportModalOpen(false)}
                 onImportSuccess={(data) => {
                     setStatementData(data);
