@@ -6,6 +6,7 @@ import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import {
     ColumnsIcon,
     DownloadIcon,
+    ExportIcon,
     ExternalLinkIcon,
     IdeaIcon,
     RefreshIcon,
@@ -18,6 +19,9 @@ function resolveActionIcon(action) {
     switch (action.icon) {
         case 'external-link':
             return <ExternalLinkIcon className="h-4.5 w-4.5" />;
+        case 'export':
+        case 'export-excel':
+            return <ExportIcon className="h-4.5 w-4.5" />;
         case 'idea':
             return <IdeaIcon className="h-4.5 w-4.5" />;
         case 'transfer':
