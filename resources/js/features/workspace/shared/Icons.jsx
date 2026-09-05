@@ -37,6 +37,7 @@ import {
     Calculator,
     X,
 } from 'lucide-react';
+import SquareArrowOutUpRight from '@/components/shared/SquareArrowOutUpRight';
 
 function AppIcon({ icon: Icon, className, strokeWidth = 1.9 }) {
     return <Icon aria-hidden="true" className={className} strokeWidth={strokeWidth} absoluteStrokeWidth />;
@@ -111,6 +112,12 @@ export function ColumnsIcon({ className = 'h-4 w-4' }) {
 export function ExternalLinkIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={ExternalLink} className={className} />;
 }
+
+export function ExportIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={SquareArrowOutUpRight} className={className} />;
+}
+
+export { SquareArrowOutUpRight };
 
 export function FunnelIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={Funnel} className={className} />;

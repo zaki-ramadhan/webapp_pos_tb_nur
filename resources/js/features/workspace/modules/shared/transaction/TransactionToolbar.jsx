@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
-import { ChevronDownIcon, SearchIcon, ExternalLinkIcon, ArrowRightLeftIcon } from '@/features/workspace/shared/Icons';
+import { ChevronDownIcon, SearchIcon, ExternalLinkIcon, ArrowRightLeftIcon, ExportIcon } from '@/features/workspace/shared/Icons';
 import Tooltip from '@/components/ui/Tooltip';
 import { exportToExcelXML } from '@/features/workspace/shared/exportUtils';
 import { tableRegistry, useColumnVisibility, getTableSchemaKey, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
@@ -302,7 +302,7 @@ export function TransactionExportExcelButton({ columns, rows, filename = 'export
             onClick={handleExport}
             disabled={resolvedDisabled}
         >
-            <ExternalLinkIcon className="h-4 w-4" />
+            <ExportIcon className="h-4 w-4" />
         </TransactionToolbarIconButton>
     );
 }

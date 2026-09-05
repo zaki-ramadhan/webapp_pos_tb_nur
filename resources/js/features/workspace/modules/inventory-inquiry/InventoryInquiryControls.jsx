@@ -1,7 +1,7 @@
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { ExternalLinkIcon, LinkIcon, RefreshIcon, DownloadIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { ExportIcon, ExternalLinkIcon, LinkIcon, RefreshIcon, DownloadIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ToolbarIconButton from '@/features/workspace/shared/toolbar/ToolbarIconButton';
@@ -16,7 +16,9 @@ export function buildInitialValues(config) {
 
 export function InquiryIconButton({ icon, label, onClick, loading = false }) {
     const IconComponent =
-        icon === 'external-link'
+        icon === 'export' || icon === 'export-excel'
+            ? ExportIcon
+            : icon === 'external-link'
             ? ExternalLinkIcon
             : icon === 'refresh'
             ? RefreshIcon
