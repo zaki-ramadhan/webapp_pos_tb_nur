@@ -81,14 +81,14 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
             open={open}
             onBackdropClick={onClose}
             className="bg-slate-950/55 px-4 py-5 sm:px-6 sm:py-8"
-            panelClassName="w-full max-w-[460px] overflow-visible rounded-[12px] bg-white px-0 py-0 shadow-modal-auth"
+            panelClassName="w-full max-w-[460px] overflow-visible rounded-[4px] bg-white px-0 py-0 shadow-modal-auth"
         >
             <div className="relative">
                 <button
                     type="button"
                     onClick={onClose}
                     aria-label={modal.closeLabel || 'Tutup'}
-                    className="absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-400 hover:text-red-800 hover:border-red-200 active:text-red-950 shadow-card-subtle transition-colors cursor-pointer"
+                    className="absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-400 hover:text-[#A20025] hover:border-red-200 active:text-red-955 shadow-card-subtle transition-colors cursor-pointer"
                 >
                     <span className="text-sm font-semibold leading-none">&times;</span>
                 </button>

@@ -146,7 +146,7 @@ export default function WorkspaceSearchModal({
             open={open}
             onBackdropClick={onClose}
             className="bg-modal-overlay-light"
-            panelClassName="max-w-[770px] overflow-hidden rounded-[6px] px-0 py-0 shadow-modal-search"
+            panelClassName="max-w-[770px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-search"
         >
             <div className="bg-white px-5 py-5 sm:px-6 sm:py-6">
                 <div className="flex items-start justify-between gap-4">
@@ -170,7 +170,7 @@ export default function WorkspaceSearchModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-brand-dark transition-colors hover:text-red-800 active:text-red-955 cursor-pointer"
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-brand-dark transition-colors hover:text-[#A20025] active:text-red-955 cursor-pointer"
                         aria-label={modal.closeLabel ?? 'Tutup pencarian menu'}
                     >
                         <CloseIcon className="h-5 w-5" />

@@ -170,13 +170,13 @@ export function FileUploadListItemProgressBar({
                             <div className="flex items-center gap-2 text-sm">
                                 <span className="text-slate-500 font-normal">{formattedSize}</span>
                                 <span className="h-3.5 w-px bg-slate-200 self-center" />
-                                <div className="flex items-center gap-1 text-red-600 font-medium">
+                                <div className="flex items-center gap-1 text-[#A20025] font-medium">
                                     <AlertCircle className="h-4 w-4 shrink-0" />
                                     <span>Upload failed, please try again</span>
                                 </div>
                             </div>
                             {errorMessage ? (
-                                <p className="text-xs text-red-600 mt-1 font-normal">{errorMessage}</p>
+                                <p className="text-xs text-[#A20025] mt-1 font-normal">{errorMessage}</p>
                             ) : null}
                             {onRetry ? (
                                 <button
@@ -185,7 +185,7 @@ export function FileUploadListItemProgressBar({
                                         e.stopPropagation();
                                         onRetry?.();
                                     }}
-                                    className="mt-1.5 text-sm font-semibold text-red-600 hover:text-red-700 cursor-pointer self-start transition"
+                                    className="mt-1.5 text-sm font-semibold text-[#A20025] hover:text-[#80001D] cursor-pointer self-start transition"
                                 >
                                     Try again
                                 </button>
@@ -246,7 +246,7 @@ export function FileUploadListItemProgressBar({
                             e.stopPropagation();
                             onDelete?.();
                         }}
-                        className="text-slate-400 hover:text-red-600 hover:bg-red-500/10 p-1.5 rounded-lg transition cursor-pointer self-start"
+                        className="text-slate-400 hover:text-[#A20025] hover:bg-red-500/10 p-1.5 rounded-[4px] transition cursor-pointer self-start"
                         aria-label="Hapus berkas"
                     >
                         <Trash2 className="h-5 w-5" />

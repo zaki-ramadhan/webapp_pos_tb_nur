@@ -503,7 +503,7 @@ export default function SalesDocumentItemEditModal({
             activeTabId={activeTabId}
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
-            panelClassName="max-w-[540px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
+            panelClassName="max-w-[540px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-import"
             footer={
                 <DocumentModalFooter
                     deleteLabel={isEdit ? 'Hapus' : null}

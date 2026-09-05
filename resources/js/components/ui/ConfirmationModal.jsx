@@ -20,7 +20,7 @@ function FormattedMessage({ message, iconVariant }) {
         return (
             <div>
                 <p className="text-xs sm:text-sm font-normal leading-6 text-slate-800">{header}</p>
-                <div className="mt-1 space-y-0.5 text-xs sm:text-sm leading-6 text-red-800 font-normal">
+                <div className="mt-1 space-y-0.5 text-xs sm:text-sm leading-6 text-[#A20025] font-normal">
                     {errorLines.map((line, idx) => (
                         <p key={idx}>{line}</p>
                     ))}
@@ -30,7 +30,7 @@ function FormattedMessage({ message, iconVariant }) {
     }
 
     const isCancelOrDelete = message.includes('dibatalkan') || message.includes('dihapus') || iconVariant === 'error' || iconVariant === 'danger' || iconVariant === 'warning';
-    const textColor = isCancelOrDelete ? 'text-red-800 font-normal' : 'text-slate-800 font-normal';
+    const textColor = isCancelOrDelete ? 'text-[#A20025] font-normal' : 'text-slate-800 font-normal';
 
     return <p className={`text-sm sm:text-base leading-6 whitespace-pre-line ${textColor}`}>{message}</p>;
 }
@@ -62,7 +62,8 @@ export default function ConfirmationModal({
             title={title}
             closeLabel={closeLabel}
             maxWidthClassName={maxWidthClassName}
-            footerClassName="bg-white px-4 py-3 sm:px-5"
+            contentClassName="bg-white px-5 pt-4 pb-2 sm:px-6 sm:pt-5 sm:pb-2.5"
+            footerClassName="bg-white px-4 pt-1 pb-3.5 sm:px-5 sm:pb-4"
             footer={(
                 <div className={`flex items-center ${actionsAlign === 'end' ? 'justify-end gap-3' : 'justify-between'} w-full`}>
                     {actionsAlign === 'end' ? (

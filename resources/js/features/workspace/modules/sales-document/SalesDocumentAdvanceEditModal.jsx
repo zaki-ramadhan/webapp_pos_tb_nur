@@ -125,7 +125,7 @@ export default function SalesDocumentAdvanceEditModal({
             activeTabId="advance"
             onTabChange={() => {}}
             closeAriaLabel="Tutup modal uang muka"
-            panelClassName="max-w-[480px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
+            panelClassName="max-w-[480px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[160px] py-4"
             footer={
                 <DocumentModalFooter

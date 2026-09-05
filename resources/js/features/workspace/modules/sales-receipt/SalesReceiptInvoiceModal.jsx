@@ -61,7 +61,7 @@ export default function SalesReceiptInvoiceModal({ open, onClose, modal, onSave,
             activeTabId={activeTabId}
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian faktur"
-            panelClassName="max-w-[570px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
+            panelClassName="max-w-[570px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[378px] py-3"
             footer={
                 <DocumentModalFooter
