@@ -452,10 +452,8 @@ export default function BankReconciliationWorkspace({
                 message="Apakah histori ini ada tercetak dalam rekening koran?"
                 confirmLabel="Ya"
                 cancelLabel="Batal"
-                actionsAlign="end"
-                hideCloseButton={true}
                 iconVariant="warning"
-                maxWidthClassName="max-w-[440px]"
+                maxWidthClassName="max-w-[480px]"
             />
 
             {/* Bank Statement Import Modal */}
