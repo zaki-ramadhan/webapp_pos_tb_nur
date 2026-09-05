@@ -104,7 +104,7 @@ export function sanitizeInput(val, type, id = '', name = '', placeholder = '', p
     }
 
     if (isPostal) {
-        return val.replace(/[^0-9]/g, '').slice(0, 5);
+        return val.replace(/[^0-9]/g, '').slice(0, 10);
     }
 
     if (isPhone) {
