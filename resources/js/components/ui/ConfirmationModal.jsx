@@ -20,7 +20,7 @@ function FormattedMessage({ message, iconVariant }) {
         return (
             <div>
                 <p className="text-xs sm:text-sm font-normal leading-6 text-slate-800">{header}</p>
-                <div className="mt-1 space-y-0.5 text-xs sm:text-sm leading-6 text-red-600 font-normal">
+                <div className="mt-1 space-y-0.5 text-xs sm:text-sm leading-6 text-red-800 font-normal">
                     {errorLines.map((line, idx) => (
                         <p key={idx}>{line}</p>
                     ))}
@@ -30,7 +30,7 @@ function FormattedMessage({ message, iconVariant }) {
     }
 
     const isCancelOrDelete = message.includes('dibatalkan') || message.includes('dihapus') || iconVariant === 'error' || iconVariant === 'danger' || iconVariant === 'warning';
-    const textColor = isCancelOrDelete ? 'text-red-600 font-normal' : 'text-slate-800 font-normal';
+    const textColor = isCancelOrDelete ? 'text-red-800 font-normal' : 'text-slate-800 font-normal';
 
     return <p className={`text-sm sm:text-base leading-6 whitespace-pre-line ${textColor}`}>{message}</p>;
 }
@@ -67,6 +67,17 @@ export default function ConfirmationModal({
                 <div className={`flex items-center ${actionsAlign === 'end' ? 'justify-end gap-3' : 'justify-between'} w-full`}>
                     {actionsAlign === 'end' ? (
                         <>
+                            {cancelLabel ? (
+                                <Button
+                                    variant="secondary"
+                                    size="md"
+                                    onClick={onClose}
+                                    disabled={cancelDisabled || confirmLoading}
+                                    className="min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
+                                >
+                                    {cancelLabel}
+                                </Button>
+                            ) : null}
                             <Button
                                 variant={confirmVariant}
                                 size="md"
@@ -74,20 +85,10 @@ export default function ConfirmationModal({
                                 disabled={confirmDisabled}
                                 loading={confirmLoading}
                                 loadingLabel={confirmLabel}
-                                className="min-w-[64px] rounded-[4px] shadow-none font-normal"
+                                className="min-w-[60px] rounded-[4px] shadow-none"
                             >
                                 {confirmLabel}
                             </Button>
-                            {cancelLabel ? (
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    disabled={cancelDisabled || confirmLoading}
-                                    className="text-sm font-normal text-brand-blue hover:underline px-2 py-1 transition cursor-pointer"
-                                >
-                                    {cancelLabel}
-                                </button>
-                            ) : null}
                         </>
                     ) : (
                         <>
