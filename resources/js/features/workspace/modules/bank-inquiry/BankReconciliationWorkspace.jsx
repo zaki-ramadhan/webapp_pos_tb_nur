@@ -253,10 +253,10 @@ export default function BankReconciliationWorkspace({
                 </div>
             </div>
 
-            <div className="flex flex-col flex-1 min-h-0 mt-3">
+            <div className="flex flex-col flex-1 min-h-0 mt-2">
                 {/* Statement Summary Banner */}
                 {statementData && (
-                    <div className="mb-3 rounded-[4px] border border-slate-200 bg-white p-3.5 shadow-2xs">
+                    <div className="mb-2 rounded-[4px] border border-slate-200 bg-white p-3 shadow-2xs">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
                                 <FileFormatBadgeIcon
@@ -297,7 +297,7 @@ export default function BankReconciliationWorkspace({
                         </div>
 
                         {/* Filter Sub-Tabs */}
-                        <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t border-slate-100 text-sm">
+                        <div className="flex flex-wrap items-center gap-1.5 mt-2 pt-2 border-t border-slate-100 text-sm">
                             <span className="text-slate-500 text-sm font-normal mr-1">Filter:</span>
                             {[
                                 { id: 'all', label: `Semua (${matchedResults.length})` },
@@ -336,7 +336,7 @@ export default function BankReconciliationWorkspace({
                         Memuat data...
                     </div>
                 ) : !hasBankSelected ? (
-                    <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[360px]">
+                    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center min-h-[300px]">
                         <img
                             src={starterStateImg}
                             alt="Pilih bank yang akan direkonsiliasi"
@@ -350,7 +350,7 @@ export default function BankReconciliationWorkspace({
                 ) : statementData ? (
                     <>
                         {filteredMatchedResults.length > 0 ? (
-                            <div className="overflow-y-auto py-3 flex flex-col gap-3 min-h-0 flex-1">
+                            <div className="overflow-y-auto py-2 flex flex-col gap-2 min-h-0 flex-1">
                                 {filteredMatchedResults.map((item) => {
                                     const key = item.id;
                                     const docNum = item.system?.documentNumber || item.system?.sourceNumber || item.system?.document_number;
@@ -366,7 +366,7 @@ export default function BankReconciliationWorkspace({
                                 })}
                             </div>
                         ) : (
-                            <div className="flex-1 flex flex-col items-center justify-center p-12 text-center min-h-[250px]">
+                            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center min-h-[220px]">
                                 <p className="text-sm text-slate-500 font-medium">
                                     Tidak ada mutasi yang sesuai dengan filter ini.
                                 </p>
@@ -375,7 +375,7 @@ export default function BankReconciliationWorkspace({
                     </>
                 ) : unreconciledRows.length > 0 ? (
                     <>
-                        <div className="overflow-y-auto py-3 flex flex-col gap-3 min-h-0 flex-1">
+                        <div className="overflow-y-auto py-2 flex flex-col gap-2 min-h-0 flex-1">
                             {unreconciledRows.map((row, index) => {
                                 const isReconciled = row.status === 'Reconciled';
                                 const key = row.documentNumber || row.sourceNumber || row.document_number;

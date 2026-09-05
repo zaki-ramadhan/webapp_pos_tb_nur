@@ -24,14 +24,14 @@ export default function BankReconciliationMatchedRow({
                 {system ? (
                     <JurnalCard row={system} />
                 ) : (
-                    <div className="border border-slate-200 rounded-[4px] bg-slate-50/70 p-4 flex flex-col justify-center items-center text-center min-h-[110px] h-full">
+                    <div className="border border-slate-200 rounded-[4px] bg-slate-50/70 p-4 flex flex-col justify-center items-center text-center min-h-[96px] h-full">
                         <span className="text-sm font-normal text-slate-500">Tidak ada data di sistem</span>
                     </div>
                 )}
             </div>
 
             {/* Right Column: REKENING KORAN BANK */}
-            <div className="border border-[#72b1cb] rounded-[4px] bg-white p-3 flex flex-col justify-between min-h-[110px] h-full shadow-xs">
+            <div className="border border-[#72b1cb] rounded-[4px] bg-white px-3.5 py-2.5 flex flex-col justify-between min-h-[96px] h-full shadow-xs">
                 {excel ? (
                     <div className="flex flex-col h-full justify-between">
                         <div className="flex justify-between items-start text-sm text-slate-900 gap-2">
@@ -41,11 +41,11 @@ export default function BankReconciliationMatchedRow({
                             </span>
                         </div>
 
-                        <div className="text-sm font-normal text-slate-900 leading-snug text-left my-2">
+                        <div className="text-sm font-normal text-slate-900 leading-snug text-left my-1">
                             {excel.description || '-'}
                         </div>
 
-                        <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2 text-sm">
+                        <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-1.5 text-sm">
                             {/* Match Status / Label */}
                             {status === 'matched' && (
                                 <span className="text-sm font-normal text-emerald-700 flex items-center gap-1.5">
