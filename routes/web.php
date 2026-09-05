@@ -35,19 +35,17 @@ Route::get('/favicon.ico', function () {
 Route::get('/auth/google', [GoogleLoginController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback'])->name('auth.google.callback');
 
-if (app()->environment('local', 'testing')) {
-    Route::get('/preview-error/{status?}', function ($status = 404) {
-        $allowed = [400, 401, 403, 404, 405, 409, 419, 429, 500, 503];
-        $code = (int) $status;
-        if (! in_array($code, $allowed, true)) {
-            $code = 404;
-        }
+Route::get('/preview-error/{status?}', function ($status = 404) {
+    $allowed = [400, 401, 403, 404, 405, 409, 419, 429, 500, 503];
+    $code = (int) $status;
+    if (! in_array($code, $allowed, true)) {
+        $code = 404;
+    }
 
-        return \Inertia\Inertia::render('ErrorPage', [
-            'status' => $code,
-        ]);
-    })->name('preview.error');
-}
+    return \Inertia\Inertia::render('ErrorPage', [
+        'status' => $code,
+    ]);
+})->name('preview.error');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', HomeController::class)->name('login');
