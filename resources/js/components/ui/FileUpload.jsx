@@ -22,7 +22,7 @@ export function FileFormatBadgeIcon({ ext = 'csv', className = '' }) {
 
     return (
         <div className={`relative flex items-center justify-center shrink-0 w-10 h-11 ${className}`}>
-            <File className="h-10 w-10 text-slate-300 stroke-[1.2]" />
+            <File className="h-10 w-10 text-slate-500 stroke-[0.8]" />
             <span
                 className={`absolute bottom-2.5 -left-1 px-1 py-0.5 text-[9px] font-bold tracking-tight rounded-[3px] shadow-xs leading-none select-none ${badgeBg}`}
             >
@@ -161,17 +161,17 @@ export function FileUploadListItemProgressBar({
 
                 {/* Info & progress section */}
                 <div className="min-w-0 flex-1 flex flex-col gap-1">
-                    <p className="text-sm font-medium text-slate-700 truncate" title={name}>
+                    <p className="text-sm font-medium text-slate-700 truncate">
                         {name}
                     </p>
 
                     {failed ? (
                         <div className="flex flex-col">
-                            <div className="flex items-center gap-2 text-xs">
+                            <div className="flex items-center gap-2 text-sm">
                                 <span className="text-slate-500 font-normal">{formattedSize}</span>
-                                <span className="h-3 w-px bg-slate-200 self-center" />
+                                <span className="h-3.5 w-px bg-slate-200 self-center" />
                                 <div className="flex items-center gap-1 text-red-600 font-medium">
-                                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                                    <AlertCircle className="h-4 w-4 shrink-0" />
                                     <span>Upload failed, please try again</span>
                                 </div>
                             </div>
@@ -193,11 +193,11 @@ export function FileUploadListItemProgressBar({
                         </div>
                     ) : progress < 100 ? (
                         <div className="flex flex-col">
-                            <div className="flex items-center gap-2 text-xs">
+                            <div className="flex items-center gap-2 text-sm">
                                 <span className="text-slate-500 font-normal">{formattedSize}</span>
-                                <span className="h-3 w-px bg-slate-200 self-center" />
+                                <span className="h-3.5 w-px bg-slate-200 self-center" />
                                 <div className="flex items-center gap-1 text-slate-600 font-medium">
-                                    <CloudUpload className="h-3.5 w-3.5 text-brand-blue animate-pulse shrink-0" />
+                                    <CloudUpload className="h-4 w-4 text-brand-blue animate-pulse shrink-0" />
                                     <span>Mengunggah...</span>
                                 </div>
                             </div>
@@ -215,11 +215,11 @@ export function FileUploadListItemProgressBar({
                         </div>
                     ) : (
                         <div className="flex flex-col">
-                            <div className="flex items-center gap-2 text-xs">
+                            <div className="flex items-center gap-2 text-sm">
                                 <span className="text-slate-500 font-normal">{formattedSize}</span>
-                                <span className="h-3 w-px bg-slate-200 self-center" />
-                                <div className="flex items-center gap-1 text-emerald-600 font-medium">
-                                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                                <span className="h-3.5 w-px bg-slate-200 self-center" />
+                                <div className="flex items-center gap-1 text-slate-600 font-medium">
+                                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
                                     <span>Selesai</span>
                                 </div>
                             </div>
