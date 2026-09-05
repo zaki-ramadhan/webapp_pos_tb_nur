@@ -21,35 +21,23 @@ export default function CityAutocompleteInput({
     ...props
 }) {
     const [open, setOpen] = useState(false);
-    const [searchVal, setSearchVal] = useState(value || '');
+    const [searchVal, setSearchVal] = useState('');
+    // selectedCity: nilai yang sudah di-commit lewat dropdown (tampil sebagai chip)
+    const [selectedCity, setSelectedCity] = useState(value || '');
     const inputRef = useRef(null);
     const rootRef = useRef(null);
     const isSelectingRef = useRef(false);
-
     const isFocusedRef = useRef(false);
 
+    // Sync prop value ke selectedCity saat nilai berubah dari luar (mis. autofill dari parent)
     useEffect(() => {
         if (!isFocusedRef.current) {
-            setSearchVal(value || '');
+            setSelectedCity(value || '');
+            if (!value) setSearchVal('');
         }
     }, [value]);
 
-    function focusInputFromWrapper(event) {
-        if (disabled) {
-            return;
-        }
-        const target = event.target;
-        if (
-            target instanceof HTMLElement &&
-            (target.closest('input, button, a, select, textarea, [role="button"]') !== null)
-        ) {
-            return;
-        }
-        inputRef.current?.focus();
-    }
-
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
-
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
 
@@ -83,7 +71,8 @@ export default function CityAutocompleteInput({
             ...item,
             country: item.country || 'Indonesia',
         });
-        setSearchVal(item.city);
+        setSelectedCity(item.city);
+        setSearchVal('');
         setOpen(false);
         clearError(contextKey);
         setTimeout(() => {
@@ -92,22 +81,26 @@ export default function CityAutocompleteInput({
     };
 
     const handleClear = () => {
+        setSelectedCity('');
         setSearchVal('');
         onSelectCity?.({ city: '', province: '', postalCode: '', country: '' });
+        onChange?.('');
         setOpen(false);
         clearError(contextKey);
         setTimeout(() => inputRef.current?.focus(), 50);
     };
 
-    const handleBlur = () => {
-        setTimeout(() => {
-            if (!isSelectingRef.current) {
-                onChange?.(searchVal);
-            }
-        }, 150);
-    };
-
-
+    function focusInputFromWrapper(event) {
+        if (disabled) return;
+        const target = event.target;
+        if (
+            target instanceof HTMLElement &&
+            target.closest('input, button, a, select, textarea, [role="button"]') !== null
+        ) {
+            return;
+        }
+        inputRef.current?.focus();
+    }
 
     const hasPrefixMinW = prefixClassName.includes('min-w-');
     const prefixMinWClass = hasPrefixMinW ? '' : 'min-w-[86px]';
@@ -122,53 +115,67 @@ export default function CityAutocompleteInput({
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-input-focus transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-ui-bg-panel text-gray-500' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} shrink-0 items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-input-focus transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-ui-bg-panel text-gray-500' : ''} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
                 ) : null}
 
-                <div className="flex flex-1 min-w-0 items-center gap-2 px-4 h-full">
-                    <input
-                        ref={inputRef}
-                        id={id}
-                        type="text"
-                        value={searchVal}
-                        onChange={(e) => {
-                            const cleanedVal = e.target.value.replace(/[^a-zA-Z\s'.-]/g, '');
-                            setSearchVal(cleanedVal);
-                            setOpen(true);
-                            onChange?.(cleanedVal);
-                        }}
-                        onFocus={() => {
-                            isFocusedRef.current = true;
-                            setOpen(true);
-                        }}
-                        onBlur={(e) => {
-                            isFocusedRef.current = false;
-                            handleBlur(e);
-                        }}
-                        placeholder={disabled ? '' : placeholder}
-                        disabled={disabled}
-                        autoComplete="off"
-                        className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${disabled ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
-                        {...props}
-                    />
+                <div className="flex flex-1 min-w-0 items-center gap-2 px-3 h-full overflow-hidden">
+                    {selectedCity ? (
+                        // Mini chip ketika kota sudah dipilih dari dropdown
+                        <span className="inline-flex max-w-full items-center gap-1.5 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-xs sm:text-sm text-text-chip-blue-dark">
+                            <span className="truncate">{selectedCity}</span>
+                            {!disabled && (
+                                <button
+                                    type="button"
+                                    onClick={handleClear}
+                                    aria-label="Hapus kota"
+                                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark hover:opacity-70 transition-opacity"
+                                >
+                                    <CloseIcon className="h-3.5 w-3.5" />
+                                </button>
+                            )}
+                        </span>
+                    ) : (
+                        // Input teks ketika belum ada pilihan
+                        <input
+                            ref={inputRef}
+                            id={id}
+                            type="text"
+                            value={searchVal}
+                            onChange={(e) => {
+                                const cleanedVal = e.target.value.replace(/[^a-zA-Z\s'.-]/g, '');
+                                setSearchVal(cleanedVal);
+                                setOpen(true);
+                                onChange?.(cleanedVal);
+                            }}
+                            onFocus={() => {
+                                isFocusedRef.current = true;
+                                setOpen(true);
+                            }}
+                            onBlur={(e) => {
+                                isFocusedRef.current = false;
+                                setTimeout(() => {
+                                    if (!isSelectingRef.current) {
+                                        onChange?.(searchVal);
+                                    }
+                                }, 150);
+                            }}
+                            placeholder={disabled ? '' : placeholder}
+                            disabled={disabled}
+                            autoComplete="off"
+                            className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${disabled ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                            {...props}
+                        />
+                    )}
                 </div>
 
-                <div className="flex h-full items-center gap-1.5 pr-3 pl-1 shrink-0">
-                    {searchVal && !disabled ? (
-                        <button
-                            type="button"
-                            onClick={handleClear}
-                            aria-label="Hapus kota"
-                            className="inline-flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-                        >
-                            <CloseIcon className="h-4 w-4" />
-                        </button>
-                    ) : null}
-                    <SearchIcon className="h-5 w-5 text-slate-400" />
-                </div>
+                {!selectedCity && (
+                    <div className="flex h-full items-center pr-3 pl-1 shrink-0">
+                        <SearchIcon className="h-4 w-4 text-slate-400" />
+                    </div>
+                )}
             </div>
 
             {feedbackMessage ? (
@@ -177,7 +184,7 @@ export default function CityAutocompleteInput({
                 </p>
             ) : null}
 
-            {open && (
+            {open && !selectedCity && (
                 <LookupDropdownSurface
                     onClose={() => setOpen(false)}
                     maxHeightLimit={220}
@@ -202,7 +209,7 @@ export default function CityAutocompleteInput({
                                 </button>
                             ))
                         ) : (
-                            <div className="px-4 py-4 text-center text-xs sm:text-sm text-slate-400">
+                            <div className="px-4 py-4 text-center text-xs sm:text-sm text-brand-dark">
                                 Tidak ada hasil yang cocok.
                             </div>
                         )}

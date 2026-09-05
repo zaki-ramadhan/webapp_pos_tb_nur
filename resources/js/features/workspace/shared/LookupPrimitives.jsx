@@ -24,7 +24,7 @@ export function LookupEmptyState({
 }) {
     return (
         <div className={`px-4 py-5 text-center ${className}`.trim()}>
-            <div className="text-xs sm:text-sm font-normal italic text-text-muted">{title}</div>
+            <div className="text-xs sm:text-sm font-normal italic text-text-workspace-dark">{title}</div>
             {description ? <div className="mt-1 text-xs italic text-text-light">{description}</div> : null}
         </div>
     );
