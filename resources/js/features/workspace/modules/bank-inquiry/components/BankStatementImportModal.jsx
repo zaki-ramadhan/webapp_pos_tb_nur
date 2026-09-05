@@ -1,5 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import {
+    DataTable,
+    DataTableHeader,
+    DataTableHead,
+    DataTableBody,
+    DataTableRow,
+    DataTableCell,
+} from '@/components/ui/DataTable';
 import StatementDropzone from './StatementDropzone';
 import StatementFileProgressCard from './StatementFileProgressCard';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
@@ -10,29 +18,12 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
     const [parsedData, setParsedData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [progress, setProgress] = useState(0);
-    const [showPreview, setShowPreview] = useState(false);
-    const progressTimerRef = useRef(null);
-
-    useEffect(() => {
-        return () => {
-            if (progressTimerRef.current) {
-                clearInterval(progressTimerRef.current);
-            }
-        };
-    }, []);
 
     const handleReset = () => {
-        if (progressTimerRef.current) {
-            clearInterval(progressTimerRef.current);
-            progressTimerRef.current = null;
-        }
         setFile(null);
         setParsedData(null);
         setLoading(false);
         setError('');
-        setProgress(0);
-        setShowPreview(false);
     };
 
     const handleFileSelect = async (selectedFile) => {
@@ -50,32 +41,16 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
         setFile(selectedFile);
         setLoading(true);
         setError('');
-        setProgress(20);
-
-        if (progressTimerRef.current) clearInterval(progressTimerRef.current);
-        progressTimerRef.current = setInterval(() => {
-            setProgress((prev) => {
-                if (prev >= 85) {
-                    clearInterval(progressTimerRef.current);
-                    return 85;
-                }
-                return prev + 15;
-            });
-        }, 70);
 
         try {
             const result = await parseBankStatementFile(selectedFile);
             if (!result.rows || result.rows.length === 0) {
                 throw new Error('Tidak ada baris transaksi yang berhasil dibaca dari file ini.');
             }
-            if (progressTimerRef.current) clearInterval(progressTimerRef.current);
-            setProgress(100);
             setParsedData(result);
         } catch (err) {
-            if (progressTimerRef.current) clearInterval(progressTimerRef.current);
             setError(err.message || 'Gagal memproses file rekening koran.');
             setParsedData(null);
-            setProgress(100);
         } finally {
             setLoading(false);
         }
@@ -128,7 +103,6 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                 {file ? (
                     <StatementFileProgressCard
                         file={file}
-                        progress={progress}
                         parsedData={parsedData}
                         loading={loading}
                         error={error}
@@ -143,54 +117,52 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                 {/* Pratinjau Mutasi jika sudah terbaca */}
                 {parsedData && parsedData.rows?.length ? (
                     <div className="flex flex-col gap-2.5 rounded-[6px] border border-slate-200 bg-white p-3.5 shadow-2xs">
-                        <div className="flex items-center justify-between text-xs sm:text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">
+                        <div className="flex items-center justify-between text-sm font-medium text-slate-800 border-b border-slate-100 pb-2">
                             <span>Pratinjau Data Transaksi Mutasi ({parsedData.rows.length} Ditemukan)</span>
-                            <span className="text-xs font-normal text-slate-500">
+                            <span className="text-sm font-normal text-slate-500">
                                 5 Baris Teratas
                             </span>
                         </div>
 
-                        <div className="max-h-[200px] overflow-y-auto border border-slate-200 rounded-[4px]">
-                            <table className="w-full text-left text-xs sm:text-sm border-collapse">
-                                <thead className="bg-slate-100 text-slate-900 sticky top-0 border-b border-slate-200">
-                                    <tr>
-                                        <th className="px-3 py-2 font-semibold">Tanggal</th>
-                                        <th className="px-3 py-2 font-semibold">Keterangan</th>
-                                        <th className="px-3 py-2 font-semibold text-right">Nominal</th>
-                                        <th className="px-3 py-2 font-semibold text-center">Tipe</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100 text-slate-800">
-                                    {parsedData.rows.slice(0, 5).map((row, idx) => (
-                                        <tr key={row.id || idx} className="hover:bg-slate-50">
-                                            <td className="px-3 py-2 whitespace-nowrap text-xs sm:text-sm text-slate-700 font-medium">
-                                                {row.date}
-                                            </td>
-                                            <td className="px-3 py-2 truncate max-w-[280px] text-xs sm:text-sm text-slate-900" title={row.description}>
-                                                {row.description}
-                                            </td>
-                                            <td className="px-3 py-2 whitespace-nowrap text-right font-bold text-xs sm:text-sm text-slate-900">
-                                                Rp {new Intl.NumberFormat('id-ID').format(row.amount)}
-                                            </td>
-                                            <td className="px-3 py-2 whitespace-nowrap text-center">
-                                                <span
-                                                    className={`px-2 py-0.5 rounded-[4px] text-xs font-bold ${
-                                                        row.type === 'CR'
-                                                            ? 'bg-emerald-100 text-emerald-800'
-                                                            : 'bg-rose-100 text-rose-800'
-                                                    }`}
-                                                >
-                                                    {row.type === 'CR' ? 'Masuk' : 'Keluar'}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <DataTable wrapperClassName="max-h-[200px] overflow-y-auto border-table-border">
+                            <DataTableHeader>
+                                <DataTableRow>
+                                    <DataTableHead className="w-[120px] px-3 py-2 text-left">Tanggal</DataTableHead>
+                                    <DataTableHead className="px-3 py-2 text-left">Keterangan</DataTableHead>
+                                    <DataTableHead className="w-[140px] px-3 py-2 text-right">Nominal</DataTableHead>
+                                    <DataTableHead className="w-[90px] px-3 py-2 text-center">Tipe</DataTableHead>
+                                </DataTableRow>
+                            </DataTableHeader>
+                            <DataTableBody>
+                                {parsedData.rows.slice(0, 5).map((row, idx) => (
+                                    <DataTableRow key={row.id || idx} className="hover:bg-slate-50">
+                                        <DataTableCell className="w-[120px] px-3 py-2 text-left text-sm font-normal text-slate-700 whitespace-nowrap">
+                                            {row.date}
+                                        </DataTableCell>
+                                        <DataTableCell className="px-3 py-2 text-left text-sm font-normal text-slate-800" title={row.description}>
+                                            {row.description}
+                                        </DataTableCell>
+                                        <DataTableCell className="w-[140px] px-3 py-2 text-right text-sm font-normal text-slate-800 whitespace-nowrap">
+                                            Rp {new Intl.NumberFormat('id-ID').format(row.amount)}
+                                        </DataTableCell>
+                                        <DataTableCell className="w-[90px] px-3 py-2 text-center whitespace-nowrap">
+                                            <span
+                                                className={`inline-block px-2 py-0.5 rounded-[4px] text-xs font-medium ${
+                                                    row.type === 'CR'
+                                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                        : 'bg-rose-50 text-rose-700 border border-rose-200'
+                                                }`}
+                                            >
+                                                {row.type === 'CR' ? 'Masuk' : 'Keluar'}
+                                            </span>
+                                        </DataTableCell>
+                                    </DataTableRow>
+                                ))}
+                            </DataTableBody>
+                        </DataTable>
                         {parsedData.rows.length > 5 && (
-                            <p className="text-xs text-slate-500 italic text-right">
-                                Menampilkan 5 dari total {parsedData.rows.length} baris transaksi mutasi.
+                            <p className="text-sm font-normal text-slate-600 text-right pt-0.5">
+                                Menampilkan 5 dari total {parsedData.rows.length} baris transaksi mutasi
                             </p>
                         )}
                     </div>
