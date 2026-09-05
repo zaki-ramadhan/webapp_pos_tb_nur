@@ -140,7 +140,7 @@ export default function SmartlinkEbankingFormView({
                 <SmartlinkFieldRow label="Jenis Internet Banking" required>
                     <SelectField
                         value={formData.serviceType}
-                        onChange={(val) => setFormData(prev => ({ ...prev, serviceType: val }))}
+                        onChange={(e) => setFormData(prev => ({ ...prev, serviceType: e?.target ? e.target.value : e }))}
                         className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]"
                         selectClassName="text-xs sm:text-sm text-brand-dark"
                         placeholder="-- Pilih Internet Banking --"

@@ -67,6 +67,7 @@ export function buildFormValues(source = {}) {
     return {
         ...source,
         ...totals,
+        adjustmentType: source.adjustmentType ?? (source.salesCategory !== undefined ? 'Harga' : 'Pengurangan Stok'),
         adjustmentAccount: cloneList(source.adjustmentAccount),
         branches: cloneList(source.branches),
         items,

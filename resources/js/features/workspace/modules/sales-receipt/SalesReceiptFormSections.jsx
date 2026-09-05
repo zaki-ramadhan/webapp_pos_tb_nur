@@ -198,7 +198,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                             className="h-[40px] rounded-[4px] border-ui-border"
                             selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
-                            {['Tunai', 'Transfer Bank', 'QRIS', 'Kartu Debit'].map((option) => (
+                            {['Tunai', 'Cek/Giro', 'Transfer Bank', 'QRIS', 'Kartu Debit'].map((option) => (
                                 <option key={option} value={option}>
                                     {option}
                                 </option>

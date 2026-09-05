@@ -63,7 +63,7 @@ export default function SalesDocumentFormHeader({
 
                 {config.headerSelectLookupField ? (() => {
                     const isPurchase = String(pageId).toLowerCase().includes('purchase');
-                    const selectedSource = values[config.headerSelectLookupField.selectValueKey] ?? 'Faktur';
+                    const selectedSource = values[config.headerSelectLookupField.selectValueKey] ?? config.headerSelectLookupField.options?.[0] ?? 'Faktur';
                     const isWithoutInvoice = selectedSource === 'Tanpa Faktur';
                     
                     const resolvedResource = selectedSource === 'Uang Muka'

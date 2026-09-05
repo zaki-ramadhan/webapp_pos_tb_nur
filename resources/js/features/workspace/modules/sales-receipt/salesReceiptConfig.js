@@ -119,7 +119,7 @@ export const defaultSalesReceiptConfig = {
         filters: [
             { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '10/02/2017', label: 'Tanggal: 10/02/2017' }] },
             { id: 'checkDate', rowKey: 'checkDate', options: [{ value: 'all', label: 'Tanggal Cek: Semua' }, { value: '24/02/2017', label: 'Tanggal Cek: 24/02/2017' }] },
-            { id: 'paymentMethod', rowKey: 'paymentMethod', options: [{ value: 'all', label: 'Metode Bayar: Semua' }, { value: 'Tunai', label: 'Metode Bayar: Tunai' }, { value: 'Transfer Bank', label: 'Metode Bayar: Transfer Bank' }, { value: 'QRIS', label: 'Metode Bayar: QRIS' }, { value: 'Kartu Debit', label: 'Metode Bayar: Kartu Debit' }] },
+            { id: 'paymentMethod', rowKey: 'paymentMethod', options: [{ value: 'all', label: 'Metode Bayar: Semua' }, { value: 'Tunai', label: 'Metode Bayar: Tunai' }, { value: 'Cek/Giro', label: 'Metode Bayar: Cek/Giro' }, { value: 'Transfer Bank', label: 'Metode Bayar: Transfer Bank' }, { value: 'QRIS', label: 'Metode Bayar: QRIS' }, { value: 'Kartu Debit', label: 'Metode Bayar: Kartu Debit' }] },
             { id: 'bank', rowKey: 'bank', options: [{ value: 'all', label: 'Bank: Semua' }, { value: 'Bank BCA IDR Jakarta (069-773-3993)', label: 'Bank: Bank BCA IDR Jakarta (069-773-3993)' }] },
             { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Terima dari: Semua' }, { value: 'Pelanggan Umum - Jakarta', label: 'Terima dari: Pelanggan Umum - Jakarta' }] },
         ],
