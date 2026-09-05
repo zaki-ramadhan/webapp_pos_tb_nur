@@ -26,7 +26,7 @@ export default function StatementDropzone({ onFileSelect, disabled = false }) {
                     fileInputRef.current?.click();
                 }
             }}
-            className={`group flex flex-col items-center justify-center p-6 sm:p-7 border-2 border-dashed rounded-[6px] transition-all cursor-pointer select-none bg-slate-50/60 hover:bg-blue-50/30 ${
+            className={`group flex flex-col items-center justify-center p-7 sm:p-8 border-2 border-dashed rounded-[6px] transition-all cursor-pointer select-none bg-slate-50/70 hover:bg-blue-50/40 ${
                 disabled
                     ? 'border-slate-200 opacity-60 cursor-not-allowed'
                     : 'border-slate-300 hover:border-brand-blue'
@@ -45,22 +45,22 @@ export default function StatementDropzone({ onFileSelect, disabled = false }) {
                 }}
             />
 
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-100 text-brand-blue mb-2.5 transition-transform group-hover:scale-105">
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-brand-blue mb-3 shadow-2xs group-hover:scale-105 transition-transform">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
             </div>
 
-            <p className="text-xs sm:text-sm font-normal text-slate-700 text-center leading-relaxed">
+            <p className="text-sm sm:text-base font-medium text-slate-800 text-center leading-relaxed">
                 Seret dan lepas berkas atau{' '}
-                <span className="font-semibold text-brand-blue underline underline-offset-2 group-hover:text-brand-blue-hover transition">
+                <span className="font-semibold text-brand-blue underline underline-offset-4 decoration-2 decoration-brand-blue/60 group-hover:text-brand-blue-hover transition">
                     pilih file
                 </span>{' '}
                 untuk mengunggah.
             </p>
 
-            <p className="mt-1 text-xs text-slate-500 text-center">
-                Mendukung format .CSV, .XLSX, .XLS (Maks. 10MB)
+            <p className="mt-1.5 text-xs sm:text-sm text-slate-600 text-center">
+                Mendukung format berkas .CSV, .XLSX, dan .XLS (Maksimal 10MB)
             </p>
         </div>
     );
