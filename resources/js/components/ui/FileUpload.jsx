@@ -87,7 +87,7 @@ export function FileUploadDropZone({
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`group relative flex flex-col items-center justify-center rounded-xl p-6 text-center transition cursor-pointer select-none ${
+            className={`group relative flex flex-col items-center justify-center rounded-xl py-11 sm:py-14 px-6 text-center transition cursor-pointer select-none ${
                 isDragging
                     ? 'bg-blue-50/50 text-brand-blue'
                     : 'bg-white text-slate-300 hover:text-brand-blue hover:bg-slate-50/50'
@@ -116,8 +116,8 @@ export function FileUploadDropZone({
                 disabled={isDisabled}
                 className="hidden"
             />
-            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-2xs text-slate-500 group-hover:border-brand-blue/40 group-hover:text-brand-blue transition-colors">
-                <CloudUpload className="h-5 w-5" />
+            <div className="mb-4 flex h-13 w-13 items-center justify-center rounded-xl border border-slate-200 bg-white shadow-2xs text-slate-600 group-hover:border-brand-blue/40 group-hover:text-brand-blue transition-colors">
+                <CloudUpload className="h-7 w-7" strokeWidth={1.8} />
             </div>
             <p className="text-sm text-slate-700">
                 <span className="font-semibold text-brand-blue hover:underline">Klik untuk unggah</span> atau seret dan lepas
