@@ -97,7 +97,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
         <WorkspaceDialog
             open={open}
             onClose={handleClose}
-            title="Impor Rekening Koran (Bank Statement)"
+            title="Impor Rekening Koran"
             maxWidthClassName="max-w-[720px]"
             contentClassName="bg-white p-5 sm:p-6"
             footer={
@@ -121,22 +121,6 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
             }
         >
             <div className="flex flex-col gap-4">
-                {bankName ? (
-                    <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-[6px] bg-blue-50/90 px-4 py-2.5 border border-blue-200 shadow-2xs">
-                        <div className="flex items-center gap-2">
-                            <span className="text-xs sm:text-sm font-semibold text-blue-900">Kas / Bank Sasaran:</span>
-                            <span className="rounded-[4px] bg-white px-2.5 py-1 text-xs sm:text-sm font-semibold border border-blue-200 text-blue-950 shadow-2xs">
-                                {bankName}
-                            </span>
-                        </div>
-                        <span className="text-xs font-medium text-blue-800 bg-blue-100/60 rounded px-2 py-0.5">Pencocokan Otomatis</span>
-                    </div>
-                ) : null}
-
-                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                    Unggah berkas mutasi rekening koran dari internet banking (BCA, Mandiri, BRI, BNI, dll) dalam format <strong>.CSV</strong> atau <strong>.XLSX</strong> untuk dicocokkan otomatis dengan buku bank sistem.
-                </p>
-
                 {/* Dropzone Area */}
                 <StatementDropzone onFileSelect={handleFileSelect} disabled={loading} />
 
@@ -151,6 +135,10 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                         onRemove={handleReset}
                     />
                 ) : null}
+
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    Unggah berkas mutasi rekening koran dari internet banking (BCA, Mandiri, BRI, BNI, dll) dalam format <strong>.CSV</strong> atau <strong>.XLSX</strong> untuk dicocokkan otomatis dengan buku bank sistem.
+                </p>
 
                 {/* Pratinjau Mutasi jika sudah terbaca */}
                 {parsedData && parsedData.rows?.length ? (
