@@ -130,11 +130,11 @@ export default function DatePickerPopover({
                                     key={idx}
                                     type="button"
                                     onClick={() => handlePresetClick(preset)}
-                                    className={`shrink-0 w-auto sm:w-full text-left px-3 py-2 text-[13px] font-medium rounded-[6px] transition cursor-pointer ${
-                                        isSelected
-                                            ? 'bg-blue-100/80 text-blue-700 font-semibold'
-                                            : 'text-slate-600 hover:bg-blue-50 hover:text-blue-700'
-                                    }`.trim()}
+                                    className={`shrink-0 w-auto sm:w-full text-left px-3 py-2 text-[13px] rounded-[6px] transition cursor-pointer ${
+                                    isSelected
+                                        ? 'bg-[#e8f2fc] text-slate-900 font-medium border border-[#9dc2ec]'
+                                        : 'text-slate-700 hover:bg-slate-100/80 hover:text-slate-900 border border-transparent font-normal'
+                                }`.trim()}
                                 >
                                     {preset.label}
                                 </button>
