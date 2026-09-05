@@ -104,37 +104,36 @@ export default function BankReconciliationMatchedRow({
                 ) : (
                     <div className="border border-dashed border-slate-300 rounded-[4px] bg-slate-50/70 p-3.5 flex flex-col justify-between min-h-[96px] h-full">
                         <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs font-normal text-slate-500 bg-slate-200/80 px-2 py-0.5 rounded">
+                            <span className="text-sm font-normal text-slate-600 bg-slate-200/80 px-2.5 py-0.5 rounded">
                                 Belum tercatat di sistem
                             </span>
-                            <span className="text-xs text-slate-500">Catat transaksi:</span>
                         </div>
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
                             {excel?.type === 'CR' ? (
                                 <button
                                     type="button"
                                     onClick={() => handleCreateTransaction('cash-receipt')}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-normal shadow-xs transition active:scale-[0.98] cursor-pointer"
+                                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-normal shadow-xs transition active:scale-[0.98] cursor-pointer"
                                 >
-                                    <Plus className="h-3.5 w-3.5 stroke-[2]" />
+                                    <Plus className="h-4 w-4 stroke-[2]" />
                                     <span>Catat Penerimaan (+)</span>
                                 </button>
                             ) : (
                                 <button
                                     type="button"
                                     onClick={() => handleCreateTransaction('cash-payment')}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#387593] hover:bg-[#2c617c] text-white text-xs font-normal shadow-xs transition active:scale-[0.98] cursor-pointer"
+                                    className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[#387593] hover:bg-[#2c617c] text-white text-sm font-normal shadow-xs transition active:scale-[0.98] cursor-pointer"
                                 >
-                                    <Minus className="h-3.5 w-3.5 stroke-[2]" />
+                                    <Minus className="h-4 w-4 stroke-[2]" />
                                     <span>Catat Pembayaran (-)</span>
                                 </button>
                             )}
                             <button
                                 type="button"
                                 onClick={() => handleCreateTransaction('bank-transfer')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[4px] border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-normal transition cursor-pointer"
+                                className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-[4px] border border-slate-300 hover:bg-slate-100 text-slate-700 text-sm font-normal transition cursor-pointer"
                             >
-                                <ArrowRightLeft className="h-3 w-3" />
+                                <ArrowRightLeft className="h-4 w-4 stroke-[2]" />
                                 <span>Transfer Bank</span>
                             </button>
                         </div>
@@ -204,24 +203,21 @@ export default function BankReconciliationMatchedRow({
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col h-full justify-between items-center text-center">
-                        <div className="flex-1 flex items-center justify-center">
-                            <span className="text-sm font-normal text-slate-500">Tidak ada di rekening koran</span>
-                        </div>
+                    <div className="flex items-center justify-start min-h-[96px] h-full">
                         {system && (
                             isReconciled ? (
-                                <div className="flex flex-col items-center">
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-xs font-normal bg-[#2a6d8c] text-white">
-                                        <Check className="h-3 w-3 stroke-[2]" />
+                                <div className="flex flex-col items-start justify-center">
+                                    <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] text-sm font-normal bg-[#2a6d8c] text-white shadow-sm">
+                                        <Check className="h-4 w-4 stroke-[2]" />
                                         <span>Ada di Rekening Koran</span>
                                     </span>
                                     <button
                                         type="button"
                                         disabled={isReconciling}
                                         onClick={() => onUnreconcile?.(sysDocNumber, false, system.account_id)}
-                                        className="text-xs text-slate-600 hover:text-rose-600 hover:underline mt-1 font-normal cursor-pointer"
+                                        className="text-sm text-slate-900 hover:text-rose-600 hover:underline mt-1.5 font-normal disabled:opacity-50 cursor-pointer"
                                     >
-                                        Batalkan kecocokan
+                                        {isReconciling ? 'Membatalkan...' : 'Batalkan kecocokan'}
                                     </button>
                                 </div>
                             ) : (
@@ -235,9 +231,9 @@ export default function BankReconciliationMatchedRow({
                                             onReconcile?.(sysDocNumber, true, system.account_id);
                                         }
                                     }}
-                                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[#387593] hover:bg-[#2c617c] text-white text-xs font-normal shadow-xs transition active:scale-[0.98] disabled:opacity-50 cursor-pointer mb-0.5"
+                                    className="inline-flex items-center justify-center gap-2 rounded-[4px] bg-[#387593] hover:bg-[#2c617c] text-white px-3.5 py-1.5 text-sm font-normal transition shadow-xs active:scale-[0.98] disabled:opacity-50 cursor-pointer"
                                 >
-                                    <Check className="h-3.5 w-3.5 stroke-[2]" />
+                                    <Check className="h-4 w-4 stroke-[2]" />
                                     <span>Ada di Rekening Koran</span>
                                 </button>
                             )
