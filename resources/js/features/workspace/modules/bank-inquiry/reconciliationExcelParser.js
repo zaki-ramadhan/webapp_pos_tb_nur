@@ -51,7 +51,7 @@ export function parseExcelRows(rawData) {
 
         row.forEach((col) => {
             const val = String(col || '').toLowerCase().trim();
-            if (val.includes('tanggal') || val.includes('date') || val === 'tgl' || val.includes('tgl.')) {
+            if (val.includes('tanggal') || val.includes('date') || val.includes('tgl')) {
                 hasDate = true;
             } else if (
                 val.includes('keterangan') ||
@@ -62,7 +62,10 @@ export function parseExcelRows(rawData) {
                 val.includes('jumlah') ||
                 val.includes('mutasi') ||
                 val.includes('debit') ||
-                val.includes('kredit')
+                val.includes('debet') ||
+                val.includes('kredit') ||
+                val.includes('remark') ||
+                val.includes('desk')
             ) {
                 hasDescOrAmount = true;
             }
@@ -81,12 +84,18 @@ export function parseExcelRows(rawData) {
     const headers = rawData[headerRowIdx];
     headers.forEach((h, idx) => {
         const name = String(h || '').toLowerCase().trim();
-        if (name.includes('tanggal') || name.includes('date') || name === 'tgl' || name.includes('tgl.')) dateIdx = idx;
-        else if (name.includes('keterangan') || name.includes('description') || name.includes('narasi') || name.includes('uraian') || name.includes('transaksi') || name.includes('rincian')) descIdx = idx;
-        else if (name.includes('debit') || name === 'db' || name.includes('keluar') || name.includes('pengeluaran')) debitIdx = idx;
-        else if (name.includes('kredit') || name === 'cr' || name.includes('masuk') || name.includes('penerimaan')) creditIdx = idx;
-        else if (name.includes('jumlah') || name.includes('amount') || name.includes('nominal') || name.includes('mutasi') || name.includes('nilai')) amountIdx = idx;
-        else if (name.includes('tipe') || name.includes('type') || name.includes('d/k') || name.includes('status')) typeIdx = idx;
+        if (name.includes('tanggal') || name.includes('date') || name.includes('tgl')) {
+            if (dateIdx === -1 || name === 'tgl_tran' || name.includes('transaksi')) dateIdx = idx;
+        }
+        if (name.includes('remark_custom')) {
+            descIdx = idx;
+        } else if (descIdx === -1 && (name.includes('keterangan') || name.includes('description') || name.includes('narasi') || name.includes('uraian') || name.includes('transaksi') || name.includes('rincian') || name.includes('desk') || name.includes('remark'))) {
+            descIdx = idx;
+        }
+        if (name.includes('debit') || name.includes('debet') || name === 'db' || name.includes('keluar') || name.includes('pengeluaran')) debitIdx = idx;
+        if (name.includes('kredit') || name === 'cr' || name.includes('masuk') || name.includes('penerimaan')) creditIdx = idx;
+        if (!name.includes('saldo') && (name.includes('jumlah') || name.includes('amount') || name.includes('nominal') || name === 'mutasi' || name.includes('nilai'))) amountIdx = idx;
+        if (name.includes('glsign') || name.includes('tipe') || name.includes('type') || name.includes('d/k') || name.includes('status')) typeIdx = idx;
     });
 
     if (dateIdx === -1) dateIdx = 0;
