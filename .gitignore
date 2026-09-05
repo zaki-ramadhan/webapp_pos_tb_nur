@@ -48,3 +48,6 @@ scratch/
 /docs/
 /.agents/
 /tools/
+*.csv
+/sample_csv/
+/sample_data/
