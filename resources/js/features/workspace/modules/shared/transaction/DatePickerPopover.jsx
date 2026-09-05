@@ -120,7 +120,7 @@ export default function DatePickerPopover({
             <div className="flex flex-col sm:flex-row">
                 {/* Kolom Preset Pintasan di Kiri */}
                 {resolvedPresets.length > 0 && (
-                    <div className="w-full sm:w-36 shrink-0 bg-slate-50/80 border-b sm:border-b-0 sm:border-r border-slate-100 p-2 flex flex-row sm:flex-col gap-1 overflow-x-auto sm:overflow-x-visible">
+                    <div className="w-full sm:w-40 shrink-0 bg-slate-50/90 border-b sm:border-b-0 sm:border-r border-slate-100 p-2.5 flex flex-row sm:flex-col gap-1 overflow-x-auto sm:overflow-x-visible">
                         {resolvedPresets.map((preset, idx) => {
                             const presetDate = preset.getDate();
                             const isSelected = selectedDate && presetDate && isSameDay(selectedDate, presetDate);
@@ -130,7 +130,7 @@ export default function DatePickerPopover({
                                     key={idx}
                                     type="button"
                                     onClick={() => handlePresetClick(preset)}
-                                    className={`shrink-0 w-auto sm:w-full text-left px-2.5 py-1.5 text-xs font-medium rounded-[5px] transition cursor-pointer ${
+                                    className={`shrink-0 w-auto sm:w-full text-left px-3 py-2 text-[13px] font-medium rounded-[6px] transition cursor-pointer ${
                                         isSelected
                                             ? 'bg-blue-100/80 text-blue-700 font-semibold'
                                             : 'text-slate-600 hover:bg-blue-50 hover:text-blue-700'
@@ -144,22 +144,22 @@ export default function DatePickerPopover({
                 )}
 
                 {/* Kolom Kalender di Kanan */}
-                <div className="p-3 flex flex-col w-[280px] sm:w-[290px]">
+                <div className="p-3.5 flex flex-col w-[300px] sm:w-[320px]">
                     {/* Header Kalender */}
-                    <div className="flex items-center justify-between pb-2 mb-1">
+                    <div className="flex items-center justify-between pb-2.5 mb-1">
                         <button
                             type="button"
                             onClick={handlePrev}
-                            className="inline-flex h-7 w-7 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                             aria-label="Sebelumnya"
                         >
-                            <ChevronLeftIcon className="h-4 w-4" />
+                            <ChevronLeftIcon className="h-4.5 w-4.5" />
                         </button>
 
                         <button
                             type="button"
                             onClick={toggleViewMode}
-                            className="px-2 py-1 text-xs sm:text-sm font-semibold text-slate-800 hover:bg-slate-100 rounded-[4px] transition cursor-pointer"
+                            className="px-2.5 py-1 text-sm sm:text-[15px] font-bold text-slate-800 hover:bg-slate-100 rounded-[5px] transition cursor-pointer"
                         >
                             {headerTitle}
                         </button>
@@ -167,10 +167,10 @@ export default function DatePickerPopover({
                         <button
                             type="button"
                             onClick={handleNext}
-                            className="inline-flex h-7 w-7 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                             aria-label="Berikutnya"
                         >
-                            <ChevronRightIcon className="h-4 w-4" />
+                            <ChevronRightIcon className="h-4.5 w-4.5" />
                         </button>
                     </div>
 
@@ -178,11 +178,11 @@ export default function DatePickerPopover({
                     {viewMode === 'days' && (
                         <>
                             {/* Hari dalam Seminggu */}
-                            <div className="grid grid-cols-7 gap-1 text-center mb-1">
+                            <div className="grid grid-cols-7 gap-1 text-center mb-1.5">
                                 {INDONESIAN_WEEKDAYS.map((weekday, idx) => (
                                     <span
                                         key={idx}
-                                        className="text-[11px] font-semibold text-slate-400 py-0.5 tracking-wide"
+                                        className="text-xs font-semibold text-slate-500 py-0.5 tracking-wide"
                                     >
                                         {weekday}
                                     </span>
@@ -193,12 +193,12 @@ export default function DatePickerPopover({
                             <div className="grid grid-cols-7 gap-1">
                                 {calendarCells.map((cell, idx) => {
                                     const cellStyle = cell.isSelected
-                                        ? 'bg-blue-570 text-white font-semibold shadow-sm hover:bg-blue-600'
+                                        ? 'bg-blue-570 text-white font-bold shadow-sm hover:bg-blue-600'
                                         : cell.isToday
-                                          ? 'border border-blue-500 font-semibold text-blue-600 hover:bg-blue-50'
+                                          ? 'border border-blue-500 font-bold text-blue-600 hover:bg-blue-50'
                                           : cell.isCurrentMonth
-                                            ? 'text-slate-800 hover:bg-slate-100 hover:text-blue-700'
-                                            : 'text-slate-300 hover:bg-slate-50 hover:text-slate-500';
+                                            ? 'text-slate-800 font-medium hover:bg-slate-100 hover:text-blue-700'
+                                            : 'text-slate-300 font-normal hover:bg-slate-50 hover:text-slate-500';
 
                                     const disabledStyle = cell.isDisabled
                                         ? 'opacity-25 cursor-not-allowed pointer-events-none'
@@ -210,7 +210,7 @@ export default function DatePickerPopover({
                                             type="button"
                                             onClick={() => handleDateClick(cell)}
                                             disabled={cell.isDisabled}
-                                            className={`h-8 w-8 text-xs flex items-center justify-center rounded-[6px] transition ${cellStyle} ${disabledStyle}`.trim()}
+                                            className={`h-9 w-9 text-[13.5px] flex items-center justify-center rounded-[6px] transition ${cellStyle} ${disabledStyle}`.trim()}
                                             aria-label={cell.ymd}
                                         >
                                             {cell.dayNumber}
@@ -234,7 +234,7 @@ export default function DatePickerPopover({
                                             setViewMonth(idx);
                                             setViewMode('days');
                                         }}
-                                        className={`py-2 text-xs font-medium rounded-[6px] transition cursor-pointer ${
+                                        className={`py-2.5 text-sm font-medium rounded-[6px] transition cursor-pointer ${
                                             isCurrent
                                                 ? 'bg-blue-570 text-white font-semibold'
                                                 : 'text-slate-700 hover:bg-slate-100 hover:text-blue-700'
@@ -260,7 +260,7 @@ export default function DatePickerPopover({
                                             setViewYear(year);
                                             setViewMode('months');
                                         }}
-                                        className={`py-2 text-xs font-medium rounded-[6px] transition cursor-pointer ${
+                                        className={`py-2.5 text-sm font-medium rounded-[6px] transition cursor-pointer ${
                                             isCurrent
                                                 ? 'bg-blue-570 text-white font-semibold'
                                                 : 'text-slate-700 hover:bg-slate-100 hover:text-blue-700'
@@ -276,12 +276,12 @@ export default function DatePickerPopover({
             </div>
 
             {/* Footer Aksi Bawah */}
-            <div className="border-t border-slate-100 px-3 py-2 flex items-center justify-between bg-slate-50/50 text-xs">
-                <div className="flex items-center gap-2">
+            <div className="border-t border-slate-100 px-3.5 py-2.5 flex items-center justify-between bg-slate-50/50 text-[13px]">
+                <div className="flex items-center gap-2.5">
                     <button
                         type="button"
                         onClick={handleSelectToday}
-                        className="text-blue-600 hover:text-blue-800 font-medium transition cursor-pointer"
+                        className="text-blue-600 hover:text-blue-800 font-semibold transition cursor-pointer"
                     >
                         Hari ini
                     </button>
@@ -291,7 +291,7 @@ export default function DatePickerPopover({
                             <button
                                 type="button"
                                 onClick={onClear}
-                                className="text-red-500 hover:text-red-700 font-medium transition cursor-pointer"
+                                className="text-red-500 hover:text-red-700 font-semibold transition cursor-pointer"
                             >
                                 Kosongkan
                             </button>
@@ -302,7 +302,7 @@ export default function DatePickerPopover({
                 <button
                     type="button"
                     onClick={onClose}
-                    className="text-slate-500 hover:text-slate-700 font-normal transition cursor-pointer"
+                    className="text-slate-500 hover:text-slate-700 font-medium transition cursor-pointer"
                 >
                     Tutup
                 </button>
