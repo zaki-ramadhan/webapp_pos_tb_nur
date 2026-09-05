@@ -10,6 +10,7 @@ export default function PortalDropdown({
     align = 'stretch',
     side = 'bottom',
     maxHeightLimit = 260,
+    minHeightNeeded = 120,
     className = '',
     panelClassName = '',
     style = {},
@@ -162,7 +163,7 @@ export default function PortalDropdown({
 
     const renderAbove = coords && (
         side === 'top' ||
-        (side === 'auto' && coords.spaceBelow < 120 && coords.rectTop > coords.spaceBelow)
+        (side === 'auto' && coords.spaceBelow < minHeightNeeded && coords.rectTop > coords.spaceBelow)
     );
 
     const dynamicMaxHeight = coords
@@ -185,7 +186,12 @@ export default function PortalDropdown({
             positionStyle.left = `${coords.left}px`;
             positionStyle.width = `${coords.width}px`;
         } else if (align === 'start') {
-            positionStyle.left = `${coords.left}px`;
+            const panelWidth = panelRef.current?.offsetWidth || 0;
+            if (panelWidth > 0 && coords.left + panelWidth > window.innerWidth - 8) {
+                positionStyle.left = `${Math.max(8, window.innerWidth - panelWidth - 8)}px`;
+            } else {
+                positionStyle.left = `${coords.left}px`;
+            }
         } else if (align === 'end') {
             positionStyle.left = `${coords.right}px`;
             positionStyle.transform = 'translateX(-100%)';
@@ -198,6 +204,13 @@ export default function PortalDropdown({
         }
     }
 
+    const hasBorder = className.split(' ').some((c) => c.startsWith('border-') || c === 'border' || c === '!border-none');
+    const borderClass = hasBorder ? '' : 'border border-slate-400';
+    const hasShadow = className.split(' ').some((c) => c.startsWith('shadow-') || c === 'shadow' || c === '!shadow-none');
+    const shadowClass = hasShadow ? '' : 'shadow-[0_4px_12px_rgba(15,23,42,0.15),0_1px_3px_rgba(15,23,42,0.08)]';
+    const hasRounded = className.split(' ').some((c) => c.startsWith('rounded-'));
+    const roundedClass = hasRounded ? '' : 'rounded-[6px]';
+
     return (
         <>
             {!externalAnchorRef && <div ref={markerRef} className="hidden" />}
@@ -206,7 +219,7 @@ export default function PortalDropdown({
                     ref={panelRef}
                     style={positionStyle}
                     data-portal-dropdown="true"
-                    className={`flex flex-col min-h-0 overflow-hidden rounded-[6px] border border-slate-400 bg-white shadow-[0_4px_12px_rgba(15,23,42,0.15),0_1px_3px_rgba(15,23,42,0.08)] ${className}`.trim()}
+                    className={`flex flex-col min-h-0 overflow-hidden ${roundedClass} ${borderClass} bg-white ${shadowClass} ${className}`.trim()}
                 >
                     <div className={`flex flex-col overflow-y-auto w-full min-h-0 ${panelClassName}`.trim()}>
                         {children}
