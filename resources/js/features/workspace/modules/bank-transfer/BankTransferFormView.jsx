@@ -223,6 +223,9 @@ export default function BankTransferFormView({
                         ...current,
                         __fromAccountId: record ? record.id : null,
                         fromBankAccounts: resolvedLabel ? [resolvedLabel] : (record ? [buildLookupLabel(record)] : []),
+                        fromBankLabel: resolvedLabel,
+                        fromBankFull: cleanLabel,
+                        fromBank: cleanLabel,
                         reconciliations: nextRecons,
                     };
                 }),
@@ -231,6 +234,9 @@ export default function BankTransferFormView({
                     ...current,
                     __fromAccountId: null,
                     fromBankAccounts: [],
+                    fromBankLabel: '',
+                    fromBankFull: '',
+                    fromBank: '',
                 })),
             onSelectToBankAccount: (record, label) =>
                 updateValues((current) => {
@@ -249,6 +255,9 @@ export default function BankTransferFormView({
                         ...current,
                         __toAccountId: record ? record.id : null,
                         toBankAccounts: resolvedLabel ? [resolvedLabel] : (record ? [buildLookupLabel(record)] : []),
+                        toBankLabel: resolvedLabel,
+                        toBankFull: cleanLabel,
+                        toBank: cleanLabel,
                         reconciliations: nextRecons,
                     };
                 }),
@@ -257,6 +266,9 @@ export default function BankTransferFormView({
                     ...current,
                     __toAccountId: null,
                     toBankAccounts: [],
+                    toBankLabel: '',
+                    toBankFull: '',
+                    toBank: '',
                 })),
             onSelectFromBranch: () =>
                 selectLookup('branches', 'cabang asal', (record) =>
