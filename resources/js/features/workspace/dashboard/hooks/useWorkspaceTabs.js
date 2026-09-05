@@ -42,7 +42,7 @@ export default function useWorkspaceTabs({
     }, []);
 
     const handleOpenContentTab = useCallback((pageId, tab) => {
-        if (!pages[pageId]?.subtab && !pages[pageId]?.detailTabsOnly) {
+        if (!pages[pageId]?.subtab && !pages[pageId]?.detailTabsOnly && !pages[pageId]?.showViewIndicator) {
             return;
         }
 
@@ -104,7 +104,7 @@ export default function useWorkspaceTabs({
     );
 
     const handleSelectLevel2Tab = useCallback((tabId) => {
-        if (!activePage.subtab && !activePage.detailTabsOnly) {
+        if (!activePage.subtab && !activePage.detailTabsOnly && !activePage.showViewIndicator) {
             return;
         }
 
