@@ -21,10 +21,10 @@ export function FileFormatBadgeIcon({ ext = 'csv', className = '' }) {
     }
 
     return (
-        <div className={`relative flex items-center justify-center shrink-0 w-9 h-10 ${className}`}>
-            <File className="h-9 w-9 text-slate-300 stroke-[1.6]" />
+        <div className={`relative flex items-center justify-center shrink-0 w-10 h-11 ${className}`}>
+            <File className="h-10 w-10 text-slate-300 stroke-[1.2]" />
             <span
-                className={`absolute bottom-1.5 -left-1 px-1 py-0.5 text-[9px] font-bold tracking-tight rounded-[3px] shadow-xs leading-none select-none ${badgeBg}`}
+                className={`absolute bottom-2.5 -left-1 px-1 py-0.5 text-[9px] font-bold tracking-tight rounded-[3px] shadow-xs leading-none select-none ${badgeBg}`}
             >
                 {cleanExt.slice(0, 4)}
             </span>
