@@ -40,7 +40,7 @@ export function buildGeneralState(general = {}) {
         null;
 
     return {
-        groupName: general.nameField?.value ?? '',
+        groupName: (general.nameField?.value === 'Data Baru' ? '' : general.nameField?.value) ?? '',
         accessLimitationId: selectedOption?.id ?? '',
         selectedUsers: normalizeSelectedUsers(general.userSelection?.selected),
         accessLimitDays: general.accessLimitDays ?? 'Senin-Jumat',
