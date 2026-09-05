@@ -1,58 +1,93 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
-import {
-    DataTable,
-    DataTableHeader,
-    DataTableHead,
-    DataTableBody,
-    DataTableRow,
-    DataTableCell,
-} from '@/components/ui/DataTable';
-import StatementDropzone from './StatementDropzone';
-import StatementFileProgressCard from './StatementFileProgressCard';
+import { FileUpload } from '@/components/ui/FileUpload';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
-import { showWarningToast } from '@/components/feedback/toast';
 
 export default function BankStatementImportModal({ open, onClose, onImportSuccess, bankName = '' }) {
     const [file, setFile] = useState(null);
     const [parsedData, setParsedData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [progress, setProgress] = useState(0);
+    const progressTimerRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            if (progressTimerRef.current) {
+                clearInterval(progressTimerRef.current);
+            }
+        };
+    }, []);
 
     const handleReset = () => {
+        if (progressTimerRef.current) {
+            clearInterval(progressTimerRef.current);
+            progressTimerRef.current = null;
+        }
         setFile(null);
         setParsedData(null);
         setLoading(false);
         setError('');
+        setProgress(0);
     };
 
-    const handleFileSelect = async (selectedFile) => {
+    const uploadAndParseFile = (selectedFile) => {
         if (!selectedFile) return;
 
         const ext = selectedFile.name.split('.').pop().toLowerCase();
         if (!['csv', 'xlsx', 'xls'].includes(ext)) {
-            showWarningToast({
-                title: 'Format Tidak Didukung',
-                message: 'Silakan pilih berkas file berformat .CSV, .XLSX, atau .XLS.',
-            });
+            setFile(selectedFile);
+            setError('Format berkas tidak didukung. Silakan pilih berkas .CSV, .XLSX, atau .XLS.');
+            setParsedData(null);
+            setProgress(0);
             return;
         }
+
+        if (progressTimerRef.current) clearInterval(progressTimerRef.current);
 
         setFile(selectedFile);
         setLoading(true);
         setError('');
+        setProgress(15);
 
-        try {
-            const result = await parseBankStatementFile(selectedFile);
-            if (!result.rows || result.rows.length === 0) {
-                throw new Error('Tidak ada baris transaksi yang berhasil dibaca dari file ini.');
-            }
-            setParsedData(result);
-        } catch (err) {
-            setError(err.message || 'Gagal memproses file rekening koran.');
-            setParsedData(null);
-        } finally {
-            setLoading(false);
+        progressTimerRef.current = setInterval(() => {
+            setProgress((prev) => {
+                if (prev >= 85) {
+                    if (progressTimerRef.current) clearInterval(progressTimerRef.current);
+                    return 85;
+                }
+                return prev + 25;
+            });
+        }, 70);
+
+        parseBankStatementFile(selectedFile)
+            .then((result) => {
+                if (progressTimerRef.current) clearInterval(progressTimerRef.current);
+                if (!result.rows || result.rows.length === 0) {
+                    throw new Error('Tidak ada baris transaksi yang berhasil dibaca dari berkas ini.');
+                }
+                setProgress(100);
+                setParsedData(result);
+            })
+            .catch((err) => {
+                if (progressTimerRef.current) clearInterval(progressTimerRef.current);
+                setError(err.message || 'Gagal memproses berkas rekening koran.');
+                setParsedData(null);
+                setProgress(0);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+
+    const handleDropFiles = (files) => {
+        if (!files || files.length === 0) return;
+        uploadAndParseFile(files[0]);
+    };
+
+    const handleRetry = () => {
+        if (file) {
+            uploadAndParseFile(file);
         }
     };
 
@@ -96,19 +131,29 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
             }
         >
             <div className="flex flex-col gap-4">
-                {/* Dropzone Area */}
-                <StatementDropzone onFileSelect={handleFileSelect} disabled={loading} />
-
-                {/* File Progress & Detail Card (di bawah dropzone) */}
-                {file ? (
-                    <StatementFileProgressCard
-                        file={file}
-                        parsedData={parsedData}
-                        loading={loading}
-                        error={error}
-                        onRemove={handleReset}
+                <FileUpload.Root>
+                    <FileUpload.DropZone
+                        isDisabled={loading}
+                        onDropFiles={handleDropFiles}
+                        accept=".csv,.xlsx,.xls"
+                        maxSizeText="CSV, XLSX, atau XLS (maks. 10MB)"
                     />
-                ) : null}
+
+                    {file ? (
+                        <FileUpload.List>
+                            <FileUpload.ListItemProgressBar
+                                name={file.name}
+                                size={file.size}
+                                type={file.name.split('.').pop()}
+                                progress={progress}
+                                failed={Boolean(error)}
+                                errorMessage={error}
+                                onDelete={handleReset}
+                                onRetry={handleRetry}
+                            />
+                        </FileUpload.List>
+                    ) : null}
+                </FileUpload.Root>
 
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                     Unggah berkas mutasi rekening koran dari internet banking (BCA, Mandiri, BRI, BNI, dll) dalam format <strong>.CSV</strong> atau <strong>.XLSX</strong> untuk dicocokkan otomatis dengan buku bank sistem.
@@ -116,53 +161,68 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
 
                 {/* Pratinjau Mutasi jika sudah terbaca */}
                 {parsedData && parsedData.rows?.length ? (
-                    <div className="flex flex-col gap-2.5 rounded-[6px] border border-slate-200 bg-white p-3.5 shadow-2xs">
-                        <div className="flex items-center justify-between text-sm font-medium text-slate-800 border-b border-slate-100 pb-2">
-                            <span>Pratinjau Data Transaksi Mutasi ({parsedData.rows.length} Ditemukan)</span>
-                            <span className="text-sm font-normal text-slate-500">
-                                5 Baris Teratas
-                            </span>
+                    <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold text-slate-800">Pratinjau Hasil Ekstraksi</span>
+                                <span className="rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-xs font-normal text-slate-700">
+                                    {parsedData.rows.length} Mutasi Ditemukan
+                                </span>
+                            </div>
+                            {parsedData.summary ? (
+                                <div className="flex items-center gap-2 text-xs font-normal">
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 text-emerald-800">
+                                        Masuk: {parsedData.summary.inCount || 0}
+                                    </span>
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 border border-rose-200/80 px-2.5 py-0.5 text-rose-800">
+                                        Keluar: {parsedData.summary.outCount || 0}
+                                    </span>
+                                </div>
+                            ) : null}
                         </div>
 
-                        <DataTable wrapperClassName="max-h-[200px] overflow-y-auto border-table-border">
-                            <DataTableHeader>
-                                <DataTableRow>
-                                    <DataTableHead className="w-[120px] px-3 py-2 text-left">Tanggal</DataTableHead>
-                                    <DataTableHead className="px-3 py-2 text-left">Keterangan</DataTableHead>
-                                    <DataTableHead className="w-[140px] px-3 py-2 text-right">Nominal</DataTableHead>
-                                    <DataTableHead className="w-[90px] px-3 py-2 text-center">Tipe</DataTableHead>
-                                </DataTableRow>
-                            </DataTableHeader>
-                            <DataTableBody>
-                                {parsedData.rows.slice(0, 5).map((row, idx) => (
-                                    <DataTableRow key={row.id || idx} className="hover:bg-slate-50">
-                                        <DataTableCell className="w-[120px] px-3 py-2 text-left text-sm font-normal text-slate-700 whitespace-nowrap">
-                                            {row.date}
-                                        </DataTableCell>
-                                        <DataTableCell className="px-3 py-2 text-left text-sm font-normal text-slate-800" title={row.description}>
-                                            {row.description}
-                                        </DataTableCell>
-                                        <DataTableCell className="w-[140px] px-3 py-2 text-right text-sm font-normal text-slate-800 whitespace-nowrap">
-                                            Rp {new Intl.NumberFormat('id-ID').format(row.amount)}
-                                        </DataTableCell>
-                                        <DataTableCell className="w-[90px] px-3 py-2 text-center whitespace-nowrap">
-                                            <span
-                                                className={`inline-block px-2 py-0.5 rounded-[4px] text-xs font-medium ${
-                                                    row.type === 'CR'
-                                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                                        : 'bg-rose-50 text-rose-700 border border-rose-200'
-                                                }`}
-                                            >
-                                                {row.type === 'CR' ? 'Masuk' : 'Keluar'}
-                                            </span>
-                                        </DataTableCell>
-                                    </DataTableRow>
-                                ))}
-                            </DataTableBody>
-                        </DataTable>
+                        <div className="max-h-[220px] overflow-y-auto rounded-lg border border-slate-200">
+                            <table className="w-full text-left text-sm border-collapse">
+                                <thead className="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200">
+                                    <tr>
+                                        <th className="px-3.5 py-2.5 font-medium w-[120px]">Tanggal</th>
+                                        <th className="px-3.5 py-2.5 font-medium">Keterangan</th>
+                                        <th className="px-3.5 py-2.5 font-medium text-right w-[140px]">Nominal</th>
+                                        <th className="px-3.5 py-2.5 font-medium text-center w-[90px]">Tipe</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 text-slate-800">
+                                    {parsedData.rows.slice(0, 5).map((row, idx) => (
+                                        <tr key={row.id || idx} className="hover:bg-slate-50/70 transition-colors">
+                                            <td className="px-3.5 py-2 whitespace-nowrap text-sm font-normal text-slate-800">
+                                                {row.date}
+                                            </td>
+                                            <td className="px-3.5 py-2 truncate max-w-[280px] text-sm font-normal text-slate-800" title={row.description}>
+                                                {row.description}
+                                            </td>
+                                            <td className="px-3.5 py-2 whitespace-nowrap text-right text-sm font-normal text-slate-900">
+                                                Rp {new Intl.NumberFormat('id-ID').format(row.amount)}
+                                            </td>
+                                            <td className="px-3.5 py-2 whitespace-nowrap text-center">
+                                                <span
+                                                    className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                        row.type === 'CR'
+                                                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                            : 'bg-rose-50 text-rose-700 border border-rose-200'
+                                                    }`}
+                                                >
+                                                    {row.type === 'CR' ? 'Masuk' : 'Keluar'}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
                         {parsedData.rows.length > 5 && (
-                            <p className="text-sm font-normal text-slate-600 text-right pt-0.5">
-                                Menampilkan 5 dari total {parsedData.rows.length} baris transaksi mutasi
+                            <p className="text-xs font-normal text-slate-600 text-right pt-0.5">
+                                Menampilkan 5 baris teratas dari total {parsedData.rows.length} baris transaksi mutasi
                             </p>
                         )}
                     </div>
