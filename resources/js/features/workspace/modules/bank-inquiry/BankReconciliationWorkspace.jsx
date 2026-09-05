@@ -6,7 +6,6 @@ import { showSuccessToast, showErrorToast, showLoadingToast, showWarningToast, d
 import axios from 'axios';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Pagination from '@/components/ui/Pagination';
-import Tooltip from '@/components/ui/Tooltip';
 
 import JurnalCard from './components/JurnalCard';
 import BankReconcileActionCard from './components/BankReconcileActionCard';
@@ -27,6 +26,7 @@ export default function BankReconciliationWorkspace({
 }) {
     const [reconcilingIds, setReconcilingIds] = useState({});
     const [keyword, setKeyword] = useState(filters.search || '');
+    const [bankError, setBankError] = useState('');
     const [startDate, setStartDate] = useState(filters.start_date || '');
     const [endDate, setEndDate] = useState(filters.end_date || '');
 
@@ -170,14 +170,20 @@ export default function BankReconciliationWorkspace({
                             searchLabel="Cari kas/bank"
                             dialogTitle="Pilih Kas/Bank"
                             queryParams={{ account_type: 'Cash/Bank' }}
-                            className="h-[40px] rounded-[4px] border-ui-border w-full"
+                            error={bankError}
+                            message={bankError}
+                            onFocus={() => setBankError('')}
+                            onChange={() => setBankError('')}
+                            className={`h-[40px] rounded-[4px] w-full ${bankError ? '!border-danger focus-within:!border-danger' : 'border-ui-border'}`}
                             inputClassName="text-sm text-slate-900 py-1 h-full"
                             trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
                             onSelectAccount={(record, label) => {
+                                setBankError('');
                                 setKeyword(label);
                                 onFiltersChange?.((prev) => ({ ...prev, search: label }));
                             }}
                             onClear={() => {
+                                setBankError('');
                                 setKeyword('');
                                 onFiltersChange?.((prev) => ({ ...prev, search: '' }));
                             }}
@@ -221,34 +227,27 @@ export default function BankReconciliationWorkspace({
                         />
                     ) : null}
 
-                    <Tooltip
-                        content={!hasBankSelected ? 'Pilih kas/bank terlebih dahulu untuk mengimpor rekening koran' : `Impor data mutasi CSV atau Excel untuk ${keyword}`}
-                        side="bottom"
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (!hasBankSelected) {
+                                setBankError('Bank harus dipilih terlebih dahulu');
+                                showWarningToast({
+                                    title: 'Pilih Bank Terlebih Dahulu',
+                                    message: 'Silakan cari dan pilih kas/bank terlebih dahulu sebelum mengimpor rekening koran.',
+                                });
+                                return;
+                            }
+                            setBankError('');
+                            setImportModalOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 h-[40px] px-3.5 rounded-[4px] text-xs sm:text-sm font-normal text-white bg-brand-blue hover:bg-brand-blue-hover border border-transparent shadow-button-primary cursor-pointer active:scale-[0.98] transition shrink-0"
                     >
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (!hasBankSelected) {
-                                    showWarningToast({
-                                        title: 'Pilih Bank Terlebih Dahulu',
-                                        message: 'Silakan cari dan pilih kas/bank terlebih dahulu sebelum mengimpor rekening koran.',
-                                    });
-                                    return;
-                                }
-                                setImportModalOpen(true);
-                            }}
-                            className={`inline-flex items-center gap-1.5 h-[40px] px-3.5 rounded-[4px] text-xs sm:text-sm font-normal transition shrink-0 ${
-                                hasBankSelected
-                                    ? 'bg-brand-blue hover:bg-brand-blue-hover text-white border border-transparent shadow-button-primary cursor-pointer active:scale-[0.98]'
-                                    : 'bg-slate-100 text-slate-400 border border-slate-300 cursor-not-allowed shadow-none'
-                            }`}
-                        >
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                            </svg>
-                            <span>Impor Rekening Koran (CSV)</span>
-                        </button>
-                    </Tooltip>
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        <span>Impor Rekening Koran (CSV)</span>
+                    </button>
                 </div>
             </div>
 
