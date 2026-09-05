@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { CloseIcon, LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
+import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { HighlightText, LookupChip, LookupDropdownSurface, LookupEmptyState, LookupLoadingState } from '@/features/workspace/shared/LookupPrimitives';
 import { useFormError } from '@/components/ui/FormErrorContext';
 import { sanitizeTextValue } from '@/utils/textSanitizer';
 
@@ -175,25 +175,15 @@ export default function ReferenceLookupInput({
                         {selectedLabels.length ? (
                             <div className="flex flex-wrap items-center gap-2 pb-0.5">
                                 {selectedLabels.map((item) => (
-                                    <span
+                                    <LookupChip
                                         key={item}
-                                        className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark"
-                                    >
-                                        <span className="truncate max-w-[240px]">{item}</span>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                handleRemove(item);
-                                            }}
-                                            disabled={disabled}
-                                            aria-label={`Hapus ${item}`}
-                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 text-text-chip-blue-dark hover:text-red-600 active:text-red-800 transition-colors cursor-pointer"
-                                        >
-                                            <CloseIcon className="h-4 w-4" />
-                                        </button>
-                                    </span>
+                                        label={item}
+                                        onClear={() => handleRemove(item)}
+                                        disabled={disabled}
+                                        clearAriaLabel={`Hapus ${item}`}
+                                        labelClassName="max-w-[240px]"
+                                        className="shrink-0"
+                                    />
                                 ))}
                             </div>
                         ) : null}
@@ -232,25 +222,14 @@ export default function ReferenceLookupInput({
                         <div className={`flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-2 py-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
                             {selectedLabels.length ? (
                                 selectedLabels.map((item) => (
-                                    <span
+                                    <LookupChip
                                         key={item}
-                                        className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark"
-                                    >
-                                        <span className="truncate">{item}</span>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                handleClear();
-                                            }}
-                                            disabled={disabled}
-                                            aria-label={`Hapus ${item}`}
-                                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 text-text-chip-blue-dark hover:text-red-600 active:text-red-800 transition-colors cursor-pointer"
-                                        >
-                                            <CloseIcon className="h-4 w-4" />
-                                        </button>
-                                    </span>
+                                        label={item}
+                                        onClear={handleClear}
+                                        disabled={disabled}
+                                        clearAriaLabel={`Hapus ${item}`}
+                                        className="shrink-0"
+                                    />
                                 ))
                             ) : (
                                 <input
@@ -289,9 +268,7 @@ export default function ReferenceLookupInput({
             {showMenu ? (
                 <LookupDropdownSurface className={menuClassName} anchorRef={rootRef}>
                     {searching ? (
-                        <div className="p-4 text-center text-xs sm:text-sm text-text-workspace-dark font-normal">
-                            Memuat data...
-                        </div>
+                        <LookupLoadingState />
                     ) : filteredItems.length ? (
                         <div className="max-h-[260px] overflow-y-auto flex-1 min-h-0">
                             {filteredItems.map((item) => (

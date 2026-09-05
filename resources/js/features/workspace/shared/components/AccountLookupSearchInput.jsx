@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import TextInput from '@/components/ui/TextInput';
-import { CloseIcon, LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { LookupChip } from '@/features/workspace/shared/LookupPrimitives';
 
 function extractCleanAccountName(label) {
     if (!label) return '';
@@ -9,25 +10,28 @@ function extractCleanAccountName(label) {
 }
 
 export default function AccountLookupSearchInput({
-    value,
+    value = '',
     selectedValue = '',
     placeholder,
     searchLabel,
-    disabled,
-    className,
-    inputClassName,
-    trailingClassName,
-    loading,
-    onBeforeOpen = null,
+    hasSelectedValue,
+    disabled = false,
+    error = false,
+    className = 'h-11',
+    inputClassName = '',
+    trailingClassName = '',
+    loading = false,
+    id,
     onFocus,
     onChange,
     onClear,
-    error = false,
-    id,
+    onBeforeOpen = null,
     containerRef = null,
 }) {
     const inputRef = useRef(null);
-    const hasSelectedValue = Boolean(selectedValue);
+    const internalContainerRef = useRef(null);
+    const effectiveContainerRef = containerRef || internalContainerRef;
+    const isSelected = hasSelectedValue ?? Boolean(selectedValue);
 
     function focusInputFromWrapper(event) {
         if (disabled) {
@@ -44,7 +48,7 @@ export default function AccountLookupSearchInput({
 
         if (
             target instanceof HTMLElement &&
-            target.closest('button, a, input, select, textarea') !== null
+            target.closest('input, button, a, select, textarea, [role="button"]') !== null
         ) {
             return;
         }
@@ -57,39 +61,33 @@ export default function AccountLookupSearchInput({
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     // Kalau ada chip, wrapper non-interaktif (kursor pointer biasa) — harus clear dulu
-    const wrapperCursor = disabled ? 'cursor-default' : hasSelectedValue ? 'cursor-default' : 'cursor-text';
+    const wrapperCursor = disabled ? 'cursor-default' : isSelected ? 'cursor-default' : 'cursor-text';
 
     return (
         <div
-            ref={containerRef}
-            onMouseDown={hasSelectedValue ? undefined : focusInputFromWrapper}
+            ref={effectiveContainerRef}
+            onMouseDown={isSelected ? undefined : focusInputFromWrapper}
             aria-invalid={error}
             className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400 cursor-default' : `bg-white ${wrapperCursor}`} ${className}`.trim()}
         >
             <div className={`flex h-full min-w-0 flex-1 items-center gap-2 pl-1 pr-3 ${wrapperCursor}`.trim()}>
-                {hasSelectedValue ? (
-                    <span className="inline-flex max-w-full items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark">
-                        <span className="truncate">{extractCleanAccountName(selectedValue)}</span>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (!disabled) {
-                                    onClear?.();
-                                    setTimeout(() => {
-                                        inputRef.current?.focus();
-                                    }, 0);
-                                }
-                            }}
-                            disabled={disabled}
-                            aria-label={`Hapus ${searchLabel.toLowerCase()}`}
-                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark hover:text-red-600 active:text-red-800 transition-colors disabled:text-slate-300 cursor-pointer"
-                        >
-                            <CloseIcon className="h-4 w-4" />
-                        </button>
-                    </span>
+                {isSelected ? (
+                    <LookupChip
+                        label={extractCleanAccountName(selectedValue)}
+                        onClear={() => {
+                            if (!disabled) {
+                                onClear?.();
+                                setTimeout(() => {
+                                    inputRef.current?.focus();
+                                }, 0);
+                            }
+                        }}
+                        disabled={disabled}
+                        clearAriaLabel={`Hapus ${searchLabel.toLowerCase()}`}
+                    />
                 ) : null}
 
-                {hasSelectedValue ? null : (
+                {isSelected ? null : (
                     <input
                         ref={inputRef}
                         id={id}
@@ -112,7 +110,7 @@ export default function AccountLookupSearchInput({
                             onChange(val);
                         }}
                         disabled={disabled}
-                        placeholder={hasSelectedValue ? '' : placeholder}
+                        placeholder={isSelected ? '' : placeholder}
                         autoComplete="off"
                         autoCorrect="off"
                         spellCheck={false}

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFormError } from '@/components/ui/FormErrorContext';
-import { CloseIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { SearchIcon } from '@/features/workspace/shared/Icons';
 import { INDONESIAN_CITIES } from '@/features/workspace/shared/indonesianCities';
-import { HighlightText, LookupDropdownSurface } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupDropdownSurface, LookupChip } from '@/features/workspace/shared/LookupPrimitives';
 
 export default function CityAutocompleteInput({
     id,
@@ -123,19 +123,12 @@ export default function CityAutocompleteInput({
 
                 <div className={`flex flex-1 min-w-0 items-center gap-2 h-full overflow-hidden ${selectedCity ? 'pl-2 pr-1' : 'px-3'}`}>
                     {selectedCity ? (
-                        <span className="inline-flex max-w-full items-center gap-1.5 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-xs sm:text-sm text-text-chip-blue-dark cursor-default">
-                            <span className="truncate">{selectedCity}</span>
-                            {!disabled && (
-                                <button
-                                    type="button"
-                                    onClick={handleClear}
-                                    aria-label="Hapus kota"
-                                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark hover:text-red-600 active:text-red-800 transition-colors cursor-pointer"
-                                >
-                                    <CloseIcon className="h-3.5 w-3.5" />
-                                </button>
-                            )}
-                        </span>
+                        <LookupChip
+                            label={selectedCity}
+                            onClear={handleClear}
+                            disabled={disabled}
+                            clearAriaLabel="Hapus kota"
+                        />
                     ) : (
                         <input
                             ref={inputRef}

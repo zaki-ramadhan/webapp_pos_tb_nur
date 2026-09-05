@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import TextInput from '@/components/ui/TextInput';
 import { SearchIcon, LoadingIcon } from '@/features/workspace/shared/Icons';
+import { LookupEmptyState, LookupLoadingState } from '@/features/workspace/shared/LookupPrimitives';
 import {
     extractBackendRows,
     getBackendErrorMessage,
@@ -97,9 +98,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
 
             <div className="flex-1 overflow-y-auto max-h-[280px] border border-table-row-border rounded-[4px] divide-y divide-table-row-border">
                 {loading && rows.length === 0 ? (
-                    <div className="p-4 text-center text-text-workspace-dark text-xs font-normal">
-                        Memuat data...
-                    </div>
+                    <LookupLoadingState className="p-4" />
                 ) : error ? (
                     <div className="p-4 text-center text-red-500 text-xs">
                         {error}
@@ -118,9 +117,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                         </button>
                     ))
                 ) : (
-                    <div className="p-4 text-center text-text-workspace-dark text-xs font-normal">
-                        Tidak ada data yang cocok.
-                    </div>
+                    <LookupEmptyState title="Tidak ada data yang cocok." className="py-4" />
                 )}
             </div>
         </WorkspaceDialog>
