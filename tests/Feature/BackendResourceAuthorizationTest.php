@@ -125,4 +125,79 @@ class BackendResourceAuthorizationTest extends TestCase
             'city' => null,
         ]);
     }
+
+    public function test_non_super_admin_cannot_view_system_administrator_users_or_roles(): void
+    {
+        $superRole = \App\Domain\Identity\Models\Role::query()->create([
+            'code' => 'super_admin',
+            'name' => 'Administrator Sistem',
+            'is_active' => true,
+        ]);
+        $regularRole = \App\Domain\Identity\Models\Role::query()->create([
+            'code' => 'staff',
+            'name' => 'Staff Toko',
+            'is_active' => true,
+        ]);
+
+        $adminUser = User::factory()->create([
+            'name' => 'System Admin Hidden',
+            'email' => 'sysadmin@dev.local',
+        ]);
+        $adminUser->roles()->attach($superRole);
+
+        $regularUser = User::factory()->create([
+            'name' => 'Kasir Reguler',
+            'email' => 'kasir@toko.local',
+        ]);
+        $regularUser->roles()->attach($regularRole);
+
+        $group = AccessGroup::query()->create([
+            'code' => 'STAFF_GRP',
+            'name' => 'Staff Group',
+            'is_active' => true,
+        ]);
+        $group->permissions()->createMany([
+            [
+                'menu_key' => 'users',
+                'can_access' => true,
+                'can_view' => true,
+            ],
+            [
+                'menu_key' => 'roles',
+                'can_access' => true,
+                'can_view' => true,
+            ],
+        ]);
+        $regularUser->accessGroups()->attach($group);
+
+        // Regular user accessing users list
+        $userListRes = $this->actingAs($regularUser)->getJson('/api/backend/users');
+        $userListRes->assertOk();
+        $userIds = array_column($userListRes->json('data'), 'id');
+        $this->assertNotContains($adminUser->id, $userIds);
+
+        // Regular user accessing roles list
+        $roleListRes = $this->actingAs($regularUser)->getJson('/api/backend/roles');
+        $roleListRes->assertOk();
+        $roleCodes = array_column($roleListRes->json('data'), 'code');
+        $this->assertNotContains('super_admin', $roleCodes);
+
+        // Regular user trying direct access to admin user
+        $this->actingAs($regularUser)->getJson("/api/backend/users/{$adminUser->id}")
+            ->assertForbidden();
+
+        // Regular user trying direct access to super admin role
+        $this->actingAs($regularUser)->getJson("/api/backend/roles/{$superRole->id}")
+            ->assertForbidden();
+
+        // Admin user can see both
+        $adminUsersRes = $this->actingAs($adminUser)->getJson('/api/backend/users');
+        $adminUsersRes->assertOk();
+        $this->assertContains($adminUser->id, array_column($adminUsersRes->json('data'), 'id'));
+
+        $adminRolesRes = $this->actingAs($adminUser)->getJson('/api/backend/roles');
+        $adminRolesRes->assertOk();
+        $this->assertContains('super_admin', array_column($adminRolesRes->json('data'), 'code'));
+    }
 }
+

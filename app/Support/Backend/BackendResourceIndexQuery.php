@@ -59,8 +59,60 @@ class BackendResourceIndexQuery
                               'system_admin',
                               'administrator_sistem',
                               'admin_sistem',
-                          ]);
+                          ])->orWhere('name', 'like', '%Administrator Sistem%')
+                            ->orWhere('name', 'like', '%System Admin%');
                       });
+
+                if (Schema::hasColumn('users', 'is_super_admin')) {
+                    $query->where(function ($q) {
+                        $q->whereNull('users.is_super_admin')
+                          ->orWhere('users.is_super_admin', false);
+                    });
+                }
+            }
+        }
+
+        if ($blueprint->key === 'roles') {
+            $developerEmails = User::getDeveloperEmails();
+            $isSuperAdminActor = $user && ($user->isSystemAdmin() || in_array(strtolower((string) $user->email), $developerEmails, true));
+
+            if (! $isSuperAdminActor) {
+                $query->whereNotIn('code', [
+                    'super_admin',
+                    'system_admin',
+                    'administrator_sistem',
+                    'admin_sistem',
+                ])->where(function ($rq) {
+                    $rq->where('name', 'not like', '%Administrator Sistem%')
+                       ->where('name', 'not like', '%System Admin%');
+                });
+            }
+        }
+
+        if ($blueprint->key === 'access-groups') {
+            $developerEmails = User::getDeveloperEmails();
+            $isSuperAdminActor = $user && ($user->isSystemAdmin() || in_array(strtolower((string) $user->email), $developerEmails, true));
+
+            if (! $isSuperAdminActor) {
+                $query->with(['users' => function ($uQuery) use ($developerEmails) {
+                    $uQuery->whereNotIn('users.email', $developerEmails)
+                           ->whereDoesntHave('roles', function ($roleQuery) {
+                               $roleQuery->whereIn('code', [
+                                   'super_admin',
+                                   'system_admin',
+                                   'administrator_sistem',
+                                   'admin_sistem',
+                               ])->orWhere('name', 'like', '%Administrator Sistem%')
+                                 ->orWhere('name', 'like', '%System Admin%');
+                           });
+
+                    if (Schema::hasColumn('users', 'is_super_admin')) {
+                        $uQuery->where(function ($q) {
+                            $q->whereNull('users.is_super_admin')
+                              ->orWhere('users.is_super_admin', false);
+                        });
+                    }
+                }]);
             }
         }
 

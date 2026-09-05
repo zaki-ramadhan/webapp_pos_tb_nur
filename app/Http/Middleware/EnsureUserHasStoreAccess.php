@@ -57,6 +57,13 @@ class EnsureUserHasStoreAccess
         $hasAccessGroup = $user->accessGroups()->exists();
 
         if (! $hasActiveRole && ! $hasAccessGroup) {
+            if (config('pos.backend.allow_bootstrap_open_access', false)
+                && ! \App\Domain\Identity\Models\Role::query()->exists()
+                && ! \App\Domain\Identity\Models\AccessGroupPermission::query()->exists()
+            ) {
+                return $next($request);
+            }
+
             return response()->json([
                 'success' => false,
                 'message' => 'Akun Anda belum memiliki peran toko yang sah. Hubungi Owner untuk mengaktifkan akses Anda.',

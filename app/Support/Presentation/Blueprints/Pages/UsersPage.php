@@ -85,15 +85,7 @@ class UsersPage
                                 'defaultHidden' => true,
                             ],
                         ],
-                        'rows' => [
-                            [
-                                'name' => 'Zaki Ramadhan',
-                                'phone' => '',
-                                'email' => 'piscokpiscok2610@gmail.com',
-                                'twoFactor' => false,
-                                'accessType' => 'Administrator',
-                            ],
-                        ],
+                        'rows' => [],
                     ],
                 ];
     }
