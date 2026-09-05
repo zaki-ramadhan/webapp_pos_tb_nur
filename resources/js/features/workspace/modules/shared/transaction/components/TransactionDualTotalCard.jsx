@@ -9,15 +9,15 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
     const count = items.length;
     const containerWidthClass =
         count === 1
-            ? 'w-full sm:w-[264px] xl:w-[290px] 2xl:w-[320px]'
+            ? 'w-full sm:w-[180px] xl:w-[200px] 2xl:w-[220px]'
             : count === 2
-            ? 'w-full sm:w-[520px] xl:w-[580px] 2xl:w-[640px]'
+            ? 'w-full sm:w-[360px] xl:w-[400px] 2xl:w-[440px]'
             : count === 3
-            ? 'w-full sm:w-[760px] xl:w-[840px] 2xl:w-[920px]'
+            ? 'w-full sm:w-[540px] xl:w-[600px] 2xl:w-[660px]'
             : count === 4
-            ? 'w-full sm:w-[880px] xl:w-[980px] 2xl:w-[1080px]'
+            ? 'w-full sm:w-[700px] xl:w-[780px] 2xl:w-[860px]'
             : count === 5
-            ? 'w-full sm:w-[950px] xl:w-[1050px] 2xl:w-[1150px]'
+            ? 'w-full sm:w-[850px] xl:w-[950px] 2xl:w-[1050px]'
             : 'w-full sm:w-[1020px] xl:w-[1140px] 2xl:w-[1260px]';
 
     return (
@@ -29,12 +29,12 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
                 return (
                     <div
                         key={item.label || index}
-                        className="flex-1 min-w-0 px-4 py-2 sm:py-2.5 flex flex-col justify-between"
+                        className="flex-1 min-w-0 px-3.5 py-2 flex flex-col justify-between"
                     >
                         <div className="text-xs sm:text-sm text-brand-dark truncate" title={item.label}>
                             {item.label}
                         </div>
-                        <div className="mt-1 text-right text-base sm:text-lg font-semibold text-text-darkest whitespace-nowrap tabular-nums">
+                        <div className="mt-1 text-right text-sm sm:text-base font-semibold text-text-darkest whitespace-nowrap tabular-nums">
                             {formattedValue}
                         </div>
                     </div>
