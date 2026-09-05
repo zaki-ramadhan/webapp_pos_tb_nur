@@ -22,9 +22,9 @@ export function FileFormatBadgeIcon({ ext = 'csv', className = '' }) {
 
     return (
         <div className={`relative flex items-center justify-center shrink-0 w-9 h-10 ${className}`}>
-            <File className="h-9 w-9 text-slate-300 stroke-[1.5]" />
+            <File className="h-9 w-9 text-slate-300 stroke-[1.6]" />
             <span
-                className={`absolute -bottom-0.5 -left-1.5 px-1 py-0.5 text-[9px] font-bold tracking-tight rounded-[3px] shadow-xs leading-none select-none ${badgeBg}`}
+                className={`absolute bottom-1.5 -left-1 px-1 py-0.5 text-[9px] font-bold tracking-tight rounded-[3px] shadow-xs leading-none select-none ${badgeBg}`}
             >
                 {cleanExt.slice(0, 4)}
             </span>
@@ -168,10 +168,10 @@ export function FileUploadListItemProgressBar({
                     {failed ? (
                         <div className="flex flex-col">
                             <div className="flex items-center gap-2 text-xs">
-                                <span className="text-slate-500">{formattedSize}</span>
+                                <span className="text-slate-500 font-normal">{formattedSize}</span>
                                 <span className="h-3 w-px bg-slate-200 self-center" />
-                                <div className="flex items-center gap-1.5 text-red-600 font-medium text-sm">
-                                    <AlertCircle className="h-4.5 w-4.5 shrink-0" />
+                                <div className="flex items-center gap-1 text-red-600 font-medium">
+                                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                                     <span>Upload failed, please try again</span>
                                 </div>
                             </div>
@@ -194,10 +194,10 @@ export function FileUploadListItemProgressBar({
                     ) : progress < 100 ? (
                         <div className="flex flex-col">
                             <div className="flex items-center gap-2 text-xs">
-                                <span className="text-slate-500">{formattedSize}</span>
+                                <span className="text-slate-500 font-normal">{formattedSize}</span>
                                 <span className="h-3 w-px bg-slate-200 self-center" />
-                                <div className="flex items-center gap-1.5 text-slate-600 font-medium text-sm">
-                                    <CloudUpload className="h-4.5 w-4.5 text-brand-blue animate-pulse shrink-0" />
+                                <div className="flex items-center gap-1 text-slate-600 font-medium">
+                                    <CloudUpload className="h-3.5 w-3.5 text-brand-blue animate-pulse shrink-0" />
                                     <span>Mengunggah...</span>
                                 </div>
                             </div>
@@ -216,10 +216,10 @@ export function FileUploadListItemProgressBar({
                     ) : (
                         <div className="flex flex-col">
                             <div className="flex items-center gap-2 text-xs">
-                                <span className="text-slate-500">{formattedSize}</span>
+                                <span className="text-slate-500 font-normal">{formattedSize}</span>
                                 <span className="h-3 w-px bg-slate-200 self-center" />
-                                <div className="flex items-center gap-1.5 text-emerald-600 font-medium text-sm">
-                                    <CheckCircle2 className="h-4.5 w-4.5 shrink-0" />
+                                <div className="flex items-center gap-1 text-emerald-600 font-medium">
+                                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                                     <span>Selesai</span>
                                 </div>
                             </div>
@@ -246,8 +246,8 @@ export function FileUploadListItemProgressBar({
                             e.stopPropagation();
                             onDelete?.();
                         }}
-                        className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg transition cursor-pointer self-start"
-                        title="Hapus berkas"
+                        className="text-slate-400 hover:text-red-600 hover:bg-red-500/10 p-1.5 rounded-lg transition cursor-pointer self-start"
+                        aria-label="Hapus berkas"
                     >
                         <Trash2 className="h-5 w-5" />
                     </button>
