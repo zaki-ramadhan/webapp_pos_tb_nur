@@ -36,22 +36,22 @@ export default function JurnalCard({ row }) {
     return (
         <div
             onClick={isClickable ? () => openSourceDocument(row) : undefined}
-            className={`border border-[#72b1cb] rounded-[4px] overflow-hidden flex flex-col justify-between min-h-[110px] h-full shadow-xs ${
+            className={`border border-[#72b1cb] rounded-[4px] overflow-hidden flex flex-col justify-between min-h-[96px] h-full shadow-xs ${
                 isClickable ? 'cursor-pointer transition hover:brightness-[0.98]' : ''
             }`.trim()}
         >
-            <div className="bg-[#D3F4FF] px-3.5 pt-3 pb-2 flex-1 flex flex-col justify-start">
+            <div className="bg-[#D3F4FF] px-3.5 pt-2 pb-1.5 flex-1 flex flex-col justify-start">
                 <div className="flex justify-between items-start text-sm text-slate-900 gap-2">
                     <span className="font-normal">{displayDate}</span>
                     <span className="font-semibold text-base text-slate-900 whitespace-nowrap">
                         {typeLabel} {formattedAmount}
                     </span>
                 </div>
-                <div className="text-sm font-normal text-slate-900 leading-snug text-left mt-1 line-clamp-2">
+                <div className="text-sm font-normal text-slate-900 leading-snug text-left mt-0.5 line-clamp-2">
                     {displayDesc}
                 </div>
             </div>
-            <div className="bg-[#F4FCFF] px-3.5 py-2.5">
+            <div className="bg-[#F4FCFF] px-3.5 py-1.5">
                 <div className={`text-sm text-left ${isClickable ? 'text-brand-blue font-normal hover:underline' : 'text-slate-900 font-normal'}`}>
                     {docNumber}
                 </div>
