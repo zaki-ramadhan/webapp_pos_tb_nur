@@ -17,7 +17,7 @@ export default function SelectField({
     messageClassName = '',
     children,
     onChange,
-    placeholder = 'Pilih...',
+    placeholder = '',
     ...props
 }) {
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
@@ -75,9 +75,25 @@ export default function SelectField({
         return list;
     }, [children]);
 
+    const hasEmptyOption = useMemo(() => {
+        return options.some((opt) => String(opt.value) === '');
+    }, [options]);
+
+    const fallbackOption = useMemo(() => {
+        if (options.length === 0) return null;
+        return options.find((opt) => !opt.disabled) ?? options[0];
+    }, [options]);
+
     const selectedOption = useMemo(() => {
         return options.find((opt) => String(opt.value) === String(currentValue)) ?? null;
     }, [options, currentValue]);
+
+    const isUnselectedPlaceholder = Boolean(
+        placeholder && (currentValue === '' || currentValue === null || currentValue === undefined) && !hasEmptyOption
+    );
+
+    const effectiveOption = selectedOption || (!isUnselectedPlaceholder ? fallbackOption : null);
+    const effectiveValue = effectiveOption ? effectiveOption.value : currentValue;
 
     const prefix = useMemo(() => {
         const allOption = options.find((opt) => String(opt.value) === 'all');
@@ -88,13 +104,36 @@ export default function SelectField({
     }, [options]);
 
     const displayLabel = useMemo(() => {
-        if (!selectedOption) return currentValue || placeholder;
-        const baseLabel = selectedOption.label;
+        if (!effectiveOption) return currentValue || placeholder || 'Pilih...';
+        const baseLabel = effectiveOption.label;
         if (prefix && !baseLabel.startsWith(prefix)) {
             return prefix + baseLabel;
         }
         return baseLabel;
-    }, [selectedOption, prefix, currentValue, placeholder]);
+    }, [effectiveOption, prefix, currentValue, placeholder]);
+
+    useEffect(() => {
+        if (disabled || options.length === 0) return;
+        if (!selectedOption && !isUnselectedPlaceholder && fallbackOption) {
+            if (String(fallbackOption.value) !== String(currentValue)) {
+                if (!isControlled) {
+                    setLocalValue(fallbackOption.value);
+                }
+                onChange?.({
+                    target: {
+                        id,
+                        name: props.name,
+                        value: fallbackOption.value,
+                    },
+                    currentTarget: {
+                        id,
+                        name: props.name,
+                        value: fallbackOption.value,
+                    },
+                });
+            }
+        }
+    }, [disabled, options, selectedOption, isUnselectedPlaceholder, fallbackOption, currentValue, isControlled, onChange, id, props.name]);
 
   // Track scroll keyboard
 
@@ -111,12 +150,12 @@ export default function SelectField({
 
     useEffect(() => {
         if (open) {
-            const index = options.findIndex((opt) => String(opt.value) === String(currentValue));
+            const index = options.findIndex((opt) => String(opt.value) === String(effectiveValue));
             setHighlightedIndex(index >= 0 ? index : 0);
         } else {
             setHighlightedIndex(-1);
         }
-    }, [open, currentValue, options]);
+    }, [open, effectiveValue, options]);
 
     function handleSelect(val) {
         if (!isControlled) {
@@ -232,7 +271,7 @@ export default function SelectField({
                     className="overflow-y-auto w-full flex-1 min-h-0"
                 >
                     {options.map((option, index) => {
-                        const isSelected = String(option.value) === String(currentValue);
+                        const isSelected = String(option.value) === String(effectiveValue);
                         const isHighlighted = index === highlightedIndex;
                         let optionLabel = option.label;
                         if (prefix && optionLabel.startsWith(prefix)) {

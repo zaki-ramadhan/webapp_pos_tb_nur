@@ -40,7 +40,9 @@ class BankTransferPage
                 'bankPlaceholder' => 'Cari/Pilih...',
                 'branchPlaceholder' => 'Cari/Pilih...',
                 'feeLookupPlaceholder' => 'Cari/Pilih Akun Perkiraan...',
-                'numberingOptions' => NumberingHelper::getCashBankNumberingOptions(),
+                'numberingOptions' => [
+                    'Transfer Bank',
+                ],
                 'transferTitle' => 'Transfer Uang',
                 'feeTitle' => 'Biaya Transfer',
                 'infoTitle' => 'Info lainnya',

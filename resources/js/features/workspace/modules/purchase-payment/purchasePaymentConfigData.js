@@ -33,7 +33,7 @@ const defaultPurchasePaymentDraft = {
     paymentAmountDisplay: '0',
     entryDate: todayDisplayDate,
     autoNumber: true,
-    numberingType: 'Nomor Bukti Kas / Bank',
+    numberingType: 'Nomor Bukti Kas (Tunai)',
     documentNumber: '',
     currency: '',
     invoiceSearch: '',
