@@ -82,7 +82,7 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
                                 </button>
                             ))
                         ) : (
-                            <div className="px-4 py-4 text-center text-sm text-slate-400">
+                            <div className="px-4 py-4 text-center text-sm text-brand-dark">
                                 Tidak ada hasil yang cocok.
                             </div>
                         )}
