@@ -1,6 +1,7 @@
 import { normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import { buildGeneratedDocNumber } from '@/features/workspace/shared/documentNumberUtils';
+import { extractCleanAccountName } from './bankTransferCalculations';
 
 export function buildGeneratedBankTransferNumber() {
     return buildGeneratedDocNumber('BT');
@@ -20,6 +21,10 @@ export function buildBankTransferPayload(values) {
     const toBranchLabel = values.toBranches?.[0] ?? null;
     const fromBankLabel = values.fromBankAccounts?.[0] ?? null;
     const toBankLabel = values.toBankAccounts?.[0] ?? null;
+    const fromCleanName = extractCleanAccountName(fromBankLabel) || 'Kas/Bank Asal';
+    const toCleanName = extractCleanAccountName(toBankLabel) || 'Kas/Bank Tujuan';
+    const defaultNotes = `Transfer dari ${fromCleanName} ke ${toCleanName}`;
+    const resolvedNotes = String(values.notes ?? '').trim() ? values.notes.trim() : defaultNotes;
     const transferLine = {
         description: `Transfer ke ${toBankLabel ?? 'kas/bank tujuan'}`,
         account_id: values.__toAccountId ?? null,
@@ -52,7 +57,7 @@ export function buildBankTransferPayload(values) {
         payment_method: 'Transfer Bank',
         status: 'Draft',
         entry_date: normalizeDisplayDate(values.entryDate) || new Date().toISOString().slice(0, 10),
-        notes: emptyStringToNull(values.notes),
+        notes: resolvedNotes,
         paid_amount: transferAmount,
         total_amount: transferAmount,
         metadata: {

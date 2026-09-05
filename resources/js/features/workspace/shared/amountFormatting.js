@@ -196,10 +196,16 @@ export function formatFileSize(bytes) {
 }
 
 export function formatCardNominal(val) {
-    if (val === null || val === undefined || val === '') return 'Rp 0';
+    if (val === null || val === undefined || val === '') return '0';
     const str = String(val).trim();
-    if (!str) return 'Rp 0';
+    if (!str) return '0';
     if (str === '-') return '-';
+
+    const numStr = str.replace(/^(Rp\s*|[$€¥£]\s*)/i, '').replace(/\./g, '').replace(/,/g, '.').trim();
+    const num = Number(numStr);
+    if (!isNaN(num) && num === 0) {
+        return '0';
+    }
 
     if (/^Rp\s?/i.test(str)) {
         return str;
@@ -214,7 +220,13 @@ export function formatCardNominal(val) {
 
     const formatted = formatDisplayValue(val);
     const formattedStr = String(formatted ?? '').trim();
-    if (!formattedStr) return 'Rp 0';
+    if (!formattedStr) return '0';
+
+    const formattedNumStr = formattedStr.replace(/^(Rp\s*|[$€¥£]\s*)/i, '').replace(/\./g, '').replace(/,/g, '.').trim();
+    const formattedNum = Number(formattedNumStr);
+    if (!isNaN(formattedNum) && formattedNum === 0) {
+        return '0';
+    }
 
     if (/^Rp\s?/i.test(formattedStr)) {
         return formattedStr;
