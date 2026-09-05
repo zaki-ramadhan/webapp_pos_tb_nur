@@ -55,8 +55,8 @@
     --color-brand-blue-lightest: #f4f7fc;
     --color-brand-blue-darker: #234b87;
     --color-input-brand: #0f65c9;
-    --color-error-border: #d65959;
-    --color-error-text: #d65959;
+    --color-error-border: #A20025;
+    --color-error-text: #A20025;
     --color-info-border: #c8ddff;
     --color-info-bg: #eef5ff;
     --color-info-text: #45608f;
@@ -69,7 +69,7 @@
     --color-warning-text: #8b6533;
     --color-danger-border: #f7c6d2;
     --color-danger-bg: #fff1f5;
-    --color-danger-text: #9a4f66;
+    --color-danger-text: #A20025;
     --color-table-border: #cbd5e1;
     --color-table-header-bg: #5B6F85;
     --color-table-row-border: #e2e8f0;

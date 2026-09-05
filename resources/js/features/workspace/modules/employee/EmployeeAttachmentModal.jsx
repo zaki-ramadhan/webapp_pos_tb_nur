@@ -109,7 +109,7 @@ export default function EmployeeAttachmentModal({
                 </div>
 
                 {uploadError && (
-                    <p className="text-xs sm:text-sm text-red-700 bg-danger-border p-2 rounded border border-red-150">
+                    <p className="text-xs sm:text-sm text-[#A20025] bg-danger-border p-2 rounded-[4px] border border-red-150">
                         {uploadError}
                     </p>
                 )}
@@ -119,7 +119,7 @@ export default function EmployeeAttachmentModal({
                 <div>
                     <h3 className="text-xs sm:text-sm font-semibold text-brand-dark mb-2">Daftar Lampiran</h3>
                     {!(values.attachments?.length) ? (
-                        <div className="flex flex-col items-center justify-center border-2 border-dashed border-ui-border rounded-[6px] py-8 bg-slate-50 text-slate-400">
+                        <div className="flex flex-col items-center justify-center border-2 border-dashed border-ui-border rounded-[4px] py-8 bg-slate-50 text-slate-400">
                             <PaperclipIcon className="h-8 w-8 mb-2 text-slate-300" />
                             <span className="text-xs sm:text-sm font-normal">Tidak ada lampiran</span>
                         </div>
@@ -132,7 +132,7 @@ export default function EmployeeAttachmentModal({
                                 return (
                                     <div
                                         key={item.id}
-                                        className="flex items-center justify-between border border-ui-border rounded-[6px] px-3 py-2 bg-slate-50 hover:bg-slate-100/70 transition"
+                                        className="flex items-center justify-between border border-ui-border rounded-[4px] px-3 py-2 bg-slate-50 hover:bg-slate-100/70 transition"
                                     >
                                         <div className="flex flex-col min-w-0 flex-1">
                                             <a
@@ -156,7 +156,7 @@ export default function EmployeeAttachmentModal({
                                                 download={item.file_name}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-1 rounded text-brand-blue-dark hover:bg-info-bg transition"
+                                                className="p-1 rounded-[4px] text-brand-blue-dark hover:bg-info-bg transition"
                                                 aria-label="Unduh lampiran"
                                             >
                                                 <DownloadIcon className="h-4.5 w-4.5" />
@@ -165,7 +165,7 @@ export default function EmployeeAttachmentModal({
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveAttachment(item.id)}
-                                                className="p-1 rounded hover:bg-danger-border text-red-700 transition"
+                                                className="p-1 rounded-[4px] hover:bg-danger-border text-[#A20025] transition"
                                                 title="Hapus dokumen"
                                                 aria-label="Hapus lampiran"
                                             >

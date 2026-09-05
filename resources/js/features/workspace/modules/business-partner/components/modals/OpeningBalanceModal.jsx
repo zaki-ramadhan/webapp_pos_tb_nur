@@ -82,7 +82,7 @@ export function OpeningBalanceModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white hover:text-red-800 transition-colors cursor-pointer"
+                            className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white hover:text-[#A20025] transition-colors cursor-pointer"
                             aria-label="Tutup"
                         >
                             <CloseIcon className="h-4 w-4" />

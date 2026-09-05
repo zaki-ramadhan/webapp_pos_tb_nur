@@ -111,7 +111,7 @@ export default function SystemErrorModal({
             open={open}
             onBackdropClick={dismissible ? handleClose : undefined}
             className="bg-modal-overlay-bg px-3 py-4 sm:px-4 sm:py-6"
-            panelClassName={`${maxWidthClassName} overflow-hidden rounded-[8px] px-0 py-0 shadow-dialog-large`.trim()}
+            panelClassName={`${maxWidthClassName} overflow-hidden rounded-[4px] sm:rounded-[4px] px-0 py-0 shadow-dialog-large`.trim()}
         >
             <div className="border-b border-[#081f3b] bg-[#0A2A55] px-4 py-2 text-white sm:px-5">
                 <div className="flex items-center justify-between gap-4">
@@ -128,7 +128,7 @@ export default function SystemErrorModal({
                         <button
                             type="button"
                             onClick={handleClose}
-                            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition-colors hover:text-red-800 active:text-red-950 cursor-pointer"
+                            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition-colors hover:text-[#A20025] active:text-red-950 cursor-pointer"
                             aria-label={closeLabel}
                         >
                             <CloseIcon className="h-4 w-4" />
@@ -137,7 +137,7 @@ export default function SystemErrorModal({
                 </div>
             </div>
 
-            <div className="bg-white px-4 pt-5 pb-4 sm:px-5 sm:pt-6 sm:pb-4">
+            <div className="bg-white px-4 pt-5 pb-2.5 sm:px-5 sm:pt-6 sm:pb-3">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
                     <div className="flex justify-center sm:justify-start shrink-0">
                         <ErrorIllustration />
@@ -151,13 +151,13 @@ export default function SystemErrorModal({
                         {hasMessages && (
                             <div className={finalDescription ? 'mt-2.5' : ''}>
                                 {finalMessages.length === 1 ? (
-                                    <p className="text-sm sm:text-[15px] font-normal leading-5 text-[#991b1b]">
+                                    <p className="text-sm sm:text-[15px] font-normal leading-5 text-[#A20025]">
                                         {finalMessages[0]}
                                     </p>
                                 ) : (
                                     <ul className="list-disc pl-5 space-y-1">
                                         {finalMessages.map((item, index) => (
-                                            <li key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-6 text-[#991b1b]">
+                                            <li key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-6 text-[#A20025]">
                                                 {item}
                                             </li>
                                         ))}
@@ -168,7 +168,7 @@ export default function SystemErrorModal({
                     </div>
                 </div>
 
-                <div className="mt-5 flex justify-end gap-2">
+                <div className="mt-3.5 flex justify-end gap-2">
                     <Button
                         type="button"
                         size="md"

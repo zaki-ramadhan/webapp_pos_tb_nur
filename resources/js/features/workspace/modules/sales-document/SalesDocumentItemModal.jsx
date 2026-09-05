@@ -34,7 +34,7 @@ export default function SalesDocumentItemModal({ open, onClose, modal }) {
             activeTabId={activeTabIdSafe}
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
-            panelClassName="max-w-[620px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
+            panelClassName="max-w-[620px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[336px] py-3"
             footer={<DocumentModalFooter deleteLabel={modal.deleteLabel} submitLabel={modal.submitLabel} onSubmit={onClose} />}
         >

@@ -6,7 +6,7 @@ export default function LoadingOverlay({ open, loading }) {
         <ModalBase
             open={open}
             className="bg-slate-950/10 backdrop-blur-[1.5px]"
-            panelClassName="max-w-[280px] rounded-lg border border-slate-200 bg-white p-6 shadow-sm text-center"
+            panelClassName="max-w-[280px] rounded-[4px] border border-slate-200 bg-white p-6 shadow-sm text-center"
         >
             <div className="flex flex-col items-center py-1">
                 <Spinner className="h-12 w-12 text-tab-active-border-t animate-spin" />

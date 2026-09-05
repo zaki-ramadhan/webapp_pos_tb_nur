@@ -215,7 +215,7 @@ export default function SalesDocumentCostEditModal({
             activeTabId={activeTabId}
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup biaya lainnya"
-            panelClassName="max-w-[540px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
+            panelClassName="max-w-[540px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[260px] py-2"
             footer={
                 <DocumentModalFooter
