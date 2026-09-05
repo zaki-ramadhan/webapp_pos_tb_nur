@@ -110,8 +110,8 @@ export default function CityAutocompleteInput({
     return (
         <div ref={rootRef} className="relative w-full min-w-0">
             <div
-                onMouseDown={focusInputFromWrapper}
-                className={`group flex h-11 w-full min-w-0 items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
+                onMouseDown={selectedCity ? undefined : focusInputFromWrapper}
+                className={`group flex h-11 w-full min-w-0 items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${selectedCity && !disabled ? 'cursor-default' : ''} ${className}`.trim()}
             >
                 {prefix ? (
                     <span
@@ -121,24 +121,22 @@ export default function CityAutocompleteInput({
                     </span>
                 ) : null}
 
-                <div className="flex flex-1 min-w-0 items-center gap-2 px-3 h-full overflow-hidden">
+                <div className={`flex flex-1 min-w-0 items-center gap-2 h-full overflow-hidden ${selectedCity ? 'pl-2 pr-1' : 'px-3'}`}>
                     {selectedCity ? (
-                        // Mini chip ketika kota sudah dipilih dari dropdown
-                        <span className="inline-flex max-w-full items-center gap-1.5 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-xs sm:text-sm text-text-chip-blue-dark">
+                        <span className="inline-flex max-w-full items-center gap-1.5 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-xs sm:text-sm text-text-chip-blue-dark cursor-default">
                             <span className="truncate">{selectedCity}</span>
                             {!disabled && (
                                 <button
                                     type="button"
                                     onClick={handleClear}
                                     aria-label="Hapus kota"
-                                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark hover:opacity-70 transition-opacity"
+                                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark hover:opacity-70 transition-opacity cursor-pointer"
                                 >
                                     <CloseIcon className="h-3.5 w-3.5" />
                                 </button>
                             )}
                         </span>
                     ) : (
-                        // Input teks ketika belum ada pilihan
                         <input
                             ref={inputRef}
                             id={id}
@@ -165,17 +163,16 @@ export default function CityAutocompleteInput({
                             placeholder={disabled ? '' : placeholder}
                             disabled={disabled}
                             autoComplete="off"
-                            className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${disabled ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                            className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${disabled ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : 'text-slate-700 cursor-text'} ${inputClassName}`.trim()}
                             {...props}
                         />
                     )}
                 </div>
 
-                {!selectedCity && (
-                    <div className="flex h-full items-center pr-3 pl-1 shrink-0">
-                        <SearchIcon className="h-4 w-4 text-slate-400" />
-                    </div>
-                )}
+                {/* SearchIcon selalu tampil di kanan, baik saat chip maupun saat mengetik */}
+                <div className="flex h-full items-center pr-3 pl-1 shrink-0">
+                    <SearchIcon className="h-4 w-4 text-slate-400" />
+                </div>
             </div>
 
             {feedbackMessage ? (
