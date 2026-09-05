@@ -21,7 +21,6 @@ import {
     TransferFeeSection,
     TransferInfoSection,
     TransferMoneySection,
-    TransferSummaryCards,
 } from './BankTransferSections';
 import {
     applyBankTransferComputedValues,
@@ -326,7 +325,7 @@ export default function BankTransferFormView({
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
-                footer={<TransferSummaryCards values={values} />}
+                footer={null}
                 dockActions={dockActions}
             >
                 {activeSectionId === 'fee' ? (

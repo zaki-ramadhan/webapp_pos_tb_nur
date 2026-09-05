@@ -1,8 +1,8 @@
 import React from 'react';
-import { formatDisplayValue } from '@/features/workspace/shared/amountFormatting';
+import { formatCardNominal } from '@/features/workspace/shared/amountFormatting';
 
 export function TransactionTotalCard({ label, value, className = '' }) {
-    const formattedValue = formatDisplayValue(value);
+    const formattedValue = formatCardNominal(value);
     return (
         <div
             className={`w-full sm:w-[264px] xl:w-[290px] 2xl:w-[320px] max-w-full shrink-0 overflow-hidden rounded-[4px] border border-ui-border bg-white shadow-card-medium ${className}`.trim()}

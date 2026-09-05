@@ -37,14 +37,18 @@ export default function TransactionFormLayout({
                         </div>
                     </div>
 
-                    <div className="shrink-0 flex items-center justify-between gap-4 pt-1.5 pb-1.5 bg-transparent">
-                        <div className="flex md:hidden">
-                            <TransactionDock actions={dockActions} />
+                    {footer || (dockActions && dockActions.length > 0) ? (
+                        <div className={`shrink-0 flex items-center justify-between gap-4 ${footer ? 'pt-1.5 pb-1.5' : 'md:hidden pt-1.5 pb-1.5'} bg-transparent`}>
+                            <div className="flex md:hidden">
+                                <TransactionDock actions={dockActions} />
+                            </div>
+                            {footer ? (
+                                <div className="ml-auto">
+                                    {footer}
+                                </div>
+                            ) : null}
                         </div>
-                        <div className="ml-auto">
-                            {footer}
-                        </div>
-                    </div>
+                    ) : null}
                 </div>
 
                 <div className="hidden md:flex shrink-0 w-[80px] lg:w-[96px] pt-1.5">
