@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
@@ -72,14 +72,28 @@ export function InventoryAdjustmentFormView({
     const [selectedItem, setSelectedItem] = useState(null);
     const initialSnapshot = useMemo(() => buildInventoryComparableSnapshot(buildFormValues(resolvedSourceRecord)), [resolvedSourceRecord]);
 
-    useEffect(() => {
-        setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
-        setValues(buildFormValues(resolvedSourceRecord));
-        setSelectedItem(null);
-    }, [activeLevel2Tab?.id, resolvedSourceRecord]);
-
     const validationMessage = useMemo(() => validateInventoryAdjustmentValues(values, config, isDetail, pageId), [config, isDetail, pageId, values]);
     const isDirty = useMemo(() => resolveInventoryDirtyState(values, initialSnapshot), [initialSnapshot, values]);
+
+    const prevTabIdRef = useRef(activeLevel2Tab?.id);
+    const prevRecordIdRef = useRef(activeRecordId);
+    const isDirtyRef = useRef(false);
+    isDirtyRef.current = isDirty;
+
+    useEffect(() => {
+        const tabChanged = activeLevel2Tab?.id !== prevTabIdRef.current;
+        const recordChanged = activeRecordId !== prevRecordIdRef.current;
+
+        if (tabChanged || recordChanged) {
+            prevTabIdRef.current = activeLevel2Tab?.id;
+            prevRecordIdRef.current = activeRecordId;
+            setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
+            setValues(buildFormValues(resolvedSourceRecord));
+            setSelectedItem(null);
+        } else if (!isDirtyRef.current) {
+            setValues(buildFormValues(resolvedSourceRecord));
+        }
+    }, [activeLevel2Tab?.id, activeRecordId, resolvedSourceRecord, config.sectionTabs]);
 
     const {
         status,

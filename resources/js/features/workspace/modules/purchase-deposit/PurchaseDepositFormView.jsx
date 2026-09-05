@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import Button from '@/components/ui/Button';
@@ -35,8 +35,14 @@ export default function PurchaseDepositFormView({
     const [isDeleting, setIsDeleting] = useState(false);
     const [activeTab, setActiveTab] = useState('deposit');
 
+    const buildRecordRef = useRef(buildRecord);
+    buildRecordRef.current = buildRecord;
+    const loadedRecordIdRef = useRef(null);
+    const hasUserEditedRef = useRef(false);
+
     useEffect(() => {
         if (!activeRecordId) return;
+        if (loadedRecordIdRef.current === activeRecordId) return;
 
         let isMounted = true;
         (async () => {
@@ -47,8 +53,11 @@ export default function PurchaseDepositFormView({
                 if (response.ok) {
                     const result = await response.json();
                     if (isMounted && result?.data) {
-                        const rec = buildRecord(result.data);
-                        setValues(rec);
+                        const rec = buildRecordRef.current ? buildRecordRef.current(result.data) : result.data;
+                        loadedRecordIdRef.current = activeRecordId;
+                        if (!hasUserEditedRef.current) {
+                            setValues(rec);
+                        }
                     }
                 } else if (isMounted) {
                     toast.error('Gagal memuat detail uang muka pembelian.');
@@ -63,9 +72,10 @@ export default function PurchaseDepositFormView({
         return () => {
             isMounted = false;
         };
-    }, [activeRecordId, buildRecord]);
+    }, [activeRecordId]);
 
     const handleChange = useCallback((key, value) => {
+        hasUserEditedRef.current = true;
         setValues((prev) => ({ ...prev, [key]: value }));
     }, []);
 
