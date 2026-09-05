@@ -41,4 +41,17 @@ class ErrorPageTest extends TestCase
                 ->component('ErrorPage')
                 ->where('status', 500));
     }
+
+    public function test_preview_error_route_renders_error_page_for_supported_statuses(): void
+    {
+        $statuses = [400, 401, 403, 404, 500, 503];
+
+        foreach ($statuses as $status) {
+            $this->get("/preview-error/{$status}")
+                ->assertOk()
+                ->assertInertia(fn (Assert $page) => $page
+                    ->component('ErrorPage')
+                    ->where('status', $status));
+        }
+    }
 }
