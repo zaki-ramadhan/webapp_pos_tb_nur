@@ -4,7 +4,7 @@ import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResou
 import { buildAccountsConfig } from './accountsConfig';
 import AccountsFormView from './AccountsFormView';
 import AccountsTableView from './AccountsTableView';
-import { mapAccountRow } from './accountsShared';
+import { mapAccountRow, buildHierarchicalAccounts } from './accountsShared';
 
 export default function AccountsView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail, onCloseTab }) {
     const {
@@ -52,7 +52,7 @@ export default function AccountsView({ page, mode, activeLevel2Tab, level2Tabs =
                 ...tableProps,
                 error,
                 emptyLabel: error || baseConfig.table?.emptyLabel || 'Tidak ada data',
-                rows: mappedRows,
+                rows: buildHierarchicalAccounts(mappedRows),
                 filters: updatedFilters,
                 pageValue: tableProps.total.toLocaleString('id-ID'),
             },
