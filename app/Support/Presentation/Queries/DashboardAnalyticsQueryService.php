@@ -90,6 +90,17 @@ class DashboardAnalyticsQueryService
 
             $salesTrendLabels = [];
             $salesTrendData = [];
+            $startDate = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - 6 days"));
+
+            $salesTrendDb = DB::table('operation_documents')
+                ->whereIn('document_type', ['sales_invoice', 'sales_return'])
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->whereBetween('entry_date', [$startDate, $latestSalesInvoiceDate])
+                ->groupBy('entry_date', 'document_type')
+                ->select('entry_date', 'document_type', DB::raw('SUM(total_amount) as total'))
+                ->get()
+                ->groupBy('entry_date');
+
             for ($i = 6; $i >= 0; $i--) {
                 $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - $i days"));
                 if ($isTodayAnchor && $i === 0) {
@@ -99,16 +110,11 @@ class DashboardAnalyticsQueryService
                 } else {
                     $dayLabel = self::dateId($date, false);
                 }
-                $salesTrendLabels[] = $dayLabel;                $totalSales = DB::table('operation_documents')
-                    ->where('document_type', 'sales_invoice')
-                    ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                    ->where('entry_date', $date)
-                    ->sum('total_amount');
-                $totalReturns = DB::table('operation_documents')
-                    ->where('document_type', 'sales_return')
-                    ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                    ->where('entry_date', $date)
-                    ->sum('total_amount');
+                $salesTrendLabels[] = $dayLabel;
+
+                $dayRecords = $salesTrendDb->get($date);
+                $totalSales = (float) ($dayRecords?->firstWhere('document_type', 'sales_invoice')?->total ?? 0);
+                $totalReturns = (float) ($dayRecords?->firstWhere('document_type', 'sales_return')?->total ?? 0);
                 $salesTrendData[] = (float) max(0, $totalSales - $totalReturns);
             }
 
@@ -119,14 +125,12 @@ class DashboardAnalyticsQueryService
             $totalSalesInvoices = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('entry_date', $resolvedYear)
-                ->where('entry_date', '<=', $latestSalesInvoiceDate)
+                ->whereBetween('entry_date', ["{$resolvedYear}-01-01", $latestSalesInvoiceDate])
                 ->sum('total_amount');
             $totalSalesReturns = DB::table('operation_documents')
                 ->where('document_type', 'sales_return')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('entry_date', $resolvedYear)
-                ->where('entry_date', '<=', $latestSalesInvoiceDate)
+                ->whereBetween('entry_date', ["{$resolvedYear}-01-01", $latestSalesInvoiceDate])
                 ->sum('total_amount');
             $totalSalesVal = (float) max(0, $totalSalesInvoices - $totalSalesReturns);
 
@@ -135,16 +139,14 @@ class DashboardAnalyticsQueryService
                 ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
                 ->where('operation_documents.document_type', 'sales_invoice')
                 ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('operation_documents.entry_date', $resolvedYear)
-                ->where('operation_documents.entry_date', '<=', $latestSalesInvoiceDate)
+                ->whereBetween('operation_documents.entry_date', ["{$resolvedYear}-01-01", $latestSalesInvoiceDate])
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
             $totalHppReturns = (float) DB::table('operation_document_lines')
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
                 ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
                 ->where('operation_documents.document_type', 'sales_return')
                 ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('operation_documents.entry_date', $resolvedYear)
-                ->where('operation_documents.entry_date', '<=', $latestSalesInvoiceDate)
+                ->whereBetween('operation_documents.entry_date', ["{$resolvedYear}-01-01", $latestSalesInvoiceDate])
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
             $totalHppVal = (float) max(0, $totalHppInvoices - $totalHppReturns);
 
@@ -158,8 +160,7 @@ class DashboardAnalyticsQueryService
                             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
                     });
                 })
-                ->whereYear('entry_date', $resolvedYear)
-                ->where('entry_date', '<=', $latestSalesInvoiceDate)
+                ->whereBetween('entry_date', ["{$resolvedYear}-01-01", $latestSalesInvoiceDate])
                 ->sum('total_amount');
  
             $netProfitVal = $totalSalesVal - $totalHppVal - $totalExpensesVal;
@@ -180,16 +181,14 @@ class DashboardAnalyticsQueryService
             $prevSalesVal = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('entry_date', $prevYear)
-                ->where('entry_date', '<=', $prevSalesInvoiceDate)
+                ->whereBetween('entry_date', ["{$prevYear}-01-01", $prevSalesInvoiceDate])
                 ->sum('total_amount');
             $prevHppVal = DB::table('operation_document_lines')
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
                 ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
                 ->where('operation_documents.document_type', 'sales_invoice')
                 ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('operation_documents.entry_date', $prevYear)
-                ->where('operation_documents.entry_date', '<=', $prevSalesInvoiceDate)
+                ->whereBetween('operation_documents.entry_date', ["{$prevYear}-01-01", $prevSalesInvoiceDate])
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
             $prevExpensesVal = DB::table('operation_documents')
                 ->where(function ($q) {
@@ -201,8 +200,7 @@ class DashboardAnalyticsQueryService
                             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
                     });
                 })
-                ->whereYear('entry_date', $prevYear)
-                ->where('entry_date', '<=', $prevSalesInvoiceDate)
+                ->whereBetween('entry_date', ["{$prevYear}-01-01", $prevSalesInvoiceDate])
                 ->sum('total_amount');
 
             $calcGrowth = function ($curr, $prev) {
@@ -237,6 +235,60 @@ class DashboardAnalyticsQueryService
             $cashFlowLabels = [];
             $cashInSeries = [];
             $cashOutSeries = [];
+
+            $inflowsDb = DB::table('operation_documents')
+                ->whereBetween('entry_date', [$startDate, $latestSalesInvoiceDate])
+                ->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('document_type', 'sales_receipt')
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })->orWhere(function ($sub) {
+                        $sub->where('document_type', 'cash_receipt')
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })->orWhere(function ($sub) {
+                        $sub->where('document_type', 'sales_invoice')
+                            ->whereIn('status', ['Lunas', 'Paid', 'lunas'])
+                            ->where('paid_amount', '>', 0)
+                            ->whereNotExists(function ($ex) {
+                                $ex->select(DB::raw(1))
+                                    ->from('operation_document_lines')
+                                    ->join('operation_documents as r', 'operation_document_lines.operation_document_id', '=', 'r.id')
+                                    ->where('r.document_type', 'sales_receipt')
+                                    ->whereColumn('operation_document_lines.reference_code', 'operation_documents.document_number');
+                            });
+                    });
+                })
+                ->groupBy('entry_date')
+                ->select('entry_date', DB::raw('SUM(total_amount) as total'))
+                ->pluck('total', 'entry_date')
+                ->all();
+
+            $outflowsDb = DB::table('operation_documents')
+                ->whereBetween('entry_date', [$startDate, $latestSalesInvoiceDate])
+                ->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('document_type', 'cash_payment')
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })->orWhere(function ($sub) {
+                        $sub->where('document_type', 'purchase_payment')
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })->orWhere(function ($sub) {
+                        $sub->whereIn('document_type', ['payroll_entry', 'expense_entry'])
+                            ->whereIn('status', ['Terbayar', 'Lunas', 'Paid'])
+                            ->whereNotExists(function ($ex) {
+                                $ex->select(DB::raw(1))
+                                    ->from('operation_documents as cp')
+                                    ->where('cp.document_type', 'cash_payment')
+                                    ->whereColumn('cp.related_document_id', 'operation_documents.id')
+                                    ->whereNotIn('cp.status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                            });
+                    });
+                })
+                ->groupBy('entry_date')
+                ->select('entry_date', DB::raw('SUM(total_amount) as total'))
+                ->pluck('total', 'entry_date')
+                ->all();
+
             for ($i = 6; $i >= 0; $i--) {
                 $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - $i days"));
                 if ($isTodayAnchor && $i === 0) {
@@ -247,66 +299,19 @@ class DashboardAnalyticsQueryService
                     $formattedDate = self::dateId($date, false);
                 }
                 $cashFlowLabels[] = $formattedDate;
-                $inflow = DB::table('operation_documents')
-                    ->where('entry_date', $date)
-                    ->where(function ($q) {
-                        $q->where(function ($sub) {
-                            $sub->where('document_type', 'sales_receipt')
-                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                        })->orWhere(function ($sub) {
-                            $sub->where('document_type', 'cash_receipt')
-                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                        })->orWhere(function ($sub) {
-                            $sub->where('document_type', 'sales_invoice')
-                                ->whereIn('status', ['Lunas', 'Paid', 'lunas'])
-                                ->where('paid_amount', '>', 0)
-                                ->whereNotExists(function ($ex) {
-                                    $ex->select(DB::raw(1))
-                                        ->from('operation_document_lines')
-                                        ->join('operation_documents as r', 'operation_document_lines.operation_document_id', '=', 'r.id')
-                                        ->where('r.document_type', 'sales_receipt')
-                                        ->whereColumn('operation_document_lines.reference_code', 'operation_documents.document_number');
-                                });
-                        });
-                    })
-                    ->sum('total_amount');
-                $outflow = DB::table('operation_documents')
-                    ->where('entry_date', $date)
-                    ->where(function ($q) {
-                        $q->where(function ($sub) {
-                            $sub->where('document_type', 'cash_payment')
-                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                        })->orWhere(function ($sub) {
-                            $sub->where('document_type', 'purchase_payment')
-                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                        })->orWhere(function ($sub) {
-                            $sub->whereIn('document_type', ['payroll_entry', 'expense_entry'])
-                                ->whereIn('status', ['Terbayar', 'Lunas', 'Paid'])
-                                ->whereNotExists(function ($ex) {
-                                    $ex->select(DB::raw(1))
-                                        ->from('operation_documents as cp')
-                                        ->where('cp.document_type', 'cash_payment')
-                                        ->whereColumn('cp.related_document_id', 'operation_documents.id')
-                                        ->whereNotIn('cp.status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                                });
-                        });
-                    })
-                    ->sum('total_amount');
-                $cashInSeries[] = (float) $inflow;
-                $cashOutSeries[] = (float) $outflow;
+                $cashInSeries[] = (float) ($inflowsDb[$date] ?? 0);
+                $cashOutSeries[] = (float) ($outflowsDb[$date] ?? 0);
             }
  
             $totalGaji = DB::table('operation_documents')
                 ->where('document_type', 'payroll_entry')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('entry_date', $resolvedYear)
-                ->where('entry_date', '<=', $latestSalesInvoiceDate)
+                ->whereBetween('entry_date', ["{$resolvedYear}-01-01", $latestSalesInvoiceDate])
                 ->sum('total_amount');
             $totalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('entry_date', $resolvedYear)
-                ->where('entry_date', '<=', $latestSalesInvoiceDate)
+                ->whereBetween('entry_date', ["{$resolvedYear}-01-01", $latestSalesInvoiceDate])
                 ->sum('total_amount');
             $totalExpense = $totalGaji + $totalOperasional;
             $pctGaji = $totalExpense > 0 ? round(($totalGaji / $totalExpense) * 100) : 0;
@@ -315,14 +320,12 @@ class DashboardAnalyticsQueryService
             $prevTotalGaji = DB::table('operation_documents')
                 ->where('document_type', 'payroll_entry')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('entry_date', $prevYear)
-                ->where('entry_date', '<=', $prevSalesInvoiceDate)
+                ->whereBetween('entry_date', ["{$prevYear}-01-01", $prevSalesInvoiceDate])
                 ->sum('total_amount');
             $prevTotalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
-                ->whereYear('entry_date', $prevYear)
-                ->where('entry_date', '<=', $prevSalesInvoiceDate)
+                ->whereBetween('entry_date', ["{$prevYear}-01-01", $prevSalesInvoiceDate])
                 ->sum('total_amount');
 
             $prevTotalExpense = $prevTotalGaji + $prevTotalOperasional;
@@ -338,31 +341,45 @@ class DashboardAnalyticsQueryService
             $operasionalGrowth = $calcGrowth($totalOperasional, $prevTotalOperasional);
             $operasionalTone = $totalOperasional >= $prevTotalOperasional ? 'danger' : 'success';
 
-            $salesInvoiceQuery = DB::table('operation_documents')
+            $salesInvoiceAgg = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->where('entry_date', '>=', $monthStart)
-                ->where('entry_date', '<=', $latestSalesInvoiceDate);
-            $fakturLunasSales = (float) (clone $salesInvoiceQuery)->sum('paid_amount');
-            $fakturBelumLunasSales = (float) (clone $salesInvoiceQuery)->sum('outstanding_amount');
-            $belumJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where(function ($q) use ($latestSalesInvoiceDate) {
-                $q->where('due_date', '>=', $latestSalesInvoiceDate)->orWhereNull('due_date');
-            })->sum('outstanding_amount');
-            $lewatJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where('due_date', '<', $latestSalesInvoiceDate)->whereNotNull('due_date')->sum('outstanding_amount');
-            $hariIniSales = (float) (clone $salesInvoiceQuery)->where('entry_date', $latestSalesInvoiceDate)->sum('total_amount');
+                ->where('entry_date', '<=', $latestSalesInvoiceDate)
+                ->selectRaw('
+                    SUM(paid_amount) as faktur_lunas,
+                    SUM(outstanding_amount) as faktur_belum_lunas,
+                    SUM(CASE WHEN due_date >= ? OR due_date IS NULL THEN outstanding_amount ELSE 0 END) as belum_jatuh_tempo,
+                    SUM(CASE WHEN due_date < ? AND due_date IS NOT NULL THEN outstanding_amount ELSE 0 END) as lewat_jatuh_tempo,
+                    SUM(CASE WHEN entry_date = ? THEN total_amount ELSE 0 END) as hari_ini
+                ', [$latestSalesInvoiceDate, $latestSalesInvoiceDate, $latestSalesInvoiceDate])
+                ->first();
 
-            $purchaseInvoiceQuery = DB::table('operation_documents')
+            $fakturLunasSales = (float) ($salesInvoiceAgg->faktur_lunas ?? 0);
+            $fakturBelumLunasSales = (float) ($salesInvoiceAgg->faktur_belum_lunas ?? 0);
+            $belumJatuhTempoSales = (float) ($salesInvoiceAgg->belum_jatuh_tempo ?? 0);
+            $lewatJatuhTempoSales = (float) ($salesInvoiceAgg->lewat_jatuh_tempo ?? 0);
+            $hariIniSales = (float) ($salesInvoiceAgg->hari_ini ?? 0);
+
+            $purchaseInvoiceAgg = DB::table('operation_documents')
                 ->where('document_type', 'purchase_invoice')
                 ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->where('entry_date', '>=', $monthStart)
-                ->where('entry_date', '<=', $latestSalesInvoiceDate);
-            $fakturLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('paid_amount');
-            $fakturBelumLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('outstanding_amount');
-            $belumJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where(function ($q) use ($latestSalesInvoiceDate) {
-                $q->where('due_date', '>=', $latestSalesInvoiceDate)->orWhereNull('due_date');
-            })->sum('outstanding_amount');
-            $lewatJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '<', $latestSalesInvoiceDate)->whereNotNull('due_date')->sum('outstanding_amount');
-            $hariIniPurchase = (float) (clone $purchaseInvoiceQuery)->where('entry_date', $latestSalesInvoiceDate)->sum('total_amount');
+                ->where('entry_date', '<=', $latestSalesInvoiceDate)
+                ->selectRaw('
+                    SUM(paid_amount) as faktur_lunas,
+                    SUM(outstanding_amount) as faktur_belum_lunas,
+                    SUM(CASE WHEN due_date >= ? OR due_date IS NULL THEN outstanding_amount ELSE 0 END) as belum_jatuh_tempo,
+                    SUM(CASE WHEN due_date < ? AND due_date IS NOT NULL THEN outstanding_amount ELSE 0 END) as lewat_jatuh_tempo,
+                    SUM(CASE WHEN entry_date = ? THEN total_amount ELSE 0 END) as hari_ini
+                ', [$latestSalesInvoiceDate, $latestSalesInvoiceDate, $latestSalesInvoiceDate])
+                ->first();
+
+            $fakturLunasPurchase = (float) ($purchaseInvoiceAgg->faktur_lunas ?? 0);
+            $fakturBelumLunasPurchase = (float) ($purchaseInvoiceAgg->faktur_belum_lunas ?? 0);
+            $belumJatuhTempoPurchase = (float) ($purchaseInvoiceAgg->belum_jatuh_tempo ?? 0);
+            $lewatJatuhTempoPurchase = (float) ($purchaseInvoiceAgg->lewat_jatuh_tempo ?? 0);
+            $hariIniPurchase = (float) ($purchaseInvoiceAgg->hari_ini ?? 0);
 
             $dbTopProducts = DB::table('operation_document_lines')
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
@@ -371,7 +388,7 @@ class DashboardAnalyticsQueryService
                 ->whereIn('operation_documents.document_type', ['sales_invoice', 'sales_delivery', 'cash_sale'])
                 ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->where('operation_documents.entry_date', '<=', $latestSalesInvoiceDate)
-                ->when($resolvedYear, fn ($q) => $q->whereYear('operation_documents.entry_date', $resolvedYear))
+                ->when($resolvedYear, fn ($q) => $q->whereBetween('operation_documents.entry_date', ["{$resolvedYear}-01-01", "{$resolvedYear}-12-31"]))
                 ->select(
                     'products.id as product_id',
                     'products.name',
@@ -387,14 +404,18 @@ class DashboardAnalyticsQueryService
             $totalTopUnits = (float) $dbTopProducts->sum('units_sold');
             $topProductsItems = [];
 
+            $productIds = $dbTopProducts->pluck('product_id')->filter()->all();
+            $productAttachments = empty($productIds) ? collect() : DB::table('attachments')
+                ->where('attachable_type', \App\Domain\Catalog\Models\Product::class)
+                ->whereIn('attachable_id', $productIds)
+                ->where('file_type', 'like', 'image/%')
+                ->get()
+                ->keyBy('attachable_id');
+
             foreach ($dbTopProducts as $tp) {
                 $pctShare = $totalTopUnits > 0 ? ($tp->units_sold / $totalTopUnits) * 100 : 0;
                 
-                $imageAttachment = DB::table('attachments')
-                    ->where('attachable_type', \App\Domain\Catalog\Models\Product::class)
-                    ->where('attachable_id', $tp->product_id)
-                    ->where('file_type', 'like', 'image/%')
-                    ->first();
+                $imageAttachment = $productAttachments->get($tp->product_id);
                 $imageUrl = $imageAttachment ? asset('storage/' . $imageAttachment->file_path) : null;
 
                 $unitsSold = (float) $tp->units_sold;
@@ -424,71 +445,77 @@ class DashboardAnalyticsQueryService
                 $initialCash = 150000000;
             }
 
+            $baseInflowBefore = (float) DB::table('operation_documents')
+                ->where('entry_date', '<', $startDate)
+                ->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('document_type', 'sales_receipt')
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })->orWhere(function ($sub) {
+                        $sub->where('document_type', 'cash_receipt')
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })->orWhere(function ($sub) {
+                        $sub->where('document_type', 'sales_invoice')
+                            ->whereIn('status', ['Lunas', 'Paid', 'lunas'])
+                            ->where('paid_amount', '>', 0)
+                            ->whereNotExists(function ($ex) {
+                                $ex->select(DB::raw(1))
+                                    ->from('operation_document_lines')
+                                    ->join('operation_documents as r', 'operation_document_lines.operation_document_id', '=', 'r.id')
+                                    ->where('r.document_type', 'sales_receipt')
+                                    ->whereColumn('operation_document_lines.reference_code', 'operation_documents.document_number');
+                            });
+                    });
+                })
+                ->sum('total_amount');
+
+            $baseOutflowBefore = (float) DB::table('operation_documents')
+                ->where('entry_date', '<', $startDate)
+                ->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('document_type', 'cash_payment')
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })->orWhere(function ($sub) {
+                        $sub->where('document_type', 'purchase_payment')
+                            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })->orWhere(function ($sub) {
+                        $sub->whereIn('document_type', ['payroll_entry', 'expense_entry'])
+                            ->whereIn('status', ['Terbayar', 'Lunas', 'Paid'])
+                            ->whereNotExists(function ($ex) {
+                                $ex->select(DB::raw(1))
+                                    ->from('operation_documents as cp')
+                                    ->where('cp.document_type', 'cash_payment')
+                                    ->whereColumn('cp.related_document_id', 'operation_documents.id')
+                                    ->whereNotIn('cp.status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                            });
+                    });
+                })
+                ->sum('total_amount');
+
+            $runningCash = $initialCash + ($baseInflowBefore - $baseOutflowBefore);
             $cashAvailabilityLabels = [];
             $cashAvailabilitySeries = [];
             for ($i = 6; $i >= 0; $i--) {
                 $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - " . $i . " days"));
                 $formattedDate = self::dateId($date, false);
                 $cashAvailabilityLabels[] = $formattedDate;
-                $inUpToDate = DB::table('operation_documents')
-                    ->where('entry_date', '<=', $date)
-                    ->where(function ($q) {
-                        $q->where(function ($sub) {
-                            $sub->where('document_type', 'sales_receipt')
-                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                        })->orWhere(function ($sub) {
-                            $sub->where('document_type', 'cash_receipt')
-                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                        })->orWhere(function ($sub) {
-                            $sub->where('document_type', 'sales_invoice')
-                                ->whereIn('status', ['Lunas', 'Paid', 'lunas'])
-                                ->where('paid_amount', '>', 0)
-                                ->whereNotExists(function ($ex) {
-                                    $ex->select(DB::raw(1))
-                                        ->from('operation_document_lines')
-                                        ->join('operation_documents as r', 'operation_document_lines.operation_document_id', '=', 'r.id')
-                                        ->where('r.document_type', 'sales_receipt')
-                                        ->whereColumn('operation_document_lines.reference_code', 'operation_documents.document_number');
-                                });
-                        });
-                    })
-                    ->sum('total_amount');
-                $outUpToDate = DB::table('operation_documents')
-                    ->where('entry_date', '<=', $date)
-                    ->where(function ($q) {
-                        $q->where(function ($sub) {
-                            $sub->where('document_type', 'cash_payment')
-                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                        })->orWhere(function ($sub) {
-                            $sub->where('document_type', 'purchase_payment')
-                                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                        })->orWhere(function ($sub) {
-                            $sub->whereIn('document_type', ['payroll_entry', 'expense_entry'])
-                                ->whereIn('status', ['Terbayar', 'Lunas', 'Paid'])
-                                ->whereNotExists(function ($ex) {
-                                    $ex->select(DB::raw(1))
-                                        ->from('operation_documents as cp')
-                                        ->where('cp.document_type', 'cash_payment')
-                                        ->whereColumn('cp.related_document_id', 'operation_documents.id')
-                                        ->whereNotIn('cp.status', ['Void', 'Cancelled', 'void', 'cancelled']);
-                                });
-                        });
-                    })
-                    ->sum('total_amount');
-                $cashAvailabilitySeries[] = $initialCash + ($inUpToDate - $outUpToDate);
+                $runningCash += ((float) ($inflowsDb[$date] ?? 0) - (float) ($outflowsDb[$date] ?? 0));
+                $cashAvailabilitySeries[] = $runningCash;
             }
 
-            $totalSalesOrders = DB::table('operation_documents')
+            $todayStr = date('Y-m-d');
+            $salesOrderStats = DB::table('operation_documents')
                 ->where('document_type', 'sales_order')
-                ->count();
-            $pendingSalesOrders = DB::table('operation_documents')
-                ->where('document_type', 'sales_order')
-                ->where('status', 'Draft')
-                ->count();
-            $overdueSalesOrders = DB::table('operation_documents')
-                ->where('document_type', 'sales_order')
-                ->where('due_date', '<', date('Y-m-d'))
-                ->count();
+                ->selectRaw('
+                    COUNT(*) as total_count,
+                    COUNT(CASE WHEN status = ? THEN 1 END) as pending_count,
+                    COUNT(CASE WHEN due_date < ? THEN 1 END) as overdue_count
+                ', ['Draft', $todayStr])
+                ->first();
+
+            $totalSalesOrders = (int) ($salesOrderStats->total_count ?? 0);
+            $pendingSalesOrders = (int) ($salesOrderStats->pending_count ?? 0);
+            $overdueSalesOrders = (int) ($salesOrderStats->overdue_count ?? 0);
 
             $today = Carbon::today();
             $monthMap = [
