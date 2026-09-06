@@ -114,7 +114,7 @@ class DashboardAnalyticsQueryService
 
             $jan1ThisYear = date('Y-01-01', strtotime($latestSalesInvoiceDate));
             $jan1LastYear = date('Y-01-01', strtotime($latestSalesInvoiceDate . ' -1 year'));
-            $monthStart = date('Y-01-01', strtotime($latestSalesInvoiceDate));
+            $monthStart = date('Y-m-01', strtotime($latestSalesInvoiceDate));
 
             $totalSalesInvoices = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')

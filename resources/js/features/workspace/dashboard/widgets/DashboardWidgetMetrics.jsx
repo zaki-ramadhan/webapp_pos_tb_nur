@@ -554,10 +554,10 @@ export function SummaryMetric({ widget }) {
 
                 {/* Right Column: Belum Lunas */}
                 <div className="flex flex-col h-full min-w-0">
-                    {/* Header: Hari Ini */}
+                    {/* Header: Posisi Hari Ini */}
                     <div className="flex justify-end h-5 items-center shrink-0">
                         <div className="text-[11px] sm:text-xs text-black font-normal">
-                            Hari ini
+                            Per Hari ini
                         </div>
                     </div>
 
