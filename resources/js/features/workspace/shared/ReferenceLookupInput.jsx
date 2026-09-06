@@ -24,6 +24,7 @@ export default function ReferenceLookupInput({
     className = '',
     inputClassName = '',
     menuClassName = '',
+    minWidth = 320,
     getOptionLabel = (option) => option?.label ?? '',
     getOptionSearchText = (option) => getOptionLabel(option),
     renderOption = null,
@@ -274,7 +275,7 @@ export default function ReferenceLookupInput({
             </div>
 
             {showMenu ? (
-                <LookupDropdownSurface className={menuClassName} anchorRef={rootRef}>
+                <LookupDropdownSurface className={menuClassName} anchorRef={rootRef} minWidth={minWidth}>
                     {searching ? (
                         <LookupLoadingState />
                     ) : filteredItems.length ? (

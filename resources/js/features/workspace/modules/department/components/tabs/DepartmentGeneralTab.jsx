@@ -20,7 +20,7 @@ function renderReferenceOptionPrimary(item, secondaryText = '') {
         <div className="min-w-0">
             <div className="truncate text-xs sm:text-sm font-medium text-text-workspace-dark">{item.label}</div>
             {secondaryText ? (
-                <div className="mt-0.5 truncate text-xs text-text-placeholder">{secondaryText}</div>
+                <div className="mt-0.5 truncate text-xs font-normal text-text-workspace-dark">{secondaryText}</div>
             ) : null}
         </div>
     );

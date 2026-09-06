@@ -92,7 +92,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                                         <span className="truncate text-xs sm:text-sm font-normal text-brand-dark">
                                             {prefix}{option.name}
                                         </span>
-                                        <div className="flex justify-end text-[11px] sm:text-xs font-normal text-text-workspace-dark">
+                                        <div className="flex justify-end text-[11px] sm:text-xs font-normal text-brand-dark">
                                             <span>{option.code || option.id}</span>
                                         </div>
                                     </div>
