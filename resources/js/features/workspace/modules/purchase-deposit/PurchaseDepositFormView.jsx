@@ -82,7 +82,7 @@ export default function PurchaseDepositFormView({
     }, [activeRecordId]);
 
     useEffect(() => {
-        const baseAmount = parseNumericInput(committedDepositAmount);
+        const baseAmount = parseNumericInput(values.depositAmount);
         const totals = calculateDepositTaxes(baseAmount, values.taxEnabled, values.__taxId, values.taxRate, values.taxIncluded);
 
         setValues((current) => {
@@ -100,7 +100,7 @@ export default function PurchaseDepositFormView({
                 total: totals.total,
             };
         });
-    }, [committedDepositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId]);
+    }, [values.depositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId]);
 
     useEffect(() => {
         clearValidationErrors();
@@ -196,6 +196,8 @@ export default function PurchaseDepositFormView({
     return (
         <>
             <TransactionFormLayout
+                isLoading={isLoading}
+                validationMessage={validationMessage}
                 header={
                     <PurchaseDepositHeader
                         config={config}
@@ -204,21 +206,21 @@ export default function PurchaseDepositFormView({
                         isDetail={isDetail}
                     />
                 }
-                railTabs={sectionTabs}
-                activeRailTabId={activeSectionId}
-                onSelectRailTab={setActiveSectionId}
+                sectionTabs={sectionTabs}
+                activeSectionId={activeSectionId}
+                onSectionChange={setActiveSectionId}
+                footer={<PurchaseDepositFooter values={values} />}
                 dockActions={dockActions}
-                summaryCard={<PurchaseDepositFooter values={values} />}
-                stamp={
-                    values.statusStamp ? (
-                        <DepositStamp
-                            text={values.statusStamp}
-                            tone={values.statusTone || 'gray'}
-                        />
-                    ) : null
-                }
             >
-                <div className="flex-1">
+                <div className="relative flex-1 flex flex-col min-h-0">
+                    {isDetail && values.statusStamp ? (
+                        <DepositStamp
+                            label={values.statusStamp}
+                            tone={values.statusTone || 'gray'}
+                            className="absolute top-[54%] right-10 sm:right-14 z-30 pointer-events-none w-[140px] h-[140px] opacity-85 select-none -translate-y-1/2"
+                        />
+                    ) : null}
+
                     {activeSectionId === 'deposit' && (
                         <PurchaseDepositSummarySection
                             config={config}

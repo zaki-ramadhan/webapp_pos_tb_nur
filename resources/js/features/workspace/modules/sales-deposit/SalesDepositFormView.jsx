@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import TextInput from '@/components/ui/TextInput';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -90,7 +91,7 @@ export default function SalesDepositFormView({
     }, [activeRecordId]);
 
     useEffect(() => {
-        const baseAmount = parseNumericInput(committedDepositAmount);
+        const baseAmount = parseNumericInput(values.depositAmount);
         const totals = calculateDepositTaxes(baseAmount, values.taxEnabled, values.__taxId, values.taxRate, values.taxIncluded);
 
         setValues((current) => {
@@ -108,7 +109,7 @@ export default function SalesDepositFormView({
                 total: totals.total,
             };
         });
-    }, [committedDepositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId]);
+    }, [values.depositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId]);
 
     useEffect(() => {
         clearValidationErrors();
@@ -278,7 +279,7 @@ export default function SalesDepositFormView({
                                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                                         <TransactionFieldLabel label={config.labels.depositAmount} required />
                                         <div className="max-w-[320px] w-full">
-                                            <TextInput
+                                            <FormattedAmountInput
                                                 id="depositAmount"
                                                 name="depositAmount"
                                                 value={values.depositAmount}
@@ -289,11 +290,11 @@ export default function SalesDepositFormView({
                                                     }))
                                                 }
                                                 onBlur={() => setCommittedDepositAmount(values.depositAmount)}
-                                                maxLength={11}
                                                 prefix="Rp"
-                                                className="h-[34px] rounded-[4px] border-ui-border bg-slate-50"
                                                 prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"
-                                                inputClassName="text-slate-700 text-sm bg-transparent"
+                                                containerClassName="!max-w-[320px] w-full"
+                                                className="h-[40px] rounded-[4px] border-ui-border bg-slate-50"
+                                                inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
                                             />
                                         </div>
                                     </div>

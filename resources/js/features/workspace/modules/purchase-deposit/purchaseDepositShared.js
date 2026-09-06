@@ -64,6 +64,27 @@ export function buildPurchaseDepositFilters(baseFilters = [], rows = []) {
     });
 }
 
+export function resolveDepositStatus(record) {
+    const rawStatus = String(record?.status ?? '').toLowerCase();
+    if (rawStatus === 'void' || rawStatus === 'batal' || rawStatus === 'cancelled') {
+        return 'Batal';
+    }
+    if (rawStatus === 'draft') {
+        return 'Draft';
+    }
+    const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
+    const outstandingAmount = record?.outstanding_amount !== undefined ? Number(record?.outstanding_amount) : null;
+    const usedAmount = record?.used_amount !== undefined ? Number(record?.used_amount) : (record?.applied_amount !== undefined ? Number(record?.applied_amount) : null);
+
+    if (rawStatus === 'lunas' || (outstandingAmount !== null && outstandingAmount <= 0 && totalAmount > 0)) {
+        return 'Lunas';
+    }
+    if (rawStatus === 'sebagian' || (usedAmount !== null && usedAmount > 0 && (outstandingAmount === null || outstandingAmount > 0))) {
+        return 'Sebagian';
+    }
+    return 'Belum Lunas';
+}
+
 export function buildPurchaseDepositRow(record) {
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
     const dateLabel = formatIsoDate(record?.entry_date ?? record?.date ?? record?.created_at) || '-';
@@ -71,7 +92,7 @@ export function buildPurchaseDepositRow(record) {
     const documentNumber = record?.document_number ?? record?.number ?? '-';
     const invoiceNumber = record?.reference_number ?? record?.metadata?.invoice_number ?? record?.invoice_number ?? '-';
     const notes = record?.notes ?? record?.description ?? '-';
-    const status = record?.status ?? 'Draft';
+    const status = resolveDepositStatus(record);
     let age = 0;
     if (record?.metadata?.age !== undefined && record?.metadata?.age !== null) {
         age = Number(record.metadata.age);
@@ -108,9 +129,11 @@ export function buildPurchaseDepositRow(record) {
 export function buildPurchaseDepositRecord(record = {}, config = {}) {
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
     const subtotalAmount = Number(record?.subtotal ?? totalAmount);
-    const isLunas = record?.status === 'Lunas' || (record?.outstanding_amount !== undefined && Number(record?.outstanding_amount) <= 0 && totalAmount > 0);
-    const status = isLunas ? 'Lunas' : (record?.status ?? 'Belum Lunas');
+    const status = resolveDepositStatus(record);
+    const isLunas = status === 'Lunas';
     const printStatus = record?.metadata?.print_status ?? 'Belum cetak/email';
+    const statusStamp = isLunas ? 'LUNAS' : (status === 'Batal' ? 'BATAL' : (status === 'Draft' ? '' : 'BELUM LUNAS'));
+    const statusTone = isLunas ? 'green' : (status === 'Batal' ? 'gray' : 'red');
 
     const supplier = record?.supplier?.name
         ? [buildLookupLabel(record.supplier)]

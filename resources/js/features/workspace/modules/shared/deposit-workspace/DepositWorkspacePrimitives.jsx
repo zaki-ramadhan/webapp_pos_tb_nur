@@ -1,4 +1,5 @@
 import DocumentStamp from '@/components/ui/DocumentStamp';
+import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 
 export function buildDepositFormState(source = {}) {
     return Object.fromEntries(
