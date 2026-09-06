@@ -1,7 +1,7 @@
 import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
-function formatCurrencyValue(value) {
+export function formatCurrencyValue(value) {
     const numericValue = Number(value ?? 0);
     if (!Number.isFinite(numericValue)) return '0';
     return numericValue.toLocaleString('id-ID', {
@@ -10,7 +10,7 @@ function formatCurrencyValue(value) {
     });
 }
 
-function formatCurrencyLabel(value) {
+export function formatCurrencyLabel(value) {
     return `Rp ${formatCurrencyValue(value)}`;
 }
 
@@ -23,6 +23,19 @@ export function buildLookupLabel(record, codeKey = 'code') {
     const name = String(record?.name ?? record?.title ?? '').trim();
     if (code && name) return `[${code}] ${name}`;
     return name || code;
+}
+
+function buildSummaryRows(totalAmount, status, printStatus = 'Belum cetak/email') {
+    return [
+        ['Total', formatCurrencyLabel(totalAmount)],
+        ['Uang Muka Terpakai/Retur', 'Rp 0'],
+        ['Sisa Uang Muka', formatCurrencyLabel(totalAmount)],
+        ['Pembayaran', 'Rp 0'],
+        ['Retur', 'Rp 0'],
+        ['Hutang', formatCurrencyLabel(totalAmount)],
+        ['Status', status || 'Draft'],
+        ['Dicetak/email', printStatus],
+    ];
 }
 
 function buildFilterOptions(labelPrefix, rows, rowKey, labelKey = rowKey) {
@@ -53,89 +66,210 @@ export function buildPurchaseDepositFilters(baseFilters = [], rows = []) {
 
 export function buildPurchaseDepositRow(record) {
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
-    const dateLabel = formatIsoDate(record?.entry_date ?? record?.date ?? record?.created_at);
+    const dateLabel = formatIsoDate(record?.entry_date ?? record?.date ?? record?.created_at) || '-';
     const supplierName = record?.supplier?.name ?? record?.supplier_name ?? record?.party_name ?? '-';
+    const documentNumber = record?.document_number ?? record?.number ?? '-';
+    const invoiceNumber = record?.reference_number ?? record?.metadata?.invoice_number ?? record?.invoice_number ?? '-';
+    const notes = record?.notes ?? record?.description ?? '-';
+    const status = record?.status ?? 'Draft';
+    const age = record?.metadata?.age ? Number(record.metadata.age) : 0;
 
     return {
-        id: String(record.id),
-        number: record.document_number ?? record.number ?? '',
+        id: String(record?.id ?? ''),
+        number: documentNumber,
+        name: documentNumber,
+        tabLabel: documentNumber,
+        invoiceNumber,
         date: dateLabel,
-        dateFilter: record.entry_date ?? '',
+        dateFilter: record?.entry_date ?? '',
+        supplier: supplierName,
         supplierShort: supplierName,
         supplierFilter: supplierName,
-        notes: record.notes ?? record.description ?? '',
-        status: record.status ?? 'Draft',
-        statusFilter: record.status ?? 'Draft',
-        total: formatCurrencyLabel(totalAmount),
+        notes,
+        status,
+        statusFilter: status,
+        age,
+        total: totalAmount ? totalAmount.toLocaleString('id-ID') : '0',
+        statusIcon: status === 'Lunas' ? 'paid' : 'draft',
         __backendRecord: record,
     };
 }
 
 export function buildPurchaseDepositRecord(record = {}, config = {}) {
-    const supplier = record.supplier
-        ? [{ id: record.supplier.id, label: buildLookupLabel(record.supplier), name: record.supplier.name }]
-        : record.supplier_id
-        ? [{ id: record.supplier_id, label: record.supplier_name ?? `[SUPP-${record.supplier_id}]`, name: record.supplier_name }]
+    const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
+    const subtotalAmount = Number(record?.subtotal ?? totalAmount);
+    const isLunas = record?.status === 'Lunas' || (record?.outstanding_amount !== undefined && Number(record?.outstanding_amount) <= 0 && totalAmount > 0);
+    const status = isLunas ? 'Lunas' : (record?.status ?? 'Belum Lunas');
+    const printStatus = record?.metadata?.print_status ?? 'Belum cetak/email';
+
+    const supplier = record?.supplier?.name
+        ? [buildLookupLabel(record.supplier)]
+        : record?.supplier_name
+        ? [record.supplier_name]
         : [];
 
-    const totalAmount = Number(record.total_amount ?? record.paid_amount ?? 0);
-    const formattedAmount = totalAmount ? totalAmount.toLocaleString('id-ID') : '0';
+    const bankAccount = record?.primary_account?.name
+        ? [buildLookupLabel(record.primary_account)]
+        : [];
 
     return {
         ...config.draft,
-        __backendRecordId: record.id ?? null,
+        __backendRecordId: record?.id ?? null,
+        __supplierId: record?.supplier_id ?? record?.supplier?.id ?? null,
         supplier,
-        supplier_id: record.supplier_id ?? null,
-        entryDate: formatIsoDate(record.entry_date) || config.draft?.entryDate,
-        documentNumber: record.document_number ?? '',
-        autoNumber: !record.document_number,
-        depositAmount: formattedAmount,
-        notes: record.notes ?? '',
-        address: record.metadata?.address ?? record.supplier?.billing_address ?? '',
-        status: record.status ?? 'Draft',
+        entryDate: formatIsoDate(record?.entry_date) || config.draft?.entryDate,
+        autoNumber: false,
+        numberingType: record?.numbering_type ?? config.draft?.numberingType ?? 'Uang Muka Pembelian',
+        documentNumber: record?.document_number ?? '',
+        depositAmount: subtotalAmount ? subtotalAmount.toLocaleString('id-ID') : '0',
+        __taxId: record?.tax_id ?? null,
+        taxName: record?.tax ? buildLookupLabel(record.tax) : '',
+        taxEnabled: Boolean(record?.tax_id),
+        taxIncluded: Boolean(record?.metadata?.tax_included),
+        taxInvoiceDate: formatIsoDate(record?.metadata?.tax_invoice_date ?? record?.entry_date),
+        taxTransactionType: record?.metadata?.tax_transaction_type ?? 'Faktur Pajak',
+        taxInvoiceNumber: record?.metadata?.tax_invoice_number ?? '',
+        taxRate: record?.tax ? parseFloat(record.tax.rate) : 0,
+        __bankAccountId: record?.primary_account_id ?? null,
+        bankAccounts: bankAccount,
+        address: record?.metadata?.address ?? record?.supplier?.billing_address ?? record?.supplier?.address ?? '',
+        notes: record?.notes ?? '',
+        status,
+        rawStatus: record?.status ?? status,
+        summary: buildSummaryRows(totalAmount, status, printStatus),
+        approvalStamp: record?.metadata?.approval_stamp ?? '',
+        statusStamp: isLunas ? 'LUNAS' : 'BELUM LUNAS',
+        statusTone: isLunas ? 'green' : 'red',
+        processButtonLabel: 'Proses',
+        dockActions: config.draft?.dockActions ?? [],
+        subtotal: formatCurrencyLabel(subtotalAmount),
+        taxTotalFormatted: formatCurrencyLabel(record?.tax_total ?? 0),
+        total: formatCurrencyLabel(totalAmount),
+        printStatus,
+    };
+}
+
+export function buildPurchaseDepositFormState(source = {}, config = {}) {
+    const depositAmount = source.depositAmount ?? config.draft?.depositAmount ?? '0';
+    const totalAmount = parseNumericInput(depositAmount);
+    const status = source.summary?.find?.(([label]) => label === 'Status')?.[1] ?? source.status ?? 'Draft';
+    const printStatus = source.printStatus ?? config.draft?.printStatus ?? 'Belum cetak/email';
+
+    return {
+        __backendRecordId: source.__backendRecordId ?? null,
+        __supplierId: source.__supplierId ?? null,
+        supplier: [...(source.supplier ?? config.draft?.supplier ?? [])],
+        entryDate: source.entryDate ?? config.draft?.entryDate ?? '',
+        autoNumber: source.autoNumber ?? config.draft?.autoNumber ?? true,
+        numberingType: source.numberingType ?? config.draft?.numberingType ?? 'Uang Muka Pembelian',
+        documentNumber: source.documentNumber ?? config.draft?.documentNumber ?? '',
+        depositAmount,
+        __taxId: source.__taxId ?? null,
+        taxName: source.taxName ?? '',
+        taxEnabled: source.taxEnabled ?? config.draft?.taxEnabled ?? false,
+        taxIncluded: source.taxIncluded ?? config.draft?.taxIncluded ?? true,
+        taxInvoiceDate: source.taxInvoiceDate ?? source.entryDate ?? '',
+        taxTransactionType: source.taxTransactionType ?? 'Faktur Pajak',
+        taxInvoiceNumber: source.taxInvoiceNumber ?? '',
+        taxRate: source.taxRate ?? 0,
+        __bankAccountId: source.__bankAccountId ?? null,
+        bankAccounts: [...(source.bankAccounts ?? config.draft?.bankAccounts ?? [])],
+        address: source.address ?? config.draft?.address ?? '',
+        notes: source.notes ?? config.draft?.notes ?? '',
+        summary: source.summary ?? buildSummaryRows(totalAmount, status, printStatus),
+        approvalStamp: source.approvalStamp ?? config.draft?.approvalStamp ?? '',
+        statusStamp: source.statusStamp ?? config.draft?.statusStamp ?? '',
+        statusTone: source.statusTone ?? config.draft?.statusTone ?? 'gray',
+        processButtonLabel: source.processButtonLabel ?? config.draft?.processButtonLabel ?? 'Proses',
+        dockActions: source.dockActions ?? config.draft?.dockActions ?? [],
+        subtotal: source.subtotal ?? formatCurrencyLabel(totalAmount),
+        taxTotalFormatted: source.taxTotalFormatted ?? 'Rp 0',
+        total: source.total ?? formatCurrencyLabel(totalAmount),
+        printStatus,
     };
 }
 
 export function buildGeneratedPurchaseDepositNumber() {
     const now = new Date();
-    const datePart = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-    const randomPart = Math.floor(1000 + Math.random() * 9000);
-    return `UMP.${datePart}.${randomPart}`;
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const time = `${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+    return `UMP.${year}.${month}.${time}`;
 }
 
 export function buildPurchaseDepositPayload(values) {
-    const totalAmount = parseNumericInput(values.depositAmount);
-    const supplierId = values.supplier?.[0]?.id ?? values.supplier_id ?? null;
+    const baseAmount = parseNumericInput(values.depositAmount);
+    const taxRate = (values.taxEnabled && values.__taxId) ? (values.taxRate ?? 0) / 100 : 0;
+
+    let taxTotal = 0;
+    let totalAmount = baseAmount;
+
+    if (taxRate > 0) {
+        if (values.taxIncluded) {
+            taxTotal = Math.round(baseAmount - (baseAmount / (1 + taxRate)));
+            totalAmount = baseAmount;
+        } else {
+            taxTotal = Math.round(baseAmount * taxRate);
+            totalAmount = baseAmount + taxTotal;
+        }
+    }
 
     return {
-        supplier_id: supplierId ? Number(supplierId) : null,
-        entry_date: normalizeDisplayDate(values.entryDate),
-        document_number: values.documentNumber?.trim() || null,
-        status: values.status ?? 'Draft',
-        subtotal: totalAmount,
+        supplier_id: values.__supplierId ?? null,
+        document_number: values.documentNumber?.trim() || buildGeneratedPurchaseDepositNumber(),
+        numbering_type: values.numberingType?.trim() || null,
+        status: totalAmount > 0 ? 'Belum Lunas' : 'Draft',
+        entry_date: normalizeDisplayDate(values.entryDate) || new Date().toISOString().slice(0, 10),
+        subtotal: baseAmount,
+        tax_total: taxTotal,
         total_amount: totalAmount,
-        paid_amount: totalAmount,
+        paid_amount: 0,
         outstanding_amount: totalAmount,
+        primary_account_id: values.__bankAccountId ?? null,
         notes: values.notes?.trim() || null,
+        tax_id: values.taxEnabled ? (values.__taxId ?? null) : null,
         metadata: {
             address: values.address?.trim() || null,
-            print_status: 'Belum cetak/email',
+            print_status: values.printStatus ?? 'Belum cetak/email',
+            tax_included: Boolean(values.taxIncluded),
+            tax_invoice_date: normalizeDisplayDate(values.taxInvoiceDate) || null,
+            tax_transaction_type: values.taxTransactionType ?? null,
+            tax_invoice_number: values.taxTransactionType === 'Faktur Pajak' ? (values.taxInvoiceNumber?.trim() || null) : null,
         },
     };
 }
 
-export function validatePurchaseDepositValues(values, config) {
-    if (!values.supplier || !values.supplier.length) {
-        return 'Pemasok wajib dipilih.';
+export function validatePurchaseDepositValues(values, config = {}) {
+    const labels = config.labels || {};
+    const supplierLabel = labels.supplier || 'Pemasok';
+    const entryDateLabel = labels.entryDate || 'Tanggal';
+    const documentNumberLabel = labels.documentNumber || 'No Form #';
+    const depositAmountLabel = labels.depositAmount || 'Uang Muka';
+
+    if (!values.supplier || !values.supplier.length || !values.__supplierId) {
+        return `${supplierLabel} wajib dipilih.`;
     }
     if (!String(values.entryDate ?? '').trim()) {
-        return 'Tanggal wajib diisi.';
+        return `${entryDateLabel} wajib diisi.`;
     }
     if (!values.autoNumber && !String(values.documentNumber ?? '').trim()) {
-        return 'Nomor Uang Muka wajib diisi.';
+        return `${documentNumberLabel} wajib diisi.`;
     }
     if (parseNumericInput(values.depositAmount) <= 0) {
-        return 'Jumlah uang muka wajib lebih dari 0.';
+        return `${depositAmountLabel} wajib lebih dari 0.`;
+    }
+    if (values.taxEnabled && (!values.taxName || !values.__taxId)) {
+        return 'PPN wajib diisi jika Kena Pajak dicentang.';
+    }
+    if (values.taxEnabled && values.__taxId && values.taxTransactionType === 'Faktur Pajak' && values.taxInvoiceNumber) {
+        const raw = values.taxInvoiceNumber.trim();
+        if (!/^[0-9.-]+$/.test(raw)) {
+            return 'Nomor Faktur Pajak hanya boleh berisi angka, titik, dan strip.';
+        }
+        const cleaned = raw.replace(/\D/g, '');
+        if (cleaned.length !== 16) {
+            return 'Nomor Faktur Pajak harus terdiri dari 16 digit angka.';
+        }
     }
     return '';
 }

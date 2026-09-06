@@ -28,12 +28,14 @@ const purchaseDepositSectionTabs = [
 ];
 
 const purchaseDepositListColumns = [
-    { id: 'number', label: 'Nomor', widthClassName: 'w-[200px]', align: 'left' },
+    { id: 'number', label: 'Nomor #', widthClassName: 'w-[160px]', align: 'left' },
+    { id: 'invoiceNumber', label: 'No Faktur #', widthClassName: 'w-[160px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
-    { id: 'supplierShort', label: 'Pemasok', widthClassName: 'w-[220px]', align: 'left' },
-    { id: 'notes', label: 'Keterangan', widthClassName: 'w-[45%]', align: 'left' },
-    { id: 'status', label: 'Status', widthClassName: 'w-[150px]', align: 'left' },
-    { id: 'total', label: 'Total', widthClassName: 'w-[160px]', align: 'right' },
+    { id: 'supplier', label: 'Pemasok', widthClassName: 'w-[200px]', align: 'left' },
+    { id: 'notes', label: 'Keterangan', widthClassName: 'w-[30%]', align: 'left' },
+    { id: 'status', label: 'Status', widthClassName: 'w-[120px]', align: 'left' },
+    { id: 'age', label: 'Umur (hr)', widthClassName: 'w-[100px]', align: 'right' },
+    { id: 'total', label: 'Total', widthClassName: 'w-[150px]', align: 'right' },
 ];
 
 const draftDockActions = [
@@ -48,15 +50,25 @@ const purchaseDepositDraft = {
     autoNumber: true,
     numberingType: 'Uang Muka Pembelian',
     documentNumber: '',
-    currency: '',
     depositAmount: '0',
-    purchaseInvoiceNumber: '',
     taxEnabled: false,
     taxIncluded: true,
+    taxInvoiceDate: todayDisplayDate,
+    taxTransactionType: 'Faktur Pajak',
+    taxInvoiceNumber: '',
+    taxRate: 0,
+    bankAccounts: [],
     address: '',
     notes: '',
-    paidFromAccount: [],
+    summary: [],
+    approvalStamp: '',
+    statusStamp: '',
+    statusTone: 'gray',
+    processButtonLabel: 'Proses',
     dockActions: draftDockActions,
+    subtotal: '0',
+    taxTotalFormatted: 'Rp 0',
+    total: '0',
 };
 
 const defaultPurchaseDepositConfig = {
@@ -64,20 +76,25 @@ const defaultPurchaseDepositConfig = {
     labels: {
         supplier: 'Pemasok',
         entryDate: 'Tanggal',
-        documentNumber: 'Nomor #',
-        currency: 'Mata Uang',
+        documentNumber: 'No Form #',
         depositAmount: 'Uang Muka',
-        taxIncluded: 'Termasuk Pajak',
-        tax: 'PPN',
-        taxInvoiceNumber: 'Nomor Faktur Pajak',
-        taxInvoiceDate: 'Tanggal Faktur Pajak',
-        taxTransactionType: 'Jenis Transaksi',
+        tax: 'Pajak',
+        taxIncluded: 'Total termasuk Pajak',
+        taxName: 'PPN',
+        taxInvoiceNumber: 'No. Faktur Pajak',
+        taxInvoiceDate: 'Tgl Faktur Pajak',
+        taxTransactionType: 'Tipe Transaksi',
         address: 'Alamat',
         notes: 'Keterangan',
-        paidFromAccount: 'Akun Kas / Bank',
+        bankAccount: 'Rekening Bank',
     },
+    numberingOptions: ['Uang Muka Pembelian'],
     sectionTabs: purchaseDepositSectionTabs,
     table: {
+        createLabel: 'Tambah Uang Muka Pembelian',
+        refreshLabel: 'Muat ulang',
+        searchPlaceholder: 'Cari data...',
+        pageValue: '1',
         columns: purchaseDepositListColumns,
         rows: [],
         filters: [
@@ -99,6 +116,9 @@ const defaultPurchaseDepositConfig = {
         ],
     },
     draft: purchaseDepositDraft,
+    infoTitle: 'Info lainnya',
+    depositTitle: 'Uang Muka',
+    summaryTitle: 'Informasi Faktur',
 };
 
 export function buildPurchaseDepositConfig(customConfig = {}) {
