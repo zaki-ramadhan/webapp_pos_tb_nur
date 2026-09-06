@@ -6,6 +6,7 @@ import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
+    TransactionHeaderButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { ChevronDownIcon } from '@/features/workspace/shared/Icons';
@@ -116,16 +117,15 @@ export default function SalesDepositHeader({ config, values, setValues, isDetail
                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                         <div />
                         <div className="flex justify-end w-full max-w-[320px] justify-self-end relative">
-                            <button
+                            <TransactionHeaderButton
                                 ref={processAnchorRef}
-                                type="button"
                                 disabled={!isDetail}
                                 onClick={() => setProcessOpen((prev) => !prev)}
-                                className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent transition hover:bg-brand-blue-lightest disabled:opacity-50 disabled:bg-zinc-50 disabled:border-slate-350 disabled:text-tab-inactive-border-l disabled:cursor-not-allowed"
+                                trailingChevron
+                                open={processOpen}
                             >
-                                <span>{values.processButtonLabel || 'Proses'}</span>
-                                <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`} />
-                            </button>
+                                {values.processButtonLabel || 'Proses'}
+                            </TransactionHeaderButton>
                             {isDetail && (
                                 <DropdownMenu
                                     open={processOpen}

@@ -8,6 +8,7 @@ import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
+    TransactionHeaderButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 export default function CashPaymentHeader({ config, values, setValues, activeRecordId, isDetail = Boolean(activeRecordId || values?.__backendRecordId), handlers = {} }) {
@@ -99,42 +100,39 @@ export default function CashPaymentHeader({ config, values, setValues, activeRec
 
                 <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div />
-                    <div className="flex justify-end relative justify-self-end w-full">
-                        <div className="relative flex-1 max-w-[120px] w-full">
-                            <button
-                                ref={ambilButtonRef}
-                                type="button"
-                                onClick={() => setOpenAmbil((o) => !o)}
-                                className="inline-flex h-[40px] w-full items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-3 text-xs sm:text-sm text-brand-blue-accent cursor-pointer transition hover:bg-brand-blue-lightest"
+                    <div className="flex justify-end w-full max-w-[320px] justify-self-end relative">
+                        <TransactionHeaderButton
+                            ref={ambilButtonRef}
+                            onClick={() => setOpenAmbil((o) => !o)}
+                            trailingChevron
+                            open={openAmbil}
+                        >
+                            {config.takeButtonLabel}
+                        </TransactionHeaderButton>
+                        <DropdownMenu
+                            open={openAmbil}
+                            onClose={() => setOpenAmbil(false)}
+                            anchorRef={ambilButtonRef}
+                            align="end"
+                            widthClassName="w-[180px]"
+                        >
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    setOpenAmbil(false);
+                                    handlers.onTakeExpenseEntry?.();
+                                }}
                             >
-                                <span>{config.takeButtonLabel}</span>
-                                <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${openAmbil ? 'rotate-180' : ''}`.trim()} />
-                            </button>
-                            <DropdownMenu
-                                open={openAmbil}
-                                onClose={() => setOpenAmbil(false)}
-                                anchorRef={ambilButtonRef}
-                                align="start"
-                                widthClassName="w-[180px]"
+                                Pencatatan Beban
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    setOpenAmbil(false);
+                                    handlers.onTakePayrollEntry?.();
+                                }}
                             >
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setOpenAmbil(false);
-                                        handlers.onTakeExpenseEntry?.();
-                                    }}
-                                >
-                                    Pencatatan Beban
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setOpenAmbil(false);
-                                        handlers.onTakePayrollEntry?.();
-                                    }}
-                                >
-                                    Pencatatan Gaji
-                                </DropdownMenuItem>
-                            </DropdownMenu>
-                        </div>
+                                Pencatatan Gaji
+                            </DropdownMenuItem>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>

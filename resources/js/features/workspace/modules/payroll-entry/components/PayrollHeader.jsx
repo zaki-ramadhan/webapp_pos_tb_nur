@@ -4,6 +4,7 @@ import TextInput from '@/components/ui/TextInput';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
+    TransactionHeaderButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import DropdownMenu from '@/components/ui/DropdownMenu';
@@ -18,8 +19,8 @@ export function PayrollHeader({ config, values, setValues, isDetail, handlers = 
         handlers.onProcessGaji?.(values);
     };
     return (
-        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-y-4 gap-x-8">
-            <div className="flex flex-col gap-y-2 w-full lg:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.paymentType} />
                     <SelectField
@@ -71,10 +72,10 @@ export function PayrollHeader({ config, values, setValues, isDetail, handlers = 
                 </div>
             </div>
 
-            <div className="flex flex-col gap-y-2 w-full lg:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
-                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px] md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-28">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <TransactionFieldLabel label={config.labels.numbering} required htmlFor="documentNumber" />
-                    <div className="max-w-[320px] w-full">
+                    <div className="max-w-[320px] w-full justify-self-end">
                         {isDetail ? (
                              <TextInput
                                  id="documentNumber"
@@ -104,37 +105,38 @@ export function PayrollHeader({ config, values, setValues, isDetail, handlers = 
                     </div>
                 </div>
 
-                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <TransactionFieldLabel label={config.labels.entryDate} required />
-                    <TransactionDateInput
-                        value={values.entryDate}
-                        onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                    />
+                    <div className="max-w-[320px] w-full justify-self-end">
+                        <TransactionDateInput
+                            value={values.entryDate}
+                            onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
+                        />
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <TransactionFieldLabel label={config.labels.dueDate} required />
-                    <div className="flex items-center gap-3">
+                    <div className="max-w-[320px] w-full justify-self-end flex items-center justify-between gap-3">
                         <TransactionDateInput
                             value={values.dueDate}
                             onChange={(nextValue) => setValues((current) => ({ ...current, dueDate: nextValue }))}
                         />
-                        <div className="relative w-[120px] shrink-0">
-                            <button
+                        <div className="relative shrink-0">
+                            <TransactionHeaderButton
                                 ref={processAnchorRef}
-                                type="button"
                                 disabled={!values.__backendRecordId}
                                 onClick={() => setProcessOpen(prev => !prev)}
-                                className="inline-flex h-[40px] w-full items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-3 text-xs sm:text-sm text-brand-blue-accent disabled:opacity-50 disabled:bg-zinc-50 disabled:border-slate-350 disabled:text-tab-inactive-border-l disabled:cursor-not-allowed cursor-pointer transition hover:bg-brand-blue-lightest"
+                                trailingChevron
+                                open={processOpen}
                             >
-                                <span>{config.processButtonLabel || 'Proses'}</span>
-                                <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`.trim()} />
-                            </button>
+                                {config.processButtonLabel || 'Proses'}
+                            </TransactionHeaderButton>
                             <DropdownMenu
                                 open={processOpen}
                                 onClose={() => setProcessOpen(false)}
                                 anchorRef={processAnchorRef}
-                                align="start"
+                                align="end"
                                 widthClassName="w-[140px]"
                             >
                                 <DropdownMenuItem onClick={handleProcessGaji}>
