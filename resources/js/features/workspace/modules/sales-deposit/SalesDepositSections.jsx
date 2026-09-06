@@ -6,6 +6,7 @@ export {
     DepositStamp,
     DepositSummarySection,
     SalesDepositHeader,
+    SalesDepositPaymentSection,
     SalesDepositSettingsIcon,
 } from './SalesDepositInfoSections';
 export {
