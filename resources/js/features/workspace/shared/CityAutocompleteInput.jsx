@@ -121,7 +121,7 @@ export default function CityAutocompleteInput({
                     </span>
                 ) : null}
 
-                <div className={`flex flex-1 min-w-0 items-center gap-2 h-full overflow-hidden ${selectedCity ? 'pl-2 pr-1' : 'px-3'}`}>
+                <div className={`flex flex-1 min-w-0 items-center gap-2 h-full overflow-hidden ${selectedCity ? 'pl-2 pr-1 cursor-default' : 'px-3'}`}>
                     {selectedCity ? (
                         <LookupChip
                             label={selectedCity}

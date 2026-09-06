@@ -111,10 +111,12 @@ export default function ReferenceLookupInput({
         });
     }, [getOptionLabel, getOptionSearchText, items, multiValueMode, query, selectedLabelSet]);
 
+    const isSingleSelected = !multiValueMode && selectedLabels.length > 0;
+    const wrapperCursor = disabled || isSingleSelected ? 'cursor-default' : 'cursor-text';
     const showMenu = !disabled && open && (!selectedLabel || multiValueMode);
 
     function focusInput(event) {
-        if (disabled) {
+        if (disabled || isSingleSelected) {
             return;
         }
 
@@ -166,9 +168,9 @@ export default function ReferenceLookupInput({
     return (
         <div ref={rootRef} className={`relative w-full ${className}`.trim()}>
             <div
-                onMouseDown={focusInput}
+                onMouseDown={isSingleSelected ? undefined : focusInput}
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : resolvedError ? 'bg-red-500/5 cursor-text' : 'bg-white cursor-text'}`.trim()}
+                className={`group flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : resolvedError ? `bg-red-500/5 ${wrapperCursor}` : `bg-white ${wrapperCursor}`}`.trim()}
             >
                 {multiValueMode ? (
                     <div className={`flex min-w-0 flex-1 flex-col gap-1.5 p-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
@@ -219,7 +221,7 @@ export default function ReferenceLookupInput({
                     </div>
                 ) : (
                     <>
-                        <div className={`flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-2 py-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
+                        <div className={`flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-2 py-1.5 ${disabled || isSingleSelected ? 'cursor-default' : 'cursor-text'}`.trim()}>
                             {selectedLabels.length ? (
                                 selectedLabels.map((item) => (
                                     <LookupChip
@@ -250,10 +252,16 @@ export default function ReferenceLookupInput({
 
                         <button
                             type="button"
-                            onClick={() => inputRef.current?.focus()}
-                            disabled={disabled}
+                            onClick={() => {
+                                if (!isSingleSelected) {
+                                    inputRef.current?.focus();
+                                    setOpen(true);
+                                }
+                            }}
+                            disabled={disabled || isSingleSelected}
+                            tabIndex={isSingleSelected ? -1 : 0}
                             aria-label={searchLabel}
-                            className="inline-flex h-full w-10 shrink-0 items-center justify-center text-text-darkest disabled:text-slate-300 focus:outline-none cursor-pointer"
+                            className={`inline-flex h-full w-10 shrink-0 items-center justify-center focus:outline-none ${disabled || isSingleSelected ? 'cursor-default text-slate-300 pointer-events-none' : 'cursor-pointer text-text-darkest hover:text-brand-dark'}`.trim()}
                         >
                             {searching ? (
                                 <LoadingIcon className="h-5 w-5 animate-spin" />
