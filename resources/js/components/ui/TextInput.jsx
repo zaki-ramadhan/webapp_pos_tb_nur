@@ -64,7 +64,7 @@ export default function TextInput({
     const disabledClassName = state.isNonInteractive
         ? 'bg-ui-bg-panel text-gray-500'
         : state.resolvedError
-            ? 'bg-red-50'
+            ? 'bg-red-500/10'
             : 'bg-white';
 
     const cleanedClassName = state.resolvedError

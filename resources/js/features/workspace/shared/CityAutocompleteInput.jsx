@@ -49,7 +49,7 @@ export default function CityAutocompleteInput({
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
-    const disabledClassName = isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : resolvedError ? 'bg-red-50' : 'bg-white';
+    const disabledClassName = isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : resolvedError ? 'bg-red-500/10' : 'bg-white';
 
     const filteredOptions = useMemo(() => {
         const normalized = String(searchVal ?? '').trim().toLowerCase();
