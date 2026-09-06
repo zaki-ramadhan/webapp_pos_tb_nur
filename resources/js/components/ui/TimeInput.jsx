@@ -58,14 +58,13 @@ export default function TimeInput({
                 anchorRef={wrapperRef}
                 align="start"
                 side="auto"
-                minHeightNeeded={220}
-                maxHeightLimit={300}
-                className="border border-slate-200 rounded-[8px] shadow-xl bg-white overflow-hidden p-2.5 w-[260px]"
+                minHeightNeeded={250}
+                maxHeightLimit={340}
+                className="border border-slate-300 rounded-[8px] shadow-md bg-white overflow-hidden p-3 w-[285px]"
             >
-                <div className="flex flex-col gap-2">
-                    <div className="text-[11px] font-semibold text-slate-500 px-1 pb-1 border-b border-slate-100 flex items-center justify-between">
-                        <span>Pilih Jam (24 Jam)</span>
-                        <span className="font-mono text-brand-blue font-bold">{displayValue}</span>
+                <div className="flex flex-col gap-2.5">
+                    <div className="px-1 pb-1.5 border-b border-slate-200">
+                        <span className="text-xs sm:text-[13px] font-medium text-slate-700">Pilih Jam (24 Jam)</span>
                     </div>
                     <TimeGrid
                         value={normalizedValue}
