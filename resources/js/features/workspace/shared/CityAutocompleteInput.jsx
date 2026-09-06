@@ -193,7 +193,7 @@ export default function CityAutocompleteInput({
                                     <span className="text-xs sm:text-sm font-normal text-text-workspace-dark">
                                         <HighlightText text={item.city} search={searchVal} />
                                     </span>
-                                    <span className="text-[10px] sm:text-xs text-black">
+                                    <span className="text-[10px] sm:text-xs font-normal text-text-workspace-dark">
                                         <HighlightText text={item.province} search={searchVal} />
                                     </span>
                                 </button>

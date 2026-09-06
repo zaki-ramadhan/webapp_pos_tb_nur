@@ -55,6 +55,7 @@ export default function AccountLookupSuggestions({
     anchorRef = null,
     showType = false,
     resource = 'accounts',
+    minWidth = 360,
 }) {
     const entityLabels = {
         accounts: 'akun perkiraan',
@@ -85,7 +86,7 @@ export default function AccountLookupSuggestions({
     }
 
     return (
-        <LookupDropdownSurface className={className} anchorRef={anchorRef}>
+        <LookupDropdownSurface className={className} anchorRef={anchorRef} minWidth={minWidth}>
             <div className="max-h-[280px] overflow-y-auto bg-white flex-1 min-h-0">
                 {loading ? (
                     <LookupLoadingState label={resolvedLoadingLabel} className="px-4 py-5 text-sm" />
@@ -164,12 +165,12 @@ export default function AccountLookupSuggestions({
                                     ) : null}
                                 </span>
                                 {(subtitleLeft || subtitleRight) ? (
-                                    <span className="flex w-full items-center justify-between gap-4 text-xs sm:text-[13px]">
-                                        <span className="truncate text-slate-500">
+                                    <span className="flex w-full items-center justify-between gap-4 text-xs sm:text-[13px] text-black">
+                                        <span className="truncate text-black font-normal">
                                             <HighlightText text={subtitleLeft} search={query} />
                                         </span>
                                         {subtitleRight ? (
-                                            <span className="shrink-0 text-slate-500 font-normal">
+                                            <span className="shrink-0 text-black font-normal">
                                                 {subtitleRight}
                                             </span>
                                         ) : null}

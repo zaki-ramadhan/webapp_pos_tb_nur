@@ -45,7 +45,7 @@ export function LookupLoadingState({
     );
 }
 
-export function LookupDropdownSurface({ className = '', children, maxHeightLimit = 260, onClose, anchorRef, side = 'bottom' }) {
+export function LookupDropdownSurface({ className = '', children, maxHeightLimit = 260, onClose, anchorRef, side = 'bottom', minWidth = null }) {
     return (
         <PortalDropdown
             open={true}
@@ -54,6 +54,7 @@ export function LookupDropdownSurface({ className = '', children, maxHeightLimit
             side={side}
             className={className}
             anchorRef={anchorRef}
+            minWidth={minWidth}
         >
             {children}
         </PortalDropdown>
