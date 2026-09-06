@@ -103,7 +103,7 @@ export default function InventoryAdjustmentDetailsSection({
                 <button
                     type="button"
                     onClick={() => setIsColumnsToggled((prev) => !prev)}
-                    title="Toggle Kolom Tabel"
+                    aria-label="Toggle kolom tabel"
                     className={`inline-flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-[4px] border transition ${
                         isColumnsToggled
                             ? 'border-brand-blue-border bg-brand-blue/10 text-brand-blue'

@@ -137,7 +137,7 @@ export default function ItemMutationTab({ productId }) {
                         fetchMutations(true);
                     }}
                     disabled={loading}
-                    title="Muat ulang"
+                    aria-label="Muat ulang"
                     className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer disabled:opacity-60"
                 >
                     <RefreshIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />

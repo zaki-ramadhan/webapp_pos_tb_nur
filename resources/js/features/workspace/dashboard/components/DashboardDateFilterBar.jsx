@@ -90,7 +90,6 @@ export default function DashboardDateFilterBar({ currentAsOfDate }) {
                         onChange={(e) => handleApplyDate(e.target.value)}
                         disabled={isPending}
                         className="rounded-md border border-slate-300 bg-white px-2 py-0.5 text-xs text-slate-700 font-medium focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue disabled:opacity-50 cursor-pointer"
-                        title="Pilih tanggal histori di masa lalu (Maksimal Hari Ini)"
                     />
                 </div>
 
@@ -98,7 +97,7 @@ export default function DashboardDateFilterBar({ currentAsOfDate }) {
                     <button
                         type="button"
                         onClick={() => handlePreset(0)}
-                        title="Kembali ke Hari Ini"
+                        aria-label="Kembali ke Hari Ini"
                         className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-500 hover:text-brand-blue hover:border-brand-blue transition"
                     >
                         <RotateCcw className="h-3.5 w-3.5" />

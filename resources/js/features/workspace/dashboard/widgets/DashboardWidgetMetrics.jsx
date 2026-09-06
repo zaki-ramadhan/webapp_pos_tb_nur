@@ -176,7 +176,7 @@ function MetricLegendItem({ item }) {
         <div className="flex items-center justify-between gap-1.5 text-xs sm:text-sm">
             <div className="flex min-w-0 items-center gap-1.5 pr-1">
                 <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
-                <span className="truncate text-black font-medium text-xs sm:text-sm" title={label}>{label}</span>
+                <span className="truncate text-black font-medium text-xs sm:text-sm">{label}</span>
             </div>
             <div className="flex shrink-0 items-center gap-1.5 font-semibold">
                 <span className={textClass}>{value}</span>

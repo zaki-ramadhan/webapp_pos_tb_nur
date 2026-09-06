@@ -17,6 +17,7 @@
   * Wajib meneliti dan menggunakan komponen UI serta utilitas global yang sudah terinstal/tersedia di projek (misal: `AccountLookupField`, `TextInput` terformat, helper `formatAmountInput`) sebelum membuat logic/komponen baru.
   * Hindari penambahan library NPM/Composer baru kecuali jika sangat mendesak dan disetujui user.
   * Terapkan YAGNI secara ketat: buat solusi dengan jumlah baris kode dan abstraksi seminimal mungkin yang terbukti bekerja secara fungsional.
+- **Larangan Atribut Title Native (Anti-Native Hover Tooltips):** Dilarang keras menyisipkan atribut `title="..."` pada elemen/tag HTML native (`<p>`, `<span>`, `<button>`, `<div>`, `<input>`, dsb.) karena memicu popup tooltip hover bawaan browser yang mengganggu. Gunakan `aria-label="..."` untuk kebutuhan aksesibilitas screen reader tanpa tooltip, atau gunakan komponen tooltip kustom aplikasi jika secara eksplisit diminta oleh user. Atribut `alt="..."` hanya diperbolehkan pada tag `<img>` untuk keperluan fallback gambar.
 
 - **Efisiensi Token Proyek (Token & Credit Saving):**
   * Setiap kali memulai sesi baru atau ketika menganalisis komponen baru, jalankan `python tools/map_project.py --summary` terlebih dahulu untuk melihat gambaran umum struktur kode proyek secara hemat token.

@@ -98,7 +98,7 @@ export function ItemGroupTab({ values, onChange }) {
                                         type="button"
                                         onClick={() => handleRemoveItem(index)}
                                         className="text-danger hover:text-red-700 transition cursor-pointer p-1"
-                                        title="Hapus rincian"
+                                        aria-label="Hapus rincian"
                                     >
                                         <TrashIcon className="h-4 w-4" />
                                     </button>
