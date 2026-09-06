@@ -70,7 +70,7 @@ export default function AccountLookupSearchInput({
             ref={effectiveContainerRef}
             onMouseDown={isSelected ? undefined : focusInputFromWrapper}
             aria-invalid={error}
-            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400 cursor-default' : error ? `bg-red-50 ${wrapperCursor}` : `bg-white ${wrapperCursor}`} ${className}`.trim()}
+            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400 cursor-default' : error ? `bg-red-500/10 ${wrapperCursor}` : `bg-white ${wrapperCursor}`} ${className}`.trim()}
         >
             <div className={`flex h-full min-w-0 flex-1 items-center gap-2 pl-1 pr-3 ${wrapperCursor}`.trim()}>
                 {isSelected ? (

@@ -253,7 +253,7 @@ export default function SelectField({
 
             <div
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : resolvedError ? 'bg-red-50' : 'bg-white'} ${cleanedClassName}`.trim()}
+                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : resolvedError ? 'bg-red-500/10' : 'bg-white'} ${cleanedClassName}`.trim()}
             >
                 <button
                     ref={triggerRef}
