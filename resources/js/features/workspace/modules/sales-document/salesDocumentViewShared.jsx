@@ -2,8 +2,7 @@ import { useRef, useState } from 'react';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import SelectField from '@/components/ui/SelectField';
-import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
-import { TransactionSwitch, TransactionToolbarSplitButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { TransactionHeaderButton, TransactionSwitch, TransactionToolbarSplitButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     CircleCheckIcon,
     DownloadIcon,
@@ -141,16 +140,15 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
         <div className="flex flex-wrap items-center justify-end gap-2">
             {showTakeButton ? (
                 <>
-                    <button
+                    <TransactionHeaderButton
                         ref={takeRef}
-                        type="button"
                         onClick={() => setTakeOpen((o) => !o)}
-                        className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-sm text-brand-blue-accent"
+                        trailingChevron
+                        open={takeOpen}
                     >
-                        <span>{config.takeButtonLabel}</span>
-                        <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${takeOpen ? 'rotate-180' : ''}`.trim()} />
-                    </button>
-                    <DropdownMenu open={takeOpen} onClose={() => setTakeOpen(false)} anchorRef={takeRef} widthClassName="w-[200px]">
+                        {config.takeButtonLabel}
+                    </TransactionHeaderButton>
+                    <DropdownMenu open={takeOpen} onClose={() => setTakeOpen(false)} anchorRef={takeRef} align="end" widthClassName="w-[200px]">
                         {takeOptions.map((opt) => (
                             <DropdownMenuItem key={opt} onClick={() => handleTakeClick(opt)}>
                                 {opt}
@@ -160,35 +158,27 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
                 </>
             ) : null}
             {showSecondaryHeaderAction ? (
-                <button
-                    type="button"
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-sm text-brand-blue-accent"
-                >
+                <TransactionHeaderButton>
                     {secondaryActionLabel}
-                </button>
+                </TransactionHeaderButton>
             ) : null}
             {showProcessButton ? (
                 <>
-                    <button
+                    <TransactionHeaderButton
                         ref={processRef}
-                        type="button"
                         disabled={values.processDisabled}
                         onClick={() => {
                             if (!values.processDisabled) {
                                 setProcessOpen((o) => !o);
                             }
                         }}
-                        className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border px-4 text-sm ${
-                            values.processDisabled
-                                ? 'border-tab-inactive-bg bg-tab-active-bg text-tab-inactive-border-l'
-                                : 'border-brand-blue-border bg-white text-brand-blue-accent'
-                        }`.trim()}
+                        trailingChevron={!values.processDisabled}
+                        open={processOpen}
                     >
-                        <span>{config.processButtonLabel}</span>
-                        {!values.processDisabled ? <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`.trim()} /> : null}
-                    </button>
+                        {config.processButtonLabel}
+                    </TransactionHeaderButton>
                     {!values.processDisabled ? (
-                        <DropdownMenu open={processOpen} onClose={() => setProcessOpen(false)} anchorRef={processRef} widthClassName="w-[180px]">
+                        <DropdownMenu open={processOpen} onClose={() => setProcessOpen(false)} anchorRef={processRef} align="end" widthClassName="w-[180px]">
                             {processOptions.map((opt) => (
                                 <DropdownMenuItem key={opt} onClick={() => handleProcessClick(opt)}>
                                     {opt}

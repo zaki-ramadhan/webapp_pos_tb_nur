@@ -16,7 +16,6 @@ export default function ExpenseAdditionalInfoSection({ config, values, setValues
                     <TransactionDateInput
                         value={values.dueDate}
                         onChange={(nextValue) => setValues((current) => ({ ...current, dueDate: nextValue }))}
-                        className="w-full max-w-full"
                     />
 
                     <TransactionFieldLabel label={config.labels.notes} />

@@ -70,7 +70,6 @@ export default function GeneralJournalHeader({ config, values, setValues, active
                     <TransactionDateInput
                         value={values.entryDate}
                         onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                        className="w-full max-w-full"
                     />
                 </div>
 

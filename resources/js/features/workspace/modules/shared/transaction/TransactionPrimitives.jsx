@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { formatDisplayValue } from '@/features/workspace/shared/amountFormatting';
 
@@ -85,18 +86,27 @@ export function TransactionSectionHeading({ title, icon }) {
     );
 }
 
-export function TransactionHeaderButton({ label, trailingChevron = false, className = '', ...props }) {
+export const TransactionHeaderButton = forwardRef(function TransactionHeaderButton(
+    { label, children, trailingChevron = false, open = false, className = '', disabled = false, ...props },
+    ref
+) {
     return (
         <button
+            ref={ref}
             type="button"
-            className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent ${className}`.trim()}
+            disabled={disabled}
+            className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent transition hover:bg-brand-blue-lightest disabled:opacity-50 disabled:bg-zinc-50 disabled:border-slate-350 disabled:text-tab-inactive-border-l disabled:cursor-not-allowed cursor-pointer ${className}`.trim()}
             {...props}
         >
-            <span>{label}</span>
-            {trailingChevron ? <ChevronDownIcon className="h-4 w-4" /> : null}
+            <span>{label || children}</span>
+            {trailingChevron ? (
+                <ChevronDownIcon
+                    className={`h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`.trim()}
+                />
+            ) : null}
         </button>
     );
-}
+});
 
 export function TransactionReadonlyTextarea({ value, rows = 3, className = '', onChange, readOnly = true }) {
     return (

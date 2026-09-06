@@ -8,6 +8,7 @@ import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
+    TransactionHeaderButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 export default function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSwitch, isDetail = Boolean(values?.__backendRecordId), handlers = {} }) {
@@ -105,30 +106,27 @@ export default function ExpenseEntryHeader({ config, values, setValues, showAuto
 
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div />
-                    <div className="flex justify-end relative justify-self-end w-full">
-                        <div className="relative flex-1 max-w-[120px] w-full">
-                            <button
-                                ref={processAnchorRef}
-                                type="button"
-                                disabled={!values.__backendRecordId}
-                                onClick={() => setProcessOpen(prev => !prev)}
-                                className="inline-flex h-[40px] w-full items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-3 text-xs sm:text-sm text-brand-blue-accent disabled:opacity-50 disabled:bg-zinc-50 disabled:border-slate-350 disabled:text-tab-inactive-border-l disabled:cursor-not-allowed cursor-pointer transition hover:bg-brand-blue-lightest"
-                            >
-                                <span>{config.processButtonLabel || 'Proses'}</span>
-                                <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`.trim()} />
-                            </button>
-                            <DropdownMenu
-                                open={processOpen}
-                                onClose={() => setProcessOpen(false)}
-                                anchorRef={processAnchorRef}
-                                align="start"
-                                widthClassName="w-[140px]"
-                            >
-                                <DropdownMenuItem onClick={handleProcessPembayaran}>
-                                    Pembayaran
-                                </DropdownMenuItem>
-                            </DropdownMenu>
-                        </div>
+                    <div className="flex justify-end w-full max-w-[320px] justify-self-end relative">
+                        <TransactionHeaderButton
+                            ref={processAnchorRef}
+                            disabled={!values.__backendRecordId}
+                            onClick={() => setProcessOpen(prev => !prev)}
+                            trailingChevron
+                            open={processOpen}
+                        >
+                            {config.processButtonLabel || 'Proses'}
+                        </TransactionHeaderButton>
+                        <DropdownMenu
+                            open={processOpen}
+                            onClose={() => setProcessOpen(false)}
+                            anchorRef={processAnchorRef}
+                            align="end"
+                            widthClassName="w-[140px]"
+                        >
+                            <DropdownMenuItem onClick={handleProcessPembayaran}>
+                                Pembayaran
+                            </DropdownMenuItem>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>
