@@ -23,24 +23,39 @@ export default function TrendLineChart({
     series = [],
     accent = 'var(--color-blue-280)',
     valueFormat = 'number',
-    heightClassName = 'h-[228px]',
-    yDivisions = 5,
+    heightClassName = 'h-full w-full',
+    yDivisions = 6,
 }) {
     const normalizedSeries = normalizeTrendSeries(series, accent);
     const allValues = normalizedSeries.flatMap((s) => s.data || []);
     const maxVal = allValues.length > 0 ? Math.max(...allValues) : 0;
     const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
 
-    const getNiceStepSize = (span, targetDivisions = 4) => {
+    const getNiceStepSize = (span, targetDivisions = 6) => {
         if (!span || span <= 0) return valueFormat === 'currency' ? 25000 : 1;
         const rawStep = span / targetDivisions;
         const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
         const ratio = rawStep / magnitude;
-        if (ratio <= 1.0) return 1.0 * magnitude;
-        if (ratio <= 2.0) return 2.0 * magnitude;
-        if (ratio <= 2.5) return 2.5 * magnitude;
-        if (ratio <= 5.0) return 5.0 * magnitude;
-        return 10.0 * magnitude;
+        let niceRatio = 1.0;
+        if (ratio <= 1.0) niceRatio = 1.0;
+        else if (ratio <= 1.25) niceRatio = 1.25;
+        else if (ratio <= 1.5) niceRatio = 1.5;
+        else if (ratio <= 2.0) niceRatio = 2.0;
+        else if (ratio <= 2.5) niceRatio = 2.5;
+        else if (ratio <= 5.0) niceRatio = 5.0;
+        else niceRatio = 10.0;
+
+        let step = niceRatio * magnitude;
+        if (step * targetDivisions < span) {
+            if (niceRatio === 1.0) niceRatio = 1.25;
+            else if (niceRatio === 1.25) niceRatio = 1.5;
+            else if (niceRatio === 1.5) niceRatio = 2.0;
+            else if (niceRatio === 2.0) niceRatio = 2.5;
+            else if (niceRatio === 2.5) niceRatio = 5.0;
+            else niceRatio = 10.0;
+            step = niceRatio * magnitude;
+        }
+        return step;
     };
 
     let yMin = 0;
@@ -48,28 +63,27 @@ export default function TrendLineChart({
     let stepSize = undefined;
 
     if (minVal === 0 && maxVal === 0) {
-        // Zero / No Data State: clean round default baseline steps
+        // Zero / No Data State: 6 intervals = 7 ticks
         stepSize = valueFormat === 'currency' ? 25000 : 1;
         yMin = 0;
-        yMax = valueFormat === 'currency' ? 100000 : 4;
+        yMax = stepSize * 6;
     } else if (minVal >= 0) {
-        // Mode A: All Positive -> 0 at bottom baseline
-        stepSize = getNiceStepSize(maxVal, 4);
+        // Mode A: All Positive -> 0 at bottom baseline, 6 intervals = 7 ticks
+        stepSize = getNiceStepSize(maxVal, 6);
         yMin = 0;
-        yMax = Math.max(Math.ceil(maxVal / stepSize) * stepSize, stepSize * 4);
+        yMax = stepSize * 6;
     } else if (maxVal <= 0) {
-        // Mode B: All Negative -> 0 at top ceiling baseline
+        // Mode B: All Negative -> 0 at top ceiling baseline, 6 intervals = 7 ticks
         const span = Math.abs(minVal);
-        stepSize = getNiceStepSize(span, 4);
+        stepSize = getNiceStepSize(span, 6);
         yMax = 0;
-        yMin = Math.min(Math.floor(minVal / stepSize) * stepSize, -stepSize * 4);
+        yMin = -stepSize * 6;
     } else {
-        // Mode C: Mixed Positive & Negative -> 0 symmetric in middle
+        // Mode C: Mixed Positive & Negative -> 0 symmetric in middle, 3 intervals below + 3 above = 7 ticks
         const maxAbs = Math.max(Math.abs(minVal), Math.abs(maxVal));
-        stepSize = getNiceStepSize(maxAbs, 2);
-        const steps = Math.max(2, Math.ceil(maxAbs / stepSize));
-        yMin = -steps * stepSize;
-        yMax = steps * stepSize;
+        stepSize = getNiceStepSize(maxAbs, 3);
+        yMin = -stepSize * 3;
+        yMax = stepSize * 3;
     }
 
     const datasets =
@@ -142,8 +156,8 @@ export default function TrendLineChart({
             },
             y: {
                 min: yMin,
-                ...(yMax !== undefined ? { max: yMax } : {}),
-                ...(stepSize !== undefined ? { stepSize } : {}),
+                max: yMax,
+                stepSize: stepSize,
                 grid: {
                     color: (context) => (context.tick?.value === 0 ? '#94a3b8' : '#e2e8f0'),
                     lineWidth: (context) => (context.tick?.value === 0 ? 1.5 : 1),
@@ -155,10 +169,10 @@ export default function TrendLineChart({
                     precision: 0,
                     color: 'var(--color-text-dark)',
                     font: {
-                        size: 12,
+                        size: 11,
                     },
                     autoSkip: false,
-                    maxTicksLimit: 7,
+                    maxTicksLimit: 10,
                     callback(value) {
                         return formatChartValue(value, valueFormat);
                     },
@@ -170,7 +184,7 @@ export default function TrendLineChart({
     return (
         <DashboardChartShell
             heightClassName={heightClassName}
-            className={heightClassName.includes('flex-1') ? 'flex-1 flex flex-col min-h-0' : ''}
+            className="w-full h-full flex-1 min-h-0 flex flex-col"
         >
             <Line data={resolveChartObject(data)} options={resolveChartObject(options)} />
         </DashboardChartShell>

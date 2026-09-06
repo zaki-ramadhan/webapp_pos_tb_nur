@@ -51,7 +51,7 @@ export default function DashboardWidgetCard({
     const baseHeightClass = isEmptyData ? 'min-h-0 h-auto' : widget.heightClass;
 
     const resolvedHeightClass = (widget.type === 'line' || widget.type === 'cash-availability' || widget.type === 'recent-activity')
-        ? 'h-[310px]'
+        ? 'h-[360px]'
         : widget.type === 'summary'
             ? 'min-h-[210px]'
             : (baseHeightClass || 'h-[310px]');

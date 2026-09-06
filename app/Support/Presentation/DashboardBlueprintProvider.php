@@ -70,7 +70,7 @@ class DashboardBlueprintProvider
                     'title' => 'Aktivitas Terakhir Anda',
                     'type' => 'recent-activity',
                     'items' => $userActivities,
-                    'heightClass' => 'h-[310px]',
+                    'heightClass' => 'h-[360px]',
                 ],
                 [
                     'id' => 'sales-trend',
@@ -86,7 +86,7 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'h-[310px]',
+                    'heightClass' => 'h-[360px]',
                 ],
                 [
                     'id' => 'profit-loss',
@@ -151,7 +151,7 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'h-[310px]',
+                    'heightClass' => 'h-[360px]',
                 ],
                 [
                     'id' => 'company-expense',
@@ -271,7 +271,7 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'h-[310px]',
+                    'heightClass' => 'h-[360px]',
                 ],
             ],
             'transactionTypeOptions' => $transactionTypeOptions,

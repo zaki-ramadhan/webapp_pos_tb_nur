@@ -167,7 +167,7 @@ export default function DashboardWidgetGrid({
             return (
                 <div
                     key={widget.id}
-                    className={`${spanClass} ${dragClass} flex flex-col`.trim()}
+                    className={`${spanClass} ${dragClass} flex flex-col min-h-0`.trim()}
                     draggable={isDraggable}
                     onDragStart={(e) => {
                         setDraggedIndex(index);
@@ -240,7 +240,7 @@ export default function DashboardWidgetGrid({
     const activeWidgets = displayWidgets.length > 0 ? displayWidgets : widgets;
 
     return (
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:gap-2.5 3xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:gap-2.5 3xl:grid-cols-3 items-start">
             {activeWidgets.map((widget, i) => renderWidgetCard(widget, i))}
         </div>
     );
