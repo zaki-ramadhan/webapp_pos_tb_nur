@@ -1,5 +1,6 @@
 import DocumentStamp from '@/components/ui/DocumentStamp';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
+import { TransactionDualTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 export function buildDepositFormState(source = {}) {
     return Object.fromEntries(
@@ -122,3 +123,22 @@ export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], e
         </section>
     );
 }
+
+export function DepositDualTotalFooter({ values }) {
+    const items = [
+        { label: 'Sub Total', value: values?.subtotal || '0' },
+    ];
+
+    if (values?.taxEnabled && values?.__taxId) {
+        const rateLabel = values.taxRate ? ` (${values.taxRate}%)` : '';
+        items.push({
+            label: `PPN${rateLabel}`,
+            value: values.taxTotalFormatted || 'Rp 0',
+        });
+    }
+
+    items.push({ label: 'Total', value: values?.total || '0' });
+
+    return <TransactionDualTotalCard items={items} />;
+}
+

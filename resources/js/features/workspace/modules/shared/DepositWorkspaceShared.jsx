@@ -1,6 +1,7 @@
 export {
     buildDepositFormState,
     DepositAmountField,
+    DepositDualTotalFooter,
     DepositFooterSummary,
     DepositLinkedRowsSection,
     DepositStamp,
