@@ -160,6 +160,10 @@ export function formatCurrencyValue(value) {
     return formatAmountInput(numericValue, { allowDecimal: true });
 }
 
+export function formatCurrencyLabel(value) {
+    return `Rp ${formatCurrencyValue(value)}`;
+}
+
 export function parseNumericInput(value) {
     return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
 }

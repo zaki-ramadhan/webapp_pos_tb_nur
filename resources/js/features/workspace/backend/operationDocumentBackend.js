@@ -1,5 +1,6 @@
 import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { parseAmountInput, formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 
 const DOCUMENT_PREFIXES = {
     'sales-quote': 'SQ',
@@ -38,19 +39,6 @@ function truncateText(value, limit = 20) {
     }
 
     return `${normalizedValue.slice(0, limit - 3)}...`;
-}
-
-function formatCurrencyValue(value) {
-    const numericValue = Number(value ?? 0);
-
-    if (!Number.isFinite(numericValue)) {
-        return '0';
-    }
-
-    return numericValue.toLocaleString('id-ID', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    });
 }
 
 export function mapDocumentStatus(status) {
