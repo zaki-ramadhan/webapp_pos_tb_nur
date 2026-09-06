@@ -81,8 +81,7 @@ export const bankInquiryPageConfigs = {
             controls: [
                 {
                     ...createSearchControl(),
-                    value: 'Bank BRI',
-                    placeholder: 'Bank BRI (BRIMO)',
+                    placeholder: 'Cari/Pilih Bank...',
                 },
                 createDateControl('startDate', buildThirtyDaysAgoDisplayDate()),
                 {

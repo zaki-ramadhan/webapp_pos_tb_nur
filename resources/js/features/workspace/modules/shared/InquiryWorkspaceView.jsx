@@ -22,6 +22,7 @@ import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHe
 import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 import { InquiryActionButton, InquiryControl } from './components/InquiryControls';
+import { loadInquiryFilter, saveInquiryFilter } from '@/features/workspace/shared/inquiryFilterPersistence';
 
 const CONTENT_MIN_HEIGHT_CLASS_NAME = 'min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]';
 
@@ -48,7 +49,16 @@ export default function InquiryWorkspaceView({
     const activePageId = pageId || config.id || '';
     const controls = config.controls ?? [];
     const hasSidePanel = config.sidePanel?.hidden !== true;
-    const [values, setValues] = useState(() => buildInitialControlValues(controls));
+    const [values, setValues] = useState(() => {
+        const initial = buildInitialControlValues(controls);
+        if (activePageId) {
+            const saved = loadInquiryFilter(activePageId);
+            if (saved) {
+                return { ...initial, ...saved };
+            }
+        }
+        return initial;
+    });
     const keywordControl = controls.find((control) => control.type === 'search');
     const keyword = keywordControl ? values[keywordControl.id] ?? '' : '';
     const [isAlternativeView, setIsAlternativeView] = useState(false);
@@ -89,11 +99,17 @@ export default function InquiryWorkspaceView({
     }, [config.table.columns, config.table.rows, config.table.searchKeys, keyword, rows]);
 
     function handleChange(controlId, nextValue, extra = null) {
-        setValues((currentValues) => ({
-            ...currentValues,
-            [controlId]: nextValue,
-            ...(extra ? extra : {}),
-        }));
+        setValues((currentValues) => {
+            const nextValues = {
+                ...currentValues,
+                [controlId]: nextValue,
+                ...(extra ? extra : {}),
+            };
+            if (activePageId) {
+                saveInquiryFilter(activePageId, nextValues);
+            }
+            return nextValues;
+        });
     }
 
     const hasRows = filteredRows.length > 0;
