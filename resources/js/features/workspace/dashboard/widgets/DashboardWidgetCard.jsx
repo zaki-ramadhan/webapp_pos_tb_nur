@@ -48,19 +48,17 @@ export default function DashboardWidgetCard({
         (widget.type === 'apriori-analysis' && (!widget.rules || widget.rules.length === 0)) ||
         (widget.id === 'integrated-analysis' && (!widget.rules || widget.rules.length === 0));
 
-    const baseHeightClass = isEmptyData ? 'min-h-0 h-auto' : widget.heightClass;
-
-    const resolvedHeightClass = (widget.type === 'line' || widget.type === 'cash-availability' || widget.type === 'recent-activity')
-        ? 'h-[360px]'
+    const resolvedHeightClass = isEmptyData
+        ? 'min-h-0 h-auto'
         : widget.type === 'summary'
-            ? 'min-h-[210px]'
-            : (baseHeightClass || 'h-[310px]');
+            ? 'h-full min-h-[210px]'
+            : 'h-[350px] max-h-[350px]';
 
     const isAbcApriori = widget.id === 'integrated-analysis' || widget.type === 'abc-apriori';
     const headerPaddingClass = isAbcApriori ? 'py-3' : 'py-2';
 
     return (
-        <Panel className={`relative z-[1] hover:z-[5] transition-all duration-150 flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-[8px] border border-chart-border bg-white/98 shadow-none ${resolvedHeightClass}`.trim()}>
+        <Panel className={`relative z-[1] hover:z-[5] transition-all duration-150 flex min-h-0 min-w-0 flex-col overflow-hidden rounded-[8px] border border-chart-border bg-white/98 shadow-none ${resolvedHeightClass}`.trim()}>
             <div className={`flex flex-wrap items-start justify-between gap-2 border-b border-table-row-border px-3 ${headerPaddingClass} sm:flex-nowrap sm:items-center sm:px-4`}>
                 <div className="min-w-0 flex-1 flex items-center">
                     <div
@@ -94,7 +92,7 @@ export default function DashboardWidgetCard({
                     </div>
                 )}
             </div>
-            <div className="relative flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-4 sm:py-3">
+            <div className="relative flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-4 sm:py-3 overflow-hidden">
                 <WidgetLoadingOverlay isVisible={isWidgetLoading} />
                 {children}
             </div>
