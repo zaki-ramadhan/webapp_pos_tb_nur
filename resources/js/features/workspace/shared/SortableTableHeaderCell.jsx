@@ -36,12 +36,12 @@ export default function SortableTableHeaderCell({
 }) {
     const alignClass = resolveAlignClassName(align);
     const justifyClass = resolveJustifyClassName(align);
-    const textClass = 'block whitespace-nowrap truncate min-w-0 flex-1';
+    const textClass = `block whitespace-nowrap truncate min-w-0 flex-1 ${alignClass}`;
     const isCheckbox = columnId === 'checkbox' || (!label && widthClassName === 'w-px');
     const minWidth = isCheckbox ? null : getColumnMinWidth(label);
     const isWFull = widthClassName.includes('w-full');
     const resolvedStyle = {
-        ...(minWidth ? { minWidth: `${minWidth}px` } : {}),
+        ...(minWidth ? { minWidth: typeof minWidth === 'number' ? `${minWidth}px` : minWidth } : {}),
         ...(isCheckbox ? { minWidth: '0px', width: '1px' } : {}),
         ...(isWFull ? { width: '100%' } : {}),
         ...propStyle,
@@ -70,7 +70,7 @@ export default function SortableTableHeaderCell({
             <button
                 type="button"
                 onClick={onSort}
-                className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 font-normal ${justifyClass}`}
+                className={`inline-flex w-full max-w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 font-normal ${justifyClass}`}
             >
                 <span className={`${textClass} font-normal`}>{label}</span>
                 <SortIcon direction={sortDirection} />

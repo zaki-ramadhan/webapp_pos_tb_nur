@@ -177,7 +177,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                                 {column.kind === 'checkbox' ? (
                                                     <span className="inline-flex h-[18px] w-[18px] rounded-[4px] border border-ui-border bg-white" />
                                                 ) : (
-                                                    formatTableTextValue(row[column.id])
+                                                    <span className="block truncate w-full min-w-0">{formatTableTextValue(row[column.id])}</span>
                                                 )}
                                             </DataTableCell>
                                         ))}

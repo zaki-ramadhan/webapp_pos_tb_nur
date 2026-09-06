@@ -240,7 +240,7 @@ export function SearchableTableSection({
                                                             )}
                                                         </div>
                                                     ) : (
-                                                        formatTableTextValue(row[column.id], column)
+                                                        <span className="block truncate w-full min-w-0">{formatTableTextValue(row[column.id], column)}</span>
                                                     )}
                                                 </DataTableCell>
                                             ))}
