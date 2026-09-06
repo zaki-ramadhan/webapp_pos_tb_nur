@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
@@ -11,151 +11,16 @@ import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspac
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 import useBackendResource from '@/features/workspace/backend/useBackendResource';
 import { toUserPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
-
-const USER_FORM_TABS = [{ id: 'users-general', label: 'Pengguna' }];
-
-function AccessTypeField({ value, onChange, isActorSuperAdmin = false }) {
-    const descriptions = {
-        kasir: 'Kasir memiliki akses terbatas hanya untuk modul Penjualan & Penerimaan Penjualan. Modul lainnya dibatasi otomatis.',
-        owner: 'Owner memiliki hak akses penuh ke seluruh transaksi operasional, laporan keuangan, dan manajemen staf toko.',
-        super_admin: 'Administrator Sistem memiliki hak akses root teknis tertinggi untuk mengelola seluruh sistem dan pemeliharaan.',
-    };
-
-    return (
-        <div className="grid gap-3">
-            <div className="flex flex-wrap items-center gap-6 pt-0.5">
-                <RadioField
-                    id="access-kasir"
-                    name="access-type"
-                    label="Kasir"
-                    checked={value === 'kasir' || value === 'operator'}
-                    onChange={() => onChange('kasir')}
-                    inputClassName="h-3.5 w-3.5"
-                    containerClassName="w-auto inline-flex items-center"
-                />
-                <RadioField
-                    id="access-owner"
-                    name="access-type"
-                    label="Owner"
-                    checked={value === 'owner' || value === 'admin'}
-                    onChange={() => onChange('owner')}
-                    inputClassName="h-3.5 w-3.5"
-                    containerClassName="w-auto inline-flex items-center"
-                />
-                {isActorSuperAdmin && (
-                    <RadioField
-                        id="access-super-admin"
-                        name="access-type"
-                        label="Administrator Sistem"
-                        checked={value === 'super_admin'}
-                        onChange={() => onChange('super_admin')}
-                        inputClassName="h-3.5 w-3.5"
-                        containerClassName="w-auto inline-flex items-center"
-                    />
-                )}
-            </div>
-            {descriptions[value === 'operator' ? 'kasir' : (value === 'admin' ? 'owner' : value)] && (
-                <div className="flex items-center gap-3 pt-0.5 mt-1">
-                    <span className="block h-6 w-[5px] rounded-[2px] bg-bg-bullet-gray" aria-hidden="true" />
-                    <p className="text-xs sm:text-sm italic leading-6 text-tab-active-border-t">
-                        {descriptions[value === 'operator' ? 'kasir' : (value === 'admin' ? 'owner' : value)]}
-                    </p>
-                </div>
-            )}
-        </div>
-    );
-}
-
-function buildInitialValues(detailRow) {
-    const developerEmails = ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'];
-    const rawEmail = (detailRow?.email ?? '').trim();
-    const normalizedEmail = rawEmail.toLowerCase();
-    const isSuperAdmin = developerEmails.includes(normalizedEmail);
-    const accessTypeStr = String(detailRow?.accessType ?? '').toLowerCase();
-    const isOwner = !isSuperAdmin && (
-        accessTypeStr.includes('owner') ||
-        accessTypeStr.includes('admin') ||
-        normalizedEmail === 'nurhayati.karya@gmail.com' ||
-        (detailRow?.roleIds ?? []).includes(1) ||
-        (detailRow?.roleIds ?? []).includes(3)
-    );
-
-    let accessType = 'kasir';
-    let accessTypeLabel = 'Kasir';
-    if (isSuperAdmin) {
-        accessType = 'super_admin';
-        accessTypeLabel = 'Administrator Sistem';
-    } else if (isOwner) {
-        accessType = 'owner';
-        accessTypeLabel = 'Owner';
-    }
-
-    const phone = detailRow?.phone ?? '';
-
-    return {
-        name: detailRow?.name ?? '',
-        email: rawEmail,
-        phone,
-        password: '',
-        isActive: detailRow?.isActive ?? true,
-        accessGroupIds: detailRow?.accessGroupIds ?? [],
-        accessType,
-        accessTypeLabel: detailRow?.accessType || accessTypeLabel,
-        initialEmail: rawEmail,
-        initialPhone: phone.trim(),
-    };
-}
-
-function buildPayloadFromInput(inputVal, values, lookupData, isDetail, detailRow) {
-    const isEmailInput = inputVal.includes('@');
-    let name = detailRow?.name || values.name || '', email = '', phone = '';
-
-    if (isEmailInput) {
-        email = inputVal.trim();
-        const match = lookupData?.employees?.find((e) => e.email?.toLowerCase() === email.toLowerCase());
-        if (match) {
-            name = name || match.full_name;
-            phone = match.mobile_phone || match.whatsapp_phone || match.office_phone || '';
-        } else {
-            name = name || `User ${email.split('@')[0]}`;
-            phone = '';
-        }
-    } else {
-        phone = inputVal.trim();
-        const normalized = phone.replace(/[^0-9]/g, '');
-        const match = lookupData?.employees?.find((e) => {
-            const ep = (e.mobile_phone || e.whatsapp_phone || e.office_phone || '').replace(/[^0-9]/g, '');
-            return ep && ep === normalized;
-        });
-        if (match) {
-            name = name || match.full_name;
-            email = match.email || '';
-        } else {
-            name = name || `User ${phone}`;
-            email = '';
-        }
-    }
-
-    const superAdminRole = lookupData?.roles?.find((r) => r.code === 'super_admin');
-    const adminRole = lookupData?.roles?.find((r) => r.code === 'admin' || r.name?.toLowerCase()?.includes('admin'));
-    const kasirRole = lookupData?.roles?.find((r) => r.code === 'kasir' || r.code === 'operator' || r.name?.toLowerCase()?.includes('kasir') || r.name?.toLowerCase()?.includes('operator'));
-
-    let roleIds = [kasirRole?.id ?? 2];
-    if (values.accessType === 'super_admin') {
-        roleIds = [superAdminRole?.id ?? 1];
-    } else if (values.accessType === 'owner' || values.accessType === 'admin') {
-        roleIds = [adminRole?.id ?? 3];
-    }
-
-    return toUserPayload({
-        ...values,
-        name: name || inputVal,
-        email: email || undefined,
-        phone: phone || undefined,
-        password: values.password || (isDetail ? undefined : 'password'),
-        roleIds,
-    });
-}
+import AccessTypeField from './components/AccessTypeField';
+import {
+    USER_FORM_TABS,
+    buildInitialValues,
+    buildPayloadFromInput,
+    canDeleteUser,
+    isSuperAdminEmail,
+    resolveUserIdentifier,
+    validateUserForm,
+} from './userFormShared';
 
 export default function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpenDetail, lookupData }) {
     const detailRow = useMemo(() => {
@@ -166,32 +31,18 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
     const recordId = detailRow ? String(detailRow.id) : null;
     const isDetail = Boolean(recordId);
 
-    const developerEmails = ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com'];
     const pageProps = usePage()?.props ?? {};
     const authUser = pageProps.auth?.user || pageProps.user;
     const actorEmail = String(authUser?.email ?? '').toLowerCase();
-    const isActorSuperAdmin = developerEmails.includes(actorEmail);
+    const isActorSuperAdmin = isSuperAdminEmail(actorEmail);
     const isSelf = Boolean(
         detailRow?.id && authUser?.id && String(detailRow.id) === String(authUser.id)
     );
 
-    const canDelete = useMemo(() => {
-        if (!isDetail || isSelf) return false;
-
-        const targetEmail = String(detailRow?.email ?? '').toLowerCase();
-        const isTargetAdmin = developerEmails.includes(targetEmail);
-
-        if (isTargetAdmin) {
-            if (!isActorSuperAdmin) return false;
-            const totalAdmins = tableRows.filter((r) => developerEmails.includes(String(r.email ?? '').toLowerCase())).length;
-            return totalAdmins > 1;
-        }
-
-        if (isActorSuperAdmin) return true;
-
-        const accessTypeStr = String(detailRow?.accessType ?? '').toLowerCase();
-        return accessTypeStr.includes('kasir') || accessTypeStr.includes('operator');
-    }, [isDetail, isSelf, detailRow, isActorSuperAdmin, tableRows]);
+    const canDelete = useMemo(
+        () => canDeleteUser(detailRow, isDetail, isSelf, isActorSuperAdmin, tableRows),
+        [detailRow, isDetail, isSelf, isActorSuperAdmin, tableRows]
+    );
 
     const initialValues = useMemo(() => buildInitialValues(detailRow), [detailRow]);
     const [values, setValues] = useState(initialValues);
@@ -223,29 +74,10 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
     const isEmailLocked = isDetail && Boolean(initialValues.initialEmail);
     const isPhoneLocked = isDetail && Boolean(initialValues.initialPhone);
 
-    const validationMessage = useMemo(() => {
-        if (!isDetail) {
-            const inputVal = values.phone?.trim() ?? '';
-            if (!inputVal) {
-                return 'No Handphone/Email wajib diisi.';
-            }
-            if (inputVal.includes('@')) {
-                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                if (!emailRegex.test(inputVal)) {
-                    return 'Format email tidak valid.';
-                }
-            }
-            return '';
-        }
-
-        if (!isEmailLocked && values.email?.trim()) {
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailRegex.test(values.email.trim())) {
-                return 'Format email tidak valid.';
-            }
-        }
-        return '';
-    }, [isDetail, isEmailLocked, values.phone, values.email]);
+    const validationMessage = useMemo(
+        () => validateUserForm(values, isDetail, isEmailLocked),
+        [isDetail, isEmailLocked, values.phone, values.email]
+    );
 
     const saveDisabled = saving || Boolean(validationMessage) || (isDetail && !isDirty);
 
@@ -328,15 +160,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
     }
 
     const resolvedForm = useMemo(() => ({ ...form, tabs: USER_FORM_TABS }), [form]);
-
-    const userIdentifier = useMemo(() => {
-        const name = (values.name || '').trim();
-        const contact = (values.email || values.phone || '').trim();
-        if (name && contact && name.toLowerCase() !== contact.toLowerCase()) {
-            return `${name} (${contact})`;
-        }
-        return name || contact || 'pengguna ini';
-    }, [values.name, values.email, values.phone]);
+    const userIdentifier = useMemo(() => resolveUserIdentifier(values), [values]);
 
     return (
         <>

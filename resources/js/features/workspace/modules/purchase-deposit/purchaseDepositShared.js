@@ -1,29 +1,12 @@
 import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
-import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+import {
+    buildLookupLabel,
+    formatCurrencyLabel,
+    formatCurrencyValue,
+    parseNumericInput,
+} from '@/features/workspace/shared/transactionFormatters';
 
-export function formatCurrencyValue(value) {
-    const numericValue = Number(value ?? 0);
-    if (!Number.isFinite(numericValue)) return '0';
-    return numericValue.toLocaleString('id-ID', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    });
-}
-
-export function formatCurrencyLabel(value) {
-    return `Rp ${formatCurrencyValue(value)}`;
-}
-
-export function parseNumericInput(value) {
-    return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
-}
-
-export function buildLookupLabel(record, codeKey = 'code') {
-    const code = String(record?.[codeKey] ?? '').trim();
-    const name = String(record?.name ?? record?.title ?? '').trim();
-    if (code && name) return `[${code}] ${name}`;
-    return name || code;
-}
+export { buildLookupLabel, formatCurrencyLabel, formatCurrencyValue, parseNumericInput };
 
 function buildSummaryRows(totalAmount, status, printStatus = 'Belum cetak/email') {
     return [

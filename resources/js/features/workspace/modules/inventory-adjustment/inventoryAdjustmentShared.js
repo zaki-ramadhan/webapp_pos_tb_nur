@@ -1,4 +1,5 @@
-import { parseAmountInput, formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { formatCurrencyValue, parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { buildAccountLookupLabel } from '@/features/workspace/shared/AccountLookupControls';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
@@ -6,6 +7,7 @@ import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLoo
 import { showPromptModal } from '@/components/ui/promptModal';
 
 export const buildLookupLabel = buildAccountLookupLabel;
+export { formatCurrencyValue, parseNumericInput };
 
 export function resolveCellAlignClassName(align) {
     if (align === 'right') {
@@ -17,23 +19,6 @@ export function resolveCellAlignClassName(align) {
     }
 
     return 'text-left';
-}
-
-export function formatCurrencyValue(value) {
-    const numericValue = Number(value ?? 0);
-
-    if (!Number.isFinite(numericValue)) {
-        return '0';
-    }
-
-    return numericValue.toLocaleString('id-ID', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    });
-}
-
-export function parseNumericInput(value) {
-    return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
 }
 
 export function buildTotals(values, items) {

@@ -1,38 +1,13 @@
 import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
-import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { validateRequiredChecks } from '@/features/workspace/shared/formValidation';
+import {
+    buildLookupLabel,
+    formatCurrencyLabel,
+    formatCurrencyValue,
+    parseNumericInput,
+} from '@/features/workspace/shared/transactionFormatters';
 
-export function formatCurrencyValue(value) {
-    const numericValue = Number(value ?? 0);
-
-    if (!Number.isFinite(numericValue)) {
-        return '0';
-    }
-
-    return numericValue.toLocaleString('id-ID', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    });
-}
-
-function formatCurrencyLabel(value) {
-    return `Rp ${formatCurrencyValue(value)}`;
-}
-
-export function parseNumericInput(value) {
-    return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
-}
-
-export function buildLookupLabel(record, codeKey = 'code') {
-    const code = String(record?.[codeKey] ?? record?.account ?? '').trim();
-    const name = String(record?.name ?? record?.accountName ?? record?.title ?? '').trim();
-
-    if (code && name) {
-        return `[${code}] ${name}`;
-    }
-
-    return name || code;
-}
+export { buildLookupLabel, formatCurrencyLabel, formatCurrencyValue, parseNumericInput };
 
 function buildExpenseTotal(lineItems = []) {
     return lineItems.reduce((sum, item) => sum + parseNumericInput(item.amount), 0);

@@ -1,5 +1,6 @@
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
-import { parseAmountInput, formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { formatCurrencyValue, parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 
 export const INVENTORY_ADJUSTMENT_BACKEND_CONFIG = {
     'inventory-adjustment': {
@@ -9,19 +10,6 @@ export const INVENTORY_ADJUSTMENT_BACKEND_CONFIG = {
         resource: 'price-adjustments',
     },
 };
-
-function formatCurrencyValue(value) {
-    const numericValue = Number(value ?? 0);
-
-    if (!Number.isFinite(numericValue)) {
-        return '0';
-    }
-
-    return numericValue.toLocaleString('id-ID', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    });
-}
 
 export function buildInventoryAdjustmentTableRows(records) {
     return records.map((record) => ({
@@ -102,10 +90,6 @@ export function buildInventoryAdjustmentRecord(record, config) {
         adjustmentType: record.process_type ?? record.metadata?.adjustmentType ?? 'Harga',
         effectiveDate: formatIsoDate(record.effective_date) || formatIsoDate(record.entry_date),
     };
-}
-
-function parseNumericInput(value) {
-    return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
 }
 
 export function buildInventoryAdjustmentPayload(values) {
