@@ -44,12 +44,12 @@ export default function CityAutocompleteInput({
     const isNonInteractive = disabled;
     const toneClassName = resolvedError
         ? isNonInteractive
-            ? 'border-red-150'
-            : 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus'
+            ? 'border-red-500'
+            : 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
-    const disabledClassName = isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : 'bg-white';
+    const disabledClassName = isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : resolvedError ? 'bg-red-50' : 'bg-white';
 
     const filteredOptions = useMemo(() => {
         const normalized = String(searchVal ?? '').trim().toLowerCase();
@@ -156,7 +156,7 @@ export default function CityAutocompleteInput({
                             placeholder={disabled ? '' : placeholder}
                             disabled={disabled}
                             autoComplete="off"
-                            className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${disabled ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : 'text-slate-700 cursor-text'} ${inputClassName}`.trim()}
+                            className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:${resolvedError ? 'text-red-400' : 'text-disabled-border-t'} ${disabled ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : resolvedError ? 'text-red-700 cursor-text' : 'text-slate-700 cursor-text'} ${inputClassName}`.trim()}
                             {...props}
                         />
                     )}
@@ -169,7 +169,7 @@ export default function CityAutocompleteInput({
             </div>
 
             {feedbackMessage ? (
-                <p className="mt-1.5 text-xs sm:text-sm leading-5 text-error-border">
+                <p className="mt-1.5 text-xs sm:text-sm leading-5 text-red-600">
                     {feedbackMessage}
                 </p>
             ) : null}

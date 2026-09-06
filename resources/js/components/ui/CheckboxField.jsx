@@ -66,7 +66,7 @@ export default function CheckboxField({
                         </span>
 
                         {feedbackMessage ? (
-                            <span className={`mt-1 block text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-error-text' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                            <span className={`mt-1 block text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-red-600' : 'text-slate-500'} ${messageClassName}`.trim()}>
                                 {feedbackMessage}
                             </span>
                         ) : null}
