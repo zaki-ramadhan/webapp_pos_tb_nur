@@ -5,7 +5,9 @@ import ReferenceLookupInput from './ReferenceLookupInput';
 
 export default function BackendLookupField({
     resource,
-    values = [],
+    value = null,
+    values = null,
+    multi = false,
     placeholder = 'Cari/Pilih...',
     searchLabel = 'Cari data',
     getOptionLabel = (option) => (typeof option === 'string' ? option : (option?.label ?? option?.name ?? '')),
@@ -16,6 +18,7 @@ export default function BackendLookupField({
     transformItems = null,
     onSelect,
     onRemove,
+    onClear,
     emptyTitle,
     emptyDescription,
     className = '',
@@ -39,8 +42,7 @@ export default function BackendLookupField({
                     setItems(extractBackendRows(payload));
                 }
             } catch {
-              // Abaikan error
-
+                // Abaikan error
             } finally {
                 if (!ignore) setSearching(false);
             }
@@ -58,6 +60,13 @@ export default function BackendLookupField({
     const filteredItems = filterOption ? items.filter(filterOption) : items;
     const resolvedItems = transformItems ? transformItems(filteredItems) : filteredItems;
 
+    const isMulti = Boolean(multi);
+    const singleLabel = value !== null && value !== undefined
+        ? (typeof value === 'string' ? value : getOptionLabel(value))
+        : (!isMulti && Array.isArray(values) && values.length > 0
+            ? (typeof values[0] === 'string' ? values[0] : getOptionLabel(values[0]))
+            : '');
+
     return (
         <div
             onFocusCapture={handleActivate}
@@ -65,7 +74,26 @@ export default function BackendLookupField({
             className="w-full"
         >
             <ReferenceLookupInput
-                values={(values || []).map((val) => (typeof val === 'string' ? val : getOptionLabel(val)))}
+                {...(isMulti
+                    ? {
+                        values: (values || []).map((val) => (typeof val === 'string' ? val : getOptionLabel(val))),
+                        onRemove: (label) => {
+                            const item = (values || []).find((val) => (typeof val === 'string' ? val : getOptionLabel(val)) === label);
+                            if (item) onRemove?.(item);
+                            else onRemove?.(label);
+                        },
+                    }
+                    : {
+                        value: singleLabel,
+                        onClear: () => {
+                            onClear?.();
+                            if (onRemove) {
+                                const item = Array.isArray(values) && values.length > 0 ? values[0] : singleLabel;
+                                onRemove(item);
+                            }
+                        },
+                    }
+                )}
                 placeholder={placeholder}
                 searchLabel={searchLabel}
                 items={resolvedItems}
@@ -74,15 +102,11 @@ export default function BackendLookupField({
                 getOptionSearchText={getOptionSearchText}
                 renderOption={renderOption}
                 onSelect={onSelect}
-                onRemove={(label) => {
-                    const item = (values || []).find((val) => (typeof val === 'string' ? val : getOptionLabel(val)) === label);
-                    if (item) onRemove?.(item);
-                    else onRemove?.(label);
-                }}
                 emptyTitle={emptyTitle}
                 emptyDescription={emptyDescription}
                 className={className}
                 disabled={disabled}
+                error={error}
             />
         </div>
     );

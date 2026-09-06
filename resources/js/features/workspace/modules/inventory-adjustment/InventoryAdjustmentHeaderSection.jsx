@@ -38,7 +38,7 @@ export default function InventoryAdjustmentHeader({ config = {}, values, setValu
                             <div className="max-w-[282px] w-full">
                                 <BackendLookupField
                                     resource="sales-categories"
-                                    values={(values.salesCategory || []).map((name) => typeof name === 'string' ? { name } : name)}
+                                    value={Array.isArray(values.salesCategory) ? (values.salesCategory[0] || '') : (values.salesCategory || '')}
                                     placeholder={config.salesCategoryPlaceholder || 'Cari/Pilih...'}
                                     searchLabel="Cari kategori penjualan"
                                     disabled={isDetail}
@@ -55,7 +55,7 @@ export default function InventoryAdjustmentHeader({ config = {}, values, setValu
                                             __salesCategoryId: option.id,
                                         }));
                                     }}
-                                    onRemove={() => {
+                                    onClear={() => {
                                         setValues((current) => ({
                                             ...current,
                                             salesCategory: [],

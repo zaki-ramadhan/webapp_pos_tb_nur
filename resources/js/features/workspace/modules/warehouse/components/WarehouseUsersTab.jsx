@@ -31,6 +31,7 @@ export default function WarehouseUsersTab({ config, values, onChange, isDetail }
                             <BackendLookupField
                                 resource="users"
                                 values={values.users || []}
+                                multi={true}
                                 placeholder={config.userAccess.userPlaceholder}
                                 searchLabel="Cari pengguna"
                                 getOptionLabel={(option) => typeof option === 'string' ? option : (option?.name ?? option?.label ?? '')}

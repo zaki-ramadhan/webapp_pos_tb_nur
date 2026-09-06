@@ -34,20 +34,15 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
             <FormRow label="Kategori Barang" required>
                 <BackendLookupField
                     resource="product-categories"
-                    values={(values.category || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
+                    value={values.category?.[0]?.name ?? (typeof values.category?.[0] === 'string' ? values.category[0] : (values.categoryName ?? ''))}
                     placeholder="Cari/Pilih Kategori..."
                     searchLabel="Cari kategori barang"
                     onSelect={(option) => {
-                        const current = values.category || [];
-                        if (!current.some((x) => (x.name ?? x) === option.name)) {
-                            onChange('category', [...current, { id: option.id, name: option.name }]);
-                            onChange('categoryId', option.id);
-                        }
+                        onChange('category', [{ id: option.id, name: option.name }]);
+                        onChange('categoryId', option.id);
                     }}
-                    onRemove={(option) => {
-                        const current = values.category || [];
-                        const nameToRemove = option.name ?? option;
-                        onChange('category', current.filter((x) => (x.name ?? x) !== nameToRemove));
+                    onClear={() => {
+                        onChange('category', []);
                         onChange('categoryId', null);
                     }}
                 />
@@ -91,14 +86,14 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                 <div className="w-full max-w-[282px]">
                     <BackendLookupField
                         resource="units"
-                        values={(values.primaryUnit || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
+                        value={values.primaryUnit?.[0]?.name ?? (typeof values.primaryUnit?.[0] === 'string' ? values.primaryUnit[0] : (values.unitName ?? ''))}
                         placeholder="Cari/Pilih Satuan..."
                         searchLabel="Cari satuan"
                         onSelect={(option) => {
                             onChange('primaryUnit', [{ id: option.id, name: option.name }]);
                             onChange('baseUnitId', option.id);
                         }}
-                        onRemove={() => {
+                        onClear={() => {
                             onChange('primaryUnit', []);
                             onChange('baseUnitId', null);
                         }}

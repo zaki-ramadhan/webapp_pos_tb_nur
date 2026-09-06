@@ -49,6 +49,7 @@ export default function GroupAccessUserLookupField({ field, selectedUsers, curre
             <BackendLookupField
                 resource="users"
                 values={selectedUsers}
+                multi={true}
                 placeholder={field.placeholder}
                 searchLabel={`Cari ${field.label}`}
                 filterOption={isUserAvailable}

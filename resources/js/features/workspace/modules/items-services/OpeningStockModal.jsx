@@ -122,11 +122,11 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                     <FormRow label="Gudang" required>
                         <BackendLookupField
                             resource="warehouses"
-                            values={warehouse}
+                            value={warehouse?.[0]?.name ?? (typeof warehouse?.[0] === 'string' ? warehouse[0] : (warehouse?.name ?? ''))}
                             placeholder="Cari/Pilih..."
                             searchLabel="Cari gudang"
                             onSelect={(option) => setWarehouse([option])}
-                            onRemove={() => setWarehouse([])}
+                            onClear={() => setWarehouse([])}
                         />
                     </FormRow>
 
@@ -151,11 +151,11 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                     <FormRow label="Satuan">
                         <BackendLookupField
                             resource="units"
-                            values={unit}
+                            value={unit?.[0]?.name ?? (typeof unit?.[0] === 'string' ? unit[0] : (unit?.name ?? ''))}
                             placeholder="Cari/Pilih..."
                             searchLabel="Cari satuan"
                             onSelect={(option) => setUnit([option])}
-                            onRemove={() => setUnit([])}
+                            onClear={() => setUnit([])}
                         />
                     </FormRow>
 

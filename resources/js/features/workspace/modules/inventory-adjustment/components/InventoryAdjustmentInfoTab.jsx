@@ -22,7 +22,7 @@ export default function InventoryAdjustmentInfoTab({ values, setValues }) {
                     <div className="max-w-[280px]">
                         <BackendLookupField
                             resource="departments"
-                            values={values.department}
+                            value={Array.isArray(values.department) ? (values.department[0] || '') : (values.department || '')}
                             placeholder="Cari/Pilih Departemen..."
                             searchLabel="Cari departemen"
                             getOptionLabel={(option) => (typeof option === 'string' ? option : (option?.name ?? option?.label ?? ''))}
@@ -33,7 +33,7 @@ export default function InventoryAdjustmentInfoTab({ values, setValues }) {
                                     __departmentId: option.id,
                                 }));
                             }}
-                            onRemove={() => {
+                            onClear={() => {
                                 setValues((current) => ({
                                     ...current,
                                     department: [],
