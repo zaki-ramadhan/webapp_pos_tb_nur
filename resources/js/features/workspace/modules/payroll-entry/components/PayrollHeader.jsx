@@ -109,19 +109,17 @@ export function PayrollHeader({ config, values, setValues, isDetail, handlers = 
                     <TransactionDateInput
                         value={values.entryDate}
                         onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                        className="w-full max-w-full"
                     />
                 </div>
 
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.dueDate} required />
-                    <div className="grid gap-3 grid-cols-[minmax(0,1fr)_120px]">
+                    <div className="flex items-center gap-3">
                         <TransactionDateInput
                             value={values.dueDate}
                             onChange={(nextValue) => setValues((current) => ({ ...current, dueDate: nextValue }))}
-                            className="w-full max-w-full"
                         />
-                        <div className="relative flex-1 max-w-[120px]">
+                        <div className="relative w-[120px] shrink-0">
                             <button
                                 ref={processAnchorRef}
                                 type="button"

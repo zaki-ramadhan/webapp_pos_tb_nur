@@ -31,7 +31,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                 value={value ?? field.value ?? ''}
                 disabled={field.disabled}
                 onChange={(displayValue) => onChange?.(field.id, displayValue)}
-                className="w-full max-w-[280px]"
+                className="w-full max-w-[160px]"
                 inputClassName="text-xs sm:text-sm"
             />
         );

@@ -102,7 +102,7 @@ export default function DepartmentOpeningBalanceTab({ form, values, onChange }) 
                         value={values.openingDate}
                         onChange={(nextValue) => onChange('openingDate', nextValue)}
                         disableAutoInit={true}
-                        className="h-[40px] w-[180px] rounded-[4px] border-ui-border"
+                        className="h-[40px] w-[160px] rounded-[4px] border-ui-border"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                         trailingClassName="w-[42px] shrink-0 justify-center px-0"
                     />

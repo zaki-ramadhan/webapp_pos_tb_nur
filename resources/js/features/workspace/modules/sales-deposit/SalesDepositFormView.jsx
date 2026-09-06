@@ -385,11 +385,11 @@ export default function SalesDepositFormView({
                                     <div className="mt-4 flex flex-col gap-y-2 pl-3 sm:pl-5">
                                         <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                                             <TransactionFieldLabel label="Tgl Faktur Pajak" required />
-                                            <div className="max-w-[320px] w-full">
+                                            <div className="max-w-[160px] w-full">
                                                 <TransactionDateInput
                                                     value={values.taxInvoiceDate}
                                                     onChange={(nextValue) => setValues((current) => ({ ...current, taxInvoiceDate: nextValue }))}
-                                                    className="max-w-none bg-slate-50"
+                                                    className="bg-slate-50"
                                                     inputClassName="bg-transparent"
                                                 />
                                             </div>
