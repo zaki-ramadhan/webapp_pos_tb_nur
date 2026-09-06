@@ -520,7 +520,7 @@ export function SummaryMetric({ widget }) {
         <div className="relative flex h-full flex-col gap-4">
             <div className="grid grid-cols-2 gap-x-3 sm:gap-x-6 min-h-0 flex-1">
                 {/* Left Column: Pendapatan/Pembelian */}
-                <div className="flex flex-col h-full min-w-0">
+                <div className="flex flex-col h-full justify-between min-w-0">
                     {/* Header: Date Range Navigator */}
                     <div className="flex justify-end h-5 items-center shrink-0">
                         {period && (
@@ -553,7 +553,7 @@ export function SummaryMetric({ widget }) {
                 </div>
 
                 {/* Right Column: Belum Lunas */}
-                <div className="flex flex-col h-full min-w-0">
+                <div className="flex flex-col h-full justify-between min-w-0">
                     {/* Header: Posisi Hari Ini */}
                     <div className="flex justify-end h-5 items-center shrink-0">
                         <div className="text-[11px] sm:text-xs text-black font-normal">

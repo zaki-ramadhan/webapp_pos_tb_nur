@@ -70,7 +70,7 @@ class DashboardBlueprintProvider
                     'title' => 'Aktivitas Terakhir Anda',
                     'type' => 'recent-activity',
                     'items' => $userActivities,
-                    'heightClass' => 'h-[360px]',
+                    'heightClass' => 'h-[350px]',
                 ],
                 [
                     'id' => 'sales-trend',
@@ -86,7 +86,7 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'h-[360px]',
+                    'heightClass' => 'h-[350px]',
                 ],
                 [
                     'id' => 'profit-loss',
@@ -129,7 +129,7 @@ class DashboardBlueprintProvider
                             'tone' => $expensesTone,
                         ],
                     ],
-                    'heightClass' => 'h-[310px]',
+                    'heightClass' => 'h-[350px]',
                 ],
                 [
                     'id' => 'cash-flow',
@@ -151,7 +151,7 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'h-[360px]',
+                    'heightClass' => 'h-[350px]',
                 ],
                 [
                     'id' => 'company-expense',
@@ -185,7 +185,7 @@ class DashboardBlueprintProvider
                             'tone' => $operasionalTone,
                         ],
                     ],
-                    'heightClass' => 'h-[310px]',
+                    'heightClass' => 'h-[350px]',
                 ],
                 [
                     'id' => 'sales-summary',
@@ -252,7 +252,7 @@ class DashboardBlueprintProvider
                     'title' => 'Barang Paling Laku',
                     'type' => 'top-products',
                     'items' => $topProductsItems,
-                    'heightClass' => 'h-[310px]',
+                    'heightClass' => 'h-[350px]',
                 ],
                 [
                     'id' => 'cash-availability',
@@ -271,7 +271,7 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'h-[360px]',
+                    'heightClass' => 'h-[350px]',
                 ],
             ],
             'transactionTypeOptions' => $transactionTypeOptions,
