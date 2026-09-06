@@ -318,25 +318,43 @@ class BackendResourceIndexQuery
             ));
         }
 
-        if ($searchColumns === []) {
+        $validColumns = array_values(array_filter(
+            $searchColumns,
+            fn ($col) => Schema::hasColumn($tableName, $col)
+        ));
+
+        if ($validColumns === [] && $tableName !== 'operation_documents') {
             return;
         }
 
         if (method_exists($query->getModel(), 'scopeSearch')) {
-            $query->search($keyword, $searchColumns);
+            $query->search($keyword, $validColumns);
 
             return;
         }
 
-        $query->where(function (Builder $builder) use ($keyword, $searchColumns, $tableName): void {
-            foreach ($searchColumns as $index => $column) {
+        $query->where(function (Builder $builder) use ($keyword, $validColumns, $tableName): void {
+            $isFirst = true;
+            foreach ($validColumns as $column) {
                 $fullCol = "{$tableName}.{$column}";
-                if ($index === 0) {
+                if ($isFirst) {
                     $builder->where($fullCol, 'like', "%{$keyword}%");
-                    continue;
+                    $isFirst = false;
+                } else {
+                    $builder->orWhere($fullCol, 'like', "%{$keyword}%");
                 }
+            }
 
-                $builder->orWhere($fullCol, 'like', "%{$keyword}%");
+            if ($tableName === 'operation_documents') {
+                $relCondition = function ($sub) use ($keyword) {
+                    $sub->whereHas('supplier', fn ($sq) => $sq->where('name', 'like', "%{$keyword}%"))
+                        ->orWhereHas('customer', fn ($cq) => $cq->where('name', 'like', "%{$keyword}%"));
+                };
+                if ($isFirst) {
+                    $builder->where($relCondition);
+                } else {
+                    $builder->orWhere($relCondition);
+                }
             }
         });
     }
@@ -354,10 +372,21 @@ class BackendResourceIndexQuery
             return;
         }
 
+        if ($sortBy === 'age') {
+            $dateCol = Schema::hasColumn($tableName, 'entry_date') ? 'entry_date' : (Schema::hasColumn($tableName, 'document_date') ? 'document_date' : null);
+            if ($dateCol) {
+                $effectiveDir = $sortDir === 'asc' ? 'desc' : 'asc';
+                $query->orderBy("{$tableName}.{$dateCol}", $effectiveDir);
+                return;
+            }
+        }
+
         // Aliases kamus kolom frontend ke backend
         $columnMap = [
             'documentNumber' => 'document_number',
             'number' => 'document_number',
+            'invoiceNumber' => 'reference_number',
+            'referenceNumber' => 'reference_number',
             'entryDate' => 'entry_date',
             'date' => 'entry_date',
             'transDate' => 'entry_date',
@@ -373,6 +402,7 @@ class BackendResourceIndexQuery
             'paymentStatus' => 'status',
             'dueDate' => 'due_date',
             'notes' => 'notes',
+            'description' => 'notes',
             'itemCode' => 'code',
             'itemName' => 'name',
             'sellingPrice' => 'default_selling_price',

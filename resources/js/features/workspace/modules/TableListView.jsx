@@ -237,7 +237,18 @@ export default function TableListView({
         <div className="min-h-full">
             <TableToolbar
                 size="compact"
-                filters={null}
+                filters={
+                    table.filters?.length ? (
+                        <TableListFilters
+                            filters={table.filters}
+                            values={filters}
+                            onChange={(filterId, nextValue) =>
+                                setFilters((prev) => ({ ...prev, [filterId]: nextValue }))
+                            }
+                            filterButtonLabel={table.filterButtonLabel}
+                        />
+                    ) : null
+                }
                 createButton={resolvedCreateButton}
                 refreshButton={
                     table.refreshLabel
@@ -351,10 +362,8 @@ export default function TableListView({
                                         'Memuat data...'
                                     ) : isAccessRestricted || (table.error && String(table.error).toLowerCase().includes('hak akses')) || (table.emptyLabel && String(table.emptyLabel).toLowerCase().includes('hak akses')) ? (
                                         'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.'
-                                    ) : table.error ? (
-                                        table.error
                                     ) : (
-                                        keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Tidak ada data')
+                                        'Tidak ada data'
                                     )}
                                 </DataTableCell>
                             </DataTableRow>
