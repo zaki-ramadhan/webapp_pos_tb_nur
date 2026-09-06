@@ -23,6 +23,7 @@ export default function BackendLookupField({
     emptyDescription,
     className = '',
     disabled = false,
+    error = '',
 }) {
     const [items, setItems] = useState([]);
     const [searching, setSearching] = useState(false);
