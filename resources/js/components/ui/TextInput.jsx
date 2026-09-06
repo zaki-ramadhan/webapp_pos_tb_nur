@@ -55,8 +55,8 @@ export default function TextInput({
     
     const toneClassName = state.resolvedError
         ? state.isNonInteractive
-            ? 'border-danger'
-            : 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
+            ? 'border-red-500'
+            : 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
         : state.isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
@@ -64,7 +64,7 @@ export default function TextInput({
     const disabledClassName = state.isNonInteractive
         ? 'bg-ui-bg-panel text-gray-500'
         : state.resolvedError
-            ? 'bg-red-500/[0.06]'
+            ? 'bg-red-50'
             : 'bg-white';
 
     const cleanedClassName = state.resolvedError
@@ -143,7 +143,7 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(state.resolvedError)}
-                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:${state.resolvedError ? 'text-red-400' : 'text-disabled-border-t'} ${state.isNonInteractive ? 'cursor-not-allowed bg-slate-100/80 text-brand-dark font-normal pointer-events-none select-none' : state.resolvedError ? 'bg-transparent text-red-800' : 'text-black bg-white'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:${state.resolvedError ? 'text-red-400' : 'text-disabled-border-t'} ${state.isNonInteractive ? 'cursor-not-allowed bg-slate-100/80 text-brand-dark font-normal pointer-events-none select-none' : state.resolvedError ? 'bg-transparent text-red-700' : 'text-black bg-white'} ${inputClassName}`.trim()}
                     onChange={state.handleWrappedChange}
                     onFocus={(e) => {
                         state.isFocusedRef.current = true;
@@ -191,7 +191,7 @@ export default function TextInput({
             </div>
 
             {state.feedbackMessage ? (
-                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${state.resolvedError ? 'text-error-border' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${state.resolvedError ? 'text-red-600' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {state.feedbackMessage}
                 </p>
             ) : null}

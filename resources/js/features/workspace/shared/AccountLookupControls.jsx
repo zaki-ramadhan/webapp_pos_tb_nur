@@ -85,7 +85,7 @@ export function AccountLookupField({
                     placeholder={placeholder}
                     searchLabel={searchLabel}
                     disabled={disabled}
-                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus' : 'border-slate-400'} ${className}`.trim()}
+                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus' : 'border-slate-400'} ${className}`.trim()}
                     inputClassName="text-xs sm:text-sm text-brand-dark"
                     trailingClassName="gap-1 pr-2"
                     loading={controller.loading && controller.open}
@@ -122,7 +122,7 @@ export function AccountLookupField({
             />
 
             {feedbackMessage ? (
-                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-error-border">
+                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-red-600">
                     {feedbackMessage}
                 </p>
             ) : null}
@@ -173,7 +173,7 @@ export function AccountLookupTextInput({
                 placeholder={resolvedPlaceholder}
                 searchLabel={resolvedSearchLabel}
                 disabled={disabled}
-                className={`${resolvedError ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus' : ''} ${className}`.trim()}
+                className={`${resolvedError ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus' : ''} ${className}`.trim()}
                 inputClassName={inputClassName}
                 trailingClassName={trailingClassName}
                 loading={controller.loading && controller.open}
@@ -213,7 +213,7 @@ export function AccountLookupTextInput({
             />
 
             {feedbackMessage ? (
-                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-error-border">
+                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-red-600">
                     {feedbackMessage}
                 </p>
             ) : null}

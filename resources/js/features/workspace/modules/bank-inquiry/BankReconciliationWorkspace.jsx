@@ -177,7 +177,7 @@ export default function BankReconciliationWorkspace({
                             message={bankError}
                             onFocus={() => setBankError('')}
                             onChange={() => setBankError('')}
-                            className={`h-[40px] rounded-[4px] w-full ${bankError ? '!border-danger focus-within:!border-danger' : 'border-ui-border'}`}
+                            className={`h-[40px] rounded-[4px] w-full ${bankError ? '!border-red-500 focus-within:!border-red-500' : 'border-ui-border'}`}
                             inputClassName="text-sm text-slate-900 py-1 h-full"
                             trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
                             onSelectAccount={(record, label) => {

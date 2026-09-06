@@ -82,8 +82,8 @@ export default function TextareaField({
 
     const toneClassName = resolvedError
         ? isNonInteractive
-            ? 'border-danger'
-            : 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
+            ? 'border-red-500'
+            : 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
@@ -92,7 +92,7 @@ export default function TextareaField({
         <div className={`w-full ${containerClassName}`.trim()}>
             <span
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex w-full items-stretch overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : ''} ${isNonInteractive ? 'cursor-default' : 'cursor-text'} ${className}`.trim()}
+                className={`group flex w-full items-stretch overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : resolvedError ? 'bg-red-50' : 'bg-white'} ${isNonInteractive ? 'cursor-default' : 'cursor-text'} ${className}`.trim()}
             >
                 {prefix ? (
                     <span
@@ -112,7 +112,7 @@ export default function TextareaField({
                     readOnly={readOnly}
                     tabIndex={readOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`min-h-[92px] flex-1 resize-y bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default text-gray-500 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
+                    className={`min-h-[92px] flex-1 resize-y bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:${resolvedError ? 'text-red-400' : 'text-disabled-border-t'} ${isNonInteractive ? 'cursor-default text-gray-500 pointer-events-none' : resolvedError ? 'text-red-700' : 'text-slate-700'} ${textareaClassName}`.trim()}
                     value={localValue}
                     onChange={handleChange}
                     onFocus={(e) => {
@@ -155,7 +155,7 @@ export default function TextareaField({
             </span>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-error-border' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-red-600' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}

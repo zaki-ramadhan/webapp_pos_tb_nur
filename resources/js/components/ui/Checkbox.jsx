@@ -70,7 +70,7 @@ export function Checkbox({
                     isCheckedOrIndeterminate
                         ? 'border-[#15529A] bg-[#15529A] text-white shadow-xs'
                         : 'border-slate-400 bg-white group-hover:border-slate-600 peer-focus-visible:ring-2 peer-focus-visible:ring-[#15529A]/40'
-                } ${ariaInvalid ? 'border-error-border' : ''} ${inputClassName}`.trim()}
+                } ${ariaInvalid ? 'border-red-500 bg-red-50' : ''} ${inputClassName}`.trim()}
             >
                 {indeterminate ? (
                     <svg

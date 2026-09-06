@@ -160,7 +160,7 @@ export default function ReferenceLookupInput({
     }
 
     const toneClassName = resolvedError
-        ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
+        ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
@@ -168,7 +168,7 @@ export default function ReferenceLookupInput({
             <div
                 onMouseDown={focusInput}
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : 'cursor-text'}`.trim()}
+                className={`group flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : resolvedError ? 'bg-red-50 cursor-text' : 'bg-white cursor-text'}`.trim()}
             >
                 {multiValueMode ? (
                     <div className={`flex min-w-0 flex-1 flex-col gap-1.5 p-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
@@ -200,7 +200,7 @@ export default function ReferenceLookupInput({
                                 }}
                                 onChange={handleChange}
                                 aria-label={searchLabel}
-                                className={`h-[24px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-brand-dark outline-none placeholder:text-disabled-border-t cursor-text disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
+                                className={`h-[24px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm ${disabled ? 'cursor-default disabled:text-slate-400' : resolvedError ? 'text-red-700' : 'text-brand-dark'} outline-none placeholder:${resolvedError ? 'text-red-400' : 'text-disabled-border-t'} cursor-text ${inputClassName}`.trim()}
                             />
                             <button
                                 type="button"
@@ -243,7 +243,7 @@ export default function ReferenceLookupInput({
                                     }}
                                     onChange={handleChange}
                                     aria-label={searchLabel}
-                                    className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-brand-dark outline-none placeholder:text-disabled-border-t cursor-text disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
+                                    className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm ${disabled ? 'cursor-default disabled:text-slate-400' : resolvedError ? 'text-red-700' : 'text-brand-dark'} outline-none placeholder:${resolvedError ? 'text-red-400' : 'text-disabled-border-t'} cursor-text ${inputClassName}`.trim()}
                                 />
                             )}
                         </div>
@@ -299,7 +299,7 @@ export default function ReferenceLookupInput({
                 </LookupDropdownSurface>
             ) : null}
             {feedbackMessage ? (
-                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-error-border">
+                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-red-600">
                     {feedbackMessage}
                 </p>
             ) : null}
