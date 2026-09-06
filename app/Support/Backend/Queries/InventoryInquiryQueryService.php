@@ -26,34 +26,46 @@ class InventoryInquiryQueryService
         $filters = [];
         if (count($productIds) === 1) {
             $filters['product_id'] = $productIds[0];
+        } elseif (count($productIds) > 1) {
+            $filters['product_ids'] = $productIds;
         }
         $compositeStockMap = $this->buildStockMap($filters);
         
         $onHandTotals = [];
+        $productIdSet = !empty($productIds) ? array_flip($productIds) : null;
         foreach ($compositeStockMap as $compositeKey => $qty) {
             $parts = explode(':', $compositeKey);
             $pid = (int) ($parts[0] ?? 0);
-            if ($pid > 0 && (empty($productIds) || in_array($pid, $productIds, true))) {
+            if ($pid > 0 && ($productIdSet === null || isset($productIdSet[$pid]))) {
                 $onHandTotals[$pid] = (float) ($onHandTotals[$pid] ?? 0.0) + (float) $qty;
             }
         }
 
-        $reservedTotals = OperationDocument::query()
-            ->with('lines')
-            ->where('document_type', 'sales_order')
-            ->where('is_closed', false)
-            ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
-            ->get()
-            ->flatMap(fn ($doc) => $doc->lines)
-            ->groupBy('product_id')
-            ->map(fn ($lines) => $lines->sum('quantity'));
+        $reservedQuery = \Illuminate\Support\Facades\DB::table('operation_document_lines as odl')
+            ->join('operation_documents as od', 'odl.operation_document_id', '=', 'od.id')
+            ->where('od.document_type', 'sales_order')
+            ->where('od.is_closed', false)
+            ->where(function ($q) {
+                $q->whereNull('od.status')
+                  ->orWhereNotIn('od.status', ['Void', 'Cancelled', 'void', 'cancelled']);
+            });
+
+        if (!empty($productIds)) {
+            $reservedQuery->whereIn('odl.product_id', $productIds);
+        }
+
+        $reservedTotals = $reservedQuery
+            ->groupBy('odl.product_id')
+            ->select('odl.product_id', \Illuminate\Support\Facades\DB::raw('SUM(odl.quantity) as reserved_qty'))
+            ->pluck('reserved_qty', 'odl.product_id')
+            ->all();
 
         $results = [];
         $targetIds = !empty($productIds) ? $productIds : array_keys($onHandTotals);
 
         foreach ($targetIds as $pid) {
             $onHand = (float) ($onHandTotals[$pid] ?? 0.0);
-            $reserved = (float) ($reservedTotals->get($pid) ?? 0.0);
+            $reserved = (float) ($reservedTotals[$pid] ?? 0.0);
             $results[$pid] = [
                 'stock_on_hand' => $onHand,
                 'stock_available' => max(0.0, $onHand - $reserved),
@@ -337,9 +349,13 @@ class InventoryInquiryQueryService
      */
     public function paginateMinimumStocks(array $filters): LengthAwarePaginator
     {
-        $rows = $this->queryProducts($filters)
-            ->map(function (Product $product) use ($filters): ?array {
-                $totals = $this->buildStockTotalsByProduct([$product->id], $filters)[$product->id] ?? [
+        $products = $this->queryProducts($filters);
+        $productIds = $products->pluck('id')->all();
+        $allTotals = $this->buildStockTotalsByProduct($productIds);
+
+        $rows = $products
+            ->map(function (Product $product) use ($allTotals): ?array {
+                $totals = $allTotals[$product->id] ?? [
                     'stock_on_hand' => 0.0,
                     'stock_available' => 0.0,
                 ];
@@ -660,6 +676,10 @@ class InventoryInquiryQueryService
     {
         $warehouseFilter = filled($filters['warehouse_id'] ?? null) ? (int) $filters['warehouse_id'] : null;
         $productFilter = filled($filters['product_id'] ?? null) ? (int) $filters['product_id'] : null;
+        $productIdsFilter = !empty($filters['product_ids']) && is_array($filters['product_ids'])
+            ? array_filter(array_map('intval', $filters['product_ids']))
+            : null;
+        $productIdsSet = !empty($productIdsFilter) ? array_flip($productIdsFilter) : null;
         $asOfDate = $this->resolveDateFilter($filters['as_of_date'] ?? null) ?? now();
 
         $stock = [];
@@ -671,11 +691,20 @@ class InventoryInquiryQueryService
                   ->orWhere(fn ($sub) => $sub->whereNull('entry_date')->whereDate('created_at', '<=', $asOfDate->toDateString()));
             })
             ->when($productFilter !== null, fn ($q) => $q->where('product_id', $productFilter))
+            ->when($productIdsFilter !== null, fn ($q) => $q->whereIn('product_id', $productIdsFilter))
             ->when($warehouseFilter !== null, fn ($q) => $q->where('warehouse_id', $warehouseFilter))
             ->get();
 
+        $sourceIds = $batches->pluck('source_id')->filter()->unique()->values()->all();
+        $adjustmentSourceIds = empty($sourceIds) ? [] : \Illuminate\Support\Facades\DB::table('operation_documents')
+            ->whereIn('id', $sourceIds)
+            ->where('document_type', 'inventory_adjustment')
+            ->pluck('id')
+            ->flip()
+            ->all();
+
         foreach ($batches as $batch) {
-            if ($batch->source_id && \Illuminate\Support\Facades\DB::table('operation_documents')->where('id', $batch->source_id)->where('document_type', 'inventory_adjustment')->exists()) {
+            if ($batch->source_id && isset($adjustmentSourceIds[$batch->source_id])) {
                 continue;
             }
             $productId = (int) $batch->product_id;
@@ -698,7 +727,9 @@ class InventoryInquiryQueryService
             foreach ($document->lines as $line) {
                 $productId = $line->product_id ? (int) $line->product_id : null;
 
-                if ($productId === null || ($productFilter !== null && $productId !== $productFilter)) {
+                if ($productId === null
+                    || ($productFilter !== null && $productId !== $productFilter)
+                    || ($productIdsSet !== null && !isset($productIdsSet[$productId]))) {
                     continue;
                 }
 
@@ -724,14 +755,17 @@ class InventoryInquiryQueryService
             ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
             ->get();
 
+        static $refCodeProductMap = [];
+        static $descProductMap = [];
+
         foreach ($operationDocuments as $document) {
             foreach ($document->lines as $line) {
                 $productId = $line->product_id ? (int) $line->product_id : null;
                 if ($productId === null && !empty($line->reference_code)) {
-                    $productId = Product::where('code', $line->reference_code)->value('id');
+                    $productId = $refCodeProductMap[$line->reference_code] ??= Product::where('code', $line->reference_code)->value('id');
                 }
                 if ($productId === null && !empty($line->description)) {
-                    $productId = Product::where('name', $line->description)->value('id');
+                    $productId = $descProductMap[$line->description] ??= Product::where('name', $line->description)->value('id');
                 }
 
                 $warehouseId = $line->warehouse_id ? (int) $line->warehouse_id : ($document->warehouse_id ? (int) $document->warehouse_id : 1);
@@ -741,6 +775,10 @@ class InventoryInquiryQueryService
                 }
 
                 if ($productFilter !== null && $productId !== $productFilter) {
+                    continue;
+                }
+
+                if ($productIdsSet !== null && !isset($productIdsSet[$productId])) {
                     continue;
                 }
 

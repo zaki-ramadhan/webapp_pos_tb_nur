@@ -113,33 +113,46 @@ final class PosBlueprint
         ];
     }
 
+    private static ?array $cachedPreferences = null;
+
+    public static function clearPreferencesCache(): void
+    {
+        self::$cachedPreferences = null;
+    }
+
     private static function loadPreferences(): array
     {
-        if (!Schema::hasTable('preference_settings')) {
-            return [];
+        if (self::$cachedPreferences !== null) {
+            return self::$cachedPreferences;
         }
 
-        return \Illuminate\Support\Facades\DB::table('preference_settings')
-            ->where('scope_type', 'company')
-            ->where('scope_key', 'default')
-            ->pluck('value', 'setting_key')
-            ->map(function ($value) {
-                if (is_bool($value)) {
-                    return $value;
-                }
-                if (!is_string($value)) {
-                    return $value;
-                }
-                $decoded = json_decode($value, true);
-                if ($decoded === 'true' || $decoded === true) {
-                    return true;
-                }
-                if ($decoded === 'false' || $decoded === false) {
-                    return false;
-                }
-                return $decoded ?? $value;
-            })
-            ->toArray();
+        try {
+            self::$cachedPreferences = \Illuminate\Support\Facades\DB::table('preference_settings')
+                ->where('scope_type', 'company')
+                ->where('scope_key', 'default')
+                ->pluck('value', 'setting_key')
+                ->map(function ($value) {
+                    if (is_bool($value)) {
+                        return $value;
+                    }
+                    if (!is_string($value)) {
+                        return $value;
+                    }
+                    $decoded = json_decode($value, true);
+                    if ($decoded === 'true' || $decoded === true) {
+                        return true;
+                    }
+                    if ($decoded === 'false' || $decoded === false) {
+                        return false;
+                    }
+                    return $decoded ?? $value;
+                })
+                ->toArray();
+        } catch (\Throwable) {
+            self::$cachedPreferences = [];
+        }
+
+        return self::$cachedPreferences;
     }
 
     private static function baseData(): array

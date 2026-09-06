@@ -189,22 +189,38 @@ trait BackendResourceImportExportTrait
         $value = trim($value);
         if ($value === '') return null;
 
-        $tempModel = new $modelClass();
-        $tableName = $tempModel->getTable();
-        $columns = Schema::getColumnListing($tableName);
+        static $resolvedCache = [];
+        $cacheKey = "{$modelClass}::{$value}";
+        if (array_key_exists($cacheKey, $resolvedCache)) {
+            return $resolvedCache[$cacheKey];
+        }
 
-        $matchCols = array_intersect(['code', 'employee_code', 'name', 'full_name', 'description'], $columns);
+        static $columnsCache = [];
+        if (!isset($columnsCache[$modelClass])) {
+            $tempModel = new $modelClass();
+            $tableName = $tempModel->getTable();
+            $columnsCache[$modelClass] = array_intersect(
+                ['code', 'employee_code', 'name', 'full_name', 'description'],
+                Schema::getColumnListing($tableName)
+            );
+        }
+
+        $matchCols = $columnsCache[$modelClass];
         foreach ($matchCols as $col) {
             $record = $modelClass::query()->where($col, $value)->first();
-            if ($record) return $record->getKey();
+            if ($record) {
+                return $resolvedCache[$cacheKey] = $record->getKey();
+            }
         }
 
         foreach ($matchCols as $col) {
             $record = $modelClass::query()->where($col, 'like', $value)->first();
-            if ($record) return $record->getKey();
+            if ($record) {
+                return $resolvedCache[$cacheKey] = $record->getKey();
+            }
         }
 
-        return null;
+        return $resolvedCache[$cacheKey] = null;
     }
 
     protected function savePreferences(array $settings): void
@@ -237,6 +253,8 @@ trait BackendResourceImportExportTrait
                 );
             }
         });
+
+        \App\Support\Presentation\PosBlueprint::clearPreferencesCache();
     }
 
     protected function allowedPreferenceKeys(): array

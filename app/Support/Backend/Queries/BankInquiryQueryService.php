@@ -123,7 +123,7 @@ class BankInquiryQueryService
             return collect();
         }
 
-        $documents = $this->queryDocuments($filters);
+        $documents = $this->queryDocuments($filters, $accountIds);
         $allRows = collect();
 
         foreach ($documents as $document) {
@@ -284,15 +284,23 @@ class BankInquiryQueryService
 
     /**
      * @param  array<string, mixed>  $filters
+     * @param  array<int, int>  $accountIds
      * @return Collection<int, OperationDocument>
      */
-    protected function queryDocuments(array $filters): Collection
+    protected function queryDocuments(array $filters, array $accountIds = []): Collection
     {
         $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
         $endDate = $this->resolveDateFilter($filters['end_date'] ?? null);
 
         return OperationDocument::query()
             ->with(['primaryAccount', 'secondaryAccount', 'lines.account'])
+            ->when(!empty($accountIds), function ($query) use ($accountIds): void {
+                $query->where(function ($q) use ($accountIds) {
+                    $q->whereIn('primary_account_id', $accountIds)
+                      ->orWhereIn('secondary_account_id', $accountIds)
+                      ->orWhereHas('lines', fn ($l) => $l->whereIn('account_id', $accountIds));
+                });
+            })
             ->when($startDate, function ($query, CarbonInterface $date): void {
                 $query->whereDate('entry_date', '>=', $date->toDateString());
             })
