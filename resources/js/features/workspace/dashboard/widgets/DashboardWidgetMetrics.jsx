@@ -538,11 +538,11 @@ export function SummaryMetric({ widget }) {
                     <div className="flex flex-col gap-0.5 mt-4 min-h-0">
                         <div className="flex items-center justify-between text-xs sm:text-sm font-medium shrink-0">
                             <div className="flex flex-col items-start gap-1.5">
-                                <span className="text-text-light font-normal text-[11px] sm:text-xs">{sec1_item1.label}</span>
+                                <span className="text-black font-normal text-[11px] sm:text-xs">{sec1_item1.label}</span>
                                 <span style={{ color: sec1_item1.color }}>{sec1_item1.value}</span>
                             </div>
                             <div className="flex flex-col items-end gap-1.5">
-                                <span className="text-text-light font-normal text-[11px] sm:text-xs">{sec1_item2.label}</span>
+                                <span className="text-black font-normal text-[11px] sm:text-xs">{sec1_item2.label}</span>
                                 <span style={{ color: sec1_item2.color }}>{sec1_item2.value}</span>
                             </div>
                         </div>
@@ -571,11 +571,11 @@ export function SummaryMetric({ widget }) {
                     <div className="flex flex-col gap-0.5 mt-4 min-h-0">
                         <div className="flex items-center justify-between text-xs sm:text-sm font-medium shrink-0">
                             <div className="flex flex-col items-start gap-1.5">
-                                <span className="text-text-light font-normal text-[11px] sm:text-xs">{sec2_item1.label}</span>
+                                <span className="text-black font-normal text-[11px] sm:text-xs">{sec2_item1.label}</span>
                                 <span style={{ color: sec2_item1.color }}>{sec2_item1.value}</span>
                             </div>
                             <div className="flex flex-col items-end gap-1.5">
-                                <span className="text-text-light font-normal text-[11px] sm:text-xs">{sec2_item2.label}</span>
+                                <span className="text-black font-normal text-[11px] sm:text-xs">{sec2_item2.label}</span>
                                 <span style={{ color: sec2_item2.color }}>{sec2_item2.value}</span>
                             </div>
                         </div>
