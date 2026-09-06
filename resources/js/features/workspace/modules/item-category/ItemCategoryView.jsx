@@ -94,7 +94,7 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
             table: {
                 loading,
                 error,
-                emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data barang'),
+                emptyLabel: loading ? 'Memuat data...' : 'Tidak ada data',
                 columns: (() => {
                     const baseCols = baseConfig.table?.columns ?? [];
                     const extraCols = [

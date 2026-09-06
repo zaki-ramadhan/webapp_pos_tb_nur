@@ -158,7 +158,7 @@ export function TransactionDataTable({
                                             : 'bg-white'
                                     } ${customRowClassName}`.trim()}
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
-                                    title={isRowUnavailable ? 'Barang/Akun ini telah dihapus dari daftar data sehingga tidak dapat diedit.' : undefined}
+                                    aria-label={isRowUnavailable ? 'Barang/Akun ini telah dihapus dari daftar data sehingga tidak dapat diedit.' : undefined}
                                 >
                                     {activeShowNumbering && (
                                         <DataTableCell
@@ -208,8 +208,10 @@ export function TransactionDataTable({
                             >
                                 {emptyLabel && String(emptyLabel).toLowerCase().includes('hak akses') ? (
                                     'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.'
+                                ) : emptyLabel === 'Memuat data...' ? (
+                                    'Memuat data...'
                                 ) : (
-                                    emptyLabel || 'Belum ada data'
+                                    'Tidak ada data'
                                 )}
                             </DataTableCell>
                         </DataTableRow>

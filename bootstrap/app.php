@@ -106,6 +106,19 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
+            \Illuminate\Support\Facades\Log::error('Backend API QueryException: ' . $exception->getMessage(), [
+                'url' => $request->fullUrl(),
+                'method' => $request->method(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+            ]);
+
+            if ($request->isMethod('GET') || $request->isMethod('HEAD')) {
+                return response()->json([
+                    'message' => (config('app.debug') && !app()->isProduction()) ? $exception->getMessage() : 'Terjadi kesalahan saat memuat data.',
+                ], 500);
+            }
+
             return response()->json([
                 'message' => 'Data tidak dapat disimpan karena masih terhubung dengan data lain atau nomor dokumen sudah digunakan.',
             ], 409);

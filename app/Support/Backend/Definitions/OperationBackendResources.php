@@ -143,7 +143,7 @@ class OperationBackendResources
             key: $key,
             label: $label,
             permissionKey: $permissionKey,
-            searchColumns: ['document_number', 'external_number', 'reference_number', 'status', 'notes'],
+            searchColumns: ['document_number', 'reference_number', 'status', 'notes'],
             modelClass: $modelClass,
             with: [
                 'branch',

@@ -72,7 +72,15 @@ export function buildPurchaseDepositRow(record) {
     const invoiceNumber = record?.reference_number ?? record?.metadata?.invoice_number ?? record?.invoice_number ?? '-';
     const notes = record?.notes ?? record?.description ?? '-';
     const status = record?.status ?? 'Draft';
-    const age = record?.metadata?.age ? Number(record.metadata.age) : 0;
+    let age = 0;
+    if (record?.metadata?.age !== undefined && record?.metadata?.age !== null) {
+        age = Number(record.metadata.age);
+    } else if (record?.entry_date) {
+        const entryTime = new Date(record.entry_date).getTime();
+        const nowTime = Date.now();
+        const diffDays = Math.floor(Math.max(0, nowTime - entryTime) / (1000 * 60 * 60 * 24));
+        age = Number.isFinite(diffDays) ? diffDays : 0;
+    }
 
     return {
         id: String(record?.id ?? ''),
@@ -89,7 +97,9 @@ export function buildPurchaseDepositRow(record) {
         status,
         statusFilter: status,
         age,
+        ageValue: age,
         total: totalAmount ? totalAmount.toLocaleString('id-ID') : '0',
+        totalValue: totalAmount,
         statusIcon: status === 'Lunas' ? 'paid' : 'draft',
         __backendRecord: record,
     };
