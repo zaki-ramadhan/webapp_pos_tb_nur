@@ -3,6 +3,7 @@ import { CloseIcon, InfoIcon } from '@/features/workspace/shared/Icons';
 import { GroupAccessUserLookupField } from './GroupAccessControls';
 import RadioField from '@/components/ui/RadioField';
 import SelectField from '@/components/ui/SelectField';
+import GroupAccessTimePicker from './components/GroupAccessTimePicker';
 
 export function GroupAccessAccessOption({ option, checked, onChange, children }) {
     return (
@@ -74,45 +75,27 @@ export function GroupAccessGeneralSection({
                                 onChange={onChangeAccessLimitation}
                             >
                                 {option.id === 'limited-time' && (
-                                    <div className="pl-[32px] flex flex-col gap-2 mt-1">
+                                    <div className="pl-[32px] flex flex-col gap-3 mt-2">
                                         <div className="flex flex-wrap items-center gap-3">
+                                            <span className="text-xs sm:text-sm text-section-tab-accent-text font-medium">Hari Akses:</span>
                                             <SelectField
                                                 value={values.accessLimitDays}
                                                 onChange={(e) => onChangeAccessLimitDays(e.target.value)}
-                                                className="h-[38px] min-w-[130px] text-xs sm:text-sm text-brand-dark"
+                                                className="h-[36px] min-w-[140px] text-xs sm:text-sm text-brand-dark"
                                                 containerClassName="w-auto"
                                             >
                                                 <option value="Senin-Jumat">Senin-Jumat</option>
                                                 <option value="Senin-Sabtu">Senin-Sabtu</option>
                                                 <option value="Setiap Hari">Setiap Hari</option>
                                             </SelectField>
-
-                                            <span className="text-xs sm:text-sm text-section-tab-accent-text">Jam</span>
-
-                                            <SelectField
-                                                value={values.accessLimitStartHour}
-                                                onChange={(e) => onChangeAccessLimitStartHour(e.target.value)}
-                                                className="h-[38px] w-[60px] text-xs sm:text-sm text-brand-dark"
-                                                containerClassName="w-auto"
-                                            >
-                                                {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((hour) => (
-                                                    <option key={hour} value={hour}>{hour}</option>
-                                                ))}
-                                            </SelectField>
-
-                                            <span className="text-xs sm:text-sm text-section-tab-accent-text">-</span>
-
-                                            <SelectField
-                                                value={values.accessLimitEndHour}
-                                                onChange={(e) => onChangeAccessLimitEndHour(e.target.value)}
-                                                className="h-[38px] w-[60px] text-xs sm:text-sm text-brand-dark"
-                                                containerClassName="w-auto"
-                                            >
-                                                {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((hour) => (
-                                                    <option key={hour} value={hour}>{hour}</option>
-                                                ))}
-                                            </SelectField>
                                         </div>
+
+                                        <GroupAccessTimePicker
+                                            startHour={values.accessLimitStartHour}
+                                            endHour={values.accessLimitEndHour}
+                                            onChangeStartHour={onChangeAccessLimitStartHour}
+                                            onChangeEndHour={onChangeAccessLimitEndHour}
+                                        />
                                     </div>
                                 )}
                             </GroupAccessAccessOption>
