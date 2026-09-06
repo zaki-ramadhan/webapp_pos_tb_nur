@@ -23,7 +23,7 @@ const purchaseDepositTopActions = [
 ];
 
 const purchaseDepositSectionTabs = [
-    { id: 'deposit', label: 'Uang Muka', icon: 'document' },
+    { id: 'deposit', label: 'Uang Muka', icon: 'payment' },
     { id: 'additional-info', label: 'Info lainnya', icon: 'info' },
 ];
 
@@ -76,7 +76,7 @@ const defaultPurchaseDepositConfig = {
     labels: {
         supplier: 'Pemasok',
         entryDate: 'Tanggal',
-        documentNumber: 'No Form #',
+        documentNumber: 'Nomor Faktur #',
         depositAmount: 'Uang Muka',
         tax: 'Pajak',
         taxIncluded: 'Total termasuk Pajak',
@@ -94,6 +94,7 @@ const defaultPurchaseDepositConfig = {
         createLabel: 'Tambah Uang Muka Pembelian',
         refreshLabel: 'Muat ulang',
         searchPlaceholder: 'Cari data...',
+        emptyLabel: 'Tidak ada data',
         pageValue: '1',
         columns: purchaseDepositListColumns,
         rows: [],

@@ -76,11 +76,32 @@ export function buildSalesDepositFilters(baseFilters = [], rows = []) {
     });
 }
 
+export function resolveDepositStatus(record) {
+    const rawStatus = String(record?.status ?? '').toLowerCase();
+    if (rawStatus === 'void' || rawStatus === 'batal' || rawStatus === 'cancelled') {
+        return 'Batal';
+    }
+    if (rawStatus === 'draft') {
+        return 'Draft';
+    }
+    const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
+    const outstandingAmount = record?.outstanding_amount !== undefined ? Number(record?.outstanding_amount) : null;
+    const usedAmount = record?.used_amount !== undefined ? Number(record?.used_amount) : (record?.applied_amount !== undefined ? Number(record?.applied_amount) : null);
+
+    if (rawStatus === 'lunas' || (outstandingAmount !== null && outstandingAmount <= 0 && totalAmount > 0)) {
+        return 'Lunas';
+    }
+    if (rawStatus === 'sebagian' || (usedAmount !== null && usedAmount > 0 && (outstandingAmount === null || outstandingAmount > 0))) {
+        return 'Sebagian';
+    }
+    return 'Belum Lunas';
+}
+
 export function buildSalesDepositRow(record) {
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
     const entryDate = formatIsoDate(record?.entry_date);
     const customerName = record?.customer?.name ?? '';
-    const status = record?.status ?? 'Draft';
+    const status = resolveDepositStatus(record);
 
     return {
         id: String(record?.id ?? ''),
@@ -106,9 +127,11 @@ export function buildSalesDepositRow(record) {
 export function buildSalesDepositRecord(record = {}, config) {
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
     const subtotalAmount = Number(record?.subtotal ?? totalAmount);
-    const isLunas = record?.status === 'Lunas' || (record?.outstanding_amount !== undefined && Number(record?.outstanding_amount) <= 0 && totalAmount > 0);
-    const status = isLunas ? 'Lunas' : (record?.status ?? 'Belum Lunas');
+    const status = resolveDepositStatus(record);
+    const isLunas = status === 'Lunas';
     const printStatus = record?.metadata?.print_status ?? 'Belum cetak/email';
+    const statusStamp = isLunas ? 'LUNAS' : (status === 'Batal' ? 'BATAL' : (status === 'Draft' ? '' : 'BELUM LUNAS'));
+    const statusTone = isLunas ? 'green' : (status === 'Batal' ? 'gray' : 'red');
 
     return {
         __backendRecordId: record.id ?? null,

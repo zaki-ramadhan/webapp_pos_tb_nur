@@ -19,7 +19,7 @@ export default function PurchaseDepositSummarySection({
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             {/* Left Column: Uang Muka & Pajak */}
             <section className="flex-1 w-full lg:max-w-[50%]">
-                <TransactionSectionHeading title={config.depositTitle || 'Uang Muka'} icon="document" />
+                <TransactionSectionHeading title={config.depositTitle || 'Uang Muka'} icon="payment" />
                 <div className="mt-4 flex flex-col gap-y-2 pl-3 sm:pl-5">
                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                         <TransactionFieldLabel label={config.labels.depositAmount} required />
@@ -35,6 +35,8 @@ export default function PurchaseDepositSummarySection({
                                     }))
                                 }
                                 onBlur={() => onDepositAmountBlur?.(values.depositAmount)}
+                                prefix="Rp"
+                                prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"
                                 containerClassName="!max-w-[320px] w-full"
                                 className="h-[40px] rounded-[4px] border-ui-border"
                                 inputClassName="text-xs sm:text-sm text-brand-dark"

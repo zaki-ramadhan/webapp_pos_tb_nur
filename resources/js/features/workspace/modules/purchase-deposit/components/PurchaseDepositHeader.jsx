@@ -82,58 +82,40 @@ export default function PurchaseDepositHeader({ config, values, setValues, isDet
 
             <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px] md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-28">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
-                    <div className="flex items-center justify-start gap-3">
-                        <TransactionFieldLabel label={config.labels.documentNumber} required />
-                        {!isDetail && (
-                            <TransactionSwitch
-                                checked={values.autoNumber}
-                                onChange={(checked) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        autoNumber: checked,
-                                    }))
-                                }
-                            />
-                        )}
-                    </div>
+                    <TransactionFieldLabel label={config.labels.documentNumber || 'Nomor Faktur #'} required />
 
                     <div className="max-w-[320px] w-full justify-self-end">
-                        {!isDetail && values.autoNumber ? (
-                            <SelectField
-                                value={values.numberingType}
-                                onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
-                                className="h-[40px] rounded-[4px] border-ui-border"
-                                selectClassName="text-xs sm:text-sm text-brand-dark"
-                            >
-                                {(config.numberingOptions || ['Uang Muka Pembelian']).map((option) => (
-                                    <option key={option} value={option}>
-                                        {option}
-                                    </option>
-                                ))}
-                            </SelectField>
-                        ) : (
-                            <TextInput
-                                value={values.documentNumber}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        documentNumber: event.target.value,
-                                    }))
-                                }
-                                onBlur={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        documentNumber: event.target.value.trim(),
-                                    }))
-                                }
-                                maxLength={120}
-                                readOnly={isDetail}
-                                trailing={isDetail ? null : <span className="text-lg font-semibold text-brand-dark">×</span>}
-                                className="h-[40px] rounded-[4px] border-ui-border"
-                                inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
-                                trailingClassName="px-3"
-                            />
-                        )}
+                        <TextInput
+                            value={values.documentNumber}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    documentNumber: event.target.value,
+                                    autoNumber: !event.target.value.trim(),
+                                }))
+                            }
+                            onBlur={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    documentNumber: event.target.value.trim(),
+                                }))
+                            }
+                            maxLength={120}
+                            readOnly={isDetail}
+                            placeholder="[Otomatis]"
+                            trailing={isDetail ? null : (values.documentNumber ? (
+                                <button
+                                    type="button"
+                                    onClick={() => setValues((c) => ({ ...c, documentNumber: '', autoNumber: true }))}
+                                    className="text-slate-400 hover:text-slate-600 text-sm font-semibold"
+                                >
+                                    ×
+                                </button>
+                            ) : null)}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
+                            trailingClassName="px-3"
+                        />
                     </div>
                 </div>
 

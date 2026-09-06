@@ -106,6 +106,7 @@ export default function AccountLookupSuggestions({
                             dateStr = formatIsoDate(rawDate);
                         }
 
+                        let titleRight = null;
                         let subtitleLeft = code;
                         let subtitleRight = null;
 
@@ -127,13 +128,16 @@ export default function AccountLookupSuggestions({
                             subtitleLeft = dateStr;
                             subtitleRight = resolveDocumentTypeLabel(record, resource);
                         } else if (['suppliers', 'vendors', 'customers', 'employees'].includes(resource)) {
+                            titleRight = code;
+                            const email = String(record.email ?? '').trim();
                             const hp = String(record.mobile_phone ?? record.mobilePhone ?? '').trim();
                             const telp = String(record.business_phone ?? record.office_phone ?? record.phone ?? '').trim();
+                            const phone = hp || telp;
                             const contactParts = [];
-                            if (code) contactParts.push(code);
-                            if (hp) contactParts.push(`HP:${formatPhoneDisplay(hp)}`);
-                            if (telp && telp !== hp) contactParts.push(`Telp:${formatPhoneDisplay(telp)}`);
-                            subtitleLeft = contactParts.join(' - ');
+                            if (email) contactParts.push(email);
+                            if (phone) contactParts.push(formatPhoneDisplay(phone));
+                            subtitleLeft = contactParts.join(', ');
+                            subtitleRight = null;
                         } else if (resource === 'accounts') {
                             subtitleLeft = code;
                             subtitleRight = translateAccountType(record.account_type);
@@ -147,20 +151,25 @@ export default function AccountLookupSuggestions({
                                     e.stopPropagation();
                                     onSelectAccount(record, label);
                                 }}
-                                className={`flex w-full flex-col gap-1.5 border-t border-slate-200 px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#F8F8F8] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
+                                className={`flex w-full flex-col gap-1 border-t border-slate-200 px-4 py-2 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#F8F8F8] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
                             >
                                 <span className="flex w-full items-center justify-between gap-4">
                                     <span className="truncate text-xs sm:text-sm font-normal text-black">
                                         <HighlightText text={title} search={query} />
                                     </span>
+                                    {titleRight ? (
+                                        <span className="shrink-0 text-xs sm:text-sm font-normal text-black">
+                                            <HighlightText text={titleRight} search={query} />
+                                        </span>
+                                    ) : null}
                                 </span>
                                 {(subtitleLeft || subtitleRight) ? (
                                     <span className="flex w-full items-center justify-between gap-4 text-xs sm:text-[13px]">
-                                        <span className="truncate text-black">
+                                        <span className="truncate text-slate-500">
                                             <HighlightText text={subtitleLeft} search={query} />
                                         </span>
                                         {subtitleRight ? (
-                                            <span className="shrink-0 text-black font-normal">
+                                            <span className="shrink-0 text-slate-500 font-normal">
                                                 {subtitleRight}
                                             </span>
                                         ) : null}
