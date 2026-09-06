@@ -56,7 +56,7 @@ function ProductItem({ item }) {
                     </div>
 
                     <div className="min-w-0 flex-1 flex flex-col justify-center">
-                        <p className="truncate text-xs sm:text-sm font-medium text-slate-800 group-hover:text-[#16499A] transition-colors leading-snug" title={item.name}>
+                        <p className="truncate text-xs sm:text-sm font-medium text-slate-800 group-hover:text-[#16499A] transition-colors leading-snug">
                             {item.name}
                         </p>
                         <p className="text-[11px] sm:text-[12.5px] text-black font-normal truncate leading-tight mt-0.5">

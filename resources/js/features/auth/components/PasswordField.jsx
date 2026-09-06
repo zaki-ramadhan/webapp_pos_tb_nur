@@ -55,7 +55,6 @@ export default function PasswordField({
                         type="button"
                         aria-label={toggleLabel}
                         aria-pressed={showPassword}
-                        title={toggleLabel}
                         onClick={() => setShowPassword((value) => !value)}
                         className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
                     >

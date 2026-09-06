@@ -58,7 +58,6 @@ export function AccountsChildrenTab({ values, onOpenDetail }) {
                     <div
                         key={`name-${item.id}`}
                         onClick={() => handleRowClick(item)}
-                        title={item.isCurrent ? 'Akun Induk Saat Ini (Tidak dapat diklik)' : `Buka detail ${item.name}`}
                         className={`rounded-[3px] px-4 py-2.5 text-xs sm:text-sm text-brand-dark transition-all ${
                             item.isCurrent
                                 ? 'bg-[#d8dbde] font-medium cursor-default select-none'
@@ -76,7 +75,6 @@ export function AccountsChildrenTab({ values, onOpenDetail }) {
                     <div
                         key={`code-${item.id}`}
                         onClick={() => handleRowClick(item)}
-                        title={item.isCurrent ? 'Akun Induk Saat Ini (Tidak dapat diklik)' : `Buka detail ${item.name}`}
                         className={`rounded-[3px] px-4 py-2.5 text-xs sm:text-sm text-brand-dark transition-all ${
                             item.isCurrent
                                 ? 'bg-[#d8dbde] font-medium cursor-default select-none'

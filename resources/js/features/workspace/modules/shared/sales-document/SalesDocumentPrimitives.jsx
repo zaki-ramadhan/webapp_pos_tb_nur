@@ -221,7 +221,7 @@ export function SearchableTableSection({
                                                                     onDeleteRow(row);
                                                                 }}
                                                                 className="inline-flex items-center justify-center p-1 text-slate-400 hover:text-rose-600 transition rounded hover:bg-rose-100"
-                                                                title="Hapus baris item ini"
+                                                                aria-label="Hapus baris item"
                                                             >
                                                                 <Trash2 className="h-4 w-4" />
                                                             </button>

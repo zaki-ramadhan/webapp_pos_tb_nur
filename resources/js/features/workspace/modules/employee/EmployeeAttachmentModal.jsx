@@ -166,7 +166,6 @@ export default function EmployeeAttachmentModal({
                                                 type="button"
                                                 onClick={() => handleRemoveAttachment(item.id)}
                                                 className="p-1 rounded-[4px] hover:bg-danger-border text-[#A20025] transition"
-                                                title="Hapus dokumen"
                                                 aria-label="Hapus lampiran"
                                             >
                                                 <TrashIcon className="h-4.5 w-4.5" />

@@ -91,7 +91,7 @@ export default function BalanceTab({ config, values, onChange }) {
                                         type="button"
                                         onClick={() => handleRemove(index)}
                                         className="text-red-500 hover:text-red-700 cursor-pointer"
-                                        title="Hapus"
+                                        aria-label="Hapus"
                                     >
                                         <TrashIcon className="h-4 w-4" />
                                     </button>

@@ -255,7 +255,7 @@ export function PartnerInlineTableSection({
                                         type="button"
                                         onClick={() => onRemove?.(index)}
                                         className="text-red-500 hover:text-red-700"
-                                        title="Hapus"
+                                        aria-label="Hapus"
                                     >
                                         <TrashIcon className="h-4 w-4" />
                                     </button>
