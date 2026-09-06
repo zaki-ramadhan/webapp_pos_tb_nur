@@ -91,7 +91,7 @@ export default function ChipLookupField({
                 onClick={handleSearch}
                 disabled={disabled}
                 aria-label={searchLabel}
-                className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-ui-border-medium text-text-darkest disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none focus:outline-none"
+                className="inline-flex h-full w-10 shrink-0 items-center justify-center text-text-darkest disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none focus:outline-none cursor-pointer"
             >
                 {isSearching ? (
                     <LoadingIcon className="h-5 w-5 animate-spin text-text-darkest" />
