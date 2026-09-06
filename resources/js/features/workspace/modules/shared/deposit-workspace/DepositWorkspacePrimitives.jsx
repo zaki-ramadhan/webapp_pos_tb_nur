@@ -91,7 +91,7 @@ export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], e
     return (
         <section>
             <div className="flex items-center gap-3 border-b border-ui-border-medium pb-3">
-                <NavigationIcon type={icon} className="h-5 w-5 text-blue-440" />
+                <NavigationIcon type={icon} className="h-5 w-5 text-input-brand" />
                 <h3 className="text-2xl font-normal text-input-brand">{title}</h3>
             </div>
 
