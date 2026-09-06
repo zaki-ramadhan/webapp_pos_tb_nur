@@ -1,10 +1,10 @@
 export default function DashboardChartShell({
     children,
-    heightClassName = 'h-[190px] sm:h-[195px]',
+    heightClassName = 'h-full w-full',
     className = '',
 }) {
     return (
-        <div onContextMenu={(e) => e.preventDefault()} className={`relative w-full overflow-hidden ${heightClassName} ${className}`.trim()}>
+        <div onContextMenu={(e) => e.preventDefault()} className={`relative w-full h-full min-h-0 flex-1 overflow-hidden ${heightClassName} ${className}`.trim()}>
             {children}
         </div>
     );

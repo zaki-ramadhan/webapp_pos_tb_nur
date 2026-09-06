@@ -29,13 +29,13 @@ export function CashAvailabilityWidget({ widget }) {
             </div>
 
             {/* Chart */}
-            <div className="flex-1 min-h-0 flex flex-col justify-end">
+            <div className="flex-1 min-h-0 flex flex-col w-full h-full relative">
                 <TrendLineChart
                     labels={widget.labels ?? []}
                     series={widget.series ?? []}
                     accent={isNegative ? '#f87171' : widget.accent}
                     valueFormat={widget.valueFormat ?? 'currency'}
-                    heightClassName="h-[155px] sm:h-[160px]"
+                    heightClassName="h-full w-full"
                 />
             </div>
         </div>

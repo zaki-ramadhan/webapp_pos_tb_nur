@@ -229,13 +229,13 @@ export function LineTrendMetric({ widget }) {
                 )}
             </div>
 
-            <div className="flex-1 min-h-0 flex flex-col justify-end">
+            <div className="flex-1 min-h-0 flex flex-col w-full h-full relative">
                 <TrendLineChart
                     labels={widget.labels ?? []}
                     series={widget.series ?? []}
                     accent={accentColor}
                     valueFormat={widget.valueFormat ?? 'number'}
-                    heightClassName="h-[190px] sm:h-[195px]"
+                    heightClassName="h-full w-full"
                 />
             </div>
         </div>
