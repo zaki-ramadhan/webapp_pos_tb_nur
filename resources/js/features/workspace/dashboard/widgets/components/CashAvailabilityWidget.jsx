@@ -9,7 +9,7 @@ export function CashAvailabilityWidget({ widget }) {
             : balanceStr.includes('-') || balanceStr.includes('(') || balanceStr.startsWith('Rp -');
 
     return (
-        <div className="flex flex-1 min-h-0 flex-col justify-between gap-3">
+        <div className="flex flex-1 min-h-0 flex-col justify-between gap-1.5">
             {/* Top row: Date Range Navigator */}
             {widget.period && (
                 <div className="flex justify-end shrink-0">
@@ -18,7 +18,7 @@ export function CashAvailabilityWidget({ widget }) {
             )}
 
             {/* Second row: Estimasi Saldo Kas Berjalan & Nominal */}
-            <div className="flex flex-wrap items-center justify-between gap-2 shrink-0 border-b border-slate-100 pb-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-2 shrink-0 border-b border-slate-100 pb-1">
                 <span className="text-xs sm:text-sm font-medium text-brand-darker">{widget.balanceLabel ?? 'Estimasi Saldo Kas Berjalan'}</span>
                 <div className="flex items-baseline gap-2">
                     <span className={`text-base font-semibold leading-none sm:text-lg ${isNegative ? 'text-rose-600 font-bold' : 'text-brand-darker'}`}>
@@ -29,13 +29,13 @@ export function CashAvailabilityWidget({ widget }) {
             </div>
 
             {/* Chart */}
-            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0 flex flex-col justify-end">
                 <TrendLineChart
                     labels={widget.labels ?? []}
                     series={widget.series ?? []}
                     accent={isNegative ? '#f87171' : widget.accent}
                     valueFormat={widget.valueFormat ?? 'currency'}
-                    heightClassName="flex-1 min-h-[160px]"
+                    heightClassName="h-[155px] sm:h-[160px]"
                 />
             </div>
         </div>

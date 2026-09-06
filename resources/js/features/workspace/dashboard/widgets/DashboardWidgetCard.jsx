@@ -50,11 +50,11 @@ export default function DashboardWidgetCard({
 
     const baseHeightClass = isEmptyData ? 'min-h-0 h-auto' : widget.heightClass;
 
-    const resolvedHeightClass = (widget.type === 'line' || widget.type === 'cash-availability') && baseHeightClass === 'min-h-[310px]'
-        ? 'min-h-[260px]'
+    const resolvedHeightClass = (widget.type === 'line' || widget.type === 'cash-availability' || widget.type === 'recent-activity')
+        ? 'h-[310px]'
         : widget.type === 'summary'
             ? 'min-h-[210px]'
-            : baseHeightClass;
+            : (baseHeightClass || 'h-[310px]');
 
     const isAbcApriori = widget.id === 'integrated-analysis' || widget.type === 'abc-apriori';
     const headerPaddingClass = isAbcApriori ? 'py-3' : 'py-2';
@@ -94,7 +94,7 @@ export default function DashboardWidgetCard({
                     </div>
                 )}
             </div>
-            <div className="relative flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-4 sm:py-4">
+            <div className="relative flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-4 sm:py-3">
                 <WidgetLoadingOverlay isVisible={isWidgetLoading} />
                 {children}
             </div>

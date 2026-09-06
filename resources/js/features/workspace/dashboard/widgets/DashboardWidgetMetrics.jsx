@@ -203,7 +203,7 @@ export function LineTrendMetric({ widget }) {
     const accentColor = isNegative ? '#f87171' : widget.accent;
 
     return (
-        <div className="flex flex-1 flex-col h-full min-h-0 justify-between gap-3">
+        <div className="flex flex-1 flex-col h-full min-h-0 justify-between gap-2">
             <div className="flex flex-wrap items-center justify-between gap-2 shrink-0">
                 {/* Left side: Legend items (e.g. Kas Masuk & Kas Keluar) */}
                 {hasLegend ? (
@@ -229,13 +229,13 @@ export function LineTrendMetric({ widget }) {
                 )}
             </div>
 
-            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0 flex flex-col justify-end">
                 <TrendLineChart
                     labels={widget.labels ?? []}
                     series={widget.series ?? []}
                     accent={accentColor}
                     valueFormat={widget.valueFormat ?? 'number'}
-                    heightClassName="flex-1 min-h-[140px]"
+                    heightClassName="h-[190px] sm:h-[195px]"
                 />
             </div>
         </div>

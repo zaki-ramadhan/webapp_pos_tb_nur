@@ -70,7 +70,7 @@ class DashboardBlueprintProvider
                     'title' => 'Aktivitas Terakhir Anda',
                     'type' => 'recent-activity',
                     'items' => $userActivities,
-                    'heightClass' => 'min-h-[310px]',
+                    'heightClass' => 'h-[310px]',
                 ],
                 [
                     'id' => 'sales-trend',
@@ -86,7 +86,7 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'min-h-[310px]',
+                    'heightClass' => 'h-[310px]',
                 ],
                 [
                     'id' => 'profit-loss',
@@ -129,7 +129,7 @@ class DashboardBlueprintProvider
                             'tone' => $expensesTone,
                         ],
                     ],
-                    'heightClass' => 'min-h-[310px]',
+                    'heightClass' => 'h-[310px]',
                 ],
                 [
                     'id' => 'cash-flow',
@@ -151,7 +151,7 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'min-h-[310px]',
+                    'heightClass' => 'h-[310px]',
                 ],
                 [
                     'id' => 'company-expense',
@@ -185,7 +185,7 @@ class DashboardBlueprintProvider
                             'tone' => $operasionalTone,
                         ],
                     ],
-                    'heightClass' => 'min-h-[310px]',
+                    'heightClass' => 'h-[310px]',
                 ],
                 [
                     'id' => 'sales-summary',
@@ -271,7 +271,7 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'min-h-[310px]',
+                    'heightClass' => 'h-[310px]',
                 ],
             ],
             'transactionTypeOptions' => $transactionTypeOptions,
