@@ -24,7 +24,7 @@ export default function TimeGrid({
     };
 
     return (
-        <div className={`grid ${columns} gap-1.5 ${className}`}>
+        <div className={`grid ${columns} gap-2 ${className}`}>
             {slots.map((slot) => {
                 const normalized = String(slot).split(':')[0].padStart(2, '0');
                 const isSelected = selected === normalized;
@@ -35,7 +35,7 @@ export default function TimeGrid({
                         type="button"
                         onClick={() => handleClick(normalized)}
                         disabled={disabled}
-                        className={`inline-flex items-center justify-center rounded-[6px] py-1.5 px-2 text-xs font-medium transition-colors cursor-pointer select-none focus:outline-hidden ${
+                        className={`inline-flex items-center justify-center rounded-[6px] py-2 px-2.5 text-xs sm:text-sm font-medium transition-colors cursor-pointer select-none focus:outline-hidden ${
                             isSelected
                                 ? 'bg-brand-blue text-white font-semibold shadow-2xs border border-brand-blue'
                                 : 'border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
