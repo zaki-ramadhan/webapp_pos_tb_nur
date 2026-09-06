@@ -225,9 +225,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                     {isCheckPayment ? (
                         <>
                             <TransactionFieldLabel label={config.labels.checkDate} required />
-                            <div className="max-w-[276px]">
-                                <TransactionDateInput value={values.checkDate} className="max-w-none" />
-                            </div>
+                            <TransactionDateInput value={values.checkDate} />
                         </>
                     ) : null}
 

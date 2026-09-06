@@ -92,7 +92,7 @@ export default function InventoryAdjustmentHeader({ config = {}, values, setValu
 
                         <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                             <TransactionFieldLabel label={labels.effectiveDate || 'Tanggal Efektif'} required />
-                            <div className="max-w-[282px] w-full">
+                            <div className="max-w-[160px] w-full">
                                 <TransactionDateInput
                                     value={values.effectiveDate}
                                     disabled={isDetail}
@@ -137,7 +137,7 @@ export default function InventoryAdjustmentHeader({ config = {}, values, setValu
                 <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                     <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                         <TransactionFieldLabel label={labels.date || 'Tanggal'} required />
-                        <div className="max-w-[282px] w-full">
+                        <div className="max-w-[160px] w-full">
                             <TransactionDateInput
                                 value={values.date}
                                 onChange={(nextDisplayValue) =>

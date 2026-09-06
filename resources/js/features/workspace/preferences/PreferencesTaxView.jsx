@@ -84,7 +84,7 @@ function TaxInputControl({ control, onChange }) {
                 value={control.value ?? ''}
                 disabled={control.disabled}
                 onChange={(displayValue) => onChange(displayValue)}
-                className={`w-full max-w-[424px] ${control.fieldClassName ?? ''}`.trim()}
+                className={`w-full max-w-[160px] ${control.fieldClassName ?? ''}`.trim()}
                 inputClassName={`text-xs sm:text-sm text-text-darkest ${control.inputClassName ?? ''}`.trim()}
             />
         );

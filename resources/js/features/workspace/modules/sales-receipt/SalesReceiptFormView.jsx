@@ -265,11 +265,10 @@ export default function SalesReceiptFormView({
 
                             <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                                 <TransactionFieldLabel label={config.labels.entryDate} required />
-                                <div className="max-w-[236px] w-full justify-self-end">
+                                <div className="max-w-[160px] w-full justify-self-end">
                                     <TransactionDateInput
                                         value={values.entryDate}
                                         onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                                        className="max-w-none"
                                     />
                                 </div>
                             </div>

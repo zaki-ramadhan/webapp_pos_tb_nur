@@ -26,7 +26,7 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
                     <TransactionDateInput
                         value={values.openingBalanceDate || buildTodayDisplayDate()}
                         onChange={(nextValue) => onChange('openingBalanceDate', nextValue)}
-                        className="w-full max-w-[200px]"
+                        className="w-full max-w-[160px]"
                     />
                 </AccountsFormFieldRow>
             </div>

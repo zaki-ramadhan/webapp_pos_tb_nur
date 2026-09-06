@@ -27,7 +27,7 @@ export default function EmployeeGeneralTab({ form, values, errors, onChange }) {
 
             <div className="space-y-3.5 min-w-0">
                 <EmployeeFieldRow label="Tgl Masuk">
-                    <TransactionDateInput name="joined_at" value={values.joinDate} onChange={(nextValue) => onChange('joinDate', nextValue)} disableAutoInit={true} className="w-full max-w-[354px]" inputClassName="text-xs sm:text-sm text-brand-dark" trailingClassName="w-[42px] shrink-0 justify-center px-0" />
+                    <TransactionDateInput name="joined_at" value={values.joinDate} onChange={(nextValue) => onChange('joinDate', nextValue)} disableAutoInit={true} className="w-full max-w-[160px]" inputClassName="text-xs sm:text-sm text-brand-dark" trailingClassName="w-[42px] shrink-0 justify-center px-0" />
                 </EmployeeFieldRow>
 
                 <EmployeeFieldRow label="No. KTP">
