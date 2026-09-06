@@ -15,14 +15,14 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                 <FormRow label="Pemasok Utama" info>
                     <BackendLookupField
                         resource="suppliers"
-                        values={(values.mainSupplier || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
+                        value={values.mainSupplier?.[0]?.name ?? (typeof values.mainSupplier?.[0] === 'string' ? values.mainSupplier[0] : (values.mainSupplierName ?? ''))}
                         placeholder="Cari/Pilih Pemasok..."
                         searchLabel="Cari pemasok"
                         onSelect={(option) => {
                             onChange('mainSupplier', [{ id: option.id, name: option.name }]);
                             onChange('mainSupplierId', option.id);
                         }}
-                        onRemove={() => {
+                        onClear={() => {
                             onChange('mainSupplier', []);
                             onChange('mainSupplierId', null);
                         }}
@@ -32,14 +32,14 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                 <FormRow label="Satuan Beli">
                     <BackendLookupField
                         resource="units"
-                        values={(values.purchaseUnit || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
+                        value={values.purchaseUnit?.[0]?.name ?? (typeof values.purchaseUnit?.[0] === 'string' ? values.purchaseUnit[0] : (values.purchaseUnitName ?? ''))}
                         placeholder="Cari/Pilih..."
                         searchLabel="Cari satuan beli"
                         onSelect={(option) => {
                             onChange('purchaseUnit', [{ id: option.id, name: option.name }]);
                             onChange('purchaseUnitId', option.id);
                         }}
-                        onRemove={() => {
+                        onClear={() => {
                             onChange('purchaseUnit', []);
                             onChange('purchaseUnitId', null);
                         }}

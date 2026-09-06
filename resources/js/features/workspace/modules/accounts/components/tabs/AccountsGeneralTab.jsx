@@ -11,11 +11,10 @@ import { mapDbToUiType, mapUiToDbType, buildHierarchicalAccounts } from '../../a
 
 export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData, excludeId }) {
     const selectedParentAccount = useMemo(() => {
-        if (!values.parentId) return [];
+        if (!values.parentId) return '';
         const code = values.parentAccountCode ?? '';
         const name = values.parentAccountName ?? values.parentAccount?.[0] ?? '';
-        const label = values.parentAccountLabel ?? (code ? `${code} - ${name}` : name);
-        return [{ id: values.parentId, code, name, label }];
+        return values.parentAccountLabel ?? (code ? `${code} - ${name}` : name);
     }, [values.parentId, values.parentAccountLabel, values.parentAccountCode, values.parentAccountName, values.parentAccount]);
 
     const isSubAccountEdit = isDetail && Boolean(values.isSubAccount || values.parentId);
@@ -75,7 +74,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                     {Boolean(values.isSubAccount) && (
                         <BackendLookupField
                             resource="accounts"
-                            values={selectedParentAccount}
+                            value={selectedParentAccount}
                             placeholder="Cari/Pilih..."
                             searchLabel="Cari akun perkiraan"
                             queryParams={{
@@ -109,7 +108,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                                     onChange('type', mapDbToUiType(option.account_type));
                                 }
                             }}
-                            onRemove={() => {
+                            onClear={() => {
                                 onChange('parentId', null);
                                 onChange('parentAccount', []);
                                 onChange('parentAccountLabel', '');

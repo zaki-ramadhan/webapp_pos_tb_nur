@@ -99,18 +99,14 @@ export default function CustomerOthersTab({ config, values, onChange }) {
                         <div className="max-w-[420px] w-full">
                             <BackendLookupField
                                 resource="warehouses"
-                                values={(values.defaultWarehouse || []).map(item => typeof item === 'string' ? { name: item } : item)}
+                                value={values.defaultWarehouse?.[0] ?? (typeof values.defaultWarehouse === 'string' ? values.defaultWarehouse : '')}
                                 placeholder={config.lookupPlaceholders.default}
                                 searchLabel="Cari gudang default"
                                 onSelect={(option) => {
-                                    const current = values.defaultWarehouse || [];
-                                    if (!current.includes(option.name)) {
-                                        onChange('defaultWarehouse', [...current, option.name]);
-                                    }
+                                    onChange('defaultWarehouse', [option.name]);
                                 }}
-                                onRemove={(option) => {
-                                    const current = values.defaultWarehouse || [];
-                                    onChange('defaultWarehouse', current.filter(x => x !== option.name));
+                                onClear={() => {
+                                    onChange('defaultWarehouse', []);
                                 }}
                             />
                         </div>

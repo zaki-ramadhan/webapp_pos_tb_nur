@@ -76,6 +76,7 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                                 <BackendLookupField
                                     resource="users"
                                     values={selectedUsers}
+                                    multi={true}
                                     placeholder="Cari/Pilih..."
                                     searchLabel="Cari pengguna"
                                     getOptionLabel={(option) => option?.name ?? ''}

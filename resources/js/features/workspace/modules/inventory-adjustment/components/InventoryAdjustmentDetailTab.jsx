@@ -124,7 +124,7 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
                     <div className="col-span-3 min-w-0">
                         <BackendLookupField
                             resource="units"
-                            values={values.unitLookup}
+                            value={Array.isArray(values.unitLookup) ? (values.unitLookup[0] || '') : (values.unitLookup || '')}
                             placeholder="Pilih satuan..."
                             searchLabel="Cari satuan"
                             getOptionLabel={(option) => (typeof option === 'string' ? option : (option?.name ?? option?.label ?? ''))}
@@ -136,7 +136,7 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
                                     __unitId: option.id,
                                 }));
                             }}
-                            onRemove={() => {
+                            onClear={() => {
                                 setValues((current) => ({
                                     ...current,
                                     unitLookup: [],
@@ -187,7 +187,7 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
                     <div className="w-[180px] sm:w-[200px] shrink-0">
                         <BackendLookupField
                             resource="warehouses"
-                            values={values.warehouse}
+                            value={Array.isArray(values.warehouse) ? (values.warehouse[0] || '') : (values.warehouse || '')}
                             placeholder="Pilih Gudang..."
                             searchLabel="Cari gudang"
                             getOptionLabel={(option) => (typeof option === 'string' ? option : (option?.name ?? option?.label ?? ''))}
@@ -198,7 +198,7 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
                                     __warehouseId: option.id,
                                 }));
                             }}
-                            onRemove={() => {
+                            onClear={() => {
                                 setValues((current) => ({
                                     ...current,
                                     warehouse: [],
