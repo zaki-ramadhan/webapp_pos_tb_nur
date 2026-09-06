@@ -8,10 +8,12 @@ import {
 import { bankInquiryPageConfigs } from './bankInquiryConfig';
 import { useCallback, useMemo, useState } from 'react';
 import BankReconciliationWorkspace from './BankReconciliationWorkspace';
+import { loadInquiryFilter } from '@/features/workspace/shared/inquiryFilterPersistence';
 
 export default function BankInquiryView({ page }) {
     const config = bankInquiryPageConfigs[page.id] ?? bankInquiryPageConfigs['bank-statement'];
-    const [filters, setFilters] = useState(() => buildBankFilters({}));
+    const initialSavedValues = useMemo(() => loadInquiryFilter(page.id), [page.id]);
+    const [filters, setFilters] = useState(() => buildBankFilters(initialSavedValues || {}));
     const resource = BACKEND_BANK_RESOURCES[page.id] ?? BACKEND_BANK_RESOURCES['bank-statement'];
     const {
         rows,

@@ -9,6 +9,7 @@ export const BACKEND_BANK_RESOURCES = {
 export function buildBankFilters(values) {
     return {
         search: values.keyword?.trim() ?? '',
+        account_id: values.account_id ?? null,
         start_date: normalizeDisplayDate(values.startDate),
         end_date: normalizeDisplayDate(values.endDate),
         per_page: 100,

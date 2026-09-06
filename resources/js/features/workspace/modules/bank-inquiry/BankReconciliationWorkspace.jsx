@@ -6,6 +6,7 @@ import { showSuccessToast, showErrorToast, showLoadingToast, showWarningToast, d
 import axios from 'axios';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import Pagination from '@/components/ui/Pagination';
+import { saveInquiryFilter } from '@/features/workspace/shared/inquiryFilterPersistence';
 
 import JurnalCard from './components/JurnalCard';
 import BankReconcileActionCard from './components/BankReconcileActionCard';
@@ -185,12 +186,24 @@ export default function BankReconciliationWorkspace({
                                 setKeyword(label);
                                 setSelectedAccount(record);
                                 onFiltersChange?.((prev) => ({ ...prev, search: label, account_id: record?.id }));
+                                saveInquiryFilter('bank-reconciliation', {
+                                    keyword: label,
+                                    account_id: record?.id ?? null,
+                                    startDate,
+                                    endDate,
+                                });
                             }}
                             onClear={() => {
                                 setBankError('');
                                 setKeyword('');
                                 setSelectedAccount(null);
                                 onFiltersChange?.((prev) => ({ ...prev, search: '', account_id: null }));
+                                saveInquiryFilter('bank-reconciliation', {
+                                    keyword: '',
+                                    account_id: null,
+                                    startDate,
+                                    endDate,
+                                });
                             }}
                         />
                     </div>
@@ -202,6 +215,12 @@ export default function BankReconciliationWorkspace({
                                 onChange={(val) => {
                                     setStartDate(val);
                                     onFiltersChange?.((prev) => ({ ...prev, start_date: val }));
+                                    saveInquiryFilter('bank-reconciliation', {
+                                        keyword,
+                                        account_id: filters.account_id ?? null,
+                                        startDate: val,
+                                        endDate,
+                                    });
                                 }}
                                 className="h-[40px] rounded-[4px] border-ui-border w-full"
                                 inputClassName="text-sm text-slate-900 py-1 h-full"
@@ -215,6 +234,12 @@ export default function BankReconciliationWorkspace({
                                 onChange={(val) => {
                                     setEndDate(val);
                                     onFiltersChange?.((prev) => ({ ...prev, end_date: val }));
+                                    saveInquiryFilter('bank-reconciliation', {
+                                        keyword,
+                                        account_id: filters.account_id ?? null,
+                                        startDate,
+                                        endDate: val,
+                                    });
                                 }}
                                 minDate={startDate}
                                 className="h-[40px] rounded-[4px] border-ui-border w-full"

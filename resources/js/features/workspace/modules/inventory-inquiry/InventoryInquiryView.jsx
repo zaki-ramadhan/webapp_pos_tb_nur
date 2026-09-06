@@ -41,6 +41,7 @@ import {
 } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
 import { buildInitialValues, InquiryControl } from './InventoryInquiryControls';
+import { loadInquiryFilter, saveInquiryFilter } from '@/features/workspace/shared/inquiryFilterPersistence';
 
 function resolveCellAlignClassName(align) {
     if (align === 'right') return 'text-right';
@@ -55,12 +56,23 @@ function isInactiveRow(row) {
 
 export default function InventoryInquiryView({ config, pageId }) {
     const resource = BACKEND_INVENTORY_RESOURCES[pageId];
-    const [values, setValues] = useState(() => buildInitialValues(config));
+    const isItemLocation = pageId === 'item-location';
+    const initialValues = useMemo(() => {
+        const base = buildInitialValues(config);
+        if (isItemLocation) {
+            const saved = loadInquiryFilter(pageId);
+            if (saved) {
+                return { ...base, ...saved };
+            }
+        }
+        return base;
+    }, [config, isItemLocation, pageId]);
+
+    const [values, setValues] = useState(initialValues);
     const [keyword, setKeyword] = useState(config.search?.value ?? '');
-    const [filters, setFilters] = useState(() => buildInventoryFilters(pageId, {}));
+    const [filters, setFilters] = useState(() => buildInventoryFilters(pageId, initialValues));
     const [selectedIds, setSelectedIds] = useState(() => new Set());
 
-    const isItemLocation = pageId === 'item-location';
     const isWarehouseMode = values.itemType === 'warehouse';
     const hasTarget = isWarehouseMode
         ? Boolean(values.warehouseSearchId || (values.warehouseSearch && values.warehouseSearch.trim()))
@@ -257,6 +269,9 @@ export default function InventoryInquiryView({ config, pageId }) {
         }
         setValues(nextValues);
         setFilters(buildInventoryFilters(pageId, nextValues));
+        if (isItemLocation) {
+            saveInquiryFilter(pageId, nextValues);
+        }
     }
 
 
@@ -385,6 +400,9 @@ export default function InventoryInquiryView({ config, pageId }) {
         };
         setValues(nextValues);
         setFilters(buildInventoryFilters(pageId, nextValues));
+        if (isItemLocation) {
+            saveInquiryFilter(pageId, nextValues);
+        }
     }
 
     function handleLookupClear(controlId) {
@@ -395,6 +413,9 @@ export default function InventoryInquiryView({ config, pageId }) {
         };
         setValues(nextValues);
         setFilters(buildInventoryFilters(pageId, nextValues));
+        if (isItemLocation) {
+            saveInquiryFilter(pageId, nextValues);
+        }
     }
 
     const emptyMessage = useMemo(() => {
