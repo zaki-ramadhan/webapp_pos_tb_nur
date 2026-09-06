@@ -33,16 +33,16 @@ function ProductItem({ item }) {
     return (
         <div
             onClick={() => handleOpenProduct(item)}
-            className="group relative overflow-hidden rounded-[4px] border border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-xs cursor-pointer px-2.5 py-1.5"
+            className="group relative overflow-hidden rounded-[4px] border border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-xs cursor-pointer px-2 py-1"
         >
             <div
                 className="absolute inset-y-0 left-0 bg-blue-50/55 pointer-events-none transition-all duration-300"
                 style={{ width: `${Math.max(shareNum, 3)}%` }}
             />
 
-            <div className="relative z-10 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <div className="relative h-8 w-8 shrink-0 rounded-[4px] border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+            <div className="relative z-10 flex items-center justify-between gap-2.5">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="relative h-9.5 w-9.5 sm:h-10 sm:w-10 shrink-0 rounded-[4px] border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
                         {imageUrl && !imgError ? (
                             <img
                                 src={imageUrl}
@@ -51,25 +51,25 @@ function ProductItem({ item }) {
                                 onError={() => setImgError(true)}
                             />
                         ) : (
-                            <ImageIcon className="h-4 w-4 text-slate-400" />
+                            <ImageIcon className="h-4.5 w-4.5 text-slate-400" />
                         )}
                     </div>
 
-                    <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs sm:text-sm font-medium text-slate-800 group-hover:text-[#16499A] transition-colors" title={item.name}>
+                    <div className="min-w-0 flex-1 flex flex-col justify-center">
+                        <p className="truncate text-xs sm:text-sm font-medium text-slate-800 group-hover:text-[#16499A] transition-colors leading-snug" title={item.name}>
                             {item.name}
                         </p>
-                        <p className="text-xs sm:text-sm text-black font-normal truncate">
+                        <p className="text-[11px] sm:text-[12.5px] text-black font-normal truncate leading-tight mt-0.5">
                             {item.units}
                         </p>
                     </div>
                 </div>
 
-                <div className="shrink-0 text-right flex flex-col items-end">
-                    <span className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#16499A]">
+                <div className="shrink-0 text-right flex flex-col items-end justify-center">
+                    <span className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#16499A] leading-snug">
                         {item.revenue}
                     </span>
-                    <span className="text-xs sm:text-sm text-black font-normal">
+                    <span className="text-[11px] sm:text-[12.5px] text-black font-normal leading-tight mt-0.5">
                         {item.share}
                     </span>
                 </div>
@@ -91,7 +91,7 @@ export function TopProductsWidget({ widget }) {
 
     return (
         <div className="flex h-full flex-col min-h-0">
-            <div className="flex-1 overflow-y-auto pr-0.5 space-y-2 [scrollbar-width:thin]">
+            <div className="flex-1 overflow-y-auto pr-0.5 space-y-1.5 [scrollbar-width:thin]">
                 {items.map((item) => (
                     <ProductItem key={item.id ?? item.name} item={item} />
                 ))}
