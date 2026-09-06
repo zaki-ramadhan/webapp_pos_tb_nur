@@ -173,10 +173,10 @@ function MetricLegendItem({ item }) {
     }
 
     return (
-        <div className="flex items-center justify-between text-xs sm:text-sm">
-            <div className="flex min-w-0 items-center gap-1.5 pr-2">
+        <div className="flex items-center justify-between gap-1.5 text-xs sm:text-sm">
+            <div className="flex min-w-0 items-center gap-1.5 pr-1">
                 <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
-                <span className="truncate text-black">{label}</span>
+                <span className="truncate text-black font-medium text-xs sm:text-sm" title={label}>{label}</span>
             </div>
             <div className="flex shrink-0 items-center gap-1.5 font-semibold">
                 <span className={textClass}>{value}</span>
@@ -280,7 +280,7 @@ export function RingBreakdownMetric({ widget }) {
             )}
 
             {/* Middle Section: Chart and Legend aligned center */}
-            <div className="grid gap-4 lg:grid-cols-[164px_minmax(0,1fr)] lg:items-center lg:gap-4 min-h-0 flex-1">
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-[148px_minmax(0,1fr)] sm:items-center min-h-0 flex-1">
                 {/* Left: Chart */}
                 <div className="flex flex-col items-center justify-center">
                     <BreakdownDoughnutChart items={legend} percentage={percentage} centerLabel={isLoss ? 'Margin Rugi' : 'Margin Laba'} />
@@ -345,7 +345,7 @@ export function ExpenseBreakdownMetric({ widget }) {
             )}
 
             {/* Middle Section: Chart and Legend aligned center */}
-            <div className="grid gap-4 lg:grid-cols-[164px_minmax(0,1fr)] lg:items-center lg:gap-4 min-h-0 flex-1">
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-[148px_minmax(0,1fr)] sm:items-center min-h-0 flex-1">
                 {/* Left: Chart */}
                 <div className="flex flex-col items-center justify-center">
                     <BreakdownDoughnutChart items={legend} percentage={percentage} centerLabel={widget.centerLabel || 'Beban Terbesar'} />

@@ -102,7 +102,7 @@ class DashboardBlueprintProvider
                     'growth' => $profitGrowth,
                     'legend' => [
                         [
-                            'label' => 'Total Pendapatan Penjualan',
+                            'label' => 'Pendapatan',
                             'value' => 'Rp ' . number_format($totalSalesVal, 0, ',', '.'),
                             'percent' => $pctRev . '%',
                             'color' => '#4ade80',
@@ -111,7 +111,7 @@ class DashboardBlueprintProvider
                             'tone' => $salesTone,
                         ],
                         [
-                            'label' => 'Total HPP',
+                            'label' => 'HPP',
                             'value' => 'Rp ' . number_format($totalHppVal, 0, ',', '.'),
                             'percent' => $pctHpp . '%',
                             'color' => '#fb923c',
@@ -120,7 +120,7 @@ class DashboardBlueprintProvider
                             'tone' => $hppTone,
                         ],
                         [
-                            'label' => 'Total Pengeluaran Beban',
+                            'label' => 'Beban Operasional',
                             'value' => 'Rp ' . number_format($totalExpensesVal, 0, ',', '.'),
                             'percent' => $pctExp . '%',
                             'color' => '#f87171',
@@ -176,7 +176,7 @@ class DashboardBlueprintProvider
                             'tone' => $gajiTone,
                         ],
                         [
-                            'label' => 'Beban Operasional',
+                            'label' => 'Operasional',
                             'value' => 'Rp ' . number_format($totalOperasional, 0, ',', '.'),
                             'percent' => $pctOpr . '%',
                             'color' => '#fb7185',
