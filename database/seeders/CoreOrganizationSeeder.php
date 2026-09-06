@@ -31,6 +31,7 @@ class CoreOrganizationSeeder extends Seeder
                 'email' => 'cabang.kedua@tbnur.com',
                 'street' => 'Jl. Raya Tuparev No. 102',
                 'city' => 'Cirebon',
+                'postal_code' => '45151',
                 'province' => 'Jawa Barat',
                 'country' => 'Indonesia',
                 'is_active' => true,
