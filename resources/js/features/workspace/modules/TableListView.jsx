@@ -267,10 +267,8 @@ export default function TableListView({
                                                 ) : (
                                                     <span className="text-slate-400 font-medium select-none">-</span>
                                                 )
-                                            ) : column.truncate ? (
-                                                <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
                                             ) : (
-                                                formatTableTextValue(row[column.id], column)
+                                                <span className="block truncate w-full min-w-0">{formatTableTextValue(row[column.id], column)}</span>
                                             )}
                                         </DataTableCell>
                                     ))}

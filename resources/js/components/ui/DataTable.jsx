@@ -83,6 +83,9 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
     const safeMinWidth = calculateMinWidth(textContent);
 
     const style = { ...propStyle };
+    if (style.minWidth && typeof style.minWidth === 'string') {
+        style.minWidth = style.minWidth.replace(/(?:px)+$/i, 'px');
+    }
     if (preferredWidth && !style.width) {
         style.width = preferredWidth;
     }
@@ -99,7 +102,7 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
             style={{ ...style, position: 'relative' }}
             {...props}
         >
-            <div className={`w-full truncate min-w-0 ${isCenter ? 'flex items-center justify-center text-center' : 'block'}`}>{children}</div>
+            <div className={`w-full truncate min-w-0 block ${isCenter ? 'text-center' : ''} [&>button]:max-w-full [&>button]:min-w-0 [&>button]:truncate`}>{children}</div>
             {onResizeStart && (
                 <div
                     className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/40 active:bg-brand-blue/70 transition-colors z-20 touch-none"
@@ -130,13 +133,18 @@ export function DataTableCell({ className = '', children, onResizeStart = null, 
     const hasCustomPx = /\b(!?px-\d+|!?px-\[[^\]]+\])\b/.test(resolvedClassName);
     const pxClass = hasCustomPx ? '' : 'px-3 sm:px-4';
 
+    const style = { ...propStyle };
+    if (style.minWidth && typeof style.minWidth === 'string') {
+        style.minWidth = style.minWidth.replace(/(?:px)+$/i, 'px');
+    }
+
     return (
         <td
             className={`border-r border-table-cell-border ${pxClass} py-2 text-sm ${fontWeightClass} leading-5 last:border-r-0 whitespace-nowrap truncate relative ${onResizeStart ? 'select-none' : ''} ${resolvedClassName}`.trim()}
-            style={{ ...propStyle, position: onResizeStart ? 'relative' : propStyle?.position }}
+            style={{ ...style, position: onResizeStart ? 'relative' : style?.position }}
             {...props}
         >
-            <div className={`w-full truncate min-w-0 ${isCenter ? 'flex items-center justify-center text-center' : 'block'}`}>{children}</div>
+            <div className={`w-full truncate min-w-0 block ${isCenter ? 'text-center' : ''} [&>button]:w-full [&>button]:max-w-full [&>button]:truncate [&>button]:block [&>a]:w-full [&>a]:max-w-full [&>a]:truncate [&>a]:block`}>{children}</div>
             {onResizeStart && (
                 <div
                     className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/20 active:bg-brand-blue/40 transition-colors z-10 touch-none"

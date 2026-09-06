@@ -96,7 +96,7 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                                             style={getCellStyle(column.id)}
                                             onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
-                                            {formatTableTextValue(row[column.id])}
+                                            <span className="block truncate w-full min-w-0">{formatTableTextValue(row[column.id])}</span>
                                         </DataTableCell>
                                     ))}
                                 </DataTableRow>

@@ -581,12 +581,14 @@ export default function InventoryInquiryView({ config, pageId }) {
                                                             );
                                                         }
                                                     }}
-                                                    className="font-normal text-blue-700 hover:text-blue-900 hover:underline cursor-pointer transition-colors text-left focus:outline-none"
+                                                    className="font-normal text-blue-700 hover:text-blue-900 hover:underline cursor-pointer transition-colors text-left focus:outline-none block w-full max-w-full truncate"
                                                 >
                                                     {formatTableTextValue(row[column.id])}
                                                 </button>
                                             ) : (
-                                                formatTableTextValue(row[column.id])
+                                                <span className="block truncate w-full min-w-0">
+                                                    {formatTableTextValue(row[column.id])}
+                                                </span>
                                             )}
                                         </DataTableCell>
                                     ))}

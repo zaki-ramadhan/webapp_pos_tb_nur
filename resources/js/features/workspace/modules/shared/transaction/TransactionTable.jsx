@@ -114,11 +114,11 @@ export function TransactionDataTable({
                                             <button
                                                 type="button"
                                                 onClick={() => onSort(column.id)}
-                                                className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${
+                                                className={`inline-flex w-full max-w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${
                                                     column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start'
                                                 }`}
                                             >
-                                                <span className="block whitespace-nowrap truncate min-w-0 flex-1 text-left">{column.label}</span>
+                                                <span className={`block whitespace-nowrap truncate min-w-0 flex-1 ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`}>{column.label}</span>
                                                 {sortKey === column.id ? (
                                                     sortDir === 'asc' ? (
                                                         <ChevronUp className="h-3.5 w-3.5 shrink-0 text-white" />
@@ -130,7 +130,7 @@ export function TransactionDataTable({
                                                 )}
                                             </button>
                                         ) : (
-                                            <span className="block truncate text-left">
+                                            <span className={`block truncate w-full min-w-0 ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`}>
                                                 {column.label}
                                             </span>
                                         )}
@@ -187,7 +187,7 @@ export function TransactionDataTable({
                                                         </span>
                                                     </div>
                                                 ) : (
-                                                    formatTableTextValue(row[column.id], column)
+                                                    <span className="block truncate w-full min-w-0">{formatTableTextValue(row[column.id], column)}</span>
                                                 )}
                                             </DataTableCell>
                                         );
