@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Image as ImageIcon } from 'lucide-react';
 import DashboardWidgetEmptyState from '@/features/workspace/dashboard/widgets/DashboardWidgetEmptyState';
 
 function parseShareNumber(shareStr) {
@@ -24,11 +25,10 @@ function handleOpenProduct(item) {
     }
 }
 
-const DEFAULT_PRODUCT_IMAGE = '/assets/images/default-product.svg';
-
 function ProductItem({ item }) {
-    const [imgSrc, setImgSrc] = useState(item.imageUrl || item.image || DEFAULT_PRODUCT_IMAGE);
+    const [imgError, setImgError] = useState(false);
     const shareNum = parseShareNumber(item.share);
+    const imageUrl = item.imageUrl || item.image || null;
 
     return (
         <div
@@ -43,16 +43,16 @@ function ProductItem({ item }) {
             <div className="relative z-10 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <div className="relative h-8 w-8 shrink-0 rounded-[4px] border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
-                        <img
-                            src={imgSrc}
-                            alt={item.name}
-                            className="h-full w-full object-cover"
-                            onError={() => {
-                                if (imgSrc !== DEFAULT_PRODUCT_IMAGE) {
-                                    setImgSrc(DEFAULT_PRODUCT_IMAGE);
-                                }
-                            }}
-                        />
+                        {imageUrl && !imgError ? (
+                            <img
+                                src={imageUrl}
+                                alt={item.name}
+                                className="h-full w-full object-cover"
+                                onError={() => setImgError(true)}
+                            />
+                        ) : (
+                            <ImageIcon className="h-4 w-4 text-slate-400" />
+                        )}
                     </div>
 
                     <div className="min-w-0 flex-1">
