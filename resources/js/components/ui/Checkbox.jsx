@@ -68,9 +68,11 @@ export function Checkbox({
             <span
                 className={`flex shrink-0 items-center justify-center rounded-[4px] border-[1.5px] transition-all duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[#15529A]/30 ${sizeClass} ${
                     isCheckedOrIndeterminate
-                        ? 'border-[#15529A] bg-[#15529A] text-white shadow-xs'
-                        : 'border-slate-400 bg-white group-hover:border-slate-600 peer-focus-visible:ring-2 peer-focus-visible:ring-[#15529A]/40'
-                } ${ariaInvalid ? 'border-red-500 bg-red-500/10' : ''} ${inputClassName}`.trim()}
+                        ? `border-[#15529A] bg-[#15529A] text-white shadow-xs ${ariaInvalid ? 'ring-2 ring-red-500/50' : ''}`
+                        : ariaInvalid
+                            ? 'border-red-500 bg-red-500/5 group-hover:border-red-600 peer-focus-visible:ring-2 peer-focus-visible:ring-red-500/40'
+                            : 'border-slate-400 bg-white group-hover:border-slate-600 peer-focus-visible:ring-2 peer-focus-visible:ring-[#15529A]/40'
+                } ${inputClassName}`.trim()}
             >
                 {indeterminate ? (
                     <svg

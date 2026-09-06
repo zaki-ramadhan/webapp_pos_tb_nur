@@ -92,7 +92,7 @@ export default function TextareaField({
         <div className={`w-full ${containerClassName}`.trim()}>
             <span
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex w-full items-stretch overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : resolvedError ? 'bg-red-500/10' : 'bg-white'} ${isNonInteractive ? 'cursor-default' : 'cursor-text'} ${className}`.trim()}
+                className={`group flex w-full items-stretch overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : resolvedError ? 'bg-red-500/5' : 'bg-white'} ${isNonInteractive ? 'cursor-default' : 'cursor-text'} ${className}`.trim()}
             >
                 {prefix ? (
                     <span

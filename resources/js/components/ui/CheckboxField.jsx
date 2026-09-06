@@ -44,14 +44,14 @@ export default function CheckboxField({
 
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
-            <div className={`flex items-center ${alignClassName} ${hasContent ? 'gap-2.5 sm:gap-3' : ''} text-xs sm:text-sm leading-6 whitespace-nowrap`.trim()}>
+            <div className={`flex ${feedbackMessage ? 'items-start' : alignClassName} ${hasContent ? 'gap-2.5 sm:gap-3' : ''} text-xs sm:text-sm leading-6 whitespace-nowrap`.trim()}>
                 <Checkbox
                     id={elementId}
                     checked={checked}
                     disabled={disabled}
                     size={size}
                     aria-invalid={Boolean(resolvedError)}
-                    inputClassName={inputClassName}
+                    inputClassName={`${feedbackMessage ? 'mt-0.5' : ''} ${inputClassName}`.trim()}
                     onChange={handleChange}
                     {...props}
                 />

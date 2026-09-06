@@ -168,7 +168,7 @@ export default function ReferenceLookupInput({
             <div
                 onMouseDown={focusInput}
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : resolvedError ? 'bg-red-500/10 cursor-text' : 'bg-white cursor-text'}`.trim()}
+                className={`group flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : resolvedError ? 'bg-red-500/5 cursor-text' : 'bg-white cursor-text'}`.trim()}
             >
                 {multiValueMode ? (
                     <div className={`flex min-w-0 flex-1 flex-col gap-1.5 p-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
