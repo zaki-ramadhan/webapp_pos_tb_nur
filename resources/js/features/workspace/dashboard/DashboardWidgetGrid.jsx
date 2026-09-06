@@ -240,7 +240,7 @@ export default function DashboardWidgetGrid({
     const activeWidgets = displayWidgets.length > 0 ? displayWidgets : widgets;
 
     return (
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:gap-2.5 2xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:gap-2.5 3xl:grid-cols-3">
             {activeWidgets.map((widget, i) => renderWidgetCard(widget, i))}
         </div>
     );
