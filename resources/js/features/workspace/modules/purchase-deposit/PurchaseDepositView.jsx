@@ -58,7 +58,8 @@ export default function PurchaseDepositView({
     }, [loading, error, reload, page?.purchaseDeposit, rows, total, serverTableProps]);
 
     const buildRecord = useCallback((row) => {
-        return buildPurchaseDepositRecord(row, config);
+        const target = row?.__backendRecord ?? row;
+        return buildPurchaseDepositRecord(target, config);
     }, [config]);
 
     return (

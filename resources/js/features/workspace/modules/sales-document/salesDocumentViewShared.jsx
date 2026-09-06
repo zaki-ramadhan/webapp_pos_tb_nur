@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import SelectField from '@/components/ui/SelectField';
+import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { TransactionHeaderButton, TransactionSwitch, TransactionToolbarSplitButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     CircleCheckIcon,

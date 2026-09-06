@@ -1,329 +1,262 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { toast } from 'sonner';
-
-import Button from '@/components/ui/Button';
-import TextInput from '@/components/ui/TextInput';
-import TextareaField from '@/components/ui/TextareaField';
-import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
-import { createBackendResource, updateBackendResource, deleteBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import {
+    createBackendResource,
+    deleteBackendResource,
+    updateBackendResource,
+} from '@/features/workspace/backend/workspaceBackendApi';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
+import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
+import {
+    PurchaseDepositFooter,
+    PurchaseDepositHeader,
+    PurchaseDepositInfoSection,
+    PurchaseDepositInvoiceInfoSection,
+    PurchaseDepositSummarySection,
+} from './PurchaseDepositSections';
+import { DepositStamp } from '@/features/workspace/modules/shared/DepositWorkspaceShared';
 import {
     buildGeneratedPurchaseDepositNumber,
+    buildPurchaseDepositFormState,
     buildPurchaseDepositPayload,
     parseNumericInput,
     validatePurchaseDepositValues,
 } from './purchaseDepositShared';
+import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { handleFormSaveSuccess, clearValidationErrors } from '@/features/workspace/shared/crudFormActions';
+import { getComparableTransactionFields, calculateDepositTaxes } from './purchaseDepositFormUtils';
 
 export default function PurchaseDepositFormView({
     pageId,
     config,
     buildRecord,
     activeLevel2Tab,
+    onOpenContent,
+    onOpenDetail,
     onCloseDetail,
     onRefresh,
 }) {
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
+        resourceName: 'purchase-deposits',
+        activeRecordId,
+        buildRecord,
+        config,
+    });
+
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
+        sourceRecord,
+        buildFormState: buildPurchaseDepositFormState,
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+        onSync: useCallback((nextValues) => setCommittedDepositAmount(nextValues.depositAmount), []),
+        isEqual: useCallback(
+            (a, b) =>
+                areComparableValuesEqual(
+                    getComparableTransactionFields(a),
+                    getComparableTransactionFields(b),
+                ),
+            [],
+        ),
+    });
+
+    const [committedDepositAmount, setCommittedDepositAmount] = useState(() => values.depositAmount);
     const isDetail = Boolean(activeRecordId);
 
-    const [values, setValues] = useState(() => {
-        const base = config.draft || {};
-        return {
-            ...base,
-            documentNumber: base.documentNumber || buildGeneratedPurchaseDepositNumber(),
-        };
-    });
-    const [isSaving, setIsSaving] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [activeTab, setActiveTab] = useState('deposit');
+    const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'deposit');
 
-    const buildRecordRef = useRef(buildRecord);
-    buildRecordRef.current = buildRecord;
-    const loadedRecordIdRef = useRef(null);
-    const hasUserEditedRef = useRef(false);
+    const sectionTabs = useMemo(() => {
+        const tabs = [...(config.sectionTabs || [])];
+        if (isDetail) {
+            tabs.push({ id: 'invoice-info', label: 'Informasi Faktur', icon: 'payment' });
+        }
+        return tabs;
+    }, [config.sectionTabs, isDetail]);
 
     useEffect(() => {
-        if (!activeRecordId) return;
-        if (loadedRecordIdRef.current === activeRecordId) return;
-
-        let isMounted = true;
-        (async () => {
-            try {
-                const response = await fetch(`/backend/purchase-deposits/${activeRecordId}`, {
-                    headers: { credentials: 'same-origin', Accept: 'application/json' },
-                });
-                if (response.ok) {
-                    const result = await response.json();
-                    if (isMounted && result?.data) {
-                        const rec = buildRecordRef.current ? buildRecordRef.current(result.data) : result.data;
-                        loadedRecordIdRef.current = activeRecordId;
-                        if (!hasUserEditedRef.current) {
-                            setValues(rec);
-                        }
-                    }
-                } else if (isMounted) {
-                    toast.error('Gagal memuat detail uang muka pembelian.');
-                }
-            } catch {
-                if (isMounted) {
-                    toast.error('Koneksi terputus saat mengambil detail uang muka.');
-                }
-            }
-        })();
-
-        return () => {
-            isMounted = false;
-        };
+        setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'deposit');
     }, [activeRecordId]);
 
-    const handleChange = useCallback((key, value) => {
-        hasUserEditedRef.current = true;
-        setValues((prev) => ({ ...prev, [key]: value }));
-    }, []);
+    useEffect(() => {
+        const baseAmount = parseNumericInput(committedDepositAmount);
+        const totals = calculateDepositTaxes(baseAmount, values.taxEnabled, values.__taxId, values.taxRate, values.taxIncluded);
 
-    const handleAmountChange = (e) => {
-        const raw = e.target.value.replace(/\D/g, '');
-        const formatted = raw ? Number(raw).toLocaleString('id-ID') : '0';
-        handleChange('depositAmount', formatted);
-    };
-
-    const validationError = useMemo(() => validatePurchaseDepositValues(values, config), [values, config]);
-
-    const handleSave = async () => {
-        if (validationError) {
-            toast.error(validationError);
-            return;
-        }
-
-        setIsSaving(true);
-        try {
-            const payload = buildPurchaseDepositPayload(values);
-            let res;
-            if (isDetail && values.__backendRecordId) {
-                res = await updateBackendResource('purchase-deposits', values.__backendRecordId, payload);
-                toast.success('Uang Muka Pembelian berhasil diperbarui.');
-            } else {
-                res = await createBackendResource('purchase-deposits', payload);
-                toast.success('Uang Muka Pembelian berhasil disimpan.');
+        setValues((current) => {
+            if (
+                current.subtotal === totals.subtotal &&
+                current.taxTotalFormatted === totals.taxTotalFormatted &&
+                current.total === totals.total
+            ) {
+                return current;
             }
+            return {
+                ...current,
+                subtotal: totals.subtotal,
+                taxTotalFormatted: totals.taxTotalFormatted,
+                total: totals.total,
+            };
+        });
+    }, [committedDepositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId]);
 
-            if (onRefresh) onRefresh();
-            if (onCloseDetail) onCloseDetail();
-        } catch (err) {
-            toast.error(err?.message || 'Gagal menyimpan Uang Muka Pembelian.');
-        } finally {
-            setIsSaving(false);
-        }
-    };
+    useEffect(() => {
+        clearValidationErrors();
+        return () => clearValidationErrors();
+    }, [pageId, isDetail]);
 
-    const handleDelete = async () => {
+    const validationMessage = useMemo(() => validatePurchaseDepositValues(values, config), [config, values]);
+
+    const {
+        status,
+        setStatus,
+        saving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        handleSave,
+        requestDelete,
+        handleDelete,
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, isDirty });
+
+    const dockActions = useMemo(
+        () =>
+            buildWorkspaceDockActions({
+                dockActions: values.dockActions,
+                isDetail,
+                saveDisabled,
+                saving,
+                onSave,
+                onDelete: onRequestDelete,
+            }),
+        [values.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]
+    );
+
+    async function onSave() {
+        await handleSave({
+            loadingMessage: isDetail ? 'Sedang memperbarui uang muka pembelian.' : 'Sedang menyimpan uang muka pembelian.',
+            successMessage: isDetail ? 'Uang muka pembelian berhasil diperbarui.' : 'Uang muka pembelian berhasil dibuat.',
+            execute: async () => {
+                const resolvedDocumentNumber =
+                    values.autoNumber || !String(values.documentNumber ?? '').trim()
+                        ? buildGeneratedPurchaseDepositNumber()
+                        : values.documentNumber;
+                const payload = buildPurchaseDepositPayload({
+                    ...values,
+                    documentNumber: resolvedDocumentNumber,
+                });
+                const response = values.__backendRecordId
+                    ? await updateBackendResource('purchase-deposits', values.__backendRecordId, payload)
+                    : await createBackendResource('purchase-deposits', payload);
+
+                return {
+                    record: response?.data ?? null,
+                    resolvedDocumentNumber,
+                };
+            },
+            onSuccess: (params) =>
+                handleFormSaveSuccess({
+                    ...params,
+                    pageId,
+                    resourceKey: 'purchase-deposits',
+                    onRefresh,
+                    buildRecord,
+                    config,
+                    setLocalRecord,
+                    resetForm,
+                    activeLevel2Tab,
+                    isDetail: Boolean(values.__backendRecordId),
+                    onOpenDetail,
+                }),
+        });
+    }
+
+    function onRequestDelete() {
         if (!values.__backendRecordId) return;
-        if (!confirm('Apakah Anda yakin ingin menghapus data uang muka pembelian ini?')) return;
+        requestDelete();
+    }
 
-        setIsDeleting(true);
-        try {
-            await deleteBackendResource('purchase-deposits', values.__backendRecordId);
-            toast.success('Data uang muka pembelian berhasil dihapus.');
-            if (onRefresh) onRefresh();
-            if (onCloseDetail) onCloseDetail();
-        } catch (err) {
-            toast.error(err?.message || 'Gagal menghapus data.');
-        } finally {
-            setIsDeleting(false);
-        }
-    };
+    async function onDelete() {
+        if (!values.__backendRecordId) return;
+
+        await handleDelete({
+            loadingMessage: 'Sedang menghapus uang muka pembelian.',
+            successMessage: 'Uang muka pembelian berhasil dihapus.',
+            execute: () => deleteBackendResource('purchase-deposits', values.__backendRecordId),
+            onSuccess: async () => {
+                await onRefresh?.();
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
+                onOpenContent?.();
+            },
+        });
+    }
 
     return (
-        <div className="flex h-full flex-col bg-tab-active-bg">
-            {/* Top Toolbar */}
-            <div className="flex items-center justify-between border-b border-ui-border bg-white px-4 py-2.5 shadow-xs">
-                <div className="flex items-center gap-3">
-                    <h2 className="text-sm sm:text-base font-bold text-slate-800">
-                        {isDetail ? `Uang Muka Pembelian #${values.documentNumber}` : 'Tambah Uang Muka Pembelian'}
-                    </h2>
-                    <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
-                        {values.status || 'Draft'}
-                    </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                    {isDetail && (
-                        <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={handleDelete}
-                            disabled={isDeleting || isSaving}
-                        >
-                            {isDeleting ? 'Menghapus...' : 'Hapus'}
-                        </Button>
+        <>
+            <TransactionFormLayout
+                header={
+                    <PurchaseDepositHeader
+                        config={config}
+                        values={values}
+                        setValues={setValues}
+                        isDetail={isDetail}
+                    />
+                }
+                railTabs={sectionTabs}
+                activeRailTabId={activeSectionId}
+                onSelectRailTab={setActiveSectionId}
+                dockActions={dockActions}
+                summaryCard={<PurchaseDepositFooter values={values} />}
+                stamp={
+                    values.statusStamp ? (
+                        <DepositStamp
+                            text={values.statusStamp}
+                            tone={values.statusTone || 'gray'}
+                        />
+                    ) : null
+                }
+            >
+                <div className="flex-1">
+                    {activeSectionId === 'deposit' && (
+                        <PurchaseDepositSummarySection
+                            config={config}
+                            values={values}
+                            setValues={setValues}
+                            onDepositAmountBlur={(val) => setCommittedDepositAmount(val)}
+                        />
                     )}
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={onCloseDetail}
-                        disabled={isSaving}
-                    >
-                        Tutup
-                    </Button>
-                    <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={handleSave}
-                        disabled={isSaving || Boolean(validationError)}
-                    >
-                        {isSaving ? 'Menyimpan...' : 'Simpan'}
-                    </Button>
-                </div>
-            </div>
 
-            {/* Navigation Tabs */}
-            <div className="flex border-b border-ui-border bg-white px-4">
-                <button
-                    type="button"
-                    onClick={() => setActiveTab('deposit')}
-                    className={`border-b-2 px-4 py-2 text-xs sm:text-sm font-semibold transition cursor-pointer ${
-                        activeTab === 'deposit'
-                            ? 'border-brand-blue text-brand-blue'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                    }`}
-                >
-                    Uang Muka
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setActiveTab('info')}
-                    className={`border-b-2 px-4 py-2 text-xs sm:text-sm font-semibold transition cursor-pointer ${
-                        activeTab === 'info'
-                            ? 'border-brand-blue text-brand-blue'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                    }`}
-                >
-                    Info Lainnya
-                </button>
-            </div>
+                    {activeSectionId === 'additional-info' && (
+                        <PurchaseDepositInfoSection
+                            config={config}
+                            values={values}
+                            setValues={setValues}
+                            isDetail={isDetail}
+                        />
+                    )}
 
-            {/* Form Content */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-                <div className="mx-auto max-w-4xl space-y-6">
-                    {activeTab === 'deposit' ? (
-                        <div className="rounded-xl border border-ui-border bg-white p-5 shadow-xs space-y-5">
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
-                                    <label className="mb-1 block text-xs font-semibold text-slate-700">
-                                        Pemasok <span className="text-red-500">*</span>
-                                    </label>
-                                    <BackendLookupField
-                                        resource="suppliers"
-                                        values={values.supplier}
-                                        placeholder="Cari / Pilih Pemasok..."
-                                        searchLabel="Cari pemasok"
-                                        onSelect={(opt) => {
-                                            handleChange('supplier', [opt]);
-                                            handleChange('supplier_id', opt.id);
-                                            if (opt.billing_address && !values.address) {
-                                                handleChange('address', opt.billing_address);
-                                            }
-                                        }}
-                                        onRemove={() => {
-                                            handleChange('supplier', []);
-                                            handleChange('supplier_id', null);
-                                        }}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="mb-1 block text-xs font-semibold text-slate-700">
-                                        Tanggal <span className="text-red-500">*</span>
-                                    </label>
-                                    <TextInput
-                                        type="date"
-                                        value={values.entryDate}
-                                        onChange={(e) => handleChange('entryDate', e.target.value)}
-                                        className="h-[38px] w-full rounded border-ui-border"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
-                                    <div className="mb-1 flex items-center justify-between">
-                                        <label className="text-xs font-semibold text-slate-700">
-                                            Nomor Bukti (UMP)
-                                        </label>
-                                        <label className="flex items-center gap-1 text-[11px] text-slate-500 cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                checked={values.autoNumber}
-                                                onChange={(e) => {
-                                                    const checked = e.target.checked;
-                                                    handleChange('autoNumber', checked);
-                                                    if (checked) {
-                                                        handleChange('documentNumber', buildGeneratedPurchaseDepositNumber());
-                                                    }
-                                                }}
-                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                            />
-                                            Otomatis
-                                        </label>
-                                    </div>
-                                    <TextInput
-                                        value={values.documentNumber}
-                                        onChange={(e) => handleChange('documentNumber', e.target.value)}
-                                        disabled={values.autoNumber}
-                                        placeholder="UMP.YYYYMMDD.XXXX"
-                                        className="h-[38px] w-full rounded border-ui-border"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="mb-1 block text-xs font-semibold text-slate-700">
-                                        Jumlah Uang Muka (Rp) <span className="text-red-500">*</span>
-                                    </label>
-                                    <div className="relative">
-                                        <span className="absolute left-3 top-2 text-xs font-semibold text-slate-400">
-                                            Rp
-                                        </span>
-                                        <input
-                                            type="text"
-                                            inputMode="numeric"
-                                            value={values.depositAmount}
-                                            onChange={handleAmountChange}
-                                            placeholder="0"
-                                            className="h-[38px] w-full rounded border border-ui-border bg-white pl-10 pr-3 text-right text-sm font-semibold text-slate-800 focus:border-brand-blue focus:outline-none"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="mb-1 block text-xs font-semibold text-slate-700">
-                                    Keterangan / Catatan
-                                </label>
-                                <TextareaField
-                                    value={values.notes}
-                                    onChange={(e) => handleChange('notes', e.target.value)}
-                                    placeholder="Contoh: Uang muka pembelian material proyek semen 100 sak..."
-                                    rows={3}
-                                    className="w-full rounded border-ui-border"
-                                />
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="rounded-xl border border-ui-border bg-white p-5 shadow-xs space-y-4">
-                            <div>
-                                <label className="mb-1 block text-xs font-semibold text-slate-700">
-                                    Alamat Pengiriman / Pemasok
-                                </label>
-                                <TextareaField
-                                    value={values.address}
-                                    onChange={(e) => handleChange('address', e.target.value)}
-                                    placeholder="Alamat lengkap pemasok..."
-                                    rows={3}
-                                    className="w-full rounded border-ui-border"
-                                />
-                            </div>
-                        </div>
+                    {activeSectionId === 'invoice-info' && (
+                        <PurchaseDepositInvoiceInfoSection
+                            config={config}
+                            values={values}
+                        />
                     )}
                 </div>
-            </div>
-        </div>
+            </TransactionFormLayout>
+
+            <ConfirmationModal
+                open={deleteConfirmationOpen}
+                onClose={() => setDeleteConfirmationOpen(false)}
+                onConfirm={onDelete}
+                title="Konfirmasi"
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.documentNumber}`}
+                confirmLabel="Ya"
+                cancelLabel="Batal"
+                confirmVariant="primary"
+                confirmLoading={saving}
+            />
+        </>
     );
 }
