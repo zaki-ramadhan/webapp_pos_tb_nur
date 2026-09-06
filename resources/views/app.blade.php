@@ -102,9 +102,11 @@
         />
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app/App.jsx'])
+        @if(config('broadcasting.default') === 'reverb' && config('broadcasting.connections.reverb.key'))
         <script>
-            window.__REVERB_KEY__ = "{{ config('broadcasting.connections.reverb.key') ?? env('REVERB_APP_KEY', 'pos_tb_nur_reverb_key') }}";
+            window.__REVERB_KEY__ = "{{ config('broadcasting.connections.reverb.key') }}";
         </script>
+        @endif
         <x-inertia::head />
     <body class="bg-[var(--color-surface)] text-[var(--color-ink)] antialiased">
         <noscript>
