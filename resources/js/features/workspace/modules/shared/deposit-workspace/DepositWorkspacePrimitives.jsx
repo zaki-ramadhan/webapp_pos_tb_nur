@@ -43,7 +43,7 @@ export function DepositAmountField({ prefix = 'Rp', value, className = '' }) {
             <span className="inline-flex flex-1 items-center justify-end px-3 text-lg font-semibold text-text-darkest">
                 {value}
             </span>
-            <span className="inline-flex w-10 items-center justify-center border-l border-ui-border-medium text-brand-dark">
+            <span className="inline-flex w-10 items-center justify-center text-brand-dark">
                 <NavigationIcon type="payment" className="h-4 w-4 text-current" />
             </span>
         </div>
