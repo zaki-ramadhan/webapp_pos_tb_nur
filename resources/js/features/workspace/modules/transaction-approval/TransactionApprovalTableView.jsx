@@ -1,5 +1,4 @@
-import { useMemo, useState } from 'react';
-import SelectField from '@/components/ui/SelectField';
+import { useMemo } from 'react';
 import {
     DataTable,
     DataTableBody,
@@ -16,50 +15,11 @@ import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 import Pagination from '@/components/ui/Pagination';
 
-function ApprovalFilterSlot({ filters: filterDefs, values, onChange }) {
-    return (
-        <>
-            {filterDefs.map((filter) => (
-                <SelectField
-                    key={filter.id}
-                    value={values[filter.id]}
-                    onChange={(event) => onChange(filter.id, event.target.value)}
-                    containerClassName="w-auto shrink-0"
-                    className="h-[40px] rounded-[4px] border-ui-border"
-                    selectClassName="text-xs sm:text-sm text-filter-select-text"
-                >
-                    {filter.options.map((option) => (
-                        <option key={option.value} value={option.value}>{option.label}</option>
-                    ))}
-                </SelectField>
-            ))}
-        </>
-    );
-}
-
 export default function TransactionApprovalTableView({ table, onCreate, onRefresh, onOpenDetail }) {
     const isServerSearch = Boolean(table.onSearch || table.pagination?.onSearch);
     const isServerSort = Boolean(table.onSort || table.pagination?.onSort);
 
-    const [filterValues, setFilterValues] = useState(() =>
-        table.filters.reduce((result, filter) => {
-            result[filter.id] = filter.options?.[0]?.value ?? '';
-            return result;
-        }, {}),
-    );
-
-    function handleFilterChange(filterId, value) {
-        setFilterValues((current) => ({ ...current, [filterId]: value }));
-    }
-
-    const filteredRows = useMemo(() => {
-        return table.rows.filter((row) =>
-            table.filters.every((filter) => {
-                const selected = filterValues[filter.id];
-                return !selected || selected === 'all' || row[filter.rowKey] === selected;
-            }),
-        );
-    }, [filterValues, table.filters, table.rows]);
+    const filteredRows = table.rows ?? [];
 
     const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
     const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
@@ -85,7 +45,7 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
     return (
         <div className="flex min-h-full flex-col">
             <TableToolbar
-                filters={table.filters?.length ? <ApprovalFilterSlot filters={table.filters} values={filterValues} onChange={handleFilterChange} /> : null}
+                filters={null}
                 size="compact"
                 createButton={{ label: table.createLabel, onClick: onCreate, icon: <PlusIcon className="h-6 w-6" /> }}
                 refreshButton={{ label: table.refreshLabel, onClick: onRefresh, icon: <RefreshIcon className="h-5 w-5" /> }}

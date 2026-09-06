@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Pagination from './Pagination';
-import SelectField from './SelectField';
 import {
     DataTable,
     DataTableBody,
@@ -39,16 +38,6 @@ export default function ModuleTableTemplate({
     const isServerSort = Boolean(table.onSort || table.pagination?.onSort);
 
     const [keyword, setKeyword] = useState(table.search ?? table.pagination?.search ?? '');
-    const [inactiveFilter, setInactiveFilter] = useState(table.filterOptions?.[0]?.value ?? 'all');
-    const [activeFilters, setActiveFilters] = useState(() => {
-        if (!Array.isArray(table.filters)) return {};
-        return table.filters.reduce((acc, filter) => {
-            const firstOpt = filter.options?.[0];
-            const firstVal = typeof firstOpt === 'object' && firstOpt !== null ? (firstOpt.value ?? firstOpt.id) : firstOpt;
-            acc[filter.id] = firstVal ?? 'all';
-            return acc;
-        }, {});
-    });
     const isFirstMount = useRef(true);
     const prevKeywordRef = useRef(keyword);
 
@@ -88,20 +77,6 @@ export default function ModuleTableTemplate({
     const filteredRows = useMemo(() => {
         if (isServerSearch) {
             let result = table.rows ?? [];
-            if (!customFiltersSlot && inactiveFilter !== 'all') {
-                result = result.filter((row) => row[inactiveFilterKey] === inactiveFilter);
-            }
-            if (Array.isArray(table.filters) && table.filters.length > 0) {
-                result = result.filter((row) => {
-                    return table.filters.every((filter) => {
-                        const selected = activeFilters[filter.id] ?? 'all';
-                        if (selected === 'all' || selected === '') return true;
-                        const rowKey = filter.rowKey ?? filter.id;
-                        const rowVal = row[rowKey] !== undefined ? row[rowKey] : (row[filter.id] ?? '');
-                        return String(rowVal).toLowerCase() === String(selected).toLowerCase();
-                    });
-                });
-            }
             if (customRowFilter) {
                 result = result.filter(customRowFilter);
             }
@@ -113,21 +88,6 @@ export default function ModuleTableTemplate({
         return (table.rows ?? []).filter((row) => {
             if (customRowFilter && !customRowFilter(row)) {
                 return false;
-            }
-
-            if (!customFiltersSlot && inactiveFilter !== 'all' && row[inactiveFilterKey] !== inactiveFilter) {
-                return false;
-            }
-
-            if (Array.isArray(table.filters) && table.filters.length > 0) {
-                const passes = table.filters.every((filter) => {
-                    const selected = activeFilters[filter.id] ?? 'all';
-                    if (selected === 'all' || selected === '') return true;
-                    const rowKey = filter.rowKey ?? filter.id;
-                    const rowVal = row[rowKey] !== undefined ? row[rowKey] : (row[filter.id] ?? '');
-                    return String(rowVal).toLowerCase() === String(selected).toLowerCase();
-                });
-                if (!passes) return false;
             }
 
             if (!normalizedKeyword) {
@@ -143,7 +103,7 @@ export default function ModuleTableTemplate({
                     .includes(normalizedKeyword)
             );
         });
-    }, [isServerSearch, customFiltersSlot, customRowFilter, inactiveFilter, inactiveFilterKey, table.filters, activeFilters, keyword, table.rows, table.columns]);
+    }, [isServerSearch, customRowFilter, keyword, table.rows, table.columns]);
 
     const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
     const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
@@ -173,7 +133,7 @@ export default function ModuleTableTemplate({
         if (!hasExternalPagination) {
             setLocalPage(1);
         }
-    }, [keyword, inactiveFilter, activeFilters, hasExternalPagination]);
+    }, [keyword, hasExternalPagination]);
 
     const displayRows = useMemo(() => {
         if (hasExternalPagination) {
@@ -215,44 +175,6 @@ export default function ModuleTableTemplate({
         };
     }, [cleanedColumns, sortedRows, resourceName]);
 
-    const filters = useMemo(() => {
-        if (customFiltersSlot) {
-            return customFiltersSlot;
-        }
-        if (Array.isArray(table.filters) && table.filters.length > 0) {
-            return (
-                <div className="flex flex-wrap items-center gap-2">
-                    {table.filters.map((filter) => (
-                        <div key={filter.id} className="min-w-[130px] max-w-[200px]">
-                            <SelectField
-                                value={activeFilters[filter.id] ?? 'all'}
-                                onChange={(e) =>
-                                    setActiveFilters((prev) => ({
-                                        ...prev,
-                                        [filter.id]: e.target.value,
-                                    }))
-                                }
-                                options={filter.options}
-                            />
-                        </div>
-                    ))}
-                </div>
-            );
-        }
-        if (table.filterOptions && table.filterOptions.length > 0) {
-            return (
-                <div className="w-[180px]">
-                    <SelectField
-                        value={inactiveFilter}
-                        onChange={(e) => setInactiveFilter(e.target.value)}
-                        options={table.filterOptions}
-                    />
-                </div>
-            );
-        }
-        return null;
-    }, [customFiltersSlot, table.filters, activeFilters, table.filterOptions, inactiveFilter]);
-
     const isAccessRestricted = Boolean(
         table.readOnly ||
         (table.error && String(table.error).toLowerCase().includes('hak akses')) ||
@@ -269,7 +191,7 @@ export default function ModuleTableTemplate({
         <div className="min-h-full">
             <TableToolbar
                 size="compact"
-                filters={filters}
+                filters={customFiltersSlot ?? null}
                 leftControls={extraToolbarSlot}
                 createButton={resolvedCreateButton}
                 refreshButton={disableRefresh ? null : {

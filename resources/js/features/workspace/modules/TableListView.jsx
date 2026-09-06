@@ -8,7 +8,6 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
-import SelectField from '@/components/ui/SelectField';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
@@ -18,57 +17,6 @@ import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel
 import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 import Pagination from '@/components/ui/Pagination';
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
-
-function matchesFilter(row, filter, selectedValue) {
-    if (!filter.rowKey || selectedValue === 'all') {
-        return true;
-    }
-
-    return row[filter.rowKey] === selectedValue;
-}
-
-function TableListFilters({ filters, values, onChange, filterButtonLabel = '' }) {
-    return (
-        <div className="flex flex-wrap items-center gap-2">
-            {filters.map((filter) => (
-                <div key={filter.id} className="flex flex-col gap-1">
-                    <SelectField
-                        value={values[filter.id]}
-                        onChange={(event) => onChange(filter.id, event.target.value)}
-                        disabled={Boolean(filter.disabled)}
-                        containerClassName="w-auto shrink-0"
-                        className={`h-[34px] rounded-[4px] ${
-                            filter.disabled ? 'border-warning-border bg-warning-bg' : 'border-ui-border bg-white'
-                        }`.trim()}
-                        selectClassName={`px-3 text-[11px] sm:text-xs ${filter.disabled ? 'text-warning-label-text' : 'text-filter-select-text'}`.trim()}
-                        iconClassName={`mr-2 ${filter.disabled ? 'text-warning-label-text' : 'text-filter-icon'}`.trim()}
-                    >
-                        {filter.options.map((option, optionIndex) => {
-                            const val = typeof option === 'object' && option !== null ? (option.value ?? option.id ?? '') : option;
-                            const lbl = typeof option === 'object' && option !== null ? (option.label ?? option.name ?? val) : option;
-                            return (
-                                <option key={`${filter.id}-${val}-${optionIndex}`} value={val}>
-                                    {lbl}
-                                </option>
-                            );
-                        })}
-                    </SelectField>
-
-                    {filter.disabled && filter.hint ? (
-                        <div className="flex flex-wrap items-center gap-1.5 pl-1 text-xs text-warning-label-text">
-                            {filter.badgeLabel ? (
-                                <span className="rounded-full bg-bg-warning-tag px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-warning-badge-text">
-                                    {filter.badgeLabel}
-                                </span>
-                            ) : null}
-                            <span>{filter.hint}</span>
-                        </div>
-                    ) : null}
-                </div>
-            ))}
-        </div>
-    );
-}
 
 export default function TableListView({
     table,
@@ -82,15 +30,6 @@ export default function TableListView({
     const hasExternalPagination = Boolean(table.pagination);
 
     const [keyword, setKeyword] = useState(table.search ?? table.pagination?.search ?? '');
-    const [filters, setFilters] = useState(() =>
-        (table.filters ?? []).reduce((result, filter) => {
-            const firstOpt = filter.options?.[0];
-            const firstVal = typeof firstOpt === 'object' && firstOpt !== null ? (firstOpt.value ?? firstOpt.id) : firstOpt;
-            result[filter.id] = firstVal ?? 'all';
-            return result;
-        }, {}),
-    );
-
     const [localPage, setLocalPage] = useState(1);
     const [localPerPage, setLocalPerPage] = useState(25);
     const isFirstMount = useRef(true);
@@ -118,36 +57,29 @@ export default function TableListView({
         if (!hasExternalPagination) {
             setLocalPage(1);
         }
-    }, [keyword, filters, hasExternalPagination]);
+    }, [keyword, hasExternalPagination]);
 
     const filteredRows = useMemo(() => {
         if (isServerSearch) {
-            return (table.rows ?? []).filter((row) => {
-                return (table.filters ?? []).every((filter) =>
-                    matchesFilter(row, filter, filters[filter.id] ?? 'all'),
-                );
-            });
+            return table.rows ?? [];
         }
 
         const normalizedKeyword = keyword.trim().toLowerCase();
+        if (!normalizedKeyword) {
+            return table.rows ?? [];
+        }
+
         const searchCols = (table.columns ?? []).filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
         const searchKeys = searchCols.map(col => col.id);
 
         return (table.rows ?? []).filter((row) => {
-            const passesFilters = (table.filters ?? []).every((filter) =>
-                matchesFilter(row, filter, filters[filter.id] ?? 'all'),
-            );
-
-            if (!passesFilters) return false;
-            if (!normalizedKeyword) return true;
-
             return searchKeys.some((key) =>
                 String(row[key] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );
         });
-    }, [isServerSearch, filters, keyword, table.columns, table.filters, table.rows]);
+    }, [isServerSearch, keyword, table.columns, table.rows]);
 
     const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
     const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
@@ -237,18 +169,7 @@ export default function TableListView({
         <div className="min-h-full">
             <TableToolbar
                 size="compact"
-                filters={
-                    table.filters?.length ? (
-                        <TableListFilters
-                            filters={table.filters}
-                            values={filters}
-                            onChange={(filterId, nextValue) =>
-                                setFilters((prev) => ({ ...prev, [filterId]: nextValue }))
-                            }
-                            filterButtonLabel={table.filterButtonLabel}
-                        />
-                    ) : null
-                }
+                filters={null}
                 createButton={resolvedCreateButton}
                 refreshButton={
                     table.refreshLabel
