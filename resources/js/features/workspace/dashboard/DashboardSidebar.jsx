@@ -55,7 +55,7 @@ function SidebarButton({ item, active, onClick, buttonRef }) {
                 ref={buttonRef}
                 type="button"
                 onClick={onClick}
-                className={`inline-flex h-11 w-11 items-center justify-center rounded-[4px] border p-1 transition sm:h-[44px] sm:w-[44px] sm:p-1.5 ${
+                className={`inline-flex h-11 w-11 items-center justify-center rounded-[4px] border p-[7px] transition sm:h-[44px] sm:w-[44px] sm:p-2 ${
                     item.disabled
                         ? 'cursor-not-allowed border-transparent bg-transparent text-white/18 opacity-45'
                         : active
@@ -65,7 +65,7 @@ function SidebarButton({ item, active, onClick, buttonRef }) {
                 aria-label={item.label}
                 aria-disabled={item.disabled}
             >
-                <NavigationIcon type={iconType} className="h-[28px] w-[28px] sm:h-[31px] sm:w-[31px]" />
+                <NavigationIcon type={iconType} className="h-[26px] w-[26px] sm:h-[28px] sm:w-[28px]" />
             </button>
         </Tooltip>
     );
@@ -100,7 +100,7 @@ function MobileModuleButton({ item, active, onSelect }) {
                           : 'bg-info-bg text-tab-view-active-text'
                 }`.trim()}
             >
-                <NavigationIcon type={iconType} className="h-5 w-5" />
+                <NavigationIcon type={iconType} className="h-4.5 w-4.5" />
             </span>
             <span className="min-w-0 flex-1">
                 <span className="block truncate text-xs font-semibold">{item.label}</span>

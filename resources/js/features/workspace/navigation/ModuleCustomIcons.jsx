@@ -1,13 +1,13 @@
 /**
  * Kumpulan ikon modul kustom TB Nur.
- * Standar kanvas: viewBox 32x32 persegi dengan content centering optimal
- * dan pewarisan warna fleksibel via `currentColor`.
+ * Standar kanvas: viewBox 35.5x35.5 (optical alignment seimbang dengan icon set Lucide 24x24).
+ * Menghasilkan visual fill ~85-88% yang serasi dan konsisten tanpa kesan kekecilan maupun kegedean.
  */
 
 export function SalesModuleIcon({ className = 'h-5 w-5', ...props }) {
     return (
         <svg
-            viewBox="-1.3 0 32 32"
+            viewBox="-3.2 -1.5 35.5 35.5"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
@@ -47,7 +47,7 @@ export function SalesModuleIcon({ className = 'h-5 w-5', ...props }) {
 export function CashBankModuleIcon({ className = 'h-5 w-5', ...props }) {
     return (
         <svg
-            viewBox="1.9 0 32 32"
+            viewBox="0.15 -2.1 35.5 35.5"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
