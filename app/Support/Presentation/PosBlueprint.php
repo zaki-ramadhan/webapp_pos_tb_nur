@@ -378,7 +378,7 @@ final class PosBlueprint
               // self::navItem('item-request', 'Permintaan Barang', 'invoice', 'green'),
               // self::navItem('stock-transfer', 'Pemindahan Barang', 'truck', 'green'),
 
-                self::navItem('inventory-adjustment', 'Penyesuaian Persediaan', 'stock', 'green'),
+                self::navItem('inventory-adjustment', 'Penyesuaian Persediaan', 'inventory-adjustment', 'green'),
               // self::navItem('work-order', 'Pekerjaan Pesanan', 'box', 'green'),
 
               // self::navItem('material-addition', 'Penambahan Bahan Baku', 'payment', 'green'),
@@ -389,15 +389,15 @@ final class PosBlueprint
 
               // self::navItem('stock-opname-result', 'Hasil Stok Opname', 'stock', 'green'),
 
-                self::navItem('items-services', 'Barang', 'box', 'blue'),
-                self::navItem('warehouse-master', 'Gudang', 'warehouse', 'blue'),
-                self::navItem('item-unit', 'Satuan Barang', 'unit', 'blue'),
-                self::navItem('item-category', 'Kategori Barang', 'category', 'blue'),
+                self::navItem('items-services', 'Barang', 'items-services', 'blue'),
+                self::navItem('warehouse-master', 'Gudang', 'warehouse-master', 'blue'),
+                self::navItem('item-unit', 'Satuan Barang', 'item-unit', 'blue'),
+                self::navItem('item-category', 'Kategori Barang', 'item-category', 'blue'),
               // self::navItem('item-brand', 'Merek Barang', 'box', 'blue'),
               // self::navItem('order-fulfillment', 'Pemenuhan Pesanan', 'inventory', 'purple'),
 
-                self::navItem('item-location', 'Barang per gudang', 'location', 'purple'),
-                self::navItem('minimum-stock', 'Barang stok minimum', 'box', 'purple'),
+                self::navItem('item-location', 'Barang per gudang', 'item-location', 'purple'),
+                self::navItem('minimum-stock', 'Barang stok minimum', 'minimum-stock', 'purple'),
             ]),
           // self::navModule('fixed-assets', 'Aset Tetap', 'asset', [
 
