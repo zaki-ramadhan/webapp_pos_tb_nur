@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
-import TextInput from '@/components/ui/TextInput';
 import Spinner from '@/components/ui/Spinner';
 
 export default function DataMaintenanceModal({ open, onClose }) {
@@ -10,13 +9,10 @@ export default function DataMaintenanceModal({ open, onClose }) {
     const [actionLoading, setActionLoading] = useState(false);
     const [statusData, setStatusData] = useState(null);
 
-    // State modal konfirmasi terpisah
+    // Modal konfirmasi terpisah (anti salah klik)
     const [isPurgeModalOpen, setIsPurgeModalOpen] = useState(false);
     const [isResetTxModalOpen, setIsResetTxModalOpen] = useState(false);
     const [isReseedModalOpen, setIsReseedModalOpen] = useState(false);
-
-    const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
 
     const fetchStatus = async () => {
         setLoading(true);
@@ -32,7 +28,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                 setStatusData(json.data);
             }
         } catch {
-            // Abaikan kesalahan koneksi sementara
+            // Abaikan kesalahan jaringan sementara
         } finally {
             setLoading(false);
         }
@@ -40,8 +36,6 @@ export default function DataMaintenanceModal({ open, onClose }) {
 
     useEffect(() => {
         if (open) {
-            setPassword('');
-            setPasswordError('');
             setIsPurgeModalOpen(false);
             setIsResetTxModalOpen(false);
             setIsReseedModalOpen(false);
@@ -49,30 +43,8 @@ export default function DataMaintenanceModal({ open, onClose }) {
         }
     }, [open]);
 
-    const handleOpenPurge = () => {
-        setPassword('');
-        setPasswordError('');
-        setIsPurgeModalOpen(true);
-    };
-
-    const handleOpenResetTx = () => {
-        setPassword('');
-        setPasswordError('');
-        setIsResetTxModalOpen(true);
-    };
-
-    const handleOpenReseed = () => {
-        setIsReseedModalOpen(true);
-    };
-
     const handlePurge = async () => {
-        if (!password.trim()) {
-            setPasswordError('Masukkan kata sandi akun login Anda.');
-            return;
-        }
-
         setActionLoading(true);
-        setPasswordError('');
 
         try {
             const res = await fetch('/api/backend/system/data-maintenance/purge', {
@@ -83,12 +55,11 @@ export default function DataMaintenanceModal({ open, onClose }) {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
-                body: JSON.stringify({ password }),
             });
 
             const json = await res.json();
             if (!res.ok || !json.success) {
-                setPasswordError(json.message || 'Gagal membersihkan data.');
+                toast.error(json.message || 'Gagal membersihkan data.');
                 setActionLoading(false);
                 return;
             }
@@ -100,19 +71,13 @@ export default function DataMaintenanceModal({ open, onClose }) {
                 window.location.reload();
             }, 1000);
         } catch (err) {
-            setPasswordError('Terjadi kesalahan jaringan atau server: ' + err.message);
+            toast.error('Terjadi kesalahan jaringan atau server: ' + err.message);
             setActionLoading(false);
         }
     };
 
     const handleResetTransactions = async () => {
-        if (!password.trim()) {
-            setPasswordError('Masukkan kata sandi akun login Anda.');
-            return;
-        }
-
         setActionLoading(true);
-        setPasswordError('');
 
         try {
             const res = await fetch('/api/backend/system/data-maintenance/reset-transactions', {
@@ -123,12 +88,11 @@ export default function DataMaintenanceModal({ open, onClose }) {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
-                body: JSON.stringify({ password }),
             });
 
             const json = await res.json();
             if (!res.ok || !json.success) {
-                setPasswordError(json.message || 'Gagal mereset transaksi.');
+                toast.error(json.message || 'Gagal mereset transaksi.');
                 setActionLoading(false);
                 return;
             }
@@ -140,7 +104,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                 window.location.reload();
             }, 1000);
         } catch (err) {
-            setPasswordError('Terjadi kesalahan jaringan atau server: ' + err.message);
+            toast.error('Terjadi kesalahan jaringan atau server: ' + err.message);
             setActionLoading(false);
         }
     };
@@ -178,6 +142,8 @@ export default function DataMaintenanceModal({ open, onClose }) {
         }
     };
 
+    const items = statusData?.items ?? [];
+
     return (
         <>
             {/* Modal Utama Pemeliharaan Data */}
@@ -187,7 +153,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                 disableClose={actionLoading}
                 title="Pemeliharaan Data Sistem"
                 headerIcon={null}
-                maxWidthClassName="max-w-[580px]"
+                maxWidthClassName="max-w-[620px]"
             >
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-10 text-slate-800">
@@ -196,7 +162,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {/* Ringkasan Data Database (Simpel & Rapi) */}
+                        {/* Ringkasan Data Database (Grid Simpel & Rapi) */}
                         <div className="border border-slate-300 rounded-[4px] bg-white overflow-hidden">
                             <div className="bg-slate-100 px-3.5 py-2.5 border-b border-slate-300 flex justify-between items-center text-sm font-medium text-slate-800">
                                 <span>Status Data Saat Ini:</span>
@@ -204,22 +170,20 @@ export default function DataMaintenanceModal({ open, onClose }) {
                                     {statusData?.is_demo_active ? 'Data Sampel / Demo' : 'Mode Bersih (Siap Operasional)'}
                                 </span>
                             </div>
-                            <div className="grid grid-cols-2 divide-x divide-y divide-slate-200 text-sm">
-                                <div className="p-3 flex justify-between items-center">
-                                    <span className="text-slate-800">Transaksi:</span>
-                                    <span className="font-semibold text-slate-900">{statusData?.transactions_count ?? 0}</span>
-                                </div>
-                                <div className="p-3 flex justify-between items-center">
-                                    <span className="text-slate-800">Barang & Jasa:</span>
-                                    <span className="font-semibold text-slate-900">{statusData?.products_count ?? 0}</span>
-                                </div>
-                                <div className="p-3 flex justify-between items-center">
-                                    <span className="text-slate-800">Pelanggan:</span>
-                                    <span className="font-semibold text-slate-900">{statusData?.customers_count ?? 0}</span>
-                                </div>
-                                <div className="p-3 flex justify-between items-center">
-                                    <span className="text-slate-800">Pemasok:</span>
-                                    <span className="font-semibold text-slate-900">{statusData?.suppliers_count ?? 0}</span>
+
+                            <div className="max-h-[280px] overflow-y-auto">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 divide-slate-200 text-sm">
+                                    {items.map((item, index) => (
+                                        <div
+                                            key={item.label}
+                                            className={`p-2.5 flex justify-between items-center border-b border-slate-200 ${
+                                                index % 2 === 0 ? 'sm:border-r' : ''
+                                            }`}
+                                        >
+                                            <span className="text-slate-800 truncate pr-2">{item.label}:</span>
+                                            <span className="font-semibold text-slate-900 shrink-0">{item.count}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -238,7 +202,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                                     <Button
                                         size="sm"
                                         variant="danger"
-                                        onClick={handleOpenPurge}
+                                        onClick={() => setIsPurgeModalOpen(true)}
                                         className="shrink-0 h-9 px-4 text-sm rounded-[4px] shadow-none"
                                     >
                                         Bersihkan Data
@@ -258,7 +222,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                                     <Button
                                         size="sm"
                                         variant="secondary"
-                                        onClick={handleOpenResetTx}
+                                        onClick={() => setIsResetTxModalOpen(true)}
                                         className="shrink-0 h-9 px-4 text-sm rounded-[4px] shadow-none border-slate-400 text-slate-800 hover:bg-slate-50"
                                     >
                                         Reset Transaksi
@@ -278,7 +242,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                                     <Button
                                         size="sm"
                                         variant="brand-blue"
-                                        onClick={handleOpenReseed}
+                                        onClick={() => setIsReseedModalOpen(true)}
                                         className="shrink-0 h-9 px-4 text-sm rounded-[4px] shadow-none"
                                     >
                                         Muat Sampel
@@ -305,26 +269,11 @@ export default function DataMaintenanceModal({ open, onClose }) {
                     <div className="border border-slate-300 rounded-[4px] p-3.5 bg-slate-50 text-sm text-slate-800 leading-relaxed">
                         <p className="font-semibold text-slate-900">Peringatan Penghapusan Data</p>
                         <p className="mt-1 text-slate-800">
-                            Seluruh transaksi penjualan, pembelian, barang contoh, dan kontak fiktif akan dihapus permanen. Akun login Admin, Owner, dan Akun Perkiraan (COA) tidak akan terhapus.
+                            Apakah Anda yakin ingin membersihkan seluruh data demo? Semua transaksi penjualan, pembelian, barang contoh, dan kontak fiktif akan dihapus permanen.
                         </p>
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <label className="block text-sm font-medium text-slate-800">
-                            Kata Sandi Akun Login
-                        </label>
-                        <TextInput
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Masukkan kata sandi Anda"
-                            disabled={actionLoading}
-                            className="h-[40px] rounded-[4px] border-slate-400"
-                            inputClassName="text-sm text-slate-900"
-                        />
-                        {passwordError ? (
-                            <p className="text-sm text-red-600 font-medium">{passwordError}</p>
-                        ) : null}
+                        <p className="mt-2 font-medium text-slate-900">
+                            Akun login Admin, Owner, dan Akun Perkiraan (COA) tetap aman terlindungi.
+                        </p>
                     </div>
 
                     <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
@@ -345,7 +294,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                             onClick={handlePurge}
                             className="h-9 px-4 text-sm rounded-[4px] shadow-none"
                         >
-                            Konfirmasi Bersihkan
+                            Ya, Bersihkan Data
                         </Button>
                     </div>
                 </div>
@@ -366,26 +315,11 @@ export default function DataMaintenanceModal({ open, onClose }) {
                     <div className="border border-slate-300 rounded-[4px] p-3.5 bg-slate-50 text-sm text-slate-800 leading-relaxed">
                         <p className="font-semibold text-slate-900">Peringatan Reset Transaksi</p>
                         <p className="mt-1 text-slate-800">
-                            Riwayat transaksi penjualan, pembelian, dan jurnal akan dikosongkan. Nomor nota akan kembali ke #0001. Master produk dan kontak Anda tetap aman tersimpan.
+                            Apakah Anda yakin ingin mereset seluruh transaksi? Riwayat transaksi penjualan, pembelian, dan jurnal akan dikosongkan, serta nomor nota akan kembali ke #0001.
                         </p>
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <label className="block text-sm font-medium text-slate-800">
-                            Kata Sandi Akun Login
-                        </label>
-                        <TextInput
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Masukkan kata sandi Anda"
-                            disabled={actionLoading}
-                            className="h-[40px] rounded-[4px] border-slate-400"
-                            inputClassName="text-sm text-slate-900"
-                        />
-                        {passwordError ? (
-                            <p className="text-sm text-red-600 font-medium">{passwordError}</p>
-                        ) : null}
+                        <p className="mt-2 font-medium text-slate-900">
+                            Master produk dan kontak Anda tetap aman tersimpan utuh.
+                        </p>
                     </div>
 
                     <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
@@ -406,7 +340,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                             onClick={handleResetTransactions}
                             className="h-9 px-4 text-sm rounded-[4px] shadow-none"
                         >
-                            Konfirmasi Reset Transaksi
+                            Ya, Reset Transaksi
                         </Button>
                     </div>
                 </div>
@@ -427,7 +361,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                     <div className="border border-slate-300 rounded-[4px] p-3.5 bg-slate-50 text-sm text-slate-800 leading-relaxed">
                         <p className="font-semibold text-slate-900">Muat Ulang Seeder Database</p>
                         <p className="mt-1 text-slate-800">
-                            Sistem akan menjalankan seeder database di latar belakang server untuk mengisi kembali barang contoh, transaksi kasir simulasi, dan grafik dashboard lengkap.
+                            Apakah Anda yakin ingin memuat ulang data sampel? Sistem akan menjalankan seeder database di latar belakang server untuk mengisi kembali barang contoh, transaksi kasir simulasi, dan grafik dashboard lengkap.
                         </p>
                     </div>
 
@@ -449,7 +383,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                             onClick={handleReseed}
                             className="h-9 px-4 text-sm rounded-[4px] shadow-none"
                         >
-                            Muat Ulang Sekarang
+                            Ya, Muat Ulang Sekarang
                         </Button>
                     </div>
                 </div>
