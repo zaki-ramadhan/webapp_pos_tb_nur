@@ -1,13 +1,13 @@
 /**
  * Kumpulan ikon modul kustom TB Nur.
- * Standar kanvas: viewBox 33.5x33.5 (sedikit lebih besar dan padat, ~92-95% glyph fill)
- * Menampilkan ikon dengan proporsi pas, tegas, dan tidak sesak di tombol 44px.
+ * Standar kanvas: viewBox 32.2x32.2 (dimensi maksimal yang presisi, ~98% glyph fill)
+ * Menampilkan ikon dengan ukuran optimal, padat, dan pas di tombol 44px.
  */
 
 export function SalesModuleIcon({ className = 'h-5 w-5', ...props }) {
     return (
         <svg
-            viewBox="-2.1 -0.75 33.5 33.5"
+            viewBox="-1.45 -0.1 32.2 32.2"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
@@ -47,7 +47,7 @@ export function SalesModuleIcon({ className = 'h-5 w-5', ...props }) {
 export function CashBankModuleIcon({ className = 'h-5 w-5', ...props }) {
     return (
         <svg
-            viewBox="1.15 -1.1 33.5 33.5"
+            viewBox="1.8 -0.45 32.2 32.2"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
