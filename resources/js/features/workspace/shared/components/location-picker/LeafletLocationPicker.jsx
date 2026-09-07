@@ -67,52 +67,23 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
         }
     }, [reverseGeocode]);
 
-    const detectDeviceLocation = useCallback(async (isUserTriggered = false) => {
-        setLocating(true);
-
-        const tryIpFallback = async () => {
-            try {
-                const res = await fetch('https://ipapi.co/json/');
-                if (res.ok) {
-                    const data = await res.json();
-                    const lat = parseFloat(data.latitude);
-                    const lng = parseFloat(data.longitude);
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                        if (mapInstanceRef.current) {
-                            mapInstanceRef.current.flyTo([lat, lng], 15);
-                        }
-                        updateMarkerPosition(lat, lng, true);
-                        if (isUserTriggered) {
-                            showInfoToast({
-                                title: 'Lokasi Terdeteksi',
-                                message: `Lokasi disesuaikan berdasarkan jaringan internet (${data.city || data.region || 'Area Anda'}).`,
-                            });
-                        }
-                        return true;
-                    }
-                }
-            } catch {
-                // Fallback failed
-            }
-            return false;
-        };
-
+    const detectDeviceLocation = useCallback((isUserTriggered = false) => {
         if (!navigator.geolocation) {
-            const ok = await tryIpFallback();
-            setLocating(false);
-            if (!ok && isUserTriggered) {
+            if (isUserTriggered) {
                 showWarningToast({
-                    title: 'Geolokasi Tidak Tersedia',
+                    title: 'Geolokasi Tidak Didukung',
                     message: 'Browser Anda tidak mendukung geolokasi GPS.',
                 });
             }
             return;
         }
 
+        setLocating(true);
+
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 setLocating(false);
-                const { latitude, longitude } = pos.coords;
+                const { latitude, longitude, accuracy } = pos.coords;
                 if (mapInstanceRef.current) {
                     mapInstanceRef.current.flyTo([latitude, longitude], 17);
                 }
@@ -120,27 +91,28 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
                 if (isUserTriggered) {
                     showSuccessToast({
                         title: 'Lokasi Ditemukan',
-                        message: 'Titik peta telah disesuaikan ke posisi GPS perangkat Anda.',
+                        message: `Titik peta disesuaikan ke posisi GPS Anda (akurasi ~${Math.round(accuracy || 10)}m).`,
                     });
                 }
             },
-            async (err) => {
-                const ok = await tryIpFallback();
+            (err) => {
                 setLocating(false);
-                if (!ok && isUserTriggered) {
+                if (isUserTriggered) {
                     let msg = 'Gagal mendeteksi lokasi GPS perangkat.';
                     if (err?.code === 1) {
-                        msg = 'Izin akses lokasi belum diizinkan pada browser. Silakan aktifkan izin lokasi atau gunakan kolom pencarian.';
+                        msg = 'Izin akses lokasi ditolak pada browser. Silakan klik ikon gembok di address bar browser untuk mengizinkan akses lokasi.';
+                    } else if (err?.code === 2) {
+                        msg = 'Sinyal GPS fisik tidak terdeteksi pada perangkat ini. Silakan ketik nama tempat (misal: Guwa Kidul atau Kaliwedi) di kolom pencarian.';
                     } else if (err?.code === 3) {
-                        msg = 'Waktu permintaan lokasi habis. Silakan gunakan kolom pencarian alamat.';
+                        msg = 'Waktu pencarian sinyal GPS habis. Silakan gunakan kolom pencarian alamat atau geser pin langsung.';
                     }
                     showWarningToast({
-                        title: 'Deteksi Lokasi',
+                        title: 'Deteksi Lokasi GPS',
                         message: msg,
                     });
                 }
             },
-            { enableHighAccuracy: false, timeout: 6000, maximumAge: 30000 }
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
     }, [updateMarkerPosition]);
 
@@ -198,13 +170,15 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
 
     const handleSearchSubmit = async (e) => {
         e?.preventDefault();
-        if (!searchQuery.trim()) return;
+        const trimmed = searchQuery.trim();
+        if (!trimmed) return;
 
         setSearching(true);
         setSuggestions([]);
-        try {
+
+        const fetchQuery = async (q) => {
             const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(
-                searchQuery
+                q
             )}&countrycodes=id&addressdetails=1&limit=5`;
             const response = await fetch(url, {
                 headers: {
@@ -212,8 +186,29 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
                 },
             });
             if (response.ok) {
-                const results = await response.json();
-                setSuggestions(results);
+                return await response.json();
+            }
+            return [];
+        };
+
+        try {
+            let results = await fetchQuery(trimmed);
+
+            // If empty, check for common Indonesian geographical spelling variants (e.g. Goa <-> Guwa)
+            if ((!results || results.length === 0) && /\bgoa\b/i.test(trimmed)) {
+                const aliasQuery = trimmed.replace(/\bgoa\b/gi, 'Guwa');
+                results = await fetchQuery(aliasQuery);
+            } else if ((!results || results.length === 0) && /\bguwa\b/i.test(trimmed)) {
+                const aliasQuery = trimmed.replace(/\bguwa\b/gi, 'Goa');
+                results = await fetchQuery(aliasQuery);
+            }
+
+            setSuggestions(results || []);
+            if (!results || results.length === 0) {
+                showWarningToast({
+                    title: 'Pencarian Alamat',
+                    message: `Lokasi "${trimmed}" tidak ditemukan. Coba ketik nama desa atau kecamatan terdekat (misal: Guwa Kidul atau Kaliwedi).`,
+                });
             }
         } catch {
             setSuggestions([]);
