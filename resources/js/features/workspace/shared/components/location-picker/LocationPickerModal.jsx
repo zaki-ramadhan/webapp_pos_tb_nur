@@ -99,27 +99,41 @@ export default function LocationPickerModal({
 
                 {/* Selected Address Preview Card */}
                 {selectedAddress && (
-                    <div className="mt-3 rounded-[4px] border border-blue-200 bg-blue-50/70 p-3 text-xs text-slate-700 space-y-1">
-                        <div className="flex items-center justify-between font-semibold text-blue-900">
-                            <span>Alamat Terdeteksi:</span>
-                            {selectedAddress.lat && selectedAddress.lng && (
-                                <span className="text-[10px] font-mono text-slate-500 font-normal">
-                                    ({selectedAddress.lat.toFixed(5)}, {selectedAddress.lng.toFixed(5)})
+                    <div className="mt-3 rounded-[4px] border border-slate-300 bg-white p-3.5 shadow-2xs">
+                        <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-2.5">
+                            <span className="text-xs sm:text-sm font-semibold text-slate-800">
+                                Ringkasan Alamat Terpilih
+                            </span>
+                            {selectedAddress.lat && selectedAddress.lng ? (
+                                <span className="text-xs text-slate-500 font-mono">
+                                    {selectedAddress.lat.toFixed(5)}, {selectedAddress.lng.toFixed(5)}
                                 </span>
-                            )}
+                            ) : null}
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 pt-1">
-                            <div><strong className="text-slate-600 font-medium">Jalan:</strong> {selectedAddress.street || '-'}</div>
-                            <div><strong className="text-slate-600 font-medium">Kota:</strong> {selectedAddress.city || '-'}</div>
-                            <div><strong className="text-slate-600 font-medium">Provinsi:</strong> {selectedAddress.province || '-'}</div>
-                            <div><strong className="text-slate-600 font-medium">Kode Pos:</strong> {selectedAddress.postalCode || '-'}</div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm">
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wide">Jalan</span>
+                                <span className="text-slate-900 font-medium">{selectedAddress.street || '-'}</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wide">Kota / Kabupaten</span>
+                                <span className="text-slate-900 font-medium">{selectedAddress.city || '-'}</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wide">Provinsi</span>
+                                <span className="text-slate-900 font-medium">{selectedAddress.province || '-'}</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wide">Kode Pos</span>
+                                <span className="text-slate-900 font-medium">{selectedAddress.postalCode || '-'}</span>
+                            </div>
                         </div>
                     </div>
                 )}
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-end gap-2 border-t border-slate-200 bg-white px-4 py-3 shrink-0">
+            <div className="flex items-center justify-between gap-2 border-t border-slate-200 bg-white px-4 py-3 shrink-0">
                 <button
                     type="button"
                     onClick={onClose}
