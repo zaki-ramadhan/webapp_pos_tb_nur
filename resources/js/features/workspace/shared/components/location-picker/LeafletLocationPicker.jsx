@@ -324,15 +324,7 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
                     </div>
                 )}
 
-                {currentCoord && (
-                    <div className="absolute bottom-2 left-2 z-[500] rounded bg-white/90 px-2 py-0.5 text-[10px] text-slate-500 shadow-sm border border-slate-200">
-                        {currentCoord.lat.toFixed(5)}, {currentCoord.lng.toFixed(5)}
-                    </div>
-                )}
             </div>
-            <p className="mt-1.5 text-[11px] text-slate-500">
-                Tips: Geser pin merah atau klik di area peta untuk menentukan titik koordinat alamat secara presisi.
-            </p>
         </div>
     );
 }
