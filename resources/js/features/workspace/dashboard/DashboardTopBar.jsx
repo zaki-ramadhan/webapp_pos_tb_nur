@@ -9,7 +9,7 @@ import { clearWorkspaceClientState } from '@/features/workspace/dashboard/worksp
 import { ChevronDownIcon, LogoutIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import UserAvatar from '@/features/workspace/shared/UserAvatar';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import { Database } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { isOwnerUser } from '@/features/workspace/backend/adapters/generalAdapters';
 import DataMaintenanceModal from '@/features/workspace/dashboard/DataMaintenanceModal';
 
@@ -176,7 +176,7 @@ export default function DashboardTopBar({
                                             setIsUserMenuOpen(false);
                                             setIsDataMaintenanceOpen(true);
                                         }}
-                                        icon={<Database className="h-4 w-4 text-slate-600" />}
+                                        icon={<Settings className="h-4 w-4 text-slate-600" />}
                                         className="text-xs font-medium text-brand-darker md:text-sm"
                                     >
                                         Pemeliharaan Data
