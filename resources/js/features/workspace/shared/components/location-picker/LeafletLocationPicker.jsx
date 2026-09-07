@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { parseOsmAddress } from './locationAddressParser';
+import { showWarningToast, showSuccessToast, showInfoToast } from '@/components/feedback/toast';
 
 const customPinIcon = L.divIcon({
     className: 'custom-map-pin',
@@ -26,6 +27,7 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
     const [suggestions, setSuggestions] = useState([]);
     const [searching, setSearching] = useState(false);
     const [geocoding, setGeocoding] = useState(false);
+    const [locating, setLocating] = useState(false);
     const [currentCoord, setCurrentCoord] = useState(null);
 
     // Default coordinates: Bogor area (TB Nur) or default to Jabodetabek (-6.5971, 106.8060)
@@ -65,19 +67,100 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
         }
     }, [reverseGeocode]);
 
+    const detectDeviceLocation = useCallback(async (isUserTriggered = false) => {
+        setLocating(true);
+
+        const tryIpFallback = async () => {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                if (res.ok) {
+                    const data = await res.json();
+                    const lat = parseFloat(data.latitude);
+                    const lng = parseFloat(data.longitude);
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        if (mapInstanceRef.current) {
+                            mapInstanceRef.current.flyTo([lat, lng], 15);
+                        }
+                        updateMarkerPosition(lat, lng, true);
+                        if (isUserTriggered) {
+                            showInfoToast({
+                                title: 'Lokasi Terdeteksi',
+                                message: `Lokasi disesuaikan berdasarkan jaringan internet (${data.city || data.region || 'Area Anda'}).`,
+                            });
+                        }
+                        return true;
+                    }
+                }
+            } catch {
+                // Fallback failed
+            }
+            return false;
+        };
+
+        if (!navigator.geolocation) {
+            const ok = await tryIpFallback();
+            setLocating(false);
+            if (!ok && isUserTriggered) {
+                showWarningToast({
+                    title: 'Geolokasi Tidak Tersedia',
+                    message: 'Browser Anda tidak mendukung geolokasi GPS.',
+                });
+            }
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                setLocating(false);
+                const { latitude, longitude } = pos.coords;
+                if (mapInstanceRef.current) {
+                    mapInstanceRef.current.flyTo([latitude, longitude], 17);
+                }
+                updateMarkerPosition(latitude, longitude, true);
+                if (isUserTriggered) {
+                    showSuccessToast({
+                        title: 'Lokasi Ditemukan',
+                        message: 'Titik peta telah disesuaikan ke posisi GPS perangkat Anda.',
+                    });
+                }
+            },
+            async (err) => {
+                const ok = await tryIpFallback();
+                setLocating(false);
+                if (!ok && isUserTriggered) {
+                    let msg = 'Gagal mendeteksi lokasi GPS perangkat.';
+                    if (err?.code === 1) {
+                        msg = 'Izin akses lokasi belum diizinkan pada browser. Silakan aktifkan izin lokasi atau gunakan kolom pencarian.';
+                    } else if (err?.code === 3) {
+                        msg = 'Waktu permintaan lokasi habis. Silakan gunakan kolom pencarian alamat.';
+                    }
+                    showWarningToast({
+                        title: 'Deteksi Lokasi',
+                        message: msg,
+                    });
+                }
+            },
+            { enableHighAccuracy: false, timeout: 6000, maximumAge: 30000 }
+        );
+    }, [updateMarkerPosition]);
+
     useEffect(() => {
         if (!mapContainerRef.current || mapInstanceRef.current) return;
 
+        // Initialize map with zoomControl false to relocate to bottom-right
         const map = L.map(mapContainerRef.current, {
             center: [defaultLat, defaultLng],
             zoom: 14,
-            zoomControl: true,
+            zoomControl: false,
         });
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors',
             maxZoom: 19,
         }).addTo(map);
+
+        // Move zoom control to bottom-right to prevent overlap with search suggestions
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
 
         const marker = L.marker([defaultLat, defaultLng], {
             icon: customPinIcon,
@@ -101,20 +184,8 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
         });
 
         // Auto-detect current device GPS location if no initial location is provided
-        if (!initialLocation && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const { latitude, longitude } = pos.coords;
-                    if (mapInstanceRef.current) {
-                        mapInstanceRef.current.flyTo([latitude, longitude], 16);
-                    }
-                    updateMarkerPosition(latitude, longitude, true);
-                },
-                () => {
-                    reverseGeocode(defaultLat, defaultLng);
-                },
-                { enableHighAccuracy: true, timeout: 6000 }
-            );
+        if (!initialLocation) {
+            detectDeviceLocation(false);
         } else {
             reverseGeocode(defaultLat, defaultLng);
         }
@@ -123,7 +194,7 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
             map.remove();
             mapInstanceRef.current = null;
         };
-    }, [defaultLat, defaultLng, reverseGeocode, updateMarkerPosition]);
+    }, [defaultLat, defaultLng, detectDeviceLocation, initialLocation, reverseGeocode, updateMarkerPosition]);
 
     const handleSearchSubmit = async (e) => {
         e?.preventDefault();
@@ -168,38 +239,23 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
         }
     };
 
-    const handleUseCurrentLocation = () => {
-        if (!navigator.geolocation) {
-            alert('Browser tidak mendukung geolokasi GPS.');
-            return;
-        }
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const { latitude, longitude } = pos.coords;
-                if (mapInstanceRef.current) {
-                    mapInstanceRef.current.flyTo([latitude, longitude], 17);
-                }
-                updateMarkerPosition(latitude, longitude, true);
-            },
-            () => {
-                alert('Gagal mengambil lokasi GPS perangkat.');
-            },
-            { enableHighAccuracy: true, timeout: 10000 }
-        );
-    };
-
     return (
         <div className="relative flex h-full flex-col">
             {/* Search bar & GPS button */}
-            <div className="relative z-[500] mb-2 space-y-1">
+            <div className="relative z-[1000] mb-2 space-y-1">
                 <form onSubmit={handleSearchSubmit} className="flex gap-2">
                     <div className="relative flex-1">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Cari tempat, nama gedung, atau jalan..."
-                            className="h-[38px] w-full rounded-[4px] border border-slate-300 bg-white px-3 pr-8 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:border-brand-blue focus:outline-none"
+                            placeholder="Cari jalan, tempat, atau nama gedung..."
+                            className="h-[38px] w-full rounded-[4px] border border-slate-300 bg-white pl-9 pr-8 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:border-brand-blue focus:outline-none shadow-2xs"
                         />
                         {searchQuery && (
                             <button
@@ -208,7 +264,7 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
                                     setSearchQuery('');
                                     setSuggestions([]);
                                 }}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs cursor-pointer"
                                 aria-label="Hapus teks pencarian"
                             >
                                 ✕
@@ -226,27 +282,28 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
 
                     <button
                         type="button"
-                        onClick={handleUseCurrentLocation}
-                        className="inline-flex h-[38px] items-center justify-center gap-1 rounded-[4px] border border-slate-300 bg-white px-3 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer transition"
+                        disabled={locating}
+                        onClick={() => detectDeviceLocation(true)}
+                        className="inline-flex h-[38px] items-center justify-center gap-1.5 rounded-[4px] border border-slate-300 bg-white px-3 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 cursor-pointer transition shrink-0"
                         aria-label="Gunakan lokasi GPS saat ini"
                     >
-                        <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className={`h-4 w-4 text-blue-600 shrink-0 ${locating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <span className="hidden sm:inline">Lokasi Saya</span>
+                        <span className="hidden sm:inline">{locating ? 'Mendeteksi...' : 'Lokasi Saya'}</span>
                     </button>
                 </form>
 
                 {/* Suggestions dropdown */}
                 {suggestions.length > 0 && (
-                    <div className="absolute left-0 right-0 top-[42px] z-[600] max-h-[220px] overflow-y-auto rounded-[4px] border border-slate-300 bg-white shadow-lg">
+                    <div className="absolute left-0 right-0 top-[42px] z-[1100] max-h-[220px] overflow-y-auto rounded-[4px] border border-slate-300 bg-white shadow-xl">
                         {suggestions.map((item, idx) => (
                             <button
                                 key={idx}
                                 type="button"
                                 onClick={() => handleSelectSuggestion(item)}
-                                className="flex w-full flex-col px-3 py-2 text-left text-xs hover:bg-slate-100 border-b border-slate-100 last:border-b-0 cursor-pointer"
+                                className="flex w-full flex-col px-3.5 py-2 text-left text-xs hover:bg-slate-50 border-b border-slate-100 last:border-b-0 cursor-pointer transition"
                             >
                                 <span className="font-semibold text-slate-800 line-clamp-1">{item.name || item.display_name.split(',')[0]}</span>
                                 <span className="text-[11px] text-slate-500 line-clamp-1">{item.display_name}</span>
@@ -268,7 +325,7 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
                 )}
 
                 {currentCoord && (
-                    <div className="absolute bottom-2 right-2 z-[500] rounded bg-white/90 px-2 py-0.5 text-[10px] text-slate-500 shadow-sm border border-slate-200">
+                    <div className="absolute bottom-2 left-2 z-[500] rounded bg-white/90 px-2 py-0.5 text-[10px] text-slate-500 shadow-sm border border-slate-200">
                         {currentCoord.lat.toFixed(5)}, {currentCoord.lng.toFixed(5)}
                     </div>
                 )}

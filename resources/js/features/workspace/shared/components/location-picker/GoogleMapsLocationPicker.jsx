@@ -210,11 +210,16 @@ export default function GoogleMapsLocationPicker({ onLocationSelected, initialLo
             {/* Search Box */}
             <div className="relative z-[500] mb-2 flex items-center gap-2">
                 <div className="relative flex-1">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
                     <input
                         ref={autocompleteInputRef}
                         type="text"
                         placeholder="Ketik nama tempat/toko di Google Places..."
-                        className="h-[38px] w-full rounded-[4px] border border-slate-300 bg-white px-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:border-brand-blue focus:outline-none"
+                        className="h-[38px] w-full rounded-[4px] border border-slate-300 bg-white pl-9 pr-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:border-brand-blue focus:outline-none shadow-2xs"
                     />
                 </div>
                 <button
