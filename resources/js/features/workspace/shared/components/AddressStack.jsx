@@ -43,21 +43,14 @@ export default function AddressStack({
         try {
             toastId = showLoadingToast({
                 title: 'Mendeteksi Lokasi',
-                message: 'Mengambil koordinat GPS presisi tinggi...',
+                message: 'Meminta koordinat GPS perangkat...',
             });
 
-            const coords = await getCurrentDeviceCoordinates((status) => {
-                if (status === 'prompt') {
-                    updateToastToSuccess(toastId, {
-                        title: 'Izin Lokasi Diperlukan',
-                        message: 'Silakan klik "Izinkan" (Allow) pada pop-up izin browser Anda...',
-                    });
-                }
-            });
+            const coords = await getCurrentDeviceCoordinates();
 
             updateToastToSuccess(toastId, {
                 title: 'Mencari Alamat',
-                message: 'Mengidentifikasi detail dusun, desa, kecamatan & kode pos...',
+                message: 'Mengidentifikasi detail alamat...',
             });
 
             const address = await reverseGeocodeCoordinates(coords.lat, coords.lng);
@@ -70,7 +63,7 @@ export default function AddressStack({
                 if (address.country) onChange?.('country', address.country);
 
                 updateToastToSuccess(toastId, {
-                    title: 'Alamat Berhasil Diterapkan',
+                    title: 'Lokasi Diterapkan',
                     message: `${address.street}, ${address.city} (${address.postalCode})`,
                 });
             } else {
@@ -79,13 +72,13 @@ export default function AddressStack({
         } catch (err) {
             if (toastId) {
                 updateToastToError(toastId, {
-                    title: 'Gagal Mengambil Lokasi',
-                    message: err.message || 'Tidak dapat mendeteksi lokasi GPS perangkat.',
+                    title: 'Akses Lokasi Gagal',
+                    message: err.message || 'Tidak dapat mendeteksi lokasi GPS.',
                 });
             } else {
                 showErrorToast({
-                    title: 'Gagal Mengambil Lokasi',
-                    message: err.message || 'Tidak dapat mendeteksi lokasi GPS perangkat.',
+                    title: 'Akses Lokasi Gagal',
+                    message: err.message || 'Tidak dapat mendeteksi lokasi GPS.',
                 });
             }
         } finally {
@@ -103,21 +96,21 @@ export default function AddressStack({
                         disabled={isLocating}
                         onClick={() => setIsDropdownOpen((prev) => !prev)}
                         aria-label="Pilihan Alamat & Lokasi"
-                        className="inline-flex h-[40px] shrink-0 items-center justify-center gap-1.5 rounded-[4px] border border-brand-blue-border bg-white px-2.5 text-brand-blue-accent transition hover:bg-brand-blue-lightest active:bg-brand-blue-light disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-2xs focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+                        className="inline-flex h-[40px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-2 text-brand-blue-accent transition hover:bg-brand-blue-lightest active:bg-brand-blue-light disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-2xs focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
                     >
                         {isLocating ? (
-                            <svg className="h-4 w-4 animate-spin text-brand-blue-accent" fill="none" viewBox="0 0 24 24">
+                            <svg className="h-[18px] w-[18px] animate-spin text-brand-blue-accent" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                             </svg>
                         ) : (
-                            <svg className="h-4 w-4 text-brand-blue-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="h-[18px] w-[18px] text-brand-blue-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         )}
                         <ChevronDownIcon
-                            className={`h-4 w-4 text-brand-blue-accent transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                            className={`h-3.5 w-3.5 text-brand-blue-accent transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
                         />
                     </button>
                 )}
