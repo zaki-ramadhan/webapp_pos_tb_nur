@@ -11,7 +11,6 @@ export default function PortalDropdown({
     side = 'bottom',
     maxHeightLimit = 260,
     minHeightNeeded = 120,
-    minWidth = null,
     className = '',
     panelClassName = '',
     style = {},
@@ -184,16 +183,8 @@ export default function PortalDropdown({
 
     if (coords) {
         if (align === 'stretch') {
-            const dropdownMinWidth = Number(minWidth) || 0;
-            const targetWidth = Math.max(coords.width, dropdownMinWidth);
-            const availableWidth = typeof window !== 'undefined' ? window.innerWidth - 16 : targetWidth;
-            const finalWidth = Math.min(targetWidth, availableWidth);
-            let finalLeft = coords.left;
-            if (typeof window !== 'undefined' && finalLeft + finalWidth > window.innerWidth - 8) {
-                finalLeft = Math.max(8, window.innerWidth - finalWidth - 8);
-            }
-            positionStyle.left = `${finalLeft}px`;
-            positionStyle.width = `${finalWidth}px`;
+            positionStyle.left = `${coords.left}px`;
+            positionStyle.width = `${coords.width}px`;
         } else if (align === 'start') {
             const panelWidth = panelRef.current?.offsetWidth || 0;
             if (panelWidth > 0 && coords.left + panelWidth > window.innerWidth - 8) {

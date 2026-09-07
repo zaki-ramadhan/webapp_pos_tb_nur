@@ -39,7 +39,6 @@ export function AccountLookupField({
     queryParams = {},
     showType = false,
     resource = 'accounts',
-    minWidth = 360,
 }) {
     const isProducts = resource === 'products';
     const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
@@ -120,7 +119,6 @@ export function AccountLookupField({
                 }}
                 showType={showType}
                 resource={resource}
-                minWidth={minWidth}
             />
 
             {feedbackMessage ? (
@@ -152,7 +150,6 @@ export function AccountLookupTextInput({
     queryParams = {},
     showType = false,
     resource = 'accounts',
-    minWidth = 360,
 }) {
     const isProducts = resource === 'products';
     const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
@@ -213,7 +210,6 @@ export function AccountLookupTextInput({
                 }}
                 showType={showType}
                 resource={resource}
-                minWidth={minWidth}
             />
 
             {feedbackMessage ? (
