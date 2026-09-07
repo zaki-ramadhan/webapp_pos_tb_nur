@@ -28,8 +28,8 @@ export default function PreferencesTabs({
                 onClick={() => onSelectTab(tab.id)}
                 className={`relative -mb-px -mr-px inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] px-3 text-sm cursor-pointer select-none transition sm:h-8 sm:px-4 sm:text-sm md:h-8.5 md:text-base max-w-[120px] sm:max-w-[160px] md:max-w-[200px] ${
                     isActive
-                        ? 'z-10 border-x border-t-[3px] border-b border-b-ui-bg-hover border-x-border-tab-secondary-alt border-t-tab-active-border-t bg-ui-bg-hover font-normal text-blue-550'
-                        : 'border border-border-tab-secondary-alt bg-tab-primary-inactive-bg font-normal text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg'
+                        ? 'z-10 border-x border-t-[3px] border-b border-b-ui-bg-hover border-x-ui-border border-t-tab-active-border-t bg-ui-bg-hover font-normal text-blue-550'
+                        : 'border border-ui-border bg-tab-primary-inactive-bg font-normal text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg'
                 } ${isActive ? activeTabClassName : inactiveTabClassName} ${tabClassName}`.trim()}
             >
                 <span className="block truncate">{renderTabLabel(tab.label, isActive, false)}</span>
@@ -38,7 +38,7 @@ export default function PreferencesTabs({
     };
 
     return (
-        <div className={`border-b border-border-tab-secondary-alt bg-transparent ${className}`.trim()}>
+        <div className={`border-b border-ui-border bg-transparent ${className}`.trim()}>
             <div
                 className={`overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-0.5 sm:pt-0.5 ${leftPaddingClass} ${rightPaddingClass}`.trim()}
             >

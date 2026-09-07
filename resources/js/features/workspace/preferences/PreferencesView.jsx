@@ -64,9 +64,9 @@ export default function PreferencesView({ page }) {
                 </div>
             )}
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-transparent px-1 pt-1 md:flex-row md:gap-1.5">
-                <div className="flex min-h-0 w-full shrink-0 flex-col md:w-[170px]">
-                    <div className="min-h-0 flex-1 bg-transparent px-1 pb-3 pt-1 md:pr-0">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-transparent px-1 pt-1 md:flex-row">
+                <div className="flex min-h-0 w-full shrink-0 flex-col md:w-[170px] z-10">
+                    <div className="min-h-0 flex-1 bg-transparent pb-3 pt-2 sm:pt-2.5 md:pt-3">
                         <div className="space-y-2">
                             {sideItems.map((item) => (
                                 <PreferenceSideItem
@@ -80,7 +80,7 @@ export default function PreferencesView({ page }) {
                     </div>
                 </div>
 
-                <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-transparent">
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[4px] border border-ui-border bg-white shadow-panel-subtle -ml-px">
                     <fieldset disabled={!isSuperAdmin} className="flex min-h-0 flex-1 flex-col overflow-hidden border-0 p-0 m-0 w-full disabled:opacity-85">
                         <PreferencesSidebarContent
                             {...state}

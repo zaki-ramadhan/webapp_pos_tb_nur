@@ -166,7 +166,7 @@ export default function PreferencesSidebarContent({
     const currentItem = sideItems.find((item) => item.id === activeSideItemId);
 
     return (
-        <div className="mx-2 mb-2 flex min-h-[320px] items-center justify-center rounded-[4px] border border-tab-overflow-panel-border bg-white px-6 py-8 text-center shadow-inset-lighter sm:mx-3 sm:mb-3">
+        <div className="m-2.5 sm:m-3.5 flex min-h-[320px] items-center justify-center rounded-[4px] border border-ui-border bg-white px-6 py-8 text-center">
             <div className="max-w-[560px] space-y-3">
                 <h3 className="text-2xl font-medium text-abc-label-dark">{currentItem?.label}</h3>
                 <p className="text-xs sm:text-sm leading-6 text-text-muted">
