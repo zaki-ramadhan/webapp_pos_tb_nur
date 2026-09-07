@@ -1,11 +1,5 @@
 /**
  * Layanan Lokasi & Geocoding Presisi Tinggi TB Nur
- *
- * Mengakomodasi:
- * 1. Deteksi izin & koordinat GPS perangkat via browser Geolocation API dengan opsi akurasi tinggi.
- * 2. Smart Hybrid Geocoding (Nominatim zoom 18 + BigDataCloud + Database Kodepos Resmi)
- *    yang memastikan desa/kelurahan, kecamatan (Kec. Kaliwedi), kabupaten (Kab. Cirebon),
- *    dan kode pos resmi (45165) terdeteksi akurat untuk wilayah pedesaan/daerah TB Nur.
  */
 
 const GOOGLE_MAPS_STORAGE_KEY = 'pos_google_maps_api_key';
@@ -19,36 +13,11 @@ export function getGoogleMapsApiKey() {
 }
 
 /**
- * Memeriksa status izin geolokasi browser jika didukung.
- * @returns {Promise<'granted' | 'prompt' | 'denied' | 'unknown'>}
+ * Mengambil koordinat GPS perangkat langsung via Geolocation API browser.
  */
-export async function checkGeolocationPermission() {
-    if (typeof navigator !== 'undefined' && navigator.permissions && navigator.permissions.query) {
-        try {
-            const status = await navigator.permissions.query({ name: 'geolocation' });
-            return status.state;
-        } catch {
-            return 'unknown';
-        }
-    }
-    return 'unknown';
-}
-
-/**
- * Mengambil koordinat GPS perangkat terkini dengan akurasi tinggi.
- */
-export async function getCurrentDeviceCoordinates(onStatusChange = null) {
+export function getCurrentDeviceCoordinates() {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
-        throw new Error('Browser Anda tidak mendukung layanan geolokasi GPS.');
-    }
-
-    const permissionState = await checkGeolocationPermission();
-    if (permissionState === 'denied') {
-        throw new Error('Izin lokasi diblokir oleh browser. Harap klik ikon gembok / setelan situs di sebelah kiri bilah URL browser Anda dan ubah izin Lokasi menjadi Izinkan, lalu klik kembali.');
-    }
-
-    if (permissionState === 'prompt' && typeof onStatusChange === 'function') {
-        onStatusChange('prompt');
+        return Promise.reject(new Error('Browser tidak mendukung fitur geolokasi GPS.'));
     }
 
     return new Promise((resolve, reject) => {
@@ -61,13 +30,13 @@ export async function getCurrentDeviceCoordinates(onStatusChange = null) {
                 });
             },
             (err) => {
-                let message = 'Gagal mengambil lokasi: Koordinat GPS tidak dapat diperoleh.';
+                let message = 'Gagal mendeteksi lokasi GPS.';
                 if (err.code === 1) { // PERMISSION_DENIED
-                    message = 'Izin lokasi tidak diberikan. Harap klik "Izinkan" (Allow) saat browser meminta izin, atau aktifkan izin lokasi melalui ikon gembok di bilah alamat browser.';
+                    message = 'Izin lokasi diblokir browser. Buka setelan situs di kiri URL untuk mengizinkan.';
                 } else if (err.code === 2) { // POSITION_UNAVAILABLE
-                    message = 'Sinyal lokasi atau GPS tidak tersedia pada perangkat. Pastikan GPS/layanan lokasi aktif.';
+                    message = 'Sinyal GPS tidak tersedia pada perangkat.';
                 } else if (err.code === 3) { // TIMEOUT
-                    message = 'Waktu permintaan lokasi habis (timeout). Silakan coba klik kembali.';
+                    message = 'Waktu permintaan lokasi habis. Silakan coba kembali.';
                 }
                 reject(new Error(message));
             },
@@ -87,7 +56,7 @@ async function reverseGeocodeGoogle(lat, lng, apiKey) {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}&language=id`;
     const response = await fetch(url);
     if (!response.ok) {
-        throw new Error('Google Geocoding HTTP request failed');
+        throw new Error('Permintaan Google Geocoding gagal.');
     }
     const data = await response.json();
     if (data.status !== 'OK' || !Array.isArray(data.results) || data.results.length === 0) {
@@ -177,7 +146,7 @@ async function reverseGeocodeGoogle(lat, lng, apiKey) {
 }
 
 /**
- * Smart Hybrid Geocoding: Menggabungkan Nominatim (zoom 18) + BigDataCloud (kecamatan/kabupaten) + Kodepos Resmi
+ * Smart Hybrid Geocoding: Nominatim (zoom 18) + BigDataCloud + Kodepos Resmi
  */
 async function reverseGeocodeSmart(lat, lng) {
     const osmPromise = fetch(
@@ -202,7 +171,6 @@ async function reverseGeocodeSmart(lat, lng) {
     const hamlet = osmAddr.hamlet || osmAddr.isolated_dwelling || osmAddr.neighbourhood || '';
     let village = osmAddr.village || osmAddr.suburb || osmAddr.hamlet || '';
 
-    // Cari kecamatan dari BigDataCloud
     let kecamatan = '';
     if (Array.isArray(bdcData?.localityInfo?.informative)) {
         const k = bdcData.localityInfo.informative.find((i) =>
@@ -214,7 +182,6 @@ async function reverseGeocodeSmart(lat, lng) {
         kecamatan = bdcData.city;
     }
 
-    // Cari kabupaten/kota dari BigDataCloud
     let regency = '';
     if (Array.isArray(bdcData?.localityInfo?.administrative)) {
         const r = bdcData.localityInfo.administrative.find(
@@ -228,7 +195,6 @@ async function reverseGeocodeSmart(lat, lng) {
 
     let province = osmAddr.state || bdcData?.principalSubdivision || 'Jawa Barat';
 
-    // Verifikasi kode pos via database kodepos resmi
     let postalCode = '';
     const query = village || kecamatan;
     if (query) {
@@ -256,7 +222,6 @@ async function reverseGeocodeSmart(lat, lng) {
         }
     }
 
-    // Koreksi data OSM jika kode pos keliru (misal 45274 di Guwa Kidul Cirebon harusnya 45165)
     if (!postalCode) {
         if (village.toLowerCase().includes('guwa') || kecamatan.toLowerCase().includes('kaliwedi')) {
             postalCode = '45165';
@@ -270,7 +235,6 @@ async function reverseGeocodeSmart(lat, lng) {
         postalCode = '45165';
     }
 
-    // Susun format jalan, dusun, desa, kecamatan
     const streetParts = [];
     if (road) {
         streetParts.push(`${road}${houseNumber}`);
