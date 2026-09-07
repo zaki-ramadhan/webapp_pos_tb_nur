@@ -416,8 +416,37 @@ async function reverseGeocodeSmart(lat, lng) {
 
 /**
  * Reverse geocode koordinat lat, lng menjadi objek alamat TB Nur.
+ * Memprioritaskan backend Google Geocoding (aman via .env server).
  */
 export async function reverseGeocodeCoordinates(lat, lng) {
+    // 1. Coba reverse geocode via backend Laravel (Google Maps API Key di .env server)
+    try {
+        const response = await fetch(`/api/backend/geo/reverse?lat=${lat}&lng=${lng}`, {
+            headers: {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+                const cityMatch = matchIndonesianCity(result.data.city, result.data.province);
+                return {
+                    street: result.data.street || '',
+                    city: cityMatch.city,
+                    province: cityMatch.province,
+                    postalCode: result.data.postalCode || cityMatch.postalCode || '45165',
+                    country: result.data.country || 'Indonesia',
+                    lat,
+                    lng,
+                };
+            }
+        }
+    } catch {
+        // Backend geocode gagal / offline, lanjutkan ke fallback
+    }
+
+    // 2. Coba via Google Maps client-side jika API key disetel di browser/Vite
     const googleKey = getGoogleMapsApiKey();
     if (googleKey) {
         try {
@@ -426,5 +455,7 @@ export async function reverseGeocodeCoordinates(lat, lng) {
             // Fallback ke Smart Geocoder
         }
     }
+
+    // 3. Fallback Smart Hybrid Geocoding (OSM + BigDataCloud + Kodepos Resmi)
     return await reverseGeocodeSmart(lat, lng);
 }
