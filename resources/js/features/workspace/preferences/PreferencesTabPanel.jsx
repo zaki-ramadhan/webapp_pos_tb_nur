@@ -10,12 +10,13 @@ export default function PreferencesTabPanel({
     children,
 }) {
     return (
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-2.5 sm:p-3.5">
             <PreferencesTabs
                 tabs={tabs}
                 activeTabId={activeTabId}
                 onSelectTab={onSelectTab}
                 activeTabClassName={activeTabClassName}
+                className="pl-0"
             />
 
             <PreferencesContentPanel className={panelClassName}>
