@@ -100,8 +100,24 @@ export default function LeafletLocationPicker({ onLocationSelected, initialLocat
             updateMarkerPosition(lat, lng, true);
         });
 
-        // Trigger initial geocode if none provided
-        reverseGeocode(defaultLat, defaultLng);
+        // Auto-detect current device GPS location if no initial location is provided
+        if (!initialLocation && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    if (mapInstanceRef.current) {
+                        mapInstanceRef.current.flyTo([latitude, longitude], 16);
+                    }
+                    updateMarkerPosition(latitude, longitude, true);
+                },
+                () => {
+                    reverseGeocode(defaultLat, defaultLng);
+                },
+                { enableHighAccuracy: true, timeout: 6000 }
+            );
+        } else {
+            reverseGeocode(defaultLat, defaultLng);
+        }
 
         return () => {
             map.remove();
