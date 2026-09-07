@@ -276,7 +276,7 @@ final class PosBlueprint
         return [
             self::navModule('settings', 'Pengaturan', 'settings', [
                 self::navItem('preferences', 'Preferensi', 'settings', 'amber'),
-                self::navItem('group-access', 'Akses Grup', 'group', 'amber'),
+                self::navItem('group-access', 'Akses Grup', 'group-access', 'amber'),
                 self::navItem('users', 'Pengguna', 'users', 'amber'),
               // self::navItem('numbering', 'Penomoran', 'numbering', 'amber'),
 
@@ -299,8 +299,8 @@ final class PosBlueprint
 
               // self::navItem('fob-master', 'FOB', 'invoice', 'blue'),
 
-                self::navItem('salary-allowance', 'Gaji atau Tunjangan', 'salary', 'blue'),
-                self::navItem('employees', 'Karyawan', 'employee', 'blue'),
+                self::navItem('salary-allowance', 'Gaji atau Tunjangan', 'salary-allowance', 'blue'),
+                self::navItem('employees', 'Karyawan', 'employees', 'blue'),
               // self::navItem('recurring-transactions', 'Transaksi Berulang', 'recurring', 'green'),
 
               // self::navItem('period-end', 'Proses Akhir Bulan', 'calendar', 'green'),
@@ -309,12 +309,12 @@ final class PosBlueprint
 
               // self::navItem('favorite-transactions', 'Transaksi Favorit', 'favorite', 'purple'),
 
-                self::navItem('activity-log', 'Log Aktivitas', 'activity', 'purple'),
+                self::navItem('activity-log', 'Log Aktivitas', 'activity-log', 'purple'),
             ]),
             self::navModule('general-ledger', 'Buku Besar', 'ledger', [
                 self::navItem('accounts', 'Akun Perkiraan', 'account', 'blue'),
                 self::navItem('expense-entry', 'Pencatatan Beban', 'expense', 'green'),
-                self::navItem('payroll-entry', 'Pencatatan Gaji', 'salary', 'green'),
+                self::navItem('payroll-entry', 'Pencatatan Gaji', 'payroll-entry', 'green'),
                 self::navItem('general-journal', 'Jurnal Umum', 'journal', 'green'),
               // self::navItem('budget-monitor', 'Monitor Anggaran', 'budget', 'purple'),
 
