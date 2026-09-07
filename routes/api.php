@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api', \App\Http\Middleware\EnsureUserHasStoreAccess::class])->group(function (): void {
     Route::post('/attachments/upload', [\App\Http\Controllers\Api\AttachmentUploadController::class, 'upload'])->middleware('throttle:30,1');
     Route::post('/currencies/sync', [BackendResourceController::class, 'syncCurrencies']);
-    Route::get('/geo/reverse', [\App\Http\Controllers\Api\GeoLocationController::class, 'reverseGeocode']);
     Route::get('/banks', function (): \Illuminate\Http\JsonResponse {
         $cacheKey = 'indonesian_banks_list';
 
