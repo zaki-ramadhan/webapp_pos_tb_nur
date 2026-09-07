@@ -9,6 +9,9 @@ import { clearWorkspaceClientState } from '@/features/workspace/dashboard/worksp
 import { ChevronDownIcon, LogoutIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import UserAvatar from '@/features/workspace/shared/UserAvatar';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { Database } from 'lucide-react';
+import { isOwnerUser } from '@/features/workspace/backend/adapters/generalAdapters';
+import DataMaintenanceModal from '@/features/workspace/dashboard/DataMaintenanceModal';
 
 function TopBarIcon({ children, label, onClick, buttonRef }) {
     return (
@@ -33,7 +36,9 @@ export default function DashboardTopBar({
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+    const [isDataMaintenanceOpen, setIsDataMaintenanceOpen] = useState(false);
     const userMenuButtonRef = useRef(null);
+    const isSuperAdmin = isOwnerUser(user);
 
     const [headerBg, setHeaderBg] = useState(() => {
         if (typeof window === 'undefined') return '/assets/images/panel-header-background_2.svg';
@@ -155,7 +160,7 @@ export default function DashboardTopBar({
                             open={isUserMenuOpen}
                             onClose={() => setIsUserMenuOpen(false)}
                             anchorRef={userMenuButtonRef}
-                            widthClassName="w-[min(180px,calc(100vw-1rem))]"
+                            widthClassName="w-[min(200px,calc(100vw-1rem))]"
                             className="z-[70]"
                         >
                             <div className="border-b border-table-row-border px-3 py-2 text-left lg:hidden">
@@ -164,6 +169,21 @@ export default function DashboardTopBar({
                                     {user.role === 'Super Admin' || user.role === 'super_admin' ? 'Administrator Sistem' : (user.role || 'Kasir')}
                                 </p>
                             </div>
+                            {isSuperAdmin && (
+                                <>
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            setIsUserMenuOpen(false);
+                                            setIsDataMaintenanceOpen(true);
+                                        }}
+                                        icon={<Database className="h-4 w-4 text-slate-600" />}
+                                        className="text-xs font-medium text-brand-darker md:text-sm"
+                                    >
+                                        Pemeliharaan Data
+                                    </DropdownMenuItem>
+                                    <div className="my-1 border-t border-table-row-border" />
+                                </>
+                            )}
                             <DropdownMenuItem
                                 onClick={handleLogout}
                                 icon={isLoggingOut ? <Spinner className="h-4 w-4 text-brand-blue-dark" /> : <LogoutIcon />}
@@ -187,6 +207,11 @@ export default function DashboardTopBar({
                 cancelLabel="Batal"
                 confirmVariant="danger"
                 confirmLoading={isLoggingOut}
+            />
+
+            <DataMaintenanceModal
+                open={isDataMaintenanceOpen}
+                onClose={() => setIsDataMaintenanceOpen(false)}
             />
         </header>
     );
