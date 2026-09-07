@@ -52,9 +52,9 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
         ? 'aspect-square rounded-[10px] px-2 pt-3 pb-2.5 sm:pt-3.5 sm:pb-2.5 md:pt-3.5 md:pb-3'
         : 'aspect-square rounded-[10px] px-2 pt-3 pb-2.5 sm:pt-3.5 sm:pb-2.5 sm:px-2.5 md:pt-4 md:pb-3';
     const iconSizeClassName = dense
-        ? 'h-9 w-9 sm:h-9.5 sm:w-9.5 md:h-10 md:w-10'
-        : 'h-9.5 w-9.5 sm:h-10 sm:w-10 md:h-[42px] md:w-[42px]';
-    const labelSizeClassName = dense ? 'text-xs sm:text-xs md:text-[12.5px]' : 'text-xs sm:text-[11.5px] md:text-[12.5px]';
+        ? 'h-[38px] w-[38px] sm:h-[40px] sm:w-[40px] md:h-[42px] md:w-[42px]'
+        : 'h-[42px] w-[42px] sm:h-[44px] sm:w-[44px] md:h-[46px] md:w-[46px]';
+    const labelSizeClassName = dense ? 'text-[12px] sm:text-[12.5px] md:text-[13px]' : 'text-[12.5px] sm:text-[13px] md:text-[13.5px]';
     const hintLabel = isInactive ? WORKSPACE_INACTIVE_HINT : isImplemented ? '' : 'Belum diimplementasikan penuh';
 
     return (

@@ -102,6 +102,32 @@ export function StoreModuleIcon({ className = 'h-5 w-5', ...props }) {
 export function GeneralLedgerModuleIcon({ className = 'h-5 w-5', ...props }) {
     return (
         <svg
+            viewBox="-3.6 -0.25 32.5 32.5"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+            aria-hidden="true"
+            {...props}
+        >
+            <path d="M8.50001 28H16.5" stroke="currentColor" strokeWidth={2} />
+            <path
+                d="M24 30.8V1.2C24 1.08954 23.9144 1 23.8039 1H5.00001C2.00001 1 1 2.5 1 5V26C1 30.5 3 31 5.5 31H23.8016C23.9121 31 24 30.9105 24 30.8Z"
+                stroke="currentColor"
+                strokeWidth={2}
+            />
+            <path d="M1.30001 25H5.65342M5.65342 25V1.5M5.65342 25H24.3" stroke="currentColor" strokeWidth={2} />
+            <path
+                d="M19.8 6H10.2C10.0896 6 10 6.08954 10 6.2V10.8C10 10.9105 10.0896 11 10.2 11H19.8C19.9105 11 20 10.9105 20 10.8V6.2C20 6.08954 19.9105 6 19.8 6Z"
+                stroke="currentColor"
+                strokeWidth={2}
+            />
+        </svg>
+    );
+}
+
+export function PayrollModuleIcon({ className = 'h-5 w-5', ...props }) {
+    return (
+        <svg
             viewBox="-1.4 -0.3 33.6 33.6"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
