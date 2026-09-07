@@ -38,8 +38,11 @@ export default function DashboardActivePageContent({
                 if (page.id === 'dashboard') return null;
 
                 const isCurrent = activePageId === page.id;
-                const isFormMode = mode === 'form' || page.id === 'preferences';
-                const ptClassName = isFormMode ? 'pt-0.5 sm:pt-0.5' : 'pt-3 sm:pt-3';
+                const isPreferences = page.id === 'preferences';
+                const isFormMode = mode === 'form';
+                const ptClassName = isPreferences
+                    ? 'pt-1.5 sm:pt-2'
+                    : (isFormMode ? 'pt-0.5 sm:pt-0.5' : 'pt-3 sm:pt-3');
 
                 return (
                     <div
