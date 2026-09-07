@@ -47,12 +47,6 @@ export default function AddressStack({
             });
 
             const coords = await getCurrentDeviceCoordinates();
-
-            updateToastToSuccess(toastId, {
-                title: 'Mencari Alamat',
-                message: 'Mengidentifikasi detail alamat...',
-            });
-
             const address = await reverseGeocodeCoordinates(coords.lat, coords.lng);
 
             if (address) {
