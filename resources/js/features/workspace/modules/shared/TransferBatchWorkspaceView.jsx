@@ -136,9 +136,11 @@ export default function TransferBatchWorkspaceView({ config }) {
                     >
                         <DataTableHeader className="bg-table-header-bg">
                             <tr>
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-light text-white">
-                                    No.
-                                </DataTableHead>
+                                {sortedRows.length > 0 && (
+                                    <DataTableHead className="w-[50px] px-2.5 text-center text-base font-light text-white">
+                                        No.
+                                    </DataTableHead>
+                                )}
                                 {config.table.columns.map((column) => (
                                     column.kind === 'checkbox' ? (
                                         <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-2.5 text-base font-light text-white text-center`.trim()}>
@@ -187,7 +189,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                 <DataTableRow className="bg-white">
                                     {firstColumnIsCheckbox ? <DataTableCell className="px-2.5 py-2 text-black" /> : null}
                                     <DataTableCell
-                                        colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0) + 1}
+                                        colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0)}
                                         className="px-2.5 py-2 text-center text-base text-black"
                                     >
                                         {config.table.loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}

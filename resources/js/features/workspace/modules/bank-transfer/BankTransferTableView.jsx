@@ -96,21 +96,6 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
     const { sortedRows: clientSortedRows, sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
     const sortedRows = isServerSort ? filteredRows : clientSortedRows;
 
-    const columnsWithNo = useMemo(() => {
-        return [
-            { id: '__no', label: 'No.', widthClassName: 'w-[48px]', align: 'center', sortable: false },
-            ...config.table.columns,
-        ];
-    }, [config.table.columns]);
-
-    const rowsWithNo = useMemo(() => {
-        const { from = 1 } = config.table.pagination ?? {};
-        return sortedRows.map((row, index) => ({
-            ...row,
-            __no: from + index,
-        }));
-    }, [sortedRows, config.table.pagination]);
-
     return (
         <div className="flex min-h-full flex-col">
             <TableToolbar
@@ -141,15 +126,15 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <TransactionDataTable
-                    columns={columnsWithNo}
-                    rows={rowsWithNo}
-                    showNumbering={false}
+                    columns={config.table.columns}
+                    rows={sortedRows}
+                    pagination={config.table.pagination}
                     emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Tidak ada data')}
                     minWidthClassName="min-w-[1280px]"
                     onRowClick={(row) => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                     getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
                     renderHeaderCell={(column) => {
-                        const sortable = column.sortable !== false && column.id !== '__no';
+                        const sortable = column.sortable !== false;
                         const activeKey = isServerSort ? (config.table.sortBy || config.table.pagination?.sortBy) : sortKey;
                         const activeDir = isServerSort ? (config.table.sortDirection || config.table.pagination?.sortDirection) : sortDir;
                         const direction = activeKey === column.id ? activeDir : null;

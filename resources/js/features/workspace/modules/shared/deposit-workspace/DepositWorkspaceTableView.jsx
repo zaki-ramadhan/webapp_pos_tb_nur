@@ -275,7 +275,7 @@ export default function DepositTableView({
                             ))
                         ) : (
                             <DataTableRow className="border-ui-border-row bg-white">
-                                <DataTableCell colSpan={config.table.columns.length + 1} className="px-2.5 py-2 text-center text-base text-black">
+                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-2 text-center text-base text-black">
                                     {config.table.loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
                                 </DataTableCell>
                             </DataTableRow>
