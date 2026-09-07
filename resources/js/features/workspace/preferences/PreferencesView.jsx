@@ -64,7 +64,7 @@ export default function PreferencesView({ page }) {
                 </div>
             )}
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-transparent px-1 pt-1 md:flex-row">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-transparent px-1 pt-0 md:flex-row">
                 <div className="flex min-h-0 w-full shrink-0 flex-col md:w-[170px] z-10">
                     <div className="min-h-0 flex-1 bg-transparent pb-3 pt-0">
                         <div className="space-y-2">
