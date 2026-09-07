@@ -49,8 +49,8 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
     const iconClassName = isInactive ? 'text-disabled-text' : isImplemented ? tone.icon : 'text-text-inactive';
     const labelClassName = isInactive ? 'text-text-sidebar-muted' : isImplemented ? 'text-tab-active-text' : 'text-text-light';
     const tileClassName = dense
-        ? 'aspect-square rounded-[10px] px-2 pt-3 pb-2.5 sm:pt-3.5 sm:pb-2.5 md:pt-3.5 md:pb-3'
-        : 'aspect-square rounded-[10px] px-2 pt-3 pb-2.5 sm:pt-3.5 sm:pb-2.5 sm:px-2.5 md:pt-4 md:pb-3';
+        ? 'aspect-square rounded-[10px] px-2 pt-2.5 pb-2 sm:pt-3 sm:pb-2.5 md:pt-3 md:pb-2.5'
+        : 'aspect-square rounded-[10px] px-2 pt-3 pb-2 sm:pt-3.5 sm:pb-2.5 sm:px-2 md:pt-3.5 md:pb-2.5';
     const iconSizeClassName = dense
         ? 'h-[38px] w-[38px] sm:h-[40px] sm:w-[40px] md:h-[42px] md:w-[42px]'
         : 'h-[42px] w-[42px] sm:h-[44px] sm:w-[44px] md:h-[46px] md:w-[46px]';

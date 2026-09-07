@@ -49,18 +49,18 @@ function resolveColumnCount(itemCount) {
 
 function resolveTileWidth(columnCount, dense) {
     if (columnCount >= 6) {
-        return dense ? 96 : 110;
+        return dense ? 88 : 100;
     }
 
     if (columnCount === 5) {
-        return dense ? 102 : 116;
+        return dense ? 94 : 106;
     }
 
     if (columnCount === 4) {
-        return dense ? 108 : 122;
+        return dense ? 100 : 112;
     }
 
-    return dense ? 116 : 130;
+    return dense ? 106 : 118;
 }
 
 function resolveFlyoutWidth(columnCount, tileWidth, dense) {
