@@ -46,8 +46,8 @@ export function getCurrentDeviceCoordinates() {
             },
             {
                 enableHighAccuracy: true,
-                timeout: 30000,
-                maximumAge: 0,
+                timeout: Infinity,
+                maximumAge: 60000,
             }
         );
     });
