@@ -49,11 +49,11 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
     const iconClassName = isInactive ? 'text-disabled-text' : isImplemented ? tone.icon : 'text-text-inactive';
     const labelClassName = isInactive ? 'text-text-sidebar-muted' : isImplemented ? 'text-tab-active-text' : 'text-text-light';
     const tileClassName = dense
-        ? 'min-h-[86px] gap-2 rounded-[10px] px-2 pt-3 pb-2 sm:min-h-[90px] sm:gap-2.5 sm:pt-3.5 sm:pb-2.5 md:min-h-[94px] md:pb-2'
-        : 'min-h-[86px] gap-2 rounded-[10px] px-2 pt-3 pb-2 sm:min-h-[90px] sm:gap-2.5 sm:pt-3.5 sm:pb-2.5 sm:px-2 md:min-h-[96px] md:pb-2';
+        ? 'aspect-square rounded-[10px] px-2 pt-3 pb-2.5 sm:pt-3.5 sm:pb-2.5 md:pt-3.5 md:pb-3'
+        : 'aspect-square rounded-[10px] px-2 pt-3 pb-2.5 sm:pt-3.5 sm:pb-2.5 sm:px-2.5 md:pt-4 md:pb-3';
     const iconSizeClassName = dense
-        ? 'h-8.5 w-8.5 sm:h-9 sm:w-9 md:h-9.5 md:w-9.5'
-        : 'h-9 w-9 sm:h-9.5 sm:w-9.5 md:h-10 md:w-10';
+        ? 'h-9 w-9 sm:h-9.5 sm:w-9.5 md:h-10 md:w-10'
+        : 'h-9.5 w-9.5 sm:h-10 sm:w-10 md:h-[42px] md:w-[42px]';
     const labelSizeClassName = dense ? 'text-xs sm:text-xs md:text-[12.5px]' : 'text-xs sm:text-[11.5px] md:text-[12.5px]';
     const hintLabel = isInactive ? WORKSPACE_INACTIVE_HINT : isImplemented ? '' : 'Belum diimplementasikan penuh';
 
@@ -65,24 +65,26 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
                     onSelect?.(item);
                 }
             }}
-            className={`flex w-full flex-col items-center justify-center border text-center font-normal shadow-tile-navigation transition ${tileClassName} ${stateClassName} ${
+            className={`flex w-full flex-col items-center justify-between border text-center font-normal shadow-tile-navigation transition ${tileClassName} ${stateClassName} ${
                 isSelectable ? '' : 'cursor-not-allowed'
             }`.trim()}
             aria-disabled={!isSelectable}
         >
             <NavigationIcon type={item.icon} className={`${iconSizeClassName} ${iconClassName}`.trim()} strokeWidth={1.35} />
-            <span className={`${labelSizeClassName} font-normal leading-[1.2] ${labelClassName}`.trim()}>
-                {item.label}
-            </span>
-            {hintLabel ? (
-                <span
-                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
-                        isInactive ? 'bg-disabled-bg text-tab-inactive-text' : 'bg-bg-workspace-tab-inactive text-text-workspace-tab-inactive'
-                    }`.trim()}
-                >
-                    {isInactive ? WORKSPACE_INACTIVE_BADGE_LABEL : 'Draft'}
+            <div className="flex w-full flex-col items-center gap-1">
+                <span className={`${labelSizeClassName} font-normal leading-[1.25] ${labelClassName}`.trim()}>
+                    {item.label}
                 </span>
-            ) : null}
+                {hintLabel ? (
+                    <span
+                        className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
+                            isInactive ? 'bg-disabled-bg text-tab-inactive-text' : 'bg-bg-workspace-tab-inactive text-text-workspace-tab-inactive'
+                        }`.trim()}
+                    >
+                        {isInactive ? WORKSPACE_INACTIVE_BADGE_LABEL : 'Draft'}
+                    </span>
+                ) : null}
+            </div>
         </button>
     );
 }

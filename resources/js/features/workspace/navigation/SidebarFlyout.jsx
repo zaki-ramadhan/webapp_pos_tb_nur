@@ -90,11 +90,9 @@ export default function SidebarFlyout({
     const itemCount = items.length;
     const isDense = itemCount >= 10;
     const columnCount =
-        viewportWidth < 480
-            ? 1
-            : viewportWidth < 768
-              ? Math.min(2, itemCount || 1)
-              : viewportWidth < 1024
+        viewportWidth < 768
+            ? Math.min(2, itemCount || 1)
+            : viewportWidth < 1024
                 ? Math.min(isDense ? 4 : 3, resolveColumnCount(itemCount))
                 : viewportWidth < 1280
                   ? Math.min(4, resolveColumnCount(itemCount))
