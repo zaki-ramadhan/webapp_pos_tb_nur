@@ -125,6 +125,9 @@ export function InquiryControl({
                     placeholder={control.placeholder ?? 'Cari/Pilih Pemasok...'}
                     searchLabel="Cari pemasok"
                     heightClassName="h-[40px]"
+                    onChange={(e) => {
+                        onChange?.('supplierSearch', e?.target?.value ?? '');
+                    }}
                     onSelectAccount={(record, label) => {
                         if (record) {
                             onLookupSelect?.('supplierSearch', { id: record.id, label, name: record.name, code: record.code });

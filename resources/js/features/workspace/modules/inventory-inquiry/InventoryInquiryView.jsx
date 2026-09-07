@@ -192,18 +192,27 @@ export default function InventoryInquiryView({ config, pageId }) {
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
-        if (!normalizedKeyword) return tableRows;
+        const supplierSearch = (values.supplierSearch ?? '').trim().toLowerCase();
 
-        const searchKeys = config.table.searchKeys?.length
-            ? config.table.searchKeys
-            : dataColumns.map((col) => col.id);
+        return tableRows.filter((row) => {
+            if (supplierSearch) {
+                const rowSupplier = String(row.supplier ?? '').toLowerCase();
+                if (!rowSupplier.includes(supplierSearch)) {
+                    return false;
+                }
+            }
 
-        return tableRows.filter((row) =>
-            searchKeys.some((key) =>
+            if (!normalizedKeyword) return true;
+
+            const searchKeys = config.table.searchKeys?.length
+                ? config.table.searchKeys
+                : dataColumns.map((col) => col.id);
+
+            return searchKeys.some((key) =>
                 String(row[key] ?? '').toLowerCase().includes(normalizedKeyword),
-            ),
-        );
-    }, [config.table.searchKeys, dataColumns, keyword, tableRows]);
+            );
+        });
+    }, [config.table.searchKeys, dataColumns, keyword, tableRows, values.supplierSearch]);
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
     const { handleResizeStart, getCellStyle } = useColumnResize('inventory-inquiry');

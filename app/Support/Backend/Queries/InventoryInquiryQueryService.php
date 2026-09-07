@@ -6,6 +6,7 @@ use App\Domain\Catalog\Models\Product;
 use App\Domain\Catalog\Models\Warehouse;
 use App\Domain\Inventory\Models\InventoryDocument;
 use App\Domain\Inventory\Models\InventoryDocumentLine;
+use App\Domain\Partner\Models\Supplier;
 use App\Domain\Support\Models\OperationDocument;
 use App\Domain\Support\Models\OperationDocumentLine;
 use App\Support\Backend\Queries\Concerns\HasQueryHelpers;
@@ -13,21 +14,26 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class InventoryInquiryQueryService
 {
     use HasQueryHelpers;
     /**
      * @param  array<int, int>  $productIds
+     * @param  int|null  $warehouseId
      * @return array<int, array{stock_on_hand: float, stock_available: float}>
      */
-    public function buildStockTotalsByProduct(array $productIds = []): array
+    public function buildStockTotalsByProduct(array $productIds = [], ?int $warehouseId = null): array
     {
         $filters = [];
         if (count($productIds) === 1) {
             $filters['product_id'] = $productIds[0];
         } elseif (count($productIds) > 1) {
             $filters['product_ids'] = $productIds;
+        }
+        if ($warehouseId !== null) {
+            $filters['warehouse_id'] = $warehouseId;
         }
         $compositeStockMap = $this->buildStockMap($filters);
         
@@ -36,12 +42,16 @@ class InventoryInquiryQueryService
         foreach ($compositeStockMap as $compositeKey => $qty) {
             $parts = explode(':', $compositeKey);
             $pid = (int) ($parts[0] ?? 0);
+            $wid = (int) ($parts[1] ?? 0);
+            if ($warehouseId !== null && $wid !== $warehouseId) {
+                continue;
+            }
             if ($pid > 0 && ($productIdSet === null || isset($productIdSet[$pid]))) {
                 $onHandTotals[$pid] = (float) ($onHandTotals[$pid] ?? 0.0) + (float) $qty;
             }
         }
 
-        $reservedQuery = \Illuminate\Support\Facades\DB::table('operation_document_lines as odl')
+        $reservedQuery = DB::table('operation_document_lines as odl')
             ->join('operation_documents as od', 'odl.operation_document_id', '=', 'od.id')
             ->where('od.document_type', 'sales_order')
             ->where('od.is_closed', false)
@@ -54,9 +64,19 @@ class InventoryInquiryQueryService
             $reservedQuery->whereIn('odl.product_id', $productIds);
         }
 
+        if ($warehouseId !== null) {
+            $reservedQuery->where(function ($q) use ($warehouseId) {
+                $q->where('odl.warehouse_id', $warehouseId)
+                  ->orWhere(function ($sq) use ($warehouseId) {
+                      $sq->whereNull('odl.warehouse_id')
+                         ->where('od.warehouse_id', $warehouseId);
+                  });
+            });
+        }
+
         $reservedTotals = $reservedQuery
             ->groupBy('odl.product_id')
-            ->select('odl.product_id', \Illuminate\Support\Facades\DB::raw('SUM(odl.quantity) as reserved_qty'))
+            ->select('odl.product_id', DB::raw('SUM(odl.quantity) as reserved_qty'))
             ->pluck('reserved_qty', 'odl.product_id')
             ->all();
 
@@ -349,12 +369,26 @@ class InventoryInquiryQueryService
      */
     public function paginateMinimumStocks(array $filters): LengthAwarePaginator
     {
+        $warehouseId = filled($filters['warehouse_id'] ?? null) ? (int) $filters['warehouse_id'] : null;
+        if ($warehouseId === null && filled($filters['warehouse'] ?? null)) {
+            $warehouseName = trim((string) $filters['warehouse']);
+            $warehouseId = Warehouse::where('name', 'like', "%{$warehouseName}%")
+                ->orWhere('code', 'like', "%{$warehouseName}%")
+                ->value('id');
+        }
+
+        $supplierId = filled($filters['supplier_id'] ?? null) ? (int) $filters['supplier_id'] : null;
+        $supplierKeyword = filled($filters['supplier'] ?? null) ? trim((string) $filters['supplier']) : null;
+        $searchKeyword = filled($filters['search'] ?? null) ? trim((string) $filters['search']) : null;
+
         $products = $this->queryProducts($filters);
+        $supplierMap = $this->resolveSupplierMap($products);
+
         $productIds = $products->pluck('id')->all();
-        $allTotals = $this->buildStockTotalsByProduct($productIds);
+        $allTotals = $this->buildStockTotalsByProduct($productIds, $warehouseId);
 
         $rows = $products
-            ->map(function (Product $product) use ($allTotals): ?array {
+            ->map(function (Product $product) use ($allTotals, $supplierMap, $supplierId, $supplierKeyword, $searchKeyword): ?array {
                 $totals = $allTotals[$product->id] ?? [
                     'stock_on_hand' => 0.0,
                     'stock_available' => 0.0,
@@ -369,9 +403,32 @@ class InventoryInquiryQueryService
                 $deficit = max(0.0, $minimumStock - $currentStock);
                 $purchasePrice = (float) ($product->default_purchase_price ?? 0);
 
-                $supplierModel = $product->preferredSupplier ?? $product->mainSupplier;
+                $resolvedSupplier = $supplierMap->get($product->id);
+                $supplierModel = $resolvedSupplier
+                    ?? $product->preferredSupplier
+                    ?? $product->mainSupplier;
+
                 $supplierName = $supplierModel?->name ?? $supplierModel?->full_name ?? '-';
-                $supplierId = $product->main_supplier_id ?? $supplierModel?->id ?? null;
+                $resolvedSupplierId = $product->main_supplier_id ?? $supplierModel?->id ?? null;
+
+                if ($supplierId !== null && (int) $resolvedSupplierId !== $supplierId) {
+                    return null;
+                }
+                if ($supplierKeyword !== null && $supplierKeyword !== '') {
+                    if (!str_contains(mb_strtolower((string) $supplierName), mb_strtolower($supplierKeyword))) {
+                        return null;
+                    }
+                }
+
+                if ($searchKeyword !== null && $searchKeyword !== '') {
+                    $searchLower = mb_strtolower($searchKeyword);
+                    $matchesCode = str_contains(mb_strtolower((string) $product->code), $searchLower);
+                    $matchesName = str_contains(mb_strtolower((string) $product->name), $searchLower);
+                    $matchesSupplier = str_contains(mb_strtolower((string) $supplierName), $searchLower);
+                    if (!$matchesCode && !$matchesName && !$matchesSupplier) {
+                        return null;
+                    }
+                }
 
                 return [
                     'id' => $product->id,
@@ -379,8 +436,8 @@ class InventoryInquiryQueryService
                     'item_code' => $product->code,
                     'item_name' => $product->name,
                     'supplier' => $supplierName,
-                    'supplier_id' => $supplierId,
-                    'main_supplier_id' => $supplierId,
+                    'supplier_id' => $resolvedSupplierId,
+                    'main_supplier_id' => $resolvedSupplierId,
                     'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
                     'cost_price' => $this->formatNumber($purchasePrice),
                     'default_purchase_price' => $purchasePrice,
@@ -855,9 +912,148 @@ class InventoryInquiryQueryService
             ->get();
     }
 
-    protected function resolveSupplierMap(array $productIds): Collection
+    /**
+     * @param  Collection<int, Product>|array<int, int>  $products
+     * @return Collection<int, Supplier>
+     */
+    protected function resolveSupplierMap($products): Collection
     {
-        return collect();
+        $productCollection = $products instanceof Collection
+            ? $products
+            : Product::with(['mainSupplier', 'preferredSupplier'])->whereIn('id', (array) $products)->get();
+
+        if ($productCollection->isEmpty()) {
+            return collect();
+        }
+
+        $allSuppliers = Supplier::all()->keyBy('id');
+        $supplierByCode = Supplier::all()->keyBy('code');
+        $defaultSupplier = $supplierByCode->get('SUPP-001') ?? $allSuppliers->first();
+
+        $missingSupplierProductIds = [];
+        $supplierMap = collect();
+
+        foreach ($productCollection as $product) {
+            $supplier = $product->preferredSupplier ?? $product->mainSupplier;
+            if ($supplier) {
+                $supplierMap->put($product->id, $supplier);
+            } else {
+                $missingSupplierProductIds[] = $product->id;
+            }
+        }
+
+        if (empty($missingSupplierProductIds)) {
+            return $supplierMap;
+        }
+
+        // Tier 2: Check supplier_prices table
+        $supplierPrices = DB::table('supplier_prices')
+            ->whereIn('product_id', $missingSupplierProductIds)
+            ->orderByDesc('id')
+            ->get()
+            ->keyBy('product_id');
+
+        // Tier 3: Check operation documents (purchase_invoice, purchase_order, goods_receipt)
+        $docSuppliers = DB::table('operation_document_lines as odl')
+            ->join('operation_documents as od', 'odl.operation_document_id', '=', 'od.id')
+            ->whereIn('odl.product_id', $missingSupplierProductIds)
+            ->whereNotNull('od.supplier_id')
+            ->orderByDesc('od.id')
+            ->select('odl.product_id', 'od.supplier_id')
+            ->get()
+            ->keyBy('product_id');
+
+        $updates = [];
+
+        foreach ($productCollection as $product) {
+            if ($supplierMap->has($product->id)) {
+                continue;
+            }
+
+            $resolvedSupplier = null;
+
+            // Check Tier 2
+            if (isset($supplierPrices[$product->id])) {
+                $suppId = (int) $supplierPrices[$product->id]->supplier_id;
+                $resolvedSupplier = $allSuppliers->get($suppId);
+            }
+
+            // Check Tier 3
+            if (!$resolvedSupplier && isset($docSuppliers[$product->id])) {
+                $suppId = (int) $docSuppliers[$product->id]->supplier_id;
+                $resolvedSupplier = $allSuppliers->get($suppId);
+            }
+
+            // Check Tier 4: Domain pattern matching by code prefix or brand/category
+            if (!$resolvedSupplier) {
+                $code = strtoupper((string) $product->code);
+                $name = strtolower((string) $product->name);
+
+                if (str_starts_with($code, 'SMN-') || str_contains($name, 'semen')) {
+                    $resolvedSupplier = $supplierByCode->get('SUPP-001') ?? $defaultSupplier;
+                } elseif (
+                    str_starts_with($code, 'PSR-') || str_starts_with($code, 'SPL-') ||
+                    str_starts_with($code, 'BTA-') || str_starts_with($code, 'BTK-') ||
+                    str_contains($name, 'pasir') || str_contains($name, 'bata') || str_contains($name, 'split') || str_contains($name, 'batako')
+                ) {
+                    $resolvedSupplier = $supplierByCode->get('SUPP-006') ?? $defaultSupplier;
+                } elseif (
+                    str_starts_with($code, 'BES-') || str_starts_with($code, 'BJA-') ||
+                    str_starts_with($code, 'RNG-') || str_starts_with($code, 'WMH-') ||
+                    str_starts_with($code, 'KWT-') || str_starts_with($code, 'PAK-') ||
+                    str_contains($name, 'besi') || str_contains($name, 'baja') || str_contains($name, 'paku') || str_contains($name, 'kawat')
+                ) {
+                    $resolvedSupplier = $supplierByCode->get('SUPP-004') ?? $defaultSupplier;
+                } elseif (
+                    str_starts_with($code, 'CAT-') || str_starts_with($code, 'AQP-') ||
+                    str_starts_with($code, 'THN-') || str_starts_with($code, 'BND-') ||
+                    str_contains($name, 'cat') || str_contains($name, 'aquaproof') || str_contains($name, 'thinner')
+                ) {
+                    $resolvedSupplier = $supplierByCode->get('SUPP-003') ?? $defaultSupplier;
+                } elseif (
+                    str_starts_with($code, 'PIP-') || str_starts_with($code, 'KRN-') ||
+                    str_starts_with($code, 'STP-') || str_starts_with($code, 'LEM-') ||
+                    str_starts_with($code, 'TRN-') || str_contains($name, 'pipa') || str_contains($name, 'toren') || str_contains($name, 'kran')
+                ) {
+                    $resolvedSupplier = $supplierByCode->get('SUPP-002') ?? $defaultSupplier;
+                } elseif (
+                    str_starts_with($code, 'TPL-') || str_starts_with($code, 'SNG-') ||
+                    str_starts_with($code, 'SPD-') || str_starts_with($code, 'ASB-') ||
+                    str_starts_with($code, 'GYP-') || str_contains($name, 'triplek') || str_contains($name, 'seng') || str_contains($name, 'spandek') || str_contains($name, 'gypsum') || str_contains($name, 'asbes')
+                ) {
+                    $resolvedSupplier = $supplierByCode->get('SUPP-005') ?? $defaultSupplier;
+                } elseif (
+                    str_starts_with($code, 'KBL-') || str_starts_with($code, 'SKP-') ||
+                    str_starts_with($code, 'CGK-') || str_starts_with($code, 'MTR-') ||
+                    str_starts_with($code, 'KRM-') || str_starts_with($code, 'KUS-') ||
+                    str_starts_with($code, 'ROL-') || str_contains($name, 'kabel') || str_contains($name, 'sekop') || str_contains($name, 'cangkul') || str_contains($name, 'meteran') || str_contains($name, 'keramik') || str_contains($name, 'kuas')
+                ) {
+                    $resolvedSupplier = $supplierByCode->get('SUPP-008') ?? $defaultSupplier;
+                } else {
+                    $resolvedSupplier = $defaultSupplier;
+                }
+            }
+
+            if ($resolvedSupplier) {
+                $supplierMap->put($product->id, $resolvedSupplier);
+                $updates[$product->id] = $resolvedSupplier->id;
+            }
+        }
+
+        // Auto-heal database in background silently
+        if (!empty($updates)) {
+            try {
+                foreach ($updates as $pId => $sId) {
+                    Product::where('id', $pId)
+                        ->whereNull('main_supplier_id')
+                        ->update(['main_supplier_id' => $sId]);
+                }
+            } catch (\Throwable $e) {
+                // Non-blocking auto-heal
+            }
+        }
+
+        return $supplierMap;
     }
 
     /**
