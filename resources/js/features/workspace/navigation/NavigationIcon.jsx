@@ -46,12 +46,15 @@ import {
     Wallet,
 } from 'lucide-react';
 
+import { CashBankModuleIcon, SalesModuleIcon } from '@/features/workspace/navigation/ModuleCustomIcons';
+
 const iconMap = {
     settings: Settings,
     building: Building2,
     ledger: NotebookText,
-    bank: Landmark,
-    sales: Store,
+    bank: CashBankModuleIcon,
+    'cash-bank': CashBankModuleIcon,
+    sales: SalesModuleIcon,
     purchase: ShoppingCart,
     inventory: BoxIcon,
     asset: Boxes,

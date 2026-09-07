@@ -14,11 +14,6 @@ import { toneClasses } from '@/features/workspace/navigation/NavigationTile';
 
 const DISABLED_SIDEBAR_GROUP_IDS = new Set(['fixed-assets', 'tax-center']);
 
-const MODULE_CUSTOM_ICONS = {
-    sales: '/assets/images/modules/modul_penjualan_icon.svg',
-    'cash-bank': '/assets/images/modules/modul_kas_&_bank.svg',
-};
-
 function getVisiblePanelItems(item, preferences, user) {
     if (user && user.hasAccessGroup === false) {
         return [];
@@ -46,7 +41,7 @@ function normalizeSidebarItem(item, preferences, user) {
 }
 
 function SidebarButton({ item, active, onClick, buttonRef }) {
-    const customIcon = MODULE_CUSTOM_ICONS[item.id];
+    const iconType = item.id === 'cash-bank' ? 'cash-bank' : item.id === 'sales' ? 'sales' : item.icon;
 
     return (
         <Tooltip
@@ -70,23 +65,14 @@ function SidebarButton({ item, active, onClick, buttonRef }) {
                 aria-label={item.label}
                 aria-disabled={item.disabled}
             >
-                {customIcon ? (
-                    <img
-                        src={customIcon}
-                        alt=""
-                        aria-hidden="true"
-                        className="h-[26px] w-[26px] sm:h-[28px] sm:w-[28px] object-contain shrink-0 select-none pointer-events-none"
-                    />
-                ) : (
-                    <NavigationIcon type={item.icon} className="h-[26px] w-[26px] sm:h-[28px] sm:w-[28px]" />
-                )}
+                <NavigationIcon type={iconType} className="h-[26px] w-[26px] sm:h-[28px] sm:w-[28px]" />
             </button>
         </Tooltip>
     );
 }
 
 function MobileModuleButton({ item, active, onSelect }) {
-    const customIcon = MODULE_CUSTOM_ICONS[item.id];
+    const iconType = item.id === 'cash-bank' ? 'cash-bank' : item.id === 'sales' ? 'sales' : item.icon;
 
     return (
         <button
@@ -109,25 +95,12 @@ function MobileModuleButton({ item, active, onSelect }) {
                 className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] ${
                     item.disabled
                         ? 'bg-table-row-border text-tab-inactive-border-l'
-                        : customIcon
-                          ? active
-                              ? 'bg-blue-900 text-white shadow-sm ring-1 ring-brand-blue-border'
-                              : 'bg-blue-900 text-white shadow-sm'
-                          : active
-                            ? 'bg-ui-border-light text-brand-blue-dark'
-                            : 'bg-info-bg text-tab-view-active-text'
+                        : active
+                          ? 'bg-ui-border-light text-brand-blue-dark'
+                          : 'bg-info-bg text-tab-view-active-text'
                 }`.trim()}
             >
-                {customIcon ? (
-                    <img
-                        src={customIcon}
-                        alt=""
-                        aria-hidden="true"
-                        className="h-5 w-5 object-contain select-none pointer-events-none"
-                    />
-                ) : (
-                    <NavigationIcon type={item.icon} className="h-4.5 w-4.5" />
-                )}
+                <NavigationIcon type={iconType} className="h-4.5 w-4.5" />
             </span>
             <span className="min-w-0 flex-1">
                 <span className="block truncate text-xs font-semibold">{item.label}</span>
