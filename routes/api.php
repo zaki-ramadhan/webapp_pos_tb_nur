@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api', \App\Http\Middleware\EnsureUserHasStoreAccess::class])->group(function (): void {
     Route::post('/attachments/upload', [\App\Http\Controllers\Api\AttachmentUploadController::class, 'upload'])->middleware('throttle:30,1');
     Route::post('/currencies/sync', [BackendResourceController::class, 'syncCurrencies']);
+    Route::get('/system/data-maintenance/status', [\App\Http\Controllers\Api\DataMaintenanceController::class, 'status']);
+    Route::post('/system/data-maintenance/purge', [\App\Http\Controllers\Api\DataMaintenanceController::class, 'purgeDemoData']);
+    Route::post('/system/data-maintenance/reset-transactions', [\App\Http\Controllers\Api\DataMaintenanceController::class, 'resetTransactionsOnly']);
+    Route::post('/system/data-maintenance/reseed', [\App\Http\Controllers\Api\DataMaintenanceController::class, 'reseedDemoData']);
     Route::get('/banks', function (): \Illuminate\Http\JsonResponse {
         $cacheKey = 'indonesian_banks_list';
 
