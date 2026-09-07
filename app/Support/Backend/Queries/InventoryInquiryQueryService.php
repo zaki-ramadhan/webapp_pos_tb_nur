@@ -394,13 +394,14 @@ class InventoryInquiryQueryService
                     'stock_available' => 0.0,
                 ];
 
-                $currentStock = (float) $totals['stock_on_hand'];
+                $onHandStock = (float) $totals['stock_on_hand'];
+                $availableStock = (float) ($totals['stock_available'] ?? max(0.0, $onHandStock));
                 $minimumStock = (float) ($product->minimum_stock ?? 0);
-                if ($currentStock > $minimumStock) {
+                if ($onHandStock > $minimumStock) {
                     return null;
                 }
 
-                $deficit = max(0.0, $minimumStock - $currentStock);
+                $deficit = max(0.0, $minimumStock - $onHandStock);
                 $purchasePrice = (float) ($product->default_purchase_price ?? 0);
 
                 $resolvedSupplier = $supplierMap->get($product->id);
@@ -430,6 +431,9 @@ class InventoryInquiryQueryService
                     }
                 }
 
+                $displayAvailableStock = max(0.0, $availableStock);
+                $displayCurrentStock = max(0.0, $onHandStock);
+
                 return [
                     'id' => $product->id,
                     'item_id' => $product->id,
@@ -442,14 +446,14 @@ class InventoryInquiryQueryService
                     'cost_price' => $this->formatNumber($purchasePrice),
                     'default_purchase_price' => $purchasePrice,
                     'price' => $purchasePrice,
-                    'current_stock' => $this->formatNumber($currentStock),
-                    'available_stock' => $this->formatNumber($currentStock),
+                    'current_stock' => $this->formatNumber($displayCurrentStock),
+                    'available_stock' => $this->formatNumber($displayAvailableStock),
                     'minimum_stock' => $this->formatNumber($minimumStock),
                     'minimum_limit' => $this->formatNumber($minimumStock),
                     'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
                     'raw_cost_price' => $purchasePrice,
-                    'raw_current_stock' => $currentStock,
-                    'raw_available_stock' => $currentStock,
+                    'raw_current_stock' => $displayCurrentStock,
+                    'raw_available_stock' => $displayAvailableStock,
                     'raw_minimum_stock' => $minimumStock,
                     'raw_minimum_limit' => $minimumStock,
                 ];

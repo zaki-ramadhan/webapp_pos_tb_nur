@@ -14,7 +14,7 @@ class MinimumStockPage
                         'type' => 'lookup',
                         'value' => '',
                         'placeholder' => 'Cari/Pilih Pemasok...',
-                        'className' => 'w-full sm:w-[280px]',
+                        'className' => 'w-full sm:w-[360px]',
                     ],
                     [
                         'id' => 'warehouseSearch',

@@ -135,7 +135,8 @@ export function InquiryControl({
                             onLookupClear?.('supplierSearch');
                         }
                     }}
-                    className={`h-[40px] ${control.className ?? 'w-full sm:w-[240px]'}`.trim()}
+                    minWidth={360}
+                    className={`h-[40px] ${control.className ?? 'w-full sm:w-[360px]'}`.trim()}
                 />
             );
         }
