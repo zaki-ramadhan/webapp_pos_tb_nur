@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Database, Trash2, RotateCcw, AlertTriangle, Layers, Users, Package, ShoppingCart } from 'lucide-react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
 import TextInput from '@/components/ui/TextInput';
@@ -28,7 +27,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                 setStatusData(json.data);
             }
         } catch {
-            // Abaikan kegagalan jaringan sementara
+            // Abaikan kesalahan koneksi sementara
         } finally {
             setLoading(false);
         }
@@ -45,7 +44,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
 
     const handlePurge = async () => {
         if (!password.trim()) {
-            setPasswordError('Harap masukkan kata sandi akun login Anda.');
+            setPasswordError('Masukkan kata sandi akun login Anda.');
             return;
         }
 
@@ -75,7 +74,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
             onClose();
             setTimeout(() => {
                 window.location.reload();
-            }, 1200);
+            }, 1000);
         } catch (err) {
             setPasswordError('Terjadi kesalahan jaringan atau server: ' + err.message);
             setActionLoading(false);
@@ -84,7 +83,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
 
     const handleResetTransactions = async () => {
         if (!password.trim()) {
-            setPasswordError('Harap masukkan kata sandi akun login Anda.');
+            setPasswordError('Masukkan kata sandi akun login Anda.');
             return;
         }
 
@@ -114,7 +113,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
             onClose();
             setTimeout(() => {
                 window.location.reload();
-            }, 1200);
+            }, 1000);
         } catch (err) {
             setPasswordError('Terjadi kesalahan jaringan atau server: ' + err.message);
             setActionLoading(false);
@@ -146,7 +145,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
             onClose();
             setTimeout(() => {
                 window.location.reload();
-            }, 1200);
+            }, 1000);
         } catch (err) {
             toast.error('Terjadi kesalahan koneksi server: ' + err.message);
             setActionLoading(false);
@@ -158,81 +157,54 @@ export default function DataMaintenanceModal({ open, onClose }) {
             open={open}
             onClose={onClose}
             disableClose={actionLoading}
-            title="Pemeliharaan Data & Status Toko"
-            headerIcon={Database}
-            maxWidthClassName="max-w-[580px]"
+            title="Pemeliharaan Data Sistem"
+            headerIcon={null}
+            maxWidthClassName="max-w-[560px]"
         >
             {loading ? (
-                <div className="flex flex-col items-center justify-center py-10 text-slate-500">
+                <div className="flex flex-col items-center justify-center py-10 text-slate-800">
                     <Spinner className="h-6 w-6 text-brand-blue" />
-                    <p className="mt-2 text-xs font-medium">Memeriksa status database...</p>
+                    <p className="mt-2 text-sm font-medium">Memeriksa status database...</p>
                 </div>
             ) : viewMode === 'overview' ? (
                 <div className="space-y-4">
-                    {/* Ringkasan Status Database */}
-                    <div className="rounded-[6px] border border-slate-200 bg-slate-50 p-3">
-                        <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold text-slate-700">Status Data Saat Ini</span>
-                            {statusData?.is_demo_active ? (
-                                <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[11px] font-medium text-amber-800">
-                                    <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-                                    Data Sampel / Demo Aktif
-                                </span>
-                            ) : (
-                                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-800">
-                                    <span className="h-2 w-2 rounded-full bg-emerald-600" />
-                                    Mode Bersih (Siap Operasional)
-                                </span>
-                            )}
+                    {/* Ringkasan Data Database */}
+                    <div className="border border-slate-300 rounded-[4px] bg-white overflow-hidden">
+                        <div className="bg-slate-100 px-3.5 py-2.5 border-b border-slate-300 flex justify-between items-center text-sm font-medium text-slate-800">
+                            <span>Status Data Saat Ini:</span>
+                            <span className="font-semibold text-slate-900">
+                                {statusData?.is_demo_active ? 'Data Sampel / Demo' : 'Mode Bersih (Siap Operasional)'}
+                            </span>
                         </div>
-
-                        <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                            <div className="rounded-[4px] border border-slate-200 bg-white p-2 text-center">
-                                <div className="flex items-center justify-center text-slate-400">
-                                    <ShoppingCart className="h-3.5 w-3.5" />
-                                </div>
-                                <div className="mt-1 text-base font-semibold text-slate-800">{statusData?.transactions_count ?? 0}</div>
-                                <div className="text-[10px] text-slate-500">Transaksi</div>
+                        <div className="grid grid-cols-2 divide-x divide-y divide-slate-200 text-sm">
+                            <div className="p-3 flex justify-between items-center">
+                                <span className="text-slate-800">Transaksi:</span>
+                                <span className="font-semibold text-slate-900">{statusData?.transactions_count ?? 0}</span>
                             </div>
-
-                            <div className="rounded-[4px] border border-slate-200 bg-white p-2 text-center">
-                                <div className="flex items-center justify-center text-slate-400">
-                                    <Package className="h-3.5 w-3.5" />
-                                </div>
-                                <div className="mt-1 text-base font-semibold text-slate-800">{statusData?.products_count ?? 0}</div>
-                                <div className="text-[10px] text-slate-500">Barang</div>
+                            <div className="p-3 flex justify-between items-center">
+                                <span className="text-slate-800">Barang & Jasa:</span>
+                                <span className="font-semibold text-slate-900">{statusData?.products_count ?? 0}</span>
                             </div>
-
-                            <div className="rounded-[4px] border border-slate-200 bg-white p-2 text-center">
-                                <div className="flex items-center justify-center text-slate-400">
-                                    <Users className="h-3.5 w-3.5" />
-                                </div>
-                                <div className="mt-1 text-base font-semibold text-slate-800">{statusData?.customers_count ?? 0}</div>
-                                <div className="text-[10px] text-slate-500">Pelanggan</div>
+                            <div className="p-3 flex justify-between items-center">
+                                <span className="text-slate-800">Pelanggan:</span>
+                                <span className="font-semibold text-slate-900">{statusData?.customers_count ?? 0}</span>
                             </div>
-
-                            <div className="rounded-[4px] border border-slate-200 bg-white p-2 text-center">
-                                <div className="flex items-center justify-center text-slate-400">
-                                    <Layers className="h-3.5 w-3.5" />
-                                </div>
-                                <div className="mt-1 text-base font-semibold text-slate-800">{statusData?.suppliers_count ?? 0}</div>
-                                <div className="text-[10px] text-slate-500">Pemasok</div>
+                            <div className="p-3 flex justify-between items-center">
+                                <span className="text-slate-800">Pemasok:</span>
+                                <span className="font-semibold text-slate-900">{statusData?.suppliers_count ?? 0}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Tindakan Pemeliharaan */}
-                    <div className="space-y-2.5">
-                        {/* Aksi 1: Bersihkan Data Demo */}
-                        <div className="rounded-[6px] border border-red-200 bg-red-50/40 p-3 transition hover:border-red-300">
-                            <div className="flex items-start justify-between gap-3">
-                                <div>
-                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-red-800">
-                                        <Trash2 className="h-3.5 w-3.5 text-red-600" />
-                                        <span>Bersihkan Seluruh Data Demo (Go-Live)</span>
-                                    </div>
-                                    <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
-                                        Mengosongkan semua transaksi, stok, produk sampel, dan kontak fiktif. Akun Admin, Owner, dan Akun Perkiraan (COA) tetap aman.
+                    <div className="space-y-3">
+                        {/* Aksi 1: Bersihkan Seluruh Data Demo */}
+                        <div className="border border-slate-300 rounded-[4px] p-3.5 bg-white">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <div className="space-y-1">
+                                    <h3 className="text-sm font-semibold text-slate-900">Bersihkan Data Demo (Go-Live)</h3>
+                                    <p className="text-sm text-slate-800 leading-normal">
+                                        Menghapus seluruh transaksi, stok, produk sampel, dan kontak fiktif. Akun Admin, Owner, dan Akun Perkiraan (COA) tetap aman.
                                     </p>
                                 </div>
                                 <Button
@@ -243,23 +215,20 @@ export default function DataMaintenanceModal({ open, onClose }) {
                                         setPasswordError('');
                                         setViewMode('confirm_purge');
                                     }}
-                                    className="shrink-0 h-8 px-3 text-xs"
+                                    className="shrink-0 h-9 px-4 text-sm rounded-[4px] shadow-none"
                                 >
-                                    Bersihkan
+                                    Bersihkan Data
                                 </Button>
                             </div>
                         </div>
 
                         {/* Aksi 2: Reset Transaksi Saja */}
-                        <div className="rounded-[6px] border border-slate-200 bg-white p-3 transition hover:border-slate-300">
-                            <div className="flex items-start justify-between gap-3">
-                                <div>
-                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
-                                        <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
-                                        <span>Reset Transaksi Saja</span>
-                                    </div>
-                                    <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
-                                        Hanya menghapus riwayat faktur dan jurnal. Master produk dan kontak asli yang sudah diinput tetap tersimpan.
+                        <div className="border border-slate-300 rounded-[4px] p-3.5 bg-white">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <div className="space-y-1">
+                                    <h3 className="text-sm font-semibold text-slate-900">Reset Transaksi Saja</h3>
+                                    <p className="text-sm text-slate-800 leading-normal">
+                                        Hanya menghapus riwayat transaksi dan faktur. Master barang dan kontak yang sudah diinput tetap tersimpan utuh.
                                     </p>
                                 </div>
                                 <Button
@@ -270,7 +239,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                                         setPasswordError('');
                                         setViewMode('confirm_reset_tx');
                                     }}
-                                    className="shrink-0 h-8 px-3 text-xs"
+                                    className="shrink-0 h-9 px-4 text-sm rounded-[4px] shadow-none border-slate-400 text-slate-800 hover:bg-slate-50"
                                 >
                                     Reset Transaksi
                                 </Button>
@@ -278,22 +247,19 @@ export default function DataMaintenanceModal({ open, onClose }) {
                         </div>
 
                         {/* Aksi 3: Muat Ulang Data Sampel */}
-                        <div className="rounded-[6px] border border-blue-200 bg-blue-50/40 p-3 transition hover:border-blue-300">
-                            <div className="flex items-start justify-between gap-3">
-                                <div>
-                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-blue">
-                                        <RotateCcw className="h-3.5 w-3.5 text-brand-blue" />
-                                        <span>Muat Ulang Data Sampel (Seeder)</span>
-                                    </div>
-                                    <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
-                                        Memasukkan kembali seluruh data simulasi seeder lengkap untuk keperluan pengujian dan demo fitur.
+                        <div className="border border-slate-300 rounded-[4px] p-3.5 bg-white">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <div className="space-y-1">
+                                    <h3 className="text-sm font-semibold text-slate-900">Muat Ulang Data Sampel (Seeder)</h3>
+                                    <p className="text-sm text-slate-800 leading-normal">
+                                        Memasukkan kembali seluruh data simulasi seeder (barang contoh dan transaksi) untuk keperluan demo atau uji coba.
                                     </p>
                                 </div>
                                 <Button
                                     size="sm"
                                     variant="brand-blue"
                                     onClick={() => setViewMode('confirm_reseed')}
-                                    className="shrink-0 h-8 px-3 text-xs"
+                                    className="shrink-0 h-9 px-4 text-sm rounded-[4px] shadow-none"
                                 >
                                     Muat Sampel
                                 </Button>
@@ -302,136 +268,129 @@ export default function DataMaintenanceModal({ open, onClose }) {
                     </div>
                 </div>
             ) : viewMode === 'confirm_purge' ? (
-                <div className="space-y-3.5">
-                    <div className="flex items-start gap-3 rounded-[6px] border border-red-200 bg-red-50 p-3">
-                        <AlertTriangle className="h-5 w-5 shrink-0 text-red-600 mt-0.5" />
-                        <div className="text-xs leading-relaxed text-red-900">
-                            <p className="font-semibold">Konfirmasi Pembersihan Data Demo</p>
-                            <p className="mt-0.5">
-                                Seluruh transaksi, jurnal, barang contoh, dan kontak dummy akan dihapus permanen. Akun login Admin, Owner, dan Akun Perkiraan (COA) tidak akan terhapus.
-                            </p>
-                        </div>
+                <div className="space-y-4">
+                    <div className="border border-slate-300 rounded-[4px] p-3.5 bg-slate-50 text-sm text-slate-800 leading-relaxed">
+                        <p className="font-semibold text-slate-900">Konfirmasi Pembersihan Data Demo</p>
+                        <p className="mt-1 text-slate-800">
+                            Seluruh transaksi, jurnal, barang contoh, dan kontak dummy akan dihapus permanen. Akun login Admin, Owner, dan Akun Perkiraan (COA) tidak akan terhapus.
+                        </p>
                     </div>
 
-                    <div>
+                    <div className="space-y-1.5">
+                        <label className="block text-sm font-medium text-slate-800">
+                            Kata Sandi Akun Login
+                        </label>
                         <TextInput
                             type="password"
-                            prefix="Kata Sandi"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Masukkan kata sandi akun Anda"
+                            placeholder="Masukkan kata sandi Anda"
                             disabled={actionLoading}
                             className="h-[40px] rounded-[4px] border-slate-400"
-                            prefixClassName="min-w-[100px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-slate-600"
-                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                            inputClassName="text-sm text-slate-900"
                         />
                         {passwordError ? (
-                            <p className="mt-1 text-xs text-red-600 font-medium">{passwordError}</p>
+                            <p className="text-sm text-red-600 font-medium">{passwordError}</p>
                         ) : null}
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200">
+                    <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
                         <Button
-                            size="sm"
+                            size="md"
                             variant="secondary"
                             disabled={actionLoading}
                             onClick={() => setViewMode('overview')}
-                            className="h-9 px-4 text-xs"
+                            className="h-9 px-4 text-sm rounded-[4px] border-slate-400 text-slate-800 shadow-none"
                         >
                             Batal
                         </Button>
                         <Button
-                            size="sm"
+                            size="md"
                             variant="danger"
                             loading={actionLoading}
                             loadingLabel="Membersihkan..."
                             onClick={handlePurge}
-                            className="h-9 px-4 text-xs"
+                            className="h-9 px-4 text-sm rounded-[4px] shadow-none"
                         >
                             Konfirmasi Bersihkan
                         </Button>
                     </div>
                 </div>
             ) : viewMode === 'confirm_reset_tx' ? (
-                <div className="space-y-3.5">
-                    <div className="flex items-start gap-3 rounded-[6px] border border-amber-200 bg-amber-50 p-3">
-                        <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
-                        <div className="text-xs leading-relaxed text-amber-900">
-                            <p className="font-semibold">Konfirmasi Reset Transaksi Saja</p>
-                            <p className="mt-0.5">
-                                Riwayat transaksi penjualan, pembelian, dan jurnal akan dikosongkan. Nomor urut nota akan kembali ke #0001. Master produk dan kontak Anda tidak akan dihapus.
-                            </p>
-                        </div>
+                <div className="space-y-4">
+                    <div className="border border-slate-300 rounded-[4px] p-3.5 bg-slate-50 text-sm text-slate-800 leading-relaxed">
+                        <p className="font-semibold text-slate-900">Konfirmasi Reset Transaksi Saja</p>
+                        <p className="mt-1 text-slate-800">
+                            Riwayat transaksi penjualan, pembelian, dan jurnal akan dikosongkan. Nomor urut nota akan kembali ke #0001. Master produk dan kontak Anda tidak akan dihapus.
+                        </p>
                     </div>
 
-                    <div>
+                    <div className="space-y-1.5">
+                        <label className="block text-sm font-medium text-slate-800">
+                            Kata Sandi Akun Login
+                        </label>
                         <TextInput
                             type="password"
-                            prefix="Kata Sandi"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Masukkan kata sandi akun Anda"
+                            placeholder="Masukkan kata sandi Anda"
                             disabled={actionLoading}
                             className="h-[40px] rounded-[4px] border-slate-400"
-                            prefixClassName="min-w-[100px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-slate-600"
-                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                            inputClassName="text-sm text-slate-900"
                         />
                         {passwordError ? (
-                            <p className="mt-1 text-xs text-red-600 font-medium">{passwordError}</p>
+                            <p className="text-sm text-red-600 font-medium">{passwordError}</p>
                         ) : null}
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200">
+                    <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
                         <Button
-                            size="sm"
+                            size="md"
                             variant="secondary"
                             disabled={actionLoading}
                             onClick={() => setViewMode('overview')}
-                            className="h-9 px-4 text-xs"
+                            className="h-9 px-4 text-sm rounded-[4px] border-slate-400 text-slate-800 shadow-none"
                         >
                             Batal
                         </Button>
                         <Button
-                            size="sm"
+                            size="md"
                             variant="danger"
                             loading={actionLoading}
                             loadingLabel="Mereset..."
                             onClick={handleResetTransactions}
-                            className="h-9 px-4 text-xs"
+                            className="h-9 px-4 text-sm rounded-[4px] shadow-none"
                         >
                             Konfirmasi Reset Transaksi
                         </Button>
                     </div>
                 </div>
             ) : viewMode === 'confirm_reseed' ? (
-                <div className="space-y-3.5">
-                    <div className="flex items-start gap-3 rounded-[6px] border border-blue-200 bg-blue-50 p-3">
-                        <RotateCcw className="h-5 w-5 shrink-0 text-brand-blue mt-0.5" />
-                        <div className="text-xs leading-relaxed text-blue-900">
-                            <p className="font-semibold">Muat Ulang Seluruh Data Sampel Seeder</p>
-                            <p className="mt-0.5">
-                                Sistem akan menjalankan seeder database di latar belakang server untuk mengisi kembali barang contoh, transaksi kasir simulasi, dan grafik dashboard lengkap.
-                            </p>
-                        </div>
+                <div className="space-y-4">
+                    <div className="border border-slate-300 rounded-[4px] p-3.5 bg-slate-50 text-sm text-slate-800 leading-relaxed">
+                        <p className="font-semibold text-slate-900">Konfirmasi Muat Ulang Data Sampel</p>
+                        <p className="mt-1 text-slate-800">
+                            Sistem akan menjalankan seeder database di latar belakang server untuk mengisi kembali barang contoh, transaksi kasir simulasi, dan grafik dashboard lengkap.
+                        </p>
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200">
+                    <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
                         <Button
-                            size="sm"
+                            size="md"
                             variant="secondary"
                             disabled={actionLoading}
                             onClick={() => setViewMode('overview')}
-                            className="h-9 px-4 text-xs"
+                            className="h-9 px-4 text-sm rounded-[4px] border-slate-400 text-slate-800 shadow-none"
                         >
                             Batal
                         </Button>
                         <Button
-                            size="sm"
+                            size="md"
                             variant="brand-blue"
                             loading={actionLoading}
                             loadingLabel="Memuat seeder..."
                             onClick={handleReseed}
-                            className="h-9 px-4 text-xs"
+                            className="h-9 px-4 text-sm rounded-[4px] shadow-none"
                         >
                             Muat Ulang Sekarang
                         </Button>
