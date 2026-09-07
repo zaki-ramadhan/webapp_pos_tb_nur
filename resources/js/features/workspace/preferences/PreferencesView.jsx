@@ -48,14 +48,13 @@ export default function PreferencesView({ page }) {
                 onClick: isSuperAdmin ? handleSave : undefined,
                 loading: state.saving,
                 disabled: !isSuperAdmin || state.saving || !state.isDirty,
-                title: !isSuperAdmin ? 'Hanya Owner / Super Admin yang dapat mengubah preferensi' : action.label,
             };
         }
         return action;
     });
 
     return (
-        <div ref={formRef} className="flex h-full flex-col overflow-hidden rounded-[4px] border border-tab-view-active-border-x bg-ui-bg-panel-lighter shadow-panel-subtle-alt">
+        <div ref={formRef} className="flex h-full flex-col overflow-hidden bg-transparent">
             {!isSuperAdmin && (
                 <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs font-medium text-amber-800">
                     <svg className="h-4 w-4 shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,9 +64,9 @@ export default function PreferencesView({ page }) {
                 </div>
             )}
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-t border-ui-border-medium bg-ui-bg-panel-lighter px-2 pt-1 md:flex-row">
-                <div className="flex min-h-0 w-full shrink-0 flex-col md:w-[190px]">
-                    <div className="min-h-0 flex-1 border border-ui-border bg-bg-scrollbar-track-alt px-3 pb-3 pt-2 sm:pt-2.5 md:pt-3.5 md:rounded-sm md:pr-0">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-transparent px-1 pt-1 md:flex-row md:gap-1.5">
+                <div className="flex min-h-0 w-full shrink-0 flex-col md:w-[170px]">
+                    <div className="min-h-0 flex-1 bg-transparent px-1 pb-3 pt-1 md:pr-0">
                         <div className="space-y-2">
                             {sideItems.map((item) => (
                                 <PreferenceSideItem
@@ -94,7 +93,7 @@ export default function PreferencesView({ page }) {
                 </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 border-t border-tab-overflow-border bg-ui-bg-panel-lighter px-4 py-4">
+            <div className="flex items-center justify-end gap-3 bg-transparent px-3 py-3 sm:px-4 sm:py-3.5">
                 <PanelActions actions={resolvedActions} />
             </div>
         </div>

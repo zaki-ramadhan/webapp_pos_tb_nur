@@ -6,7 +6,7 @@ import PreferencesLimitationsView from '@/features/workspace/preferences/Prefere
 import PreferencesOthersView from '@/features/workspace/preferences/PreferencesOthersView';
 import PreferencesPurchaseView from '@/features/workspace/preferences/PreferencesPurchaseView';
 import PreferencesSalesView from '@/features/workspace/preferences/PreferencesSalesView';
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
+import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import PreferencesTaxView from '@/features/workspace/preferences/PreferencesTaxView';
 import PreferenceField from './components/PreferenceField';
 import PreferenceCompanyAddress from './components/PreferenceCompanyAddress';
@@ -129,41 +129,37 @@ export default function PreferencesSidebarContent({
 
     if (activeSideItemId === companyRootItem.id) {
         return (
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                <PreferencesTabs
-                    tabs={workspace.companyTabs}
-                    activeTabId={activeProfileTabId}
-                    onSelectTab={setActiveProfileTabId}
-                    activeTabClassName="font-medium text-tab-active-text"
-                />
-
-                <div className="mx-2 mb-2 min-h-0 flex-1 overflow-y-auto bg-transparent px-3 py-3 sm:mx-3 sm:mb-3 sm:px-4">
-                    {activeProfileTabId === 'company-info' ? (
-                        <div className="max-w-[580px] space-y-4">
-                            <div className="grid gap-x-6 gap-y-3 grid-cols-[130px_minmax(0,1fr)] items-center">
-                                {workspace.companyInfo.map((field) => (
-                                    <div key={field.id} className="contents">
-                                        <label className="text-xs sm:text-sm text-brand-dark">{field.label}</label>
-                                        <div>
-                                            <PreferenceField 
-                                                field={field} 
-                                                value={values[field.id]} 
-                                                onChange={handleValueChange} 
-                                            />
-                                        </div>
+            <PreferencesTabPanel
+                tabs={workspace.companyTabs}
+                activeTabId={activeProfileTabId}
+                onSelectTab={setActiveProfileTabId}
+                activeTabClassName="font-medium text-tab-active-text"
+            >
+                {activeProfileTabId === 'company-info' ? (
+                    <div className="max-w-[580px] space-y-4">
+                        <div className="grid gap-x-6 gap-y-3 grid-cols-[130px_minmax(0,1fr)] items-center">
+                            {workspace.companyInfo.map((field) => (
+                                <div key={field.id} className="contents">
+                                    <label className="text-xs sm:text-sm text-brand-dark">{field.label}</label>
+                                    <div>
+                                        <PreferenceField 
+                                            field={field} 
+                                            value={values[field.id]} 
+                                            onChange={handleValueChange} 
+                                        />
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))}
                         </div>
-                    ) : (
-                        <PreferenceCompanyAddress 
-                            address={workspace.companyAddress} 
-                            values={values}
-                            onChange={handleValueChange}
-                        />
-                    )}
-                </div>
-            </div>
+                    </div>
+                ) : (
+                    <PreferenceCompanyAddress 
+                        address={workspace.companyAddress} 
+                        values={values}
+                        onChange={handleValueChange} 
+                    />
+                )}
+            </PreferencesTabPanel>
         );
     }
 

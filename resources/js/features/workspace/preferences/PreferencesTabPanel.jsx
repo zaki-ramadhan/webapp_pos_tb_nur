@@ -6,6 +6,7 @@ export default function PreferencesTabPanel({
     activeTabId,
     onSelectTab,
     panelClassName = '',
+    activeTabClassName = '',
     children,
 }) {
     return (
@@ -14,6 +15,7 @@ export default function PreferencesTabPanel({
                 tabs={tabs}
                 activeTabId={activeTabId}
                 onSelectTab={onSelectTab}
+                activeTabClassName={activeTabClassName}
             />
 
             <PreferencesContentPanel className={panelClassName}>
