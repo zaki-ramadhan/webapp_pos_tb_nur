@@ -46,16 +46,30 @@ import {
     Wallet,
 } from 'lucide-react';
 
-import { CashBankModuleIcon, SalesModuleIcon } from '@/features/workspace/navigation/ModuleCustomIcons';
+import {
+    CashBankModuleIcon,
+    GeneralLedgerModuleIcon,
+    PurchasesModuleIcon,
+    SalesModuleIcon,
+    StoreModuleIcon,
+} from '@/features/workspace/navigation/ModuleCustomIcons';
 
 const iconMap = {
     settings: Settings,
-    building: Building2,
-    ledger: NotebookText,
+    company: StoreModuleIcon,
+    store: StoreModuleIcon,
+    building: StoreModuleIcon,
+    toko: StoreModuleIcon,
+    'general-ledger': GeneralLedgerModuleIcon,
+    ledger: GeneralLedgerModuleIcon,
+    'buku-besar': GeneralLedgerModuleIcon,
     bank: CashBankModuleIcon,
     'cash-bank': CashBankModuleIcon,
     sales: SalesModuleIcon,
-    purchase: ShoppingCart,
+    penjualan: SalesModuleIcon,
+    purchases: PurchasesModuleIcon,
+    purchase: PurchasesModuleIcon,
+    pembelian: PurchasesModuleIcon,
     inventory: BoxIcon,
     asset: Boxes,
     tax: ReceiptText,
@@ -64,7 +78,6 @@ const iconMap = {
     users: UserRound,
     numbering: Hash,
     printer: Printer,
-    store: Store,
     currency: BadgeDollarSign,
     branch: GitBranch,
     department: Building2,
