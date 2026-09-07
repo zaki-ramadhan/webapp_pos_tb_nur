@@ -47,9 +47,12 @@ import {
 } from 'lucide-react';
 
 import {
+    AccountsModuleIcon,
     CashBankModuleIcon,
+    GeneralJournalModuleIcon,
     GeneralLedgerModuleIcon,
     InventoryModuleIcon,
+    JournalActivityLogModuleIcon,
     PurchasesModuleIcon,
     SalesModuleIcon,
     StoreModuleIcon,
@@ -92,9 +95,13 @@ const iconMap = {
     contact: ContactRound,
     favorite: Star,
     activity: History,
-    account: NotebookText,
+    'journal-activity-log': JournalActivityLogModuleIcon,
+    'journal-activity': JournalActivityLogModuleIcon,
+    account: AccountsModuleIcon,
+    accounts: AccountsModuleIcon,
     expense: ListMinus,
-    journal: NotebookText,
+    journal: GeneralJournalModuleIcon,
+    'general-journal': GeneralJournalModuleIcon,
     budget: BarChart3,
     transfer: ArrowRightLeft,
     payment: BadgeDollarSign,
