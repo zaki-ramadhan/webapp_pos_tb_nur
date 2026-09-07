@@ -65,13 +65,13 @@ class InventoryCostingService
         $consumptions = [];
         $totalCost = 0.0;
 
-      // Ambil batch aktif
-
+        // Ambil batch aktif dengan penguncian baris eksklusif (anti race-condition)
         $batches = InventoryBatch::where('product_id', $productId)
             ->where('warehouse_id', $warehouseId)
             ->where('qty_remaining', '>', 0)
             ->orderBy('entry_date', 'asc')
             ->orderBy('id', 'asc')
+            ->lockForUpdate()
             ->get();
 
         foreach ($batches as $batch) {
@@ -82,7 +82,7 @@ class InventoryCostingService
             $remaining = (float) $batch->qty_remaining;
             $consumeQty = min($qtyNeeded, $remaining);
 
-            $batch->qty_remaining = $remaining - $consumeQty;
+            $batch->qty_remaining = round($remaining - $consumeQty, 4);
             $batch->save();
 
             $consumptions[] = [
@@ -95,8 +95,7 @@ class InventoryCostingService
             $qtyNeeded -= $consumeQty;
         }
 
-      // Fallback jika kurang
-
+        // Fallback jika kurang
         if ($qtyNeeded > 0) {
             $fallbackCost = $this->resolveProductCost($productId);
             $consumptions[] = [
@@ -126,9 +125,9 @@ class InventoryCostingService
                 continue;
             }
 
-            $batch = InventoryBatch::find($batchId);
+            $batch = InventoryBatch::where('id', $batchId)->lockForUpdate()->first();
             if ($batch) {
-                $batch->qty_remaining = (float) $batch->qty_remaining + $qty;
+                $batch->qty_remaining = round((float) $batch->qty_remaining + $qty, 4);
                 $batch->save();
             }
         }
