@@ -1,13 +1,13 @@
 /**
  * Kumpulan ikon modul kustom TB Nur.
- * Standar kanvas: viewBox 35.5x35.5 (optical alignment seimbang dengan icon set Lucide 24x24).
- * Menghasilkan visual fill ~85-88% yang serasi dan konsisten tanpa kesan kekecilan maupun kegedean.
+ * Standar kanvas: viewBox 33.5x33.5 (sedikit lebih besar dan padat, ~92-95% glyph fill)
+ * Menampilkan ikon dengan proporsi pas, tegas, dan tidak sesak di tombol 44px.
  */
 
 export function SalesModuleIcon({ className = 'h-5 w-5', ...props }) {
     return (
         <svg
-            viewBox="-3.2 -1.5 35.5 35.5"
+            viewBox="-2.1 -0.75 33.5 33.5"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
@@ -47,7 +47,7 @@ export function SalesModuleIcon({ className = 'h-5 w-5', ...props }) {
 export function CashBankModuleIcon({ className = 'h-5 w-5', ...props }) {
     return (
         <svg
-            viewBox="0.15 -2.1 35.5 35.5"
+            viewBox="1.15 -1.1 33.5 33.5"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
