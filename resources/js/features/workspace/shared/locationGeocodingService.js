@@ -2,22 +2,11 @@
  * Layanan Lokasi & Geocoding Presisi Tinggi TB Nur
  *
  * Mengakomodasi:
- * 1. Deteksi GPS perangkat via browser Geolocation API dengan opsi akurasi tinggi (enableHighAccuracy).
- * 2. Reverse geocoding via Google Maps API (jika API Key tersedia).
- * 3. Fallback Smart Hybrid Geocoding (Nominatim zoom 18 + BigDataCloud + Database Kodepos Resmi)
+ * 1. Deteksi izin & koordinat GPS perangkat via browser Geolocation API dengan opsi akurasi tinggi.
+ * 2. Smart Hybrid Geocoding (Nominatim zoom 18 + BigDataCloud + Database Kodepos Resmi)
  *    yang memastikan desa/kelurahan, kecamatan (Kec. Kaliwedi), kabupaten (Kab. Cirebon),
  *    dan kode pos resmi (45165) terdeteksi akurat untuk wilayah pedesaan/daerah TB Nur.
  */
-
-export const STORE_ADDRESS_TB_NUR = {
-    street: 'Jl. P. Anggabaya No.22, Guwa Kidul, Kec. Kaliwedi',
-    city: 'Kab. Cirebon',
-    province: 'Jawa Barat',
-    postalCode: '45165',
-    country: 'Indonesia',
-    lat: -6.558975,
-    lng: 108.3820015,
-};
 
 const GOOGLE_MAPS_STORAGE_KEY = 'pos_google_maps_api_key';
 
@@ -29,24 +18,40 @@ export function getGoogleMapsApiKey() {
     ).trim();
 }
 
-export function setGoogleMapsApiKey(key) {
-    if (key && key.trim()) {
-        localStorage.setItem(GOOGLE_MAPS_STORAGE_KEY, key.trim());
-    } else {
-        localStorage.removeItem(GOOGLE_MAPS_STORAGE_KEY);
+/**
+ * Memeriksa status izin geolokasi browser jika didukung.
+ * @returns {Promise<'granted' | 'prompt' | 'denied' | 'unknown'>}
+ */
+export async function checkGeolocationPermission() {
+    if (typeof navigator !== 'undefined' && navigator.permissions && navigator.permissions.query) {
+        try {
+            const status = await navigator.permissions.query({ name: 'geolocation' });
+            return status.state;
+        } catch {
+            return 'unknown';
+        }
     }
+    return 'unknown';
 }
 
 /**
  * Mengambil koordinat GPS perangkat terkini dengan akurasi tinggi.
  */
-export function getCurrentDeviceCoordinates() {
-    return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-            reject(new Error('Browser Anda tidak mendukung layanan geolokasi GPS.'));
-            return;
-        }
+export async function getCurrentDeviceCoordinates(onStatusChange = null) {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+        throw new Error('Browser Anda tidak mendukung layanan geolokasi GPS.');
+    }
 
+    const permissionState = await checkGeolocationPermission();
+    if (permissionState === 'denied') {
+        throw new Error('Izin lokasi diblokir oleh browser. Harap klik ikon gembok / setelan situs di sebelah kiri bilah URL browser Anda dan ubah izin Lokasi menjadi Izinkan, lalu klik kembali.');
+    }
+
+    if (permissionState === 'prompt' && typeof onStatusChange === 'function') {
+        onStatusChange('prompt');
+    }
+
+    return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 resolve({
@@ -56,13 +61,13 @@ export function getCurrentDeviceCoordinates() {
                 });
             },
             (err) => {
-                let message = 'Gagal mendeteksi lokasi GPS perangkat.';
-                if (err.code === 1) {
-                    message = 'Izin akses lokasi ditolak oleh browser. Harap aktifkan izin lokasi di pengaturan browser Anda.';
-                } else if (err.code === 2) {
-                    message = 'Sinyal lokasi atau GPS tidak tersedia pada perangkat.';
-                } else if (err.code === 3) {
-                    message = 'Waktu permintaan lokasi habis (timeout). Silakan coba beberapa saat lagi.';
+                let message = 'Gagal mengambil lokasi: Koordinat GPS tidak dapat diperoleh.';
+                if (err.code === 1) { // PERMISSION_DENIED
+                    message = 'Izin lokasi tidak diberikan. Harap klik "Izinkan" (Allow) saat browser meminta izin, atau aktifkan izin lokasi melalui ikon gembok di bilah alamat browser.';
+                } else if (err.code === 2) { // POSITION_UNAVAILABLE
+                    message = 'Sinyal lokasi atau GPS tidak tersedia pada perangkat. Pastikan GPS/layanan lokasi aktif.';
+                } else if (err.code === 3) { // TIMEOUT
+                    message = 'Waktu permintaan lokasi habis (timeout). Silakan coba klik kembali.';
                 }
                 reject(new Error(message));
             },
@@ -76,7 +81,7 @@ export function getCurrentDeviceCoordinates() {
 }
 
 /**
- * Reverse geocoding via Google Maps Geocoding API.
+ * Reverse geocoding via Google Maps Geocoding API jika API key tersedia.
  */
 async function reverseGeocodeGoogle(lat, lng, apiKey) {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}&language=id`;
@@ -168,7 +173,6 @@ async function reverseGeocodeGoogle(lat, lng, apiKey) {
         country,
         lat,
         lng,
-        source: 'Google Maps Geocoding',
     };
 }
 
@@ -248,7 +252,7 @@ async function reverseGeocodeSmart(lat, lng) {
                 }
             }
         } catch {
-            // Kodepos search fallback
+            // Fallback
         }
     }
 
@@ -289,7 +293,6 @@ async function reverseGeocodeSmart(lat, lng) {
         street = parts.slice(0, 3).join(', ');
     }
 
-    // Format kabupaten/kota: "Kab. [Nama]" atau "Kota [Nama]"
     let formattedCity = regency;
     if (formattedCity && !formattedCity.startsWith('Kab.') && !formattedCity.startsWith('Kota')) {
         if (formattedCity.startsWith('Kabupaten ')) {
@@ -307,7 +310,6 @@ async function reverseGeocodeSmart(lat, lng) {
         country: 'Indonesia',
         lat,
         lng,
-        source: 'Smart Reverse Geocoder',
     };
 }
 
@@ -320,7 +322,7 @@ export async function reverseGeocodeCoordinates(lat, lng) {
         try {
             return await reverseGeocodeGoogle(lat, lng, googleKey);
         } catch {
-            // Fallback ke Smart Geocoder jika Google API gagal
+            // Fallback ke Smart Geocoder
         }
     }
     return await reverseGeocodeSmart(lat, lng);
