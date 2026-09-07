@@ -28,30 +28,108 @@ class DataMaintenanceController extends Controller
     }
 
     /**
-     * Mendapatkan statistik data saat ini dan status mode database.
+     * Mendapatkan statistik lengkap seluruh data halaman modul sistem.
      */
     public function status(Request $request): JsonResponse
     {
         $this->authorizeAdmin($request);
 
         try {
-            $transactionsCount = DB::table('operation_documents')->count();
-            $productsCount = DB::table('products')->count();
-            $customersCount = DB::table('customers')->count();
-            $suppliersCount = DB::table('suppliers')->count();
-            $employeesCount = DB::table('employees')->count();
+            $docCounts = DB::table('operation_documents')
+                ->select('document_type', DB::raw('count(*) as aggregate'))
+                ->groupBy('document_type')
+                ->pluck('aggregate', 'document_type')
+                ->toArray();
 
-            $isDemoActive = ($transactionsCount > 0 || $productsCount > 0);
+            $countTable = static function (string $table): int {
+                return Schema::hasTable($table) ? DB::table($table)->count() : 0;
+            };
+
+            $totalTransactions = DB::table('operation_documents')->count();
+            $productsCount = $countTable('products');
+            $customersCount = $countTable('customers');
+            $suppliersCount = $countTable('suppliers');
+            $employeesCount = $countTable('employees');
+
+            $categories = [
+                [
+                    'category' => 'Penjualan',
+                    'items' => [
+                        ['name' => 'Faktur Penjualan', 'count' => (int) ($docCounts['sales_invoice'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Penerimaan Penjualan', 'count' => (int) ($docCounts['sales_receipt'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Uang Muka Penjualan', 'count' => (int) ($docCounts['sales_deposit'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Retur Penjualan', 'count' => (int) ($docCounts['sales_return'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Pesanan Penjualan', 'count' => (int) ($docCounts['sales_order'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Penawaran Penjualan', 'count' => (int) ($docCounts['sales_quote'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Pengiriman Pesanan', 'count' => (int) ($docCounts['sales_delivery'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Pelanggan', 'count' => $customersCount, 'policy' => 'master_dummy'],
+                    ],
+                ],
+                [
+                    'category' => 'Pembelian',
+                    'items' => [
+                        ['name' => 'Faktur Pembelian', 'count' => (int) ($docCounts['purchase_invoice'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Pembayaran Pembelian', 'count' => (int) ($docCounts['purchase_payment'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Uang Muka Pembelian', 'count' => (int) ($docCounts['purchase_deposit'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Retur Pembelian', 'count' => (int) ($docCounts['purchase_return'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Pesanan Pembelian', 'count' => (int) ($docCounts['purchase_order'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Penerimaan Barang', 'count' => (int) ($docCounts['goods_receipt'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Pemasok', 'count' => $suppliersCount, 'policy' => 'master_dummy'],
+                    ],
+                ],
+                [
+                    'category' => 'Kas & Bank',
+                    'items' => [
+                        ['name' => 'Pembayaran Kas/Bank', 'count' => (int) ($docCounts['cash_payment'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Penerimaan Kas/Bank', 'count' => (int) ($docCounts['cash_receipt'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Transfer Bank', 'count' => (int) ($docCounts['bank_transfer'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Rekonsiliasi Bank', 'count' => $countTable('bank_reconciliations'), 'policy' => 'transaksi'],
+                    ],
+                ],
+                [
+                    'category' => 'Buku Besar & Keuangan',
+                    'items' => [
+                        ['name' => 'Jurnal Umum', 'count' => (int) ($docCounts['general_journal'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Pencatatan Beban', 'count' => (int) ($docCounts['expense_entry'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Pencatatan Gaji', 'count' => (int) ($docCounts['payroll_entry'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Akun Perkiraan (COA)', 'count' => $countTable('accounts'), 'policy' => 'dilindungi'],
+                    ],
+                ],
+                [
+                    'category' => 'Persediaan & Logistik',
+                    'items' => [
+                        ['name' => 'Barang & Jasa', 'count' => $productsCount, 'policy' => 'master_dummy'],
+                        ['name' => 'Kategori Barang', 'count' => $countTable('product_categories'), 'policy' => 'master_dummy'],
+                        ['name' => 'Merek Barang', 'count' => $countTable('brands'), 'policy' => 'master_dummy'],
+                        ['name' => 'Penyesuaian Persediaan', 'count' => (int) ($docCounts['inventory_adjustment'] ?? 0), 'policy' => 'transaksi'],
+                        ['name' => 'Gudang', 'count' => $countTable('warehouses'), 'policy' => 'dilindungi'],
+                        ['name' => 'Satuan Barang', 'count' => $countTable('units'), 'policy' => 'dilindungi'],
+                    ],
+                ],
+                [
+                    'category' => 'Organisasi & Keamanan',
+                    'items' => [
+                        ['name' => 'Karyawan', 'count' => $employeesCount, 'policy' => 'master_dummy'],
+                        ['name' => 'Gaji atau Tunjangan', 'count' => $countTable('salary_allowances'), 'policy' => 'master_dummy'],
+                        ['name' => 'Departemen', 'count' => $countTable('departments'), 'policy' => 'dilindungi'],
+                        ['name' => 'Pengguna Sistem', 'count' => $countTable('users'), 'policy' => 'pengguna_admin'],
+                        ['name' => 'Akses Grup', 'count' => $countTable('access_groups'), 'policy' => 'dilindungi'],
+                        ['name' => 'Log Aktivitas', 'count' => $countTable('activity_logs'), 'policy' => 'transaksi'],
+                        ['name' => 'Preferensi Toko', 'count' => $countTable('preference_settings'), 'policy' => 'dilindungi'],
+                    ],
+                ],
+            ];
 
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'transactions_count' => $transactionsCount,
+                    'transactions_count' => $totalTransactions,
                     'products_count' => $productsCount,
                     'customers_count' => $customersCount,
                     'suppliers_count' => $suppliersCount,
                     'employees_count' => $employeesCount,
-                    'is_demo_active' => $isDemoActive,
+                    'is_demo_active' => ($totalTransactions > 0 || $productsCount > 0),
+                    'categories' => $categories,
                 ],
             ]);
         } catch (\Throwable $e) {

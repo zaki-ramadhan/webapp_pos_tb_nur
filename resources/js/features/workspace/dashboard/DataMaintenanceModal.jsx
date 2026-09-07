@@ -27,7 +27,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                 setStatusData(json.data);
             }
         } catch {
-            // Abaikan kesalahan koneksi sementara
+            // Abaikan kegagalan jaringan sementara
         } finally {
             setLoading(false);
         }
@@ -152,6 +152,22 @@ export default function DataMaintenanceModal({ open, onClose }) {
         }
     };
 
+    const renderPolicyLabel = (policy) => {
+        if (policy === 'transaksi') {
+            return <span className="text-red-700">Dibersihkan pada reset transaksi / total</span>;
+        }
+        if (policy === 'master_dummy') {
+            return <span className="text-amber-800">Dibersihkan pada reset total, aman pada reset transaksi</span>;
+        }
+        if (policy === 'dilindungi') {
+            return <span className="text-emerald-700 font-medium">Selalu dilindungi (aman permanen)</span>;
+        }
+        if (policy === 'pengguna_admin') {
+            return <span className="text-blue-700 font-medium">Admin & Owner aman, kasir demo dihapus</span>;
+        }
+        return <span className="text-slate-800">-</span>;
+    };
+
     return (
         <WorkspaceDialog
             open={open}
@@ -159,40 +175,58 @@ export default function DataMaintenanceModal({ open, onClose }) {
             disableClose={actionLoading}
             title="Pemeliharaan Data Sistem"
             headerIcon={null}
-            maxWidthClassName="max-w-[560px]"
+            maxWidthClassName="max-w-[760px]"
         >
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-10 text-slate-800">
                     <Spinner className="h-6 w-6 text-brand-blue" />
-                    <p className="mt-2 text-sm font-medium">Memeriksa status database...</p>
+                    <p className="mt-2 text-sm font-medium">Memeriksa status seluruh data modul...</p>
                 </div>
             ) : viewMode === 'overview' ? (
                 <div className="space-y-4">
-                    {/* Ringkasan Data Database */}
+                    {/* Ringkasan Status Global */}
+                    <div className="border border-slate-300 rounded-[4px] bg-slate-50 px-3.5 py-2.5 flex justify-between items-center text-sm">
+                        <span className="font-medium text-slate-800">Status Database:</span>
+                        <span className="font-semibold text-slate-900">
+                            {statusData?.is_demo_active
+                                ? 'Data Sampel / Demo Aktif'
+                                : 'Mode Bersih (Siap Operasional)'}
+                        </span>
+                    </div>
+
+                    {/* Rincian Seluruh Data Halaman Modul */}
                     <div className="border border-slate-300 rounded-[4px] bg-white overflow-hidden">
-                        <div className="bg-slate-100 px-3.5 py-2.5 border-b border-slate-300 flex justify-between items-center text-sm font-medium text-slate-800">
-                            <span>Status Data Saat Ini:</span>
-                            <span className="font-semibold text-slate-900">
-                                {statusData?.is_demo_active ? 'Data Sampel / Demo' : 'Mode Bersih (Siap Operasional)'}
-                            </span>
+                        <div className="bg-slate-100 px-3.5 py-2 border-b border-slate-300 flex justify-between items-center text-sm font-semibold text-slate-800">
+                            <span>Rincian Data per Halaman Modul</span>
+                            <span className="font-normal text-xs text-slate-700">Total Transaksi: {statusData?.transactions_count ?? 0}</span>
                         </div>
-                        <div className="grid grid-cols-2 divide-x divide-y divide-slate-200 text-sm">
-                            <div className="p-3 flex justify-between items-center">
-                                <span className="text-slate-800">Transaksi:</span>
-                                <span className="font-semibold text-slate-900">{statusData?.transactions_count ?? 0}</span>
-                            </div>
-                            <div className="p-3 flex justify-between items-center">
-                                <span className="text-slate-800">Barang & Jasa:</span>
-                                <span className="font-semibold text-slate-900">{statusData?.products_count ?? 0}</span>
-                            </div>
-                            <div className="p-3 flex justify-between items-center">
-                                <span className="text-slate-800">Pelanggan:</span>
-                                <span className="font-semibold text-slate-900">{statusData?.customers_count ?? 0}</span>
-                            </div>
-                            <div className="p-3 flex justify-between items-center">
-                                <span className="text-slate-800">Pemasok:</span>
-                                <span className="font-semibold text-slate-900">{statusData?.suppliers_count ?? 0}</span>
-                            </div>
+
+                        <div className="max-h-[290px] overflow-y-auto divide-y divide-slate-200">
+                            {(statusData?.categories ?? []).map((cat) => (
+                                <div key={cat.category} className="p-3">
+                                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-2">
+                                        {cat.category}
+                                    </h4>
+                                    <table className="w-full text-left text-sm border-collapse">
+                                        <thead>
+                                            <tr className="border-b border-slate-200 text-xs text-slate-700">
+                                                <th className="py-1 font-medium">Halaman / Data</th>
+                                                <th className="py-1 px-2 font-medium text-right w-24">Jumlah</th>
+                                                <th className="py-1 pl-4 font-medium">Kebijakan Pembersihan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {cat.items.map((item) => (
+                                                <tr key={item.name} className="hover:bg-slate-50">
+                                                    <td className="py-1.5 font-normal text-slate-900">{item.name}</td>
+                                                    <td className="py-1.5 px-2 text-right font-semibold text-slate-900">{item.count}</td>
+                                                    <td className="py-1.5 pl-4 text-xs">{renderPolicyLabel(item.policy)}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
@@ -202,9 +236,9 @@ export default function DataMaintenanceModal({ open, onClose }) {
                         <div className="border border-slate-300 rounded-[4px] p-3.5 bg-white">
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                 <div className="space-y-1">
-                                    <h3 className="text-sm font-semibold text-slate-900">Bersihkan Data Demo (Go-Live)</h3>
+                                    <h3 className="text-sm font-semibold text-slate-900">Bersihkan Seluruh Data Demo (Go-Live)</h3>
                                     <p className="text-sm text-slate-800 leading-normal">
-                                        Menghapus seluruh transaksi, stok, produk sampel, dan kontak fiktif. Akun Admin, Owner, dan Akun Perkiraan (COA) tetap aman.
+                                        Mengosongkan semua transaksi, stok, produk sampel, dan kontak fiktif. Akun Admin, Owner, dan Akun Perkiraan (COA) tetap aman.
                                     </p>
                                 </div>
                                 <Button
