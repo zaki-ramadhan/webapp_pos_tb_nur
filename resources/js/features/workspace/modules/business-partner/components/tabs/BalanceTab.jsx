@@ -61,7 +61,9 @@ export default function BalanceTab({ config, values, onChange }) {
             <DataTable className="w-full min-w-[700px]" wrapperClassName="border-table-wrapper-border">
                 <DataTableHeader className="bg-table-header-bg">
                     <tr>
-                        <DataTableHead className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 py-2.5 text-center text-base font-light text-white whitespace-nowrap">No.</DataTableHead>
+                        {rows.length > 0 && (
+                            <DataTableHead className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 py-2.5 text-center text-base font-light text-white whitespace-nowrap">No.</DataTableHead>
+                        )}
                         <DataTableHead className="w-[120px] px-3 py-2.5 text-left text-base font-light text-white">Tanggal</DataTableHead>
                         <DataTableHead className="w-[150px] px-3 py-2.5 text-right text-base font-light text-white">Jumlah</DataTableHead>
                         <DataTableHead className="w-[160px] px-3 py-2.5 text-left text-base font-light text-white">Mata Uang</DataTableHead>
@@ -73,7 +75,7 @@ export default function BalanceTab({ config, values, onChange }) {
                 <DataTableBody>
                     {rows.length === 0 ? (
                         <DataTableRow className="bg-white table-row-empty" data-empty-row="true">
-                            <DataTableCell colSpan={7} className="px-3 py-2 text-center text-base text-text-workspace-dark">
+                            <DataTableCell colSpan={6} className="px-3 py-2 text-center text-base text-text-workspace-dark">
                                 Tidak ada data
                             </DataTableCell>
                         </DataTableRow>

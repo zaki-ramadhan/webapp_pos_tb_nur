@@ -608,7 +608,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                             <DataTableRow className="bg-white">
                                 {firstColumnIsCheckbox ? <DataTableCell className="px-2.5 py-2 text-black" /> : null}
                                 <DataTableCell
-                                    colSpan={dataColumns.length + 1}
+                                    colSpan={dataColumns.length}
                                     className="px-2.5 py-2 text-center text-base text-black font-normal"
                                 >
                                     {emptyMessage}

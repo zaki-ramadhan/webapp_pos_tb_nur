@@ -190,9 +190,11 @@ export default function ActivityLogView({ page }) {
                 <DataTable className="min-w-[1320px]" wrapperClassName="border-table-wrapper-border">
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
-                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-light text-white">
-                                No.
-                            </DataTableHead>
+                            {sortedRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-light text-white">
+                                    No.
+                                </DataTableHead>
+                            )}
                             {visibleColumns.map((column) => (
                                 <SortableTableHeaderCell
                                     key={column.id}
@@ -233,7 +235,7 @@ export default function ActivityLogView({ page }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-2 text-center text-base text-black">
+                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-2 text-center text-base text-black">
                                     {emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

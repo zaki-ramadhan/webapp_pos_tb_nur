@@ -246,7 +246,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-2 text-center text-base text-black">
+                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-2 text-center text-base text-black">
                                     {config.table.loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
                                 </DataTableCell>
                             </DataTableRow>

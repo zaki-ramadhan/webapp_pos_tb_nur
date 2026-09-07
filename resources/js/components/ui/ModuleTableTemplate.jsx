@@ -234,12 +234,14 @@ export default function ModuleTableTemplate({
                     <DataTable wrapperClassName="border-table-wrapper-border">
                         <DataTableHeader className="bg-table-header-bg">
                             <tr>
-                                <DataTableHead
-                                    className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 py-2.5 text-center text-base font-normal text-white whitespace-nowrap"
-                                    style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
-                                >
-                                    No.
-                                </DataTableHead>
+                                {displayRows.length > 0 && (
+                                    <DataTableHead
+                                        className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 py-2.5 text-center text-base font-normal text-white whitespace-nowrap"
+                                        style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
+                                    >
+                                        No.
+                                    </DataTableHead>
+                                )}
                             {visibleColumns.map((column) => (
                                     <SortableTableHeaderCell
                                         key={column.id}
@@ -310,7 +312,7 @@ export default function ModuleTableTemplate({
                             ) : (
                                 <DataTableRow className="bg-white table-row-empty" data-empty-row="true">
                                     <DataTableCell
-                                        colSpan={visibleColumns.length + 1}
+                                        colSpan={visibleColumns.length}
                                         className="px-3 py-2 text-center text-base text-black"
                                     >
                                         {table.loading ? (
