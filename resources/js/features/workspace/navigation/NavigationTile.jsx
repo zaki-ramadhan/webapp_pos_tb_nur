@@ -49,11 +49,11 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
     const iconClassName = isInactive ? 'text-disabled-text' : isImplemented ? tone.icon : 'text-text-inactive';
     const labelClassName = isInactive ? 'text-text-sidebar-muted' : isImplemented ? 'text-tab-active-text' : 'text-text-light';
     const tileClassName = dense
-        ? 'min-h-[84px] gap-1.5 rounded-[10px] px-2 pt-3 pb-2 sm:min-h-[88px] sm:gap-2 sm:pt-3.5 sm:pb-2.5 md:min-h-[92px] md:pb-2'
-        : 'min-h-[84px] gap-1.5 rounded-[10px] px-2 pt-3 pb-2 sm:min-h-[88px] sm:gap-2 sm:pt-3.5 sm:pb-2.5 sm:px-2 md:min-h-[94px] md:pb-2';
+        ? 'min-h-[86px] gap-2 rounded-[10px] px-2 pt-3 pb-2 sm:min-h-[90px] sm:gap-2.5 sm:pt-3.5 sm:pb-2.5 md:min-h-[94px] md:pb-2'
+        : 'min-h-[86px] gap-2 rounded-[10px] px-2 pt-3 pb-2 sm:min-h-[90px] sm:gap-2.5 sm:pt-3.5 sm:pb-2.5 sm:px-2 md:min-h-[96px] md:pb-2';
     const iconSizeClassName = dense
-        ? 'h-9.5 w-9.5 sm:h-10 sm:w-10 md:h-[42px] md:w-[42px]'
-        : 'h-10 w-10 sm:h-[42px] sm:w-[42px] md:h-11 md:w-11';
+        ? 'h-8.5 w-8.5 sm:h-9 sm:w-9 md:h-9.5 md:w-9.5'
+        : 'h-9 w-9 sm:h-9.5 sm:w-9.5 md:h-10 md:w-10';
     const labelSizeClassName = dense ? 'text-xs sm:text-xs md:text-[12.5px]' : 'text-xs sm:text-[11.5px] md:text-[12.5px]';
     const hintLabel = isInactive ? WORKSPACE_INACTIVE_HINT : isImplemented ? '' : 'Belum diimplementasikan penuh';
 
