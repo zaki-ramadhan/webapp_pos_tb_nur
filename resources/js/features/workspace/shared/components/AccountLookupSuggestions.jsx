@@ -55,7 +55,6 @@ export default function AccountLookupSuggestions({
     anchorRef = null,
     showType = false,
     resource = 'accounts',
-    minWidth = 360,
 }) {
     const entityLabels = {
         accounts: 'akun perkiraan',
@@ -86,7 +85,7 @@ export default function AccountLookupSuggestions({
     }
 
     return (
-        <LookupDropdownSurface className={className} anchorRef={anchorRef} minWidth={minWidth}>
+        <LookupDropdownSurface className={className} anchorRef={anchorRef}>
             <div className="max-h-[280px] overflow-y-auto bg-white flex-1 min-h-0">
                 {loading ? (
                     <LookupLoadingState label={resolvedLoadingLabel} className="px-4 py-5 text-sm" />
