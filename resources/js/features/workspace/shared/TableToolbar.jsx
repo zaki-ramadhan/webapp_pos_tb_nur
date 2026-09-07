@@ -217,32 +217,32 @@ export default function TableToolbar({
                                     }
                                 });
                             }
-                            msg = backendMsg || 'Terdapat format nilai kolom yang tidak sesuai atau data wajib yang kosong.';
+                            msg = backendMsg || 'Format nilai kolom tidak sesuai atau data wajib kosong.';
                         } else if (status === 500) {
-                            msg = 'Format data pada file tidak sesuai (misal: kolom angka diisi teks, atau data referensi tidak terdaftar). Silakan periksa kembali isi file Anda.';
+                            msg = 'Format file tidak valid. Periksa kolom angka dan data referensi Anda.';
                         } else if (backendMsg) {
                             msg = backendMsg;
                         }
                     } else {
-                        msg = err.message || 'Gagal menghubungkan ke server. Pastikan koneksi internet Anda aktif.';
+                        msg = err.message || 'Koneksi ke server terputus. Periksa jaringan Anda.';
                     }
 
                     if (errorList.length > 1) {
                         showSystemErrorModal({
                             title: 'Impor Gagal',
-                            description: 'Terdapat beberapa kesalahan format data pada file Anda:',
+                            description: 'Daftar kesalahan pada file:',
                             messages: errorList,
                         });
                     } else if (errorList.length === 1) {
                         showSystemErrorModal({
                             title: 'Impor Gagal',
-                            description: 'Terdapat kesalahan format data pada file Anda:',
+                            description: 'Kesalahan format data pada file:',
                             message: errorList[0],
                         });
                     } else {
                         showSystemErrorModal({
                             title: 'Impor Gagal',
-                            description: 'Terjadi kesalahan saat memproses data:',
+                            description: 'Gagal memproses data:',
                             message: msg,
                         });
                     }

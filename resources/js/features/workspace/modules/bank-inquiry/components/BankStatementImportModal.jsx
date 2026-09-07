@@ -99,7 +99,7 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
         const ext = selectedFile.name.split('.').pop().toLowerCase();
         if (!['csv', 'xlsx', 'xls'].includes(ext)) {
             setFile(selectedFile);
-            setError('Format berkas tidak didukung. Silakan pilih berkas .CSV, .XLSX, atau .XLS.');
+            setError('Format berkas tidak didukung. Gunakan .CSV, .XLSX, atau .XLS.');
             setParsedData(null);
             setProgress(0);
             return;

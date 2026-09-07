@@ -85,17 +85,17 @@ trait BackendResourceImportExportTrait
         ];
 
         $messages = [
-            'required' => 'Kolom :attribute harus diisi.',
-            'unique' => 'Kolom :attribute dengan nilai ini sudah terdaftar di sistem (harus unik).',
-            'max' => 'Kolom :attribute tidak boleh melebihi :max karakter.',
-            'min' => 'Kolom :attribute tidak boleh kurang dari :min.',
-            'numeric' => 'Kolom :attribute harus berisi angka (contoh: 15000 atau 12.5).',
-            'integer' => 'Kolom :attribute harus berisi angka bulat (contoh: 10).',
-            'email' => 'Kolom :attribute harus berisi format email yang valid (contoh: admin@domain.com).',
-            'boolean' => 'Kolom :attribute harus berisi nilai aktif/nonaktif (ya/tidak).',
-            'exists' => 'Nilai pada kolom :attribute tidak ditemukan dalam daftar pilihan sistem. Silakan pastikan data referensi tersebut sudah terdaftar.',
-            'size' => 'Kolom :attribute harus berukuran tepat :size karakter.',
-            'date' => 'Kolom :attribute harus berisi format tanggal yang valid (contoh: YYYY-MM-DD seperti 2026-06-14).',
+            'required' => 'Kolom :attribute wajib diisi.',
+            'unique' => 'Kolom :attribute sudah digunakan.',
+            'max' => 'Kolom :attribute maksimal :max karakter.',
+            'min' => 'Kolom :attribute minimal :min.',
+            'numeric' => 'Kolom :attribute harus diisi angka (contoh: 15000).',
+            'integer' => 'Kolom :attribute harus diisi angka bulat (contoh: 10).',
+            'email' => 'Format email :attribute tidak valid (contoh: admin@domain.com).',
+            'boolean' => 'Kolom :attribute harus bernilai ya/tidak.',
+            'exists' => ':attribute belum ada di daftar pilihan.',
+            'size' => 'Kolom :attribute harus tepat :size karakter.',
+            'date' => 'Format tanggal :attribute salah (gunakan contoh: 2026-06-14).',
         ];
 
         $created = 0;

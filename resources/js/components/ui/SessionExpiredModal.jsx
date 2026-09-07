@@ -28,7 +28,7 @@ export default function SessionExpiredModal({ open, onClose, onConfirm }) {
                 <SessionExpiredIllustration />
                 <div className="min-w-0 flex-1 pt-2">
                     <p className="text-xs sm:text-sm leading-6 text-brand-dark">
-                        Sesi login Anda telah berakhir demi keamanan. Silakan login kembali untuk melanjutkan aktivitas Anda.
+                        Sesi login Anda telah berakhir. Silakan login kembali.
                     </p>
                 </div>
             </div>

@@ -301,7 +301,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                 showSystemErrorModal({
                     title: 'Terjadi Permasalahan pada Pemrosesan',
                     description: 'Silakan perbaiki permasalahan berikut ini:',
-                    message: 'Barang belum ada yang dicentang. Silakan centang barang yang ingin dipesan terlebih dahulu.',
+                    message: 'Pilih minimal satu barang untuk dipesan.',
                 });
                 return;
             }
