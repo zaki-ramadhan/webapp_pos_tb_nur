@@ -16,6 +16,10 @@ export function getGoogleMapsApiKey() {
  * Mengambil koordinat GPS perangkat langsung via Geolocation API browser.
  */
 export function getCurrentDeviceCoordinates() {
+    if (typeof window !== 'undefined' && window.isSecureContext === false) {
+        return Promise.reject(new Error('Akses lokasi membutuhkan koneksi aman (HTTPS atau localhost).'));
+    }
+
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
         return Promise.reject(new Error('Browser tidak mendukung fitur geolokasi GPS.'));
     }
@@ -42,7 +46,7 @@ export function getCurrentDeviceCoordinates() {
             },
             {
                 enableHighAccuracy: true,
-                timeout: 15000,
+                timeout: 30000,
                 maximumAge: 0,
             }
         );
