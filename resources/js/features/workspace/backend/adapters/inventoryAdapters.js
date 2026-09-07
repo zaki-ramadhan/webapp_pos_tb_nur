@@ -30,9 +30,11 @@ export function buildInventoryFilters(pageId, values) {
     }
 
     return {
-        search: values.keyword?.trim() ?? '',
+        search: (values.keyword || values.search)?.trim() ?? '',
         supplier_id: values.supplierSearchId ?? null,
+        supplier: values.supplierSearch?.trim() ?? '',
         warehouse_id: values.warehouseSearchId ?? null,
+        warehouse: values.warehouseSearch?.trim() ?? '',
         as_of_date: normalizeDisplayDate(values.asOfDate),
         per_page: 100,
     };
