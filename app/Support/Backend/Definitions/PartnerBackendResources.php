@@ -71,7 +71,7 @@ class PartnerBackendResources
                 modelClass: Customer::class,
                 with: ['branches'],
                 storeRules: [
-                    'code' => ['required', 'string', 'max:50', 'unique:customers,code'],
+                    'code' => ['nullable', 'string', 'max:50', 'unique:customers,code'],
                     'name' => ['required', 'string', 'max:160'],
                     'mobile_phone' => ['nullable', 'string', 'max:50'],
                     'email' => ['nullable', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255'],
@@ -110,7 +110,7 @@ class PartnerBackendResources
                 with: ['category', 'branches'],
                 storeRules: [
                     'category_id' => ['nullable', 'integer', 'exists:supplier_categories,id'],
-                    'code' => ['required', 'string', 'max:50', 'unique:suppliers,code'],
+                    'code' => ['nullable', 'string', 'max:50', 'unique:suppliers,code'],
                     'name' => ['required', 'string', 'max:160'],
                     'mobile_phone' => ['nullable', 'string', 'max:50'],
                     'email' => ['nullable', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255'],

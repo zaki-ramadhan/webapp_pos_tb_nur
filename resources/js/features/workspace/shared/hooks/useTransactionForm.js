@@ -92,6 +92,10 @@ export function useTransactionForm({
     }
 
     async function handleSave({ execute, loadingMessage, successMessage, onSuccess }) {
+        if (saving) {
+            return { ok: false, errorMessage: 'Sedang memproses dokumen...' };
+        }
+
         if (validationMessage) {
             rejectCrudFormAction(validationMessage, { setStatus, fieldErrors: resolvedFieldErrors });
             return { ok: false, errorMessage: validationMessage };
