@@ -47,7 +47,7 @@ export function SalesModuleIcon({ className = 'h-5 w-5', ...props }) {
 export function CashBankModuleIcon({ className = 'h-5 w-5', ...props }) {
     return (
         <svg
-            viewBox="1.8 -0.45 32.2 32.2"
+            viewBox="1.35 -0.5 32.3 32.3"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
@@ -75,7 +75,91 @@ export function CashBankModuleIcon({ className = 'h-5 w-5', ...props }) {
                 stroke="currentColor"
                 strokeWidth={1.8}
             />
-            <path d="M15 23.7233H29M21.5 27.2233H26.5H27.5" stroke="currentColor" strokeWidth={1.6} />
+            <path d="M15 23.7233H29M21.5 27.2233H26.5H27.5" stroke="currentColor" strokeWidth={1.8} />
+        </svg>
+    );
+}
+
+export function StoreModuleIcon({ className = 'h-5 w-5', ...props }) {
+    return (
+        <svg
+            viewBox="-1.0 -0.6 33.5 33.5"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+            aria-hidden="true"
+            {...props}
+        >
+            <path
+                d="M0 31.2043H2M31.5 31.2043H30M30 31.2043V11.4043C30 11.2938 29.9105 11.2043 29.8 11.2043H21M30 31.2043H21M21 11.2043V31.2043M21 11.2043V1.1011C21 0.959225 20.8564 0.862459 20.7249 0.915748L2.12488 8.45364C2.04939 8.48424 2 8.55755 2 8.639V31.2043M21 31.2043H2M7.5 12.2043H11.5H15.5M7.5 17.2043H15.5M7.5 22.2043H9.5H11.5H15.5M7.5 27.2043H15.5M23.5 15.2043H24.5H25.5H27.5M23.5 19.7043H24.5H25.5H27.5M23.5 24.2043H24.5H25.5H27.5"
+                stroke="currentColor"
+                strokeWidth={1.8}
+            />
+        </svg>
+    );
+}
+
+export function GeneralLedgerModuleIcon({ className = 'h-5 w-5', ...props }) {
+    return (
+        <svg
+            viewBox="-3.55 -0.2 32.2 32.2"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+            aria-hidden="true"
+            {...props}
+        >
+            <path d="M8.40001 27.9H16.4" stroke="currentColor" strokeWidth={1.8} />
+            <path
+                d="M23.9 30.7V1.1C23.9 0.989545 23.8144 0.900002 23.7039 0.900002H4.90001C1.90001 0.900002 0.900002 2.4 0.900002 4.9V25.9C0.900002 30.4 2.90001 30.9 5.40001 30.9H23.7016C23.8121 30.9 23.9 30.8105 23.9 30.7Z"
+                stroke="currentColor"
+                strokeWidth={1.8}
+            />
+            <path d="M1.20001 24.9H5.55342M5.55342 24.9V1.4M5.55342 24.9H24.2" stroke="currentColor" strokeWidth={1.8} />
+            <path
+                d="M19.7 5.9H10.1C9.98955 5.9 9.90001 5.98954 9.90001 6.1V10.7C9.90001 10.8105 9.98955 10.9 10.1 10.9H19.7C19.8105 10.9 19.9 10.8105 19.9 10.7V6.1C19.9 5.98954 19.8105 5.9 19.7 5.9Z"
+                stroke="currentColor"
+                strokeWidth={1.8}
+            />
+        </svg>
+    );
+}
+
+export function PurchasesModuleIcon({ className = 'h-5 w-5', ...props }) {
+    return (
+        <svg
+            viewBox="-1.0 -1.2 33.8 33.8"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+            aria-hidden="true"
+            {...props}
+        >
+            <path
+                d="M0 0.900002H5.31696C5.42056 0.900002 5.50558 0.962755 5.515 1.06593C5.71189 3.22367 7.82 25.7 10.2 25.7C14.2 25.7 29 25.7 29 25.7"
+                stroke="currentColor"
+                strokeWidth={1.8}
+            />
+            <path
+                d="M6 6.89999C6 6.89999 23.5 6.9 29 6.89999C32.5 6.89999 31.5 22.4 24.5 22.4C23 22.4 8.5 22.4 8.5 22.4"
+                stroke="currentColor"
+                strokeWidth={1.8}
+            />
+            <path
+                d="M6.5 14.4H22.6M30.5 14.4H22.6M22.6 14.4V6.9V22.2C22.6 22.3105 22.5105 22.4 22.4 22.4H15.4C15.2895 22.4 15.2 22.3105 15.2 22.2V6.9"
+                stroke="currentColor"
+                strokeWidth={1.8}
+            />
+            <path
+                d="M15.5432 28.05C15.5432 29.2926 14.5358 30.3 13.2932 30.3C12.0505 30.3 11.0432 29.2926 11.0432 28.05C11.0432 26.8074 12.0505 25.8 13.2932 25.8C14.5358 25.8 15.5432 26.8074 15.5432 28.05Z"
+                stroke="currentColor"
+                strokeWidth={1.8}
+            />
+            <path
+                d="M27.2 28.05C27.2 29.2926 26.1926 30.3 24.95 30.3C23.7074 30.3 22.7 29.2926 22.7 28.05C22.7 26.8074 23.7074 25.8 24.95 25.8C26.1926 25.8 27.2 26.8074 27.2 28.05Z"
+                stroke="currentColor"
+                strokeWidth={1.8}
+            />
         </svg>
     );
 }

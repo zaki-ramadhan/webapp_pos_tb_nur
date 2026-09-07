@@ -41,7 +41,7 @@ function normalizeSidebarItem(item, preferences, user) {
 }
 
 function SidebarButton({ item, active, onClick, buttonRef }) {
-    const iconType = item.id === 'cash-bank' ? 'cash-bank' : item.id === 'sales' ? 'sales' : item.icon;
+    const iconType = item.id ?? item.icon;
 
     return (
         <Tooltip
@@ -72,7 +72,7 @@ function SidebarButton({ item, active, onClick, buttonRef }) {
 }
 
 function MobileModuleButton({ item, active, onSelect }) {
-    const iconType = item.id === 'cash-bank' ? 'cash-bank' : item.id === 'sales' ? 'sales' : item.icon;
+    const iconType = item.id ?? item.icon;
 
     return (
         <button
