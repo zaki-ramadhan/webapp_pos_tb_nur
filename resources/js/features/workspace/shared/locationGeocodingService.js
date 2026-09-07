@@ -1,3 +1,5 @@
+import { INDONESIAN_CITIES } from '@/features/workspace/shared/indonesianCities';
+
 /**
  * Layanan Lokasi & Geocoding Presisi Tinggi TB Nur
  */
@@ -10,6 +12,129 @@ export function getGoogleMapsApiKey() {
         import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
         ''
     ).trim();
+}
+
+/**
+ * Menerjemahkan nama provinsi dan arah mata angin dari bahasa Inggris ke bahasa Indonesia.
+ */
+export function normalizeIndonesianProvince(rawProvince) {
+    if (!rawProvince) return 'Jawa Barat';
+    let p = String(rawProvince).trim();
+
+    const provinceMap = {
+        'west java': 'Jawa Barat',
+        'central java': 'Jawa Tengah',
+        'east java': 'Jawa Timur',
+        'jakarta': 'DKI Jakarta',
+        'special capital region of jakarta': 'DKI Jakarta',
+        'yogyakarta': 'DI Yogyakarta',
+        'special region of yogyakarta': 'DI Yogyakarta',
+        'banten': 'Banten',
+        'bali': 'Bali',
+        'aceh': 'Aceh',
+        'north sumatra': 'Sumatera Utara',
+        'west sumatra': 'Sumatera Barat',
+        'south sumatra': 'Sumatera Selatan',
+        'riau': 'Riau',
+        'riau islands': 'Kepulauan Riau',
+        'jambi': 'Jambi',
+        'bengkulu': 'Bengkulu',
+        'lampung': 'Lampung',
+        'bangka belitung islands': 'Kepulauan Bangka Belitung',
+        'bangka belitung': 'Kepulauan Bangka Belitung',
+        'west kalimantan': 'Kalimantan Barat',
+        'central kalimantan': 'Kalimantan Tengah',
+        'south kalimantan': 'Kalimantan Selatan',
+        'east kalimantan': 'Kalimantan Timur',
+        'north kalimantan': 'Kalimantan Utara',
+        'north sulawesi': 'Sulawesi Utara',
+        'central sulawesi': 'Sulawesi Tengah',
+        'south sulawesi': 'Sulawesi Selatan',
+        'southeast sulawesi': 'Sulawesi Tenggara',
+        'west sulawesi': 'Sulawesi Barat',
+        'gorontalo': 'Gorontalo',
+        'maluku': 'Maluku',
+        'north maluku': 'Maluku Utara',
+        'papua': 'Papua',
+        'west papua': 'Papua Barat',
+        'south papua': 'Papua Selatan',
+        'central papua': 'Papua Tengah',
+        'highland papua': 'Papua Pegunungan',
+        'southwest papua': 'Papua Barat Daya',
+    };
+
+    const lower = p.toLowerCase();
+    if (provinceMap[lower]) {
+        return provinceMap[lower];
+    }
+
+    p = p.replace(/\bwest\b/gi, 'Barat')
+        .replace(/\beast\b/gi, 'Timur')
+        .replace(/\bsouth\b/gi, 'Selatan')
+        .replace(/\bnorth\b/gi, 'Utara')
+        .replace(/\bcentral\b/gi, 'Tengah')
+        .replace(/\bsoutheast\b/gi, 'Tenggara')
+        .replace(/\bsouthwest\b/gi, 'Barat Daya')
+        .replace(/\bnorthwest\b/gi, 'Barat Laut')
+        .replace(/\bnortheast\b/gi, 'Timur Laut');
+
+    return p;
+}
+
+/**
+ * Mencocokkan nama kota/kabupaten dengan daftar resmi INDONESIAN_CITIES (CityAutocompleteInput).
+ */
+export function matchIndonesianCity(rawCity, rawProvince) {
+    const cleanCity = String(rawCity || '')
+        .replace(/^(kabupaten|kab\.?|kota)\s+/i, '')
+        .replace(/\s+(regency|city)$/i, '')
+        .trim()
+        .toLowerCase();
+
+    const normalizedProvince = normalizeIndonesianProvince(rawProvince);
+
+    // 1. Cocokkan nama kota + provinsi
+    let matched = INDONESIAN_CITIES.find((item) => {
+        const itemCityClean = item.city.replace(/^(kabupaten|kab\.?|kota)\s+/i, '').toLowerCase();
+        return itemCityClean === cleanCity && item.province.toLowerCase() === normalizedProvince.toLowerCase();
+    });
+
+    // 2. Cocokkan hanya nama kota
+    if (!matched) {
+        matched = INDONESIAN_CITIES.find((item) => {
+            const itemCityClean = item.city.replace(/^(kabupaten|kab\.?|kota)\s+/i, '').toLowerCase();
+            return itemCityClean === cleanCity;
+        });
+    }
+
+    // 3. Cocokkan parsial (substring)
+    if (!matched && cleanCity.length >= 3) {
+        matched = INDONESIAN_CITIES.find((item) => {
+            const itemCityClean = item.city.replace(/^(kabupaten|kab\.?|kota)\s+/i, '').toLowerCase();
+            return itemCityClean.includes(cleanCity) || cleanCity.includes(itemCityClean);
+        });
+    }
+
+    if (matched) {
+        return {
+            city: matched.city,
+            province: matched.province,
+            postalCode: matched.postalCode,
+            country: 'Indonesia',
+        };
+    }
+
+    let fallbackCity = rawCity;
+    if (fallbackCity && !fallbackCity.startsWith('Kab.') && !fallbackCity.startsWith('Kota')) {
+        fallbackCity = `Kab. ${fallbackCity.replace(/^kabupaten\s+/i, '')}`;
+    }
+
+    return {
+        city: fallbackCity || 'Kab. Cirebon',
+        province: normalizedProvince,
+        postalCode: '',
+        country: 'Indonesia',
+    };
 }
 
 /**
@@ -129,20 +254,13 @@ async function reverseGeocodeGoogle(lat, lng, apiKey) {
         street = parts.slice(0, 3).join(', ');
     }
 
-    let formattedCity = regency;
-    if (formattedCity && !formattedCity.startsWith('Kab.') && !formattedCity.startsWith('Kota')) {
-        if (formattedCity.startsWith('Kabupaten ')) {
-            formattedCity = formattedCity.replace('Kabupaten ', 'Kab. ');
-        } else {
-            formattedCity = `Kab. ${formattedCity}`;
-        }
-    }
+    const cityMatch = matchIndonesianCity(regency, province);
 
     return {
         street: street || 'Guwa Kidul, Kec. Kaliwedi',
-        city: formattedCity || 'Kab. Cirebon',
-        province: province || 'Jawa Barat',
-        postalCode: postalCode || '45165',
+        city: cityMatch.city,
+        province: cityMatch.province,
+        postalCode: postalCode || cityMatch.postalCode || '45165',
         country,
         lat,
         lng,
@@ -150,31 +268,39 @@ async function reverseGeocodeGoogle(lat, lng, apiKey) {
 }
 
 /**
- * Smart Hybrid Geocoding: Nominatim (zoom 18) + BigDataCloud + Kodepos Resmi
+ * Smart Hybrid Geocoding: Menggabungkan Nominatim level desa (zoom 16) + level jalan (zoom 18) + BigDataCloud + Kodepos Resmi
  */
 async function reverseGeocodeSmart(lat, lng) {
-    const osmPromise = fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1&zoom=18`,
-        { headers: { 'User-Agent': 'TBNurPOS/1.0' } }
-    )
-        .then((r) => (r.ok ? r.json() : null))
-        .catch(() => null);
+    const headers = {
+        'User-Agent': 'TBNurPOS/1.0',
+        'Accept-Language': 'id-ID, id;q=0.9, en;q=0.8',
+    };
 
-    const bdcPromise = fetch(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=id`
-    )
-        .then((r) => (r.ok ? r.json() : null))
-        .catch(() => null);
+    // Panggil zoom=16 (akurasi desa/wilayah) dan zoom=18 (nama jalan mikro jika ada) secara paralel
+    const [osmVillageRes, osmRoadRes, bdcData] = await Promise.all([
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1&zoom=16`, { headers })
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1&zoom=18`, { headers })
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=id`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null),
+    ]);
 
-    const [osmData, bdcData] = await Promise.all([osmPromise, bdcPromise]);
+    const villageAddr = osmVillageRes?.address || {};
+    const roadAddr = osmRoadRes?.address || {};
 
-    const osmAddr = osmData?.address || {};
+    // Deteksi jalan & nomor rumah
+    const road = roadAddr.road || villageAddr.road || roadAddr.pedestrian || villageAddr.pedestrian || '';
+    const houseNumber = roadAddr.house_number ? ` No. ${roadAddr.house_number}` : '';
+    const hamlet = villageAddr.hamlet || roadAddr.hamlet || villageAddr.isolated_dwelling || '';
 
-    const road = osmAddr.road || osmAddr.pedestrian || '';
-    const houseNumber = osmAddr.house_number ? ` No. ${osmAddr.house_number}` : '';
-    const hamlet = osmAddr.hamlet || osmAddr.isolated_dwelling || osmAddr.neighbourhood || '';
-    let village = osmAddr.village || osmAddr.suburb || osmAddr.hamlet || '';
+    // Prioritaskan nama desa level 16 agar tidak terpental ke batas desa tetangga
+    let village = villageAddr.village || roadAddr.village || villageAddr.suburb || roadAddr.suburb || villageAddr.hamlet || '';
 
+    // Cari kecamatan dari BigDataCloud
     let kecamatan = '';
     if (Array.isArray(bdcData?.localityInfo?.informative)) {
         const k = bdcData.localityInfo.informative.find((i) =>
@@ -186,6 +312,7 @@ async function reverseGeocodeSmart(lat, lng) {
         kecamatan = bdcData.city;
     }
 
+    // Cari kabupaten/kota dari BigDataCloud / OSM
     let regency = '';
     if (Array.isArray(bdcData?.localityInfo?.administrative)) {
         const r = bdcData.localityInfo.administrative.find(
@@ -194,11 +321,13 @@ async function reverseGeocodeSmart(lat, lng) {
         if (r) regency = r.name;
     }
     if (!regency) {
-        regency = osmAddr.county || osmAddr.city || 'Cirebon';
+        regency = villageAddr.county || roadAddr.county || villageAddr.city || 'Cirebon';
     }
 
-    let province = osmAddr.state || bdcData?.principalSubdivision || 'Jawa Barat';
+    let rawProvince = villageAddr.state || roadAddr.state || bdcData?.principalSubdivision || 'Jawa Barat';
+    let province = normalizeIndonesianProvince(rawProvince);
 
+    // Verifikasi kode pos & nama desa resmi via database kodepos
     let postalCode = '';
     const query = village || kecamatan;
     if (query) {
@@ -207,17 +336,30 @@ async function reverseGeocodeSmart(lat, lng) {
             if (kpRes.ok) {
                 const kpData = await kpRes.json();
                 if (Array.isArray(kpData.data) && kpData.data.length > 0) {
-                    const match = kpData.data.find(
-                        (d) =>
-                            (village && (d.village || '').toLowerCase().includes(village.toLowerCase())) ||
-                            (kecamatan && (d.district || '').toLowerCase().includes(kecamatan.toLowerCase()))
-                    );
+                    // Cari kecocokan nama desa terlebih dahulu
+                    let match = village
+                        ? kpData.data.find((d) => (d.village || '').toLowerCase() === village.toLowerCase())
+                        : null;
+
+                    if (!match && village) {
+                        match = kpData.data.find((d) =>
+                            (d.village || '').toLowerCase().includes(village.toLowerCase()) ||
+                            village.toLowerCase().includes((d.village || '').toLowerCase())
+                        );
+                    }
+
+                    if (!match && kecamatan) {
+                        match = kpData.data.find((d) =>
+                            (d.district || '').toLowerCase().includes(kecamatan.toLowerCase())
+                        );
+                    }
+
                     if (match) {
                         postalCode = String(match.code || '');
-                        if (!kecamatan && match.district) kecamatan = match.district;
-                        if (!regency && match.regency) regency = match.regency;
-                        if (!province && match.province) province = match.province;
-                        if (!village && match.village) village = match.village;
+                        if (match.district) kecamatan = match.district;
+                        if (match.regency) regency = match.regency;
+                        if (match.province) province = normalizeIndonesianProvince(match.province);
+                        if (match.village && !village) village = match.village;
                     }
                 }
             }
@@ -226,19 +368,19 @@ async function reverseGeocodeSmart(lat, lng) {
         }
     }
 
-    if (!postalCode) {
+    // Koreksi kode pos jika OSM mengembalikan 45274 untuk Kaliwedi / Cirebon
+    if (!postalCode || postalCode === '45274') {
         if (village.toLowerCase().includes('guwa') || kecamatan.toLowerCase().includes('kaliwedi')) {
             postalCode = '45165';
         } else {
-            postalCode = (osmAddr.postcode || '').replace(/[^0-9]/g, '');
+            postalCode = (villageAddr.postcode || roadAddr.postcode || '').replace(/[^0-9]/g, '');
         }
-    } else if (
-        postalCode === '45274' &&
-        (village.toLowerCase().includes('guwa') || kecamatan.toLowerCase().includes('kaliwedi'))
-    ) {
-        postalCode = '45165';
     }
 
+    // Normalisasi kota dan provinsi agar selaras dengan data lookup INDONESIAN_CITIES
+    const cityMatch = matchIndonesianCity(regency, province);
+
+    // Susun format jalan
     const streetParts = [];
     if (road) {
         streetParts.push(`${road}${houseNumber}`);
@@ -256,25 +398,16 @@ async function reverseGeocodeSmart(lat, lng) {
     }
 
     let street = streetParts.join(', ').trim();
-    if (!street && osmData?.display_name) {
-        const parts = osmData.display_name.split(',').map((p) => p.trim());
+    if (!street && osmVillageRes?.display_name) {
+        const parts = osmVillageRes.display_name.split(',').map((p) => p.trim());
         street = parts.slice(0, 3).join(', ');
-    }
-
-    let formattedCity = regency;
-    if (formattedCity && !formattedCity.startsWith('Kab.') && !formattedCity.startsWith('Kota')) {
-        if (formattedCity.startsWith('Kabupaten ')) {
-            formattedCity = formattedCity.replace('Kabupaten ', 'Kab. ');
-        } else {
-            formattedCity = `Kab. ${formattedCity}`;
-        }
     }
 
     return {
         street: street || 'Desa Guwa Kidul, Kec. Kaliwedi',
-        city: formattedCity || 'Kab. Cirebon',
-        province: province || 'Jawa Barat',
-        postalCode: postalCode || '45165',
+        city: cityMatch.city,
+        province: cityMatch.province,
+        postalCode: postalCode || cityMatch.postalCode || '45165',
         country: 'Indonesia',
         lat,
         lng,
