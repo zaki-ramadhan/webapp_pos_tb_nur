@@ -49,6 +49,7 @@ import {
 import {
     CashBankModuleIcon,
     GeneralLedgerModuleIcon,
+    InventoryModuleIcon,
     PurchasesModuleIcon,
     SalesModuleIcon,
     StoreModuleIcon,
@@ -70,7 +71,8 @@ const iconMap = {
     purchases: PurchasesModuleIcon,
     purchase: PurchasesModuleIcon,
     pembelian: PurchasesModuleIcon,
-    inventory: BoxIcon,
+    inventory: InventoryModuleIcon,
+    persediaan: InventoryModuleIcon,
     asset: Boxes,
     tax: ReceiptText,
     reports: BarChart3,
