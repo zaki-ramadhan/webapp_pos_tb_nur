@@ -10,7 +10,7 @@ import {
     areComparableValuesEqual,
     validateRequiredChecks,
 } from '@/features/workspace/shared/formValidation';
-import { PayrollAdditionalInfoSection, PayrollEmployeeSection, PayrollHeader } from './PayrollEntrySections';
+import { PayrollAdditionalInfoSection, PayrollEmployeeSection, PayrollHeader, PayrollSummarySection } from './PayrollEntrySections';
 import { buildDefaultValues, buildGeneratedPayrollEntryNumber } from './payrollEntryShared';
 import CopyEmployeesModal from './CopyEmployeesModal';
 import {
@@ -57,6 +57,39 @@ export default function PayrollEntryFormView({
     const [selectedEmployeeRow, setSelectedEmployeeRow] = useState(null);
 
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
+
+    const hasPayments = useMemo(() => {
+        if (Array.isArray(values.payments) && values.payments.length > 0) return true;
+        const paidNum = typeof values.paidAmount === 'number'
+            ? values.paidAmount
+            : parseFloat(String(values.paidAmount || '0').replace(/[^0-9.-]+/g, '')) || 0;
+        if (paidNum > 0) return true;
+        const status = String(values.status ?? '').toLowerCase();
+        if (['draft', 'void', 'cancelled'].includes(status)) return false;
+        return status.includes('bayar') || status.includes('lunas') || status.includes('partial');
+    }, [values.payments, values.paidAmount, values.status]);
+
+    const sectionTabs = useMemo(() => {
+        const tabs = [...(config.sectionTabs || [])];
+        if (isDetail && hasPayments) {
+            tabs.push({
+                id: 'summary',
+                label: 'Ringkasan Pencatatan Gaji dan Riwayat Pembayaran',
+                icon: 'file-search-corner',
+            });
+        }
+        return tabs;
+    }, [config.sectionTabs, isDetail, hasPayments]);
+
+    useEffect(() => {
+        if (!hasPayments && activeSectionId === 'summary') {
+            setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'employees');
+        }
+    }, [hasPayments, activeSectionId, config.sectionTabs]);
+
+    useEffect(() => {
+        setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'employees');
+    }, [activeRecordId]);
 
     const configRef = useRef(config);
     configRef.current = config;
@@ -442,6 +475,20 @@ export default function PayrollEntryFormView({
                     })
                 );
             },
+            onOpenPayment: (payment) => {
+                const paymentId = payment.id || payment.number || payment.documentNumber || payment.document_number;
+                const paymentNumber = payment.number || payment.documentNumber || payment.document_number || payment.id;
+                window.dispatchEvent(
+                    new CustomEvent('workspace:open-page', {
+                        detail: {
+                            pageId: 'cash-payment',
+                            recordId: paymentId,
+                            label: paymentNumber,
+                            tabLabel: paymentNumber,
+                        },
+                    })
+                );
+            },
         }),
         [values.liabilityAccounts, employeeRows],
     );
@@ -497,7 +544,7 @@ export default function PayrollEntryFormView({
             isLoading={isLoading}
             validationMessage={validationMessage}
                 header={<PayrollHeader config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />}
-                sectionTabs={config.sectionTabs}
+                sectionTabs={sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
                 footer={<TransactionDualTotalCard items={resolvedConfig.summaryItems} />}
@@ -505,6 +552,13 @@ export default function PayrollEntryFormView({
             >
                 {activeSectionId === 'additional-info' ? (
                     <PayrollAdditionalInfoSection config={config} values={values} setValues={setValues} />
+                ) : activeSectionId === 'summary' ? (
+                    <PayrollSummarySection
+                        config={config}
+                        values={values}
+                        incomeTax={totalIncomeTax}
+                        onOpenPayment={handlers.onOpenPayment}
+                    />
                 ) : (
                     <PayrollEmployeeSection
                         config={resolvedConfig}

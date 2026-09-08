@@ -104,6 +104,18 @@ export function buildPayrollEntryRecord(record = {}, config) {
     }
     const liabilityAccountId = record.primary_account_id ?? metadata.liability_account_id ?? null;
 
+    const rawPayments = record.payments ?? record.payment_history ?? [];
+    const payments = Array.isArray(rawPayments)
+        ? rawPayments.map((p) => ({
+              id: String(p.id ?? p.document_number ?? p.number ?? ''),
+              number: p.number ?? p.document_number ?? String(p.id ?? ''),
+              date: p.date ?? p.entry_date ?? '',
+              amount: typeof p.amount === 'number' ? `Rp ${p.amount.toLocaleString('id-ID')}` : (p.amount ?? ''),
+          }))
+        : [];
+    const paidAmount = Number(record.paid_amount ?? 0);
+    const totalIncomeTax = lineItems.reduce((sum, item) => sum + (Number(item.incomeTaxRaw) || 0), 0);
+
     return {
         __backendRecordId: record.id ?? null,
         paymentType: metadata.payment_type ?? config.defaults?.paymentType ?? 'Bulanan',
@@ -121,6 +133,9 @@ export function buildPayrollEntryRecord(record = {}, config) {
         __liabilityAccountId: liabilityAccountId,
         notes: record.notes ?? '',
         employeeRows: lineItems,
+        paidAmount: `Rp ${paidAmount.toLocaleString('id-ID')}`,
+        totalIncomeTax,
+        payments,
     };
 }
 
