@@ -36,49 +36,53 @@ class TransactionDataSeeder extends Seeder
         $productsMap  = DB::table('products')->pluck('id', 'code')->toArray();
         $usersMap      = DB::table('users')->pluck('id', 'email')->toArray();
 
-        $c1 = $customersMap['CUST-001'] ?? 1;
-        $c2 = $customersMap['CUST-002'] ?? 1;
-        $c3 = $customersMap['CUST-003'] ?? 1;
-        $c4 = $customersMap['CUST-004'] ?? 1;
-        $c5 = $customersMap['CUST-005'] ?? 1;
+        $firstCust = !empty($customersMap) ? reset($customersMap) : (DB::table('customers')->value('id') ?? 1);
+        $firstSupp = !empty($suppliersMap) ? reset($suppliersMap) : (DB::table('suppliers')->value('id') ?? 1);
+        $firstProd = !empty($productsMap) ? reset($productsMap) : (DB::table('products')->value('id') ?? 1);
 
-        $s1 = $suppliersMap['SUPP-001'] ?? 1;
-        $s2 = $suppliersMap['SUPP-002'] ?? 1;
-        $s3 = $suppliersMap['SUPP-003'] ?? 1;
-        $s4 = $suppliersMap['SUPP-004'] ?? 1;
-        $s5 = $suppliersMap['SUPP-005'] ?? 1;
-        $s6 = $suppliersMap['SUPP-006'] ?? 1;
-        $s7 = $suppliersMap['SUPP-007'] ?? 1;
-        $s8 = $suppliersMap['SUPP-008'] ?? 1;
+        $c1 = $customersMap['CUST-001'] ?? $firstCust;
+        $c2 = $customersMap['CUST-002'] ?? $firstCust;
+        $c3 = $customersMap['CUST-003'] ?? $firstCust;
+        $c4 = $customersMap['CUST-004'] ?? $firstCust;
+        $c5 = $customersMap['CUST-005'] ?? $firstCust;
 
-        $pSemen  = $productsMap['SMN-050'] ?? 1;
+        $s1 = $suppliersMap['SUPP-001'] ?? $firstSupp;
+        $s2 = $suppliersMap['SUPP-002'] ?? $firstSupp;
+        $s3 = $suppliersMap['SUPP-003'] ?? $firstSupp;
+        $s4 = $suppliersMap['SUPP-004'] ?? $firstSupp;
+        $s5 = $suppliersMap['SUPP-005'] ?? $firstSupp;
+        $s6 = $suppliersMap['SUPP-006'] ?? $firstSupp;
+        $s7 = $suppliersMap['SUPP-007'] ?? $firstSupp;
+        $s8 = $suppliersMap['SUPP-008'] ?? $firstSupp;
+
+        $pSemen  = $productsMap['SMN-050'] ?? $firstProd;
         $pSemen3 = $productsMap['SMN-040'] ?? $pSemen;
-        $pPipa   = $productsMap['PIP-003'] ?? 2;
+        $pPipa   = $productsMap['PIP-003'] ?? $firstProd;
         $pPipa12 = $productsMap['PIP-001'] ?? $pPipa;
         $pPipa4  = $productsMap['PIP-004'] ?? $pPipa;
-        $pCat    = $productsMap['CAT-005'] ?? 3;
+        $pCat    = $productsMap['CAT-005'] ?? $firstProd;
         $pDulux  = $productsMap['CAT-DLX'] ?? $pCat;
         $pAqua   = $productsMap['AQP-004'] ?? $pCat;
-        $pBesi   = $productsMap['BES-010'] ?? 4;
+        $pBesi   = $productsMap['BES-010'] ?? $firstProd;
         $pBes8   = $productsMap['BES-008'] ?? $pBesi;
         $pBes12  = $productsMap['BES-012'] ?? $pBesi;
-        $pBaja   = $productsMap['BJA-075'] ?? 5;
-        $pTpl    = $productsMap['TPL-009'] ?? 5;
-        $pSng    = $productsMap['SNG-020'] ?? 6;
+        $pBaja   = $productsMap['BJA-075'] ?? $productsMap['TPL-009'] ?? $firstProd;
+        $pTpl    = $productsMap['TPL-009'] ?? $firstProd;
+        $pSng    = $productsMap['SNG-020'] ?? $firstProd;
         $pSpnd   = $productsMap['SPD-030'] ?? $pSng;
-        $pPaku   = $productsMap['PAK-050'] ?? 7;
-        $pKran   = $productsMap['KRN-001'] ?? 8;
-        $pKuas   = $productsMap['KUS-003'] ?? 9;
-        $pKabel  = $productsMap['KBL-002'] ?? 10;
-        $pLem    = $productsMap['LEM-045'] ?? 11;
-        $pKawat  = $productsMap['KWT-001'] ?? 12;
-        $pBata   = $productsMap['BTA-001'] ?? 13;
-        $pPasir  = $productsMap['PSR-001'] ?? 14;
+        $pPaku   = $productsMap['PAK-050'] ?? $firstProd;
+        $pKran   = $productsMap['KRN-001'] ?? $firstProd;
+        $pKuas   = $productsMap['KUS-003'] ?? $firstProd;
+        $pKabel  = $productsMap['KBL-002'] ?? $firstProd;
+        $pLem    = $productsMap['LEM-045'] ?? $firstProd;
+        $pKawat  = $productsMap['KWT-001'] ?? $firstProd;
+        $pBata   = $productsMap['BTA-001'] ?? $firstProd;
+        $pPasir  = $productsMap['PSR-001'] ?? $pBata;
         $pPasirC = $productsMap['PSR-002'] ?? $pPasir;
-        $pThn    = $productsMap['THN-001'] ?? 15;
-        $pSekop  = $productsMap['SKP-001'] ?? 15;
-        $pMortar = $productsMap['MTR-300'] ?? 13;
-        $pKrm    = $productsMap['KRM-404'] ?? 13;
+        $pThn    = $productsMap['THN-001'] ?? $firstProd;
+        $pSekop  = $productsMap['SKP-001'] ?? $pThn;
+        $pMortar = $productsMap['MTR-300'] ?? $pBata;
+        $pKrm    = $productsMap['KRM-404'] ?? $pBata;
 
         $userAdminId = $usersMap['piscokpiscok2610@gmail.com'] ?? 1;
         $userKasirId = $usersMap['ahmad.fauzi.tb@gmail.com'] ?? $userAdminId;
@@ -199,7 +203,6 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'customer_id' => ($quoteCount % 2 === 0) ? $c1 : $c4,
-                    'currency_id' => $currencyId,
                     'responsible_user_id' => $userKasirId,
                     'document_number' => sprintf('PN.%04d.%02d.0001', $year, $m),
                     'status' => ($quoteCount <= 4) ? 'Approved' : 'Pending',
@@ -234,7 +237,6 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'customer_id' => ($orderCount % 2 === 0) ? $c2 : $c3,
-                    'currency_id' => $currencyId,
                     'responsible_user_id' => $userKasirId,
                     'document_number' => sprintf('SO.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
@@ -284,7 +286,6 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'customer_id' => $c1,
-                    'currency_id' => $currencyId,
                     'responsible_user_id' => $userAdminId,
                     'document_number' => sprintf('SJ.%04d.%02d.0001', $year, $m),
                     'status' => 'Shipped',
@@ -368,7 +369,6 @@ class TransactionDataSeeder extends Seeder
                         'branch_id' => $branchId,
                         'warehouse_id' => $warehouseId,
                         'customer_id' => $custId,
-                        'currency_id' => $currencyId,
                         'responsible_user_id' => ($invoiceSeq % 2 === 0) ? $userAdminId : $userKasirId,
                         'document_number' => $docNo,
                         'status' => 'Posted',
@@ -436,7 +436,6 @@ class TransactionDataSeeder extends Seeder
                 'branch_id' => $branchId,
                 'warehouse_id' => $warehouseId,
                 'customer_id' => $custId,
-                'currency_id' => $currencyId,
                 'responsible_user_id' => ($invoiceSeq % 2 === 0) ? $userAdminId : $userKasirId,
                 'document_number' => $docNo,
                 'status' => 'Posted',
@@ -502,7 +501,6 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'customer_id' => $c2,
-                    'currency_id' => $currencyId,
                     'related_document_id' => $refSiId,
                     'responsible_user_id' => $userKasirId,
                     'document_number' => sprintf('RJ.%04d.%02d.0001', $year, $m),
@@ -531,7 +529,6 @@ class TransactionDataSeeder extends Seeder
                     'document_type' => 'sales_deposit',
                     'branch_id' => $branchId,
                     'customer_id' => $c1,
-                    'currency_id' => $currencyId,
                     'primary_account_id' => $accBankBCA,
                     'document_number' => sprintf('UM.%04d.%02d.0001', $year, $m),
                     'status' => 'Posted',
@@ -567,7 +564,6 @@ class TransactionDataSeeder extends Seeder
                         'document_type' => 'sales_receipt',
                         'branch_id' => $branchId,
                         'customer_id' => ($receiptSeq % 5 === 0) ? $c5 : (($receiptSeq % 4 === 0) ? $c4 : (($receiptSeq % 3 === 0) ? $c3 : (($receiptSeq % 2 === 0) ? $c2 : $c1))),
-                        'currency_id' => $currencyId,
                         'primary_account_id' => $accKasKecil,
                         'related_document_id' => $refSiId,
                         'document_number' => sprintf('KW.%04d.%02d.%04d', $year, $m, $rcK),
@@ -611,7 +607,6 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'supplier_id' => ($poCount % 5 === 0) ? $s5 : (($poCount % 4 === 0) ? $s4 : (($poCount % 3 === 0) ? $s3 : (($poCount % 2 === 0) ? $s2 : $s1))),
-                    'currency_id' => $currencyId,
                     'responsible_user_id' => $userAdminId,
                     'document_number' => sprintf('PO.%04d.%02d.0001', $year, $m),
                     'status' => 'Approved',
@@ -641,7 +636,6 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'supplier_id' => ($grCount % 2 === 0) ? $s1 : $s4,
-                    'currency_id' => $currencyId,
                     'responsible_user_id' => $userAdminId,
                     'document_number' => sprintf('PB.%04d.%02d.0001', $year, $m),
                     'status' => 'Received',
@@ -693,7 +687,6 @@ class TransactionDataSeeder extends Seeder
                         'branch_id' => $branchId,
                         'warehouse_id' => $warehouseId,
                         'supplier_id' => $supplierId,
-                        'currency_id' => $currencyId,
                         'responsible_user_id' => $userAdminId,
                         'document_number' => $docNo,
                         'reference_number' => $supplierBillNo,
@@ -746,7 +739,6 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'supplier_id' => $s1,
-                    'currency_id' => $currencyId,
                     'related_document_id' => $refPiId,
                     'responsible_user_id' => $userAdminId,
                     'document_number' => sprintf('RB.%04d.%02d.0001', $year, $m),
@@ -784,7 +776,6 @@ class TransactionDataSeeder extends Seeder
                         'document_type' => 'purchase_payment',
                         'branch_id' => $branchId,
                         'supplier_id' => $s1,
-                        'currency_id' => $currencyId,
                         'primary_account_id' => $accBankMnd,
                         'related_document_id' => $refPiId,
                         'document_number' => sprintf('BYB.%04d.%02d.%04d', $year, $m, $pyK),
@@ -928,7 +919,6 @@ class TransactionDataSeeder extends Seeder
                     $docId = DB::table('operation_documents')->insertGetId([
                         'document_type' => 'cash_payment',
                         'branch_id' => $branchId,
-                        'currency_id' => $currencyId,
                         'primary_account_id' => $accKasKecil,
                         'document_number' => sprintf('KK.%04d.%02d.%04d', $year, $m, $cpK),
                         'status' => 'Posted',
@@ -969,7 +959,6 @@ class TransactionDataSeeder extends Seeder
             $docId = DB::table('operation_documents')->insertGetId([
                 'document_type' => 'cash_payment',
                 'branch_id' => $branchId,
-                'currency_id' => $currencyId,
                 'primary_account_id' => $accKasKecil,
                 'document_number' => sprintf('KK.%s.%s.%04d', $trendDate->format('Y'), $trendDate->format('m'), 9500 + $d),
                 'status' => 'Posted',
@@ -1013,7 +1002,6 @@ class TransactionDataSeeder extends Seeder
                     $docId = DB::table('operation_documents')->insertGetId([
                         'document_type' => 'cash_receipt',
                         'branch_id' => $branchId,
-                        'currency_id' => $currencyId,
                         'primary_account_id' => $accKasKecil,
                         'document_number' => sprintf('KM.%04d.%02d.%04d', $year, $m, $crK),
                         'status' => 'Posted',
@@ -1058,7 +1046,6 @@ class TransactionDataSeeder extends Seeder
                     DB::table('operation_documents')->insert([
                         'document_type' => 'bank_transfer',
                         'branch_id' => $branchId,
-                        'currency_id' => $currencyId,
                         'primary_account_id' => $accBankBCA,
                         'secondary_account_id' => $accBankMnd,
                         'document_number' => sprintf('TB.%04d.%02d.%04d', $year, $m, $btK),
@@ -1243,7 +1230,6 @@ class TransactionDataSeeder extends Seeder
                         'document_type' => 'expense_entry',
                         'branch_id' => $branchId,
                         'warehouse_id' => $warehouseId,
-                        'currency_id' => $currencyId,
                         'primary_account_id' => $accUtangBeban,
                         'document_number' => $expDocNumber,
                         'status' => $status,
@@ -1281,51 +1267,90 @@ class TransactionDataSeeder extends Seeder
                     ]);
 
                     if ($paidAmt > 0) {
-                        $cpSeqNum = ++$monthlyCpSeq["$year-$m"];
-                        $cpDocNumber = sprintf('KK.%04d.%02d.%04d', $year, $m, $cpSeqNum);
-                        $payDay = min(28, (int) round(($tpl['day'] + $tpl['due_day']) / 2));
-                        $payDate = $buildEntryDate($year, $m, $payDay);
-                        $payDt = Carbon::parse($payDate);
+                        $installments = [];
+                        if ($expSeq % 7 === 1 && $paidAmt >= 200000) {
+                            // 4 installments (angsuran 4 kali)
+                            $p1 = (float) round($paidAmt * 0.25);
+                            $p2 = (float) round($paidAmt * 0.25);
+                            $p3 = (float) round($paidAmt * 0.25);
+                            $p4 = max(0.0, $paidAmt - $p1 - $p2 - $p3);
+                            $installments = [
+                                ['amt' => $p1, 'day' => min(28, $tpl['day'] + 1), 'note' => 'Pembayaran angsuran 1/4 ' . $tpl['desc']],
+                                ['amt' => $p2, 'day' => min(28, $tpl['day'] + 3), 'note' => 'Pembayaran angsuran 2/4 ' . $tpl['desc']],
+                                ['amt' => $p3, 'day' => min(28, $tpl['day'] + 6), 'note' => 'Pembayaran angsuran 3/4 ' . $tpl['desc']],
+                                ['amt' => $p4, 'day' => min(28, $tpl['due_day']), 'note' => 'Pembayaran pelunasan angsuran 4/4 ' . $tpl['desc']],
+                            ];
+                        } elseif ($expSeq % 4 === 1 && $paidAmt >= 150000) {
+                            // 3 installments (termin 3 kali)
+                            $p1 = (float) round($paidAmt * 0.40);
+                            $p2 = (float) round($paidAmt * 0.35);
+                            $p3 = max(0.0, $paidAmt - $p1 - $p2);
+                            $installments = [
+                                ['amt' => $p1, 'day' => min(28, $tpl['day'] + 1), 'note' => 'Pembayaran termin 1/3 ' . $tpl['desc']],
+                                ['amt' => $p2, 'day' => min(28, $tpl['day'] + 5), 'note' => 'Pembayaran termin 2/3 ' . $tpl['desc']],
+                                ['amt' => $p3, 'day' => min(28, $tpl['due_day']), 'note' => 'Pembayaran termin 3/3 ' . $tpl['desc']],
+                            ];
+                        } elseif ($expSeq % 3 === 1 && $paidAmt >= 100000) {
+                            // 2 installments (termin 2 kali)
+                            $p1 = (float) round($paidAmt * 0.50);
+                            $p2 = max(0.0, $paidAmt - $p1);
+                            $installments = [
+                                ['amt' => $p1, 'day' => min(28, $tpl['day'] + 2), 'note' => 'Pembayaran termin 1/2 ' . $tpl['desc']],
+                                ['amt' => $p2, 'day' => min(28, $tpl['due_day']), 'note' => 'Pembayaran termin 2/2 ' . $tpl['desc']],
+                            ];
+                        } else {
+                            // 1 single payment
+                            $payDay = min(28, (int) round(($tpl['day'] + $tpl['due_day']) / 2));
+                            $installments = [
+                                ['amt' => $paidAmt, 'day' => $payDay, 'note' => 'Pembayaran ' . ($payFraction < 1.0 ? 'sebagian ' : '') . $tpl['desc']],
+                            ];
+                        }
 
-                        $cpId = DB::table('operation_documents')->insertGetId([
-                            'document_type' => 'cash_payment',
-                            'branch_id' => $branchId,
-                            'currency_id' => $currencyId,
-                            'primary_account_id' => $accKasKecil,
-                            'related_document_id' => $docId,
-                            'document_number' => $cpDocNumber,
-                            'status' => 'Posted',
-                            'entry_date' => $payDate,
-                            'subtotal' => $paidAmt,
-                            'total_amount' => $paidAmt,
-                            'paid_amount' => $paidAmt,
-                            'outstanding_amount' => 0,
-                            'notes' => 'Pembayaran ' . ($payFraction < 1.0 ? 'sebagian ' : '') . $tpl['desc'],
-                            'metadata' => json_encode([
-                                'cash_bank_label' => '[110101] Kas Tunai / Kasir',
-                                'related_document_number' => $expDocNumber,
-                            ]),
-                            'is_closed' => true,
-                            'created_at' => $payDt,
-                            'updated_at' => $payDt,
-                        ]);
+                        foreach ($installments as $inst) {
+                            $cpSeqNum = ++$monthlyCpSeq["$year-$m"];
+                            $cpDocNumber = sprintf('KK.%04d.%02d.%04d', $year, $m, $cpSeqNum);
+                            $payDate = $buildEntryDate($year, $m, $inst['day']);
+                            $payDt = Carbon::parse($payDate);
 
-                        DB::table('operation_document_lines')->insert([
-                            'operation_document_id' => $cpId,
-                            'line_type' => 'cash_payment',
-                            'account_id' => $accUtangBeban,
-                            'description' => 'Pembayaran ' . ($payFraction < 1.0 ? 'sebagian ' : '') . $tpl['desc'],
-                            'reference_code' => '210202',
-                            'quantity' => 1,
-                            'unit_price' => $paidAmt,
-                            'total_amount' => $paidAmt,
-                            'sort_order' => 1,
-                            'attributes' => json_encode([
-                                'notes' => 'Pembayaran tagihan ' . $expDocNumber,
-                            ]),
-                            'created_at' => $payDt,
-                            'updated_at' => $payDt,
-                        ]);
+                            $cpId = DB::table('operation_documents')->insertGetId([
+                                'document_type' => 'cash_payment',
+                                'branch_id' => $branchId,
+                                'primary_account_id' => $accKasKecil,
+                                'related_document_id' => $docId,
+                                'document_number' => $cpDocNumber,
+                                'status' => 'Posted',
+                                'entry_date' => $payDate,
+                                'subtotal' => $inst['amt'],
+                                'total_amount' => $inst['amt'],
+                                'paid_amount' => $inst['amt'],
+                                'outstanding_amount' => 0,
+                                'notes' => $inst['note'],
+                                'metadata' => json_encode([
+                                    'cash_bank_label' => '[110101] Kas Tunai / Kasir',
+                                    'related_document_number' => $expDocNumber,
+                                ]),
+                                'is_closed' => true,
+                                'created_at' => $payDt,
+                                'updated_at' => $payDt,
+                            ]);
+
+                            DB::table('operation_document_lines')->insert([
+                                'operation_document_id' => $cpId,
+                                'line_type' => 'cash_payment',
+                                'account_id' => $accUtangBeban,
+                                'description' => $inst['note'],
+                                'reference_code' => '210202',
+                                'quantity' => 1,
+                                'unit_price' => $inst['amt'],
+                                'total_amount' => $inst['amt'],
+                                'sort_order' => 1,
+                                'attributes' => json_encode([
+                                    'notes' => 'Pembayaran tagihan ' . $expDocNumber,
+                                ]),
+                                'created_at' => $payDt,
+                                'updated_at' => $payDt,
+                            ]);
+                        }
                     }
                 }
             }
@@ -1356,7 +1381,6 @@ class TransactionDataSeeder extends Seeder
                     'document_type' => 'payroll_entry',
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
-                    'currency_id' => $currencyId,
                     'primary_account_id' => $accUtangGaji,
                     'document_number' => $payrollDocNumber,
                     'status' => 'Draft',
@@ -1440,50 +1464,97 @@ class TransactionDataSeeder extends Seeder
                 ]);
 
                 if ($paidAmt > 0) {
-                    $cpSeqNum = ++$monthlyCpSeq["$year-$m"];
-                    $cpDocNumber = sprintf('KK.%04d.%02d.%04d', $year, $m, $cpSeqNum);
-                    $payDate = $dueDate;
-                    $payDt = Carbon::parse($payDate);
+                    $payrollInstallments = [];
+                    if ($isPreviousMonthNow) {
+                        // Previous month: 50% paid in 2 installments (25% + 25%)
+                        $p1 = (float) round($paidAmt / 2);
+                        $p2 = max(0.0, $paidAmt - $p1);
+                        $payrollInstallments = [
+                            ['amt' => $p1, 'day' => 21, 'note' => 'Pembayaran Gaji Karyawan Tahap 1 ' . $monthName . ' ' . $year],
+                            ['amt' => $p2, 'day' => 24, 'note' => 'Pembayaran Gaji Karyawan Tahap 2 ' . $monthName . ' ' . $year],
+                        ];
+                    } elseif ($m % 4 === 1) {
+                        // 4 installments (4 termin mingguan/tahap)
+                        $p1 = (float) round($paidAmt * 0.25);
+                        $p2 = (float) round($paidAmt * 0.25);
+                        $p3 = (float) round($paidAmt * 0.25);
+                        $p4 = max(0.0, $paidAmt - $p1 - $p2 - $p3);
+                        $payrollInstallments = [
+                            ['amt' => $p1, 'day' => 21, 'note' => 'Pembayaran Gaji Karyawan Mingguan 1 ' . $monthName . ' ' . $year],
+                            ['amt' => $p2, 'day' => 22, 'note' => 'Pembayaran Gaji Karyawan Mingguan 2 ' . $monthName . ' ' . $year],
+                            ['amt' => $p3, 'day' => 24, 'note' => 'Pembayaran Gaji Karyawan Mingguan 3 ' . $monthName . ' ' . $year],
+                            ['amt' => $p4, 'day' => 25, 'note' => 'Pembayaran Pelunasan Gaji Mingguan 4 ' . $monthName . ' ' . $year],
+                        ];
+                    } elseif ($m % 3 === 1) {
+                        // 3 installments (seperti di Accurate: Gaji Bersih, Premi Pensiun, Premi Kesehatan)
+                        $p1 = (float) round($paidAmt * 0.70);
+                        $p2 = (float) round($paidAmt * 0.18);
+                        $p3 = max(0.0, $paidAmt - $p1 - $p2);
+                        $payrollInstallments = [
+                            ['amt' => $p1, 'day' => 22, 'note' => 'Pembayaran Transfer Gaji Karyawan ' . $monthName . ' ' . $year],
+                            ['amt' => $p2, 'day' => 24, 'note' => 'Pembayaran Iuran Premi Pensiun BPJS ' . $monthName . ' ' . $year],
+                            ['amt' => $p3, 'day' => 25, 'note' => 'Pembayaran Iuran BPJS Kesehatan ' . $monthName . ' ' . $year],
+                        ];
+                    } elseif ($m % 2 === 0) {
+                        // 2 installments (Termin 1 & Termin 2)
+                        $p1 = (float) round($paidAmt * 0.50);
+                        $p2 = max(0.0, $paidAmt - $p1);
+                        $payrollInstallments = [
+                            ['amt' => $p1, 'day' => 21, 'note' => 'Pembayaran Gaji Karyawan Termin 1 ' . $monthName . ' ' . $year],
+                            ['amt' => $p2, 'day' => 25, 'note' => 'Pembayaran Pelunasan Gaji Karyawan Termin 2 ' . $monthName . ' ' . $year],
+                        ];
+                    } else {
+                        // 1 single payment
+                        $payrollInstallments = [
+                            ['amt' => $paidAmt, 'day' => 25, 'note' => 'Pembayaran Gaji Karyawan Periode ' . $monthName . ' ' . $year],
+                        ];
+                    }
 
-                    $cpId = DB::table('operation_documents')->insertGetId([
-                        'document_type' => 'cash_payment',
-                        'branch_id' => $branchId,
-                        'currency_id' => $currencyId,
-                        'primary_account_id' => $accBankBCA,
-                        'related_document_id' => $docId,
-                        'document_number' => $cpDocNumber,
-                        'status' => 'Posted',
-                        'entry_date' => $payDate,
-                        'subtotal' => $paidAmt,
-                        'total_amount' => $paidAmt,
-                        'paid_amount' => $paidAmt,
-                        'outstanding_amount' => 0,
-                        'notes' => 'Pembayaran ' . ($payFraction < 1.0 ? 'sebagian ' : '') . 'Gaji Karyawan Periode ' . $monthName . ' ' . $year,
-                        'metadata' => json_encode([
-                            'cash_bank_label' => '[110102] Bank BRI',
-                            'related_document_number' => $payrollDocNumber,
-                        ]),
-                        'is_closed' => true,
-                        'created_at' => $payDt,
-                        'updated_at' => $payDt,
-                    ]);
+                    foreach ($payrollInstallments as $inst) {
+                        $cpSeqNum = ++$monthlyCpSeq["$year-$m"];
+                        $cpDocNumber = sprintf('KK.%04d.%02d.%04d', $year, $m, $cpSeqNum);
+                        $payDate = $buildEntryDate($year, $m, $inst['day']);
+                        $payDt = Carbon::parse($payDate);
 
-                    DB::table('operation_document_lines')->insert([
-                        'operation_document_id' => $cpId,
-                        'line_type' => 'cash_payment',
-                        'account_id' => $accUtangGaji,
-                        'description' => 'Pembayaran ' . ($payFraction < 1.0 ? 'sebagian ' : '') . 'Gaji Karyawan Periode ' . $monthName . ' ' . $year,
-                        'reference_code' => '210201',
-                        'quantity' => 1,
-                        'unit_price' => $paidAmt,
-                        'total_amount' => $paidAmt,
-                        'sort_order' => 1,
-                        'attributes' => json_encode([
-                            'notes' => 'Pembayaran gaji ' . $payrollDocNumber,
-                        ]),
-                        'created_at' => $payDt,
-                        'updated_at' => $payDt,
-                    ]);
+                        $cpId = DB::table('operation_documents')->insertGetId([
+                            'document_type' => 'cash_payment',
+                            'branch_id' => $branchId,
+                            'primary_account_id' => $accBankBCA,
+                            'related_document_id' => $docId,
+                            'document_number' => $cpDocNumber,
+                            'status' => 'Posted',
+                            'entry_date' => $payDate,
+                            'subtotal' => $inst['amt'],
+                            'total_amount' => $inst['amt'],
+                            'paid_amount' => $inst['amt'],
+                            'outstanding_amount' => 0,
+                            'notes' => $inst['note'],
+                            'metadata' => json_encode([
+                                'cash_bank_label' => '[110102] Bank BRI',
+                                'related_document_number' => $payrollDocNumber,
+                            ]),
+                            'is_closed' => true,
+                            'created_at' => $payDt,
+                            'updated_at' => $payDt,
+                        ]);
+
+                        DB::table('operation_document_lines')->insert([
+                            'operation_document_id' => $cpId,
+                            'line_type' => 'cash_payment',
+                            'account_id' => $accUtangGaji,
+                            'description' => $inst['note'],
+                            'reference_code' => '210201',
+                            'quantity' => 1,
+                            'unit_price' => $inst['amt'],
+                            'total_amount' => $inst['amt'],
+                            'sort_order' => 1,
+                            'attributes' => json_encode([
+                                'notes' => 'Pembayaran gaji ' . $payrollDocNumber,
+                            ]),
+                            'created_at' => $payDt,
+                            'updated_at' => $payDt,
+                        ]);
+                    }
                 }
             }
         }
