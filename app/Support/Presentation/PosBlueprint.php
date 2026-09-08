@@ -342,15 +342,15 @@ final class PosBlueprint
 
               // self::navItem('sales-delivery', 'Pengiriman Pesanan', 'truck', 'green'),
 
-                self::navItem('sales-deposit', 'Uang Muka Penjualan', 'payment', 'green'),
-                self::navItem('sales-invoice', 'Faktur Penjualan', 'invoice', 'green'),
-                self::navItem('sales-receipt', 'Penerimaan Penjualan', 'receipt', 'green'),
-                self::navItem('sales-return', 'Retur Penjualan', 'transfer', 'green'),
+                self::navItem('sales-deposit', 'Uang Muka Penjualan', 'sales-deposit', 'green'),
+                self::navItem('sales-invoice', 'Faktur Penjualan', 'sales-invoice', 'green'),
+                self::navItem('sales-receipt', 'Penerimaan Penjualan', 'sales-receipt', 'green'),
+                self::navItem('sales-return', 'Retur Penjualan', 'sales-return', 'green'),
               // self::navItem('customer-category', 'Kategori Pelanggan', 'group', 'blue'),
 
               // self::navItem('sales-category', 'Kategori Penjualan', 'category', 'blue'),
 
-                self::navItem('customers', 'Pelanggan', 'customer', 'blue'),
+                self::navItem('customers', 'Pelanggan', 'customers', 'blue'),
               // self::navItem('price-adjustment', 'Penyesuaian Harga atau Diskon', 'category', 'amber'),
               // self::navItem('sales-commission', 'Komisi Penjual', 'employee', 'amber'),
               // self::navItem('sales-target', 'Target Penjualan', 'budget', 'amber'),
