@@ -275,7 +275,7 @@ final class PosBlueprint
     {
         return [
             self::navModule('settings', 'Pengaturan', 'settings', [
-                self::navItem('preferences', 'Preferensi', 'settings', 'amber'),
+                self::navItem('preferences', 'Preferensi', 'preferences', 'amber'),
                 self::navItem('group-access', 'Akses Grup', 'group-access', 'amber'),
                 self::navItem('users', 'Pengguna', 'users', 'amber'),
               // self::navItem('numbering', 'Penomoran', 'numbering', 'amber'),
@@ -313,7 +313,7 @@ final class PosBlueprint
             ]),
             self::navModule('general-ledger', 'Buku Besar', 'ledger', [
                 self::navItem('accounts', 'Akun Perkiraan', 'account', 'blue'),
-                self::navItem('expense-entry', 'Pencatatan Beban', 'expense', 'green'),
+                self::navItem('expense-entry', 'Pencatatan Beban', 'expense-entry', 'green'),
                 self::navItem('payroll-entry', 'Pencatatan Gaji', 'payroll-entry', 'green'),
                 self::navItem('general-journal', 'Jurnal Umum', 'journal', 'green'),
               // self::navItem('budget-monitor', 'Monitor Anggaran', 'budget', 'purple'),
