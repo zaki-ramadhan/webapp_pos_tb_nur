@@ -60,19 +60,19 @@ export function buildExpenseEntryFilters(baseFilters = [], rows = []) {
 export function buildExpenseEntryRow(record) {
     const totalAmount = Number(record?.total_amount ?? 0);
     const paidAmount = Number(record?.paid_amount ?? 0);
-    const entryDate = formatIsoDate(record?.entry_date);
-    const dueDate = formatIsoDate(record?.due_date);
+    const entryDate = formatIsoDate(record?.entry_date ?? record?.entryDate);
+    const dueDate = formatIsoDate(record?.due_date ?? record?.dueDate);
 
     return {
         id: String(record?.id ?? ''),
         __backendRecord: record,
-        documentNumber: record?.document_number ?? '',
+        documentNumber: record?.document_number ?? record?.documentNumber ?? '',
         entryDate,
         dueDate,
         total: formatCurrencyValue(totalAmount),
         paid: formatCurrencyValue(paidAmount),
         status: record?.status ?? 'Sedang diproses',
-        note: record?.notes ?? '',
+        note: record?.notes ?? record?.note ?? '',
         dateFilter: entryDate,
         statusFilter: record?.status ?? 'Sedang diproses',
     };

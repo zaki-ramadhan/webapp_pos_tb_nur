@@ -913,11 +913,13 @@ class TransactionDataSeeder extends Seeder
         // 17. Cash Payments
         $accPerlengkapan = DB::table('accounts')->where('code', '120101')->value('id') ?? 18;
         $cpSeq = 0;
+        $monthlyCpSeq = [];
         for ($year = $startYear; $year <= $currentYear; $year++) {
             $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
                 $cpCountThisMonth = $isCurrentMonthNow ? 4 : 1;
+                $monthlyCpSeq["$year-$m"] = $cpCountThisMonth;
                 for ($cpK = 1; $cpK <= $cpCountThisMonth; $cpK++) {
                     $cpSeq++;
                     $cpDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($cpK / $cpCountThisMonth) * $currentDay))) : 10;
@@ -1132,27 +1134,110 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 21. Expense Entries (Monthly Expenses - Calibrated for ~Rp 25M / year)
-        $accUtangBeban = DB::table('accounts')->where('code', '210202')->value('id') ?? 35;
-        $accBebanGaji = DB::table('accounts')->where('code', '610101')->value('id') ?? 54;
-        $accBebanListrik = DB::table('accounts')->where('code', '610201')->value('id') ?? 66;
+        // 21. Expense Entries (Monthly Expenses - Calibrated with Realistic Variety & Varied Status)
+        $accUtangBeban = DB::table('accounts')->where('code', '210202')->value('id')
+            ?? DB::table('accounts')->where('code', '2102')->value('id')
+            ?? 35;
+        $accBebanListrik = DB::table('accounts')->where('code', '610102')->value('id')
+            ?? DB::table('accounts')->where('code', '610201')->value('id')
+            ?? 66;
+        $accBebanBBM = DB::table('accounts')->where('code', '610103')->value('id')
+            ?? $accBebanListrik;
+        $accBebanLain = DB::table('accounts')->where('code', '710102')->value('id')
+            ?? $accBebanListrik;
 
-        $expenseTemplates = [
-            ['desc' => 'Beban Listrik, Air & Telepon Toko Utama', 'amount' => 450000, 'acc' => $accBebanListrik, 'code' => '610201'],
-            ['desc' => 'Beban Pemeliharaan & Servis Kendaraan Toko', 'amount' => 350000, 'acc' => $accBebanListrik, 'code' => '610201'],
-            ['desc' => 'Beban Administrasi Kantor & Internet Wi-Fi', 'amount' => 250000, 'acc' => $accBebanListrik, 'code' => '610201'],
+        $monthsList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
         ];
 
         $expSeq = 0;
         for ($year = $startYear; $year <= $currentYear; $year++) {
             $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
-                foreach ($expenseTemplates as $tplIdx => $tpl) {
+                $monthName = $monthsList[$m];
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $isPreviousMonthNow = ($year === $currentYear && $m === ($currentMonth - 1));
+
+                $monthlyExpenses = [
+                    [
+                        'desc' => 'Tagihan Listrik PLN & Air PDAM Toko - ' . $monthName . ' ' . $year,
+                        'amount' => 450000 + (($m * 43000 + ($year % 3) * 15000) % 190000),
+                        'acc' => $accBebanListrik,
+                        'code' => '610102',
+                        'day' => 10,
+                        'due_day' => 20,
+                    ],
+                    [
+                        'desc' => 'Langganan Internet Dedicated Biznet & Telepon - ' . $monthName . ' ' . $year,
+                        'amount' => ($m % 2 === 0) ? 425000 : 385000,
+                        'acc' => $accBebanListrik,
+                        'code' => '610102',
+                        'day' => 5,
+                        'due_day' => 18,
+                    ],
+                    [
+                        'desc' => 'BBM, Tol & Pemeliharaan Armada Toko - ' . $monthName . ' ' . $year,
+                        'amount' => 750000 + (($m * 95000 + ($year % 2) * 50000) % 520000),
+                        'acc' => $accBebanBBM,
+                        'code' => '610103',
+                        'day' => 14,
+                        'due_day' => 24,
+                    ],
+                    [
+                        'desc' => 'Iuran Keamanan Pasar & Kebersihan Lingkungan - ' . $monthName . ' ' . $year,
+                        'amount' => 250000 + (($m % 3) * 35000),
+                        'acc' => $accBebanLain,
+                        'code' => '710102',
+                        'day' => 18,
+                        'due_day' => 28,
+                    ],
+                ];
+
+                foreach ($monthlyExpenses as $tplIdx => $tpl) {
                     $expSeq++;
-                    $entryDate = $buildEntryDate($year, $m, 12);
-                    $dueDate = date('Y-m-d', strtotime($entryDate . ' + 14 days'));
+                    $entryDate = $buildEntryDate($year, $m, $tpl['day']);
+                    $dueDate = $buildEntryDate($year, $m, $tpl['due_day']);
                     $dt = Carbon::parse($entryDate);
-                    $isPaid = true;
+                    $expDocNumber = sprintf('BB.%04d.%02d.%04d', $year, $m, $tplIdx + 1);
+                    $totalAmt = $tpl['amount'];
+
+                    if ($isCurrentMonthNow) {
+                        if ($tplIdx === 0) {
+                            $payFraction = 0.25; // Seperempat (25%)
+                        } elseif ($tplIdx === 1) {
+                            $payFraction = 1.0;  // Terbayar (100%)
+                        } elseif ($tplIdx === 2) {
+                            $payFraction = 0.5;  // Setengah (50%)
+                        } else {
+                            $payFraction = 0.0;  // Sedang diproses (0%)
+                        }
+                    } elseif ($isPreviousMonthNow) {
+                        if ($tplIdx === 2) {
+                            $payFraction = 0.5;  // Setengah (50%)
+                        } else {
+                            $payFraction = 1.0;  // Terbayar (100%)
+                        }
+                    } else {
+                        if ($expSeq % 7 === 0) {
+                            $payFraction = 0.5;  // 50%
+                        } elseif ($expSeq % 11 === 0) {
+                            $payFraction = 0.25; // 25%
+                        } else {
+                            $payFraction = 1.0;  // 100%
+                        }
+                    }
+
+                    $paidAmt = (float) round($totalAmt * $payFraction);
+                    $outstandingAmt = max(0.0, round($totalAmt - $paidAmt, 2));
+                    if ($paidAmt <= 0.0) {
+                        $status = 'Sedang diproses';
+                    } elseif ($outstandingAmt <= 0.01) {
+                        $status = 'Terbayar';
+                    } else {
+                        $status = 'Sebagian dibayar';
+                    }
 
                     $docId = DB::table('operation_documents')->insertGetId([
                         'document_type' => 'expense_entry',
@@ -1160,19 +1245,20 @@ class TransactionDataSeeder extends Seeder
                         'warehouse_id' => $warehouseId,
                         'currency_id' => $currencyId,
                         'primary_account_id' => $accUtangBeban,
-                        'document_number' => sprintf('BB.%04d.%02d.%04d', $year, $m, $tplIdx + 1),
-                        'status' => 'Terbayar',
+                        'document_number' => $expDocNumber,
+                        'status' => $status,
                         'entry_date' => $entryDate,
                         'due_date' => $dueDate,
-                        'subtotal' => $tpl['amount'],
-                        'total_amount' => $tpl['amount'],
-                        'paid_amount' => $tpl['amount'],
-                        'outstanding_amount' => 0,
+                        'subtotal' => $totalAmt,
+                        'total_amount' => $totalAmt,
+                        'paid_amount' => $paidAmt,
+                        'outstanding_amount' => $outstandingAmt,
                         'notes' => $tpl['desc'],
                         'metadata' => json_encode([
                             'liability_account_label' => '[210202] Utang Beban Listrik & Air',
+                            'liability_account_id' => $accUtangBeban,
                         ]),
-                        'is_closed' => true,
+                        'is_closed' => ($status === 'Terbayar'),
                         'created_at' => $dt,
                         'updated_at' => $dt,
                     ]);
@@ -1184,8 +1270,8 @@ class TransactionDataSeeder extends Seeder
                         'description' => $tpl['desc'],
                         'reference_code' => $tpl['code'],
                         'quantity' => 1,
-                        'unit_price' => $tpl['amount'],
-                        'total_amount' => $tpl['amount'],
+                        'unit_price' => $totalAmt,
+                        'total_amount' => $totalAmt,
                         'sort_order' => 1,
                         'attributes' => json_encode([
                             'notes' => 'Rincian ' . $tpl['desc'],
@@ -1193,26 +1279,77 @@ class TransactionDataSeeder extends Seeder
                         'created_at' => $dt,
                         'updated_at' => $dt,
                     ]);
+
+                    if ($paidAmt > 0) {
+                        $cpSeqNum = ++$monthlyCpSeq["$year-$m"];
+                        $cpDocNumber = sprintf('KK.%04d.%02d.%04d', $year, $m, $cpSeqNum);
+                        $payDay = min(28, (int) round(($tpl['day'] + $tpl['due_day']) / 2));
+                        $payDate = $buildEntryDate($year, $m, $payDay);
+                        $payDt = Carbon::parse($payDate);
+
+                        $cpId = DB::table('operation_documents')->insertGetId([
+                            'document_type' => 'cash_payment',
+                            'branch_id' => $branchId,
+                            'currency_id' => $currencyId,
+                            'primary_account_id' => $accKasKecil,
+                            'related_document_id' => $docId,
+                            'document_number' => $cpDocNumber,
+                            'status' => 'Posted',
+                            'entry_date' => $payDate,
+                            'subtotal' => $paidAmt,
+                            'total_amount' => $paidAmt,
+                            'paid_amount' => $paidAmt,
+                            'outstanding_amount' => 0,
+                            'notes' => 'Pembayaran ' . ($payFraction < 1.0 ? 'sebagian ' : '') . $tpl['desc'],
+                            'metadata' => json_encode([
+                                'cash_bank_label' => '[110101] Kas Tunai / Kasir',
+                                'related_document_number' => $expDocNumber,
+                            ]),
+                            'is_closed' => true,
+                            'created_at' => $payDt,
+                            'updated_at' => $payDt,
+                        ]);
+
+                        DB::table('operation_document_lines')->insert([
+                            'operation_document_id' => $cpId,
+                            'line_type' => 'cash_payment',
+                            'account_id' => $accUtangBeban,
+                            'description' => 'Pembayaran ' . ($payFraction < 1.0 ? 'sebagian ' : '') . $tpl['desc'],
+                            'reference_code' => '210202',
+                            'quantity' => 1,
+                            'unit_price' => $paidAmt,
+                            'total_amount' => $paidAmt,
+                            'sort_order' => 1,
+                            'attributes' => json_encode([
+                                'notes' => 'Pembayaran tagihan ' . $expDocNumber,
+                            ]),
+                            'created_at' => $payDt,
+                            'updated_at' => $payDt,
+                        ]);
+                    }
                 }
             }
         }
 
-        // 22. Payroll Entries (Monthly Payroll - Calibrated for ~Rp 3.5M / month)
+        // 22. Payroll Entries (Monthly Payroll - Calibrated with Due Date & Varied Status)
+        $accUtangGaji = DB::table('accounts')->where('code', '210201')->value('id')
+            ?? DB::table('accounts')->where('code', '2102')->value('id')
+            ?? 34;
         $employeesList = DB::table('employees')->get();
-        $monthsList = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
-        ];
 
         $paySeq = 0;
         for ($year = $startYear; $year <= $currentYear; $year++) {
             $maxM = ($year === $currentYear) ? $currentMonth : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $paySeq++;
-                $entryDate = $buildEntryDate($year, $m, 14);
+                $entryDate = $buildEntryDate($year, $m, 20);
+                $dueDate = $buildEntryDate($year, $m, 25);
                 $dt = Carbon::parse($entryDate);
                 $monthName = $monthsList[$m];
+                $payrollDocNumber = sprintf('GJ.%04d.%02d.0001', $year, $m);
+                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
+                $isPreviousMonthNow = ($year === $currentYear && $m === ($currentMonth - 1));
+
                 $totalDocAmount = 0;
 
                 $docId = DB::table('operation_documents')->insertGetId([
@@ -1220,10 +1357,11 @@ class TransactionDataSeeder extends Seeder
                     'branch_id' => $branchId,
                     'warehouse_id' => $warehouseId,
                     'currency_id' => $currencyId,
-                    'primary_account_id' => 34,
-                    'document_number' => sprintf('GJ.%04d.%02d.0001', $year, $m),
-                    'status' => 'Posted',
+                    'primary_account_id' => $accUtangGaji,
+                    'document_number' => $payrollDocNumber,
+                    'status' => 'Draft',
                     'entry_date' => $entryDate,
+                    'due_date' => $dueDate,
                     'subtotal' => 0,
                     'total_amount' => 0,
                     'paid_amount' => 0,
@@ -1233,9 +1371,10 @@ class TransactionDataSeeder extends Seeder
                         'payment_type' => 'Bulanan',
                         'period_month' => $monthName,
                         'period_year' => (string) $year,
-                        'liability_account_id' => 34,
+                        'liability_account_id' => $accUtangGaji,
+                        'liability_accounts' => ['[210201] Utang Gaji & Upah Karyawan'],
                     ]),
-                    'is_closed' => true,
+                    'is_closed' => false,
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
@@ -1273,11 +1412,79 @@ class TransactionDataSeeder extends Seeder
                     ]);
                 }
 
+                if ($isCurrentMonthNow) {
+                    $payFraction = 0.0; // Sedang diproses (0%)
+                } elseif ($isPreviousMonthNow) {
+                    $payFraction = 0.5; // Sebagian dibayar (50%)
+                } else {
+                    $payFraction = 1.0; // Terbayar (100%)
+                }
+
+                $paidAmt = (float) round($totalDocAmount * $payFraction);
+                $outstandingAmt = max(0.0, round($totalDocAmount - $paidAmt, 2));
+                if ($paidAmt <= 0.0) {
+                    $payrollStatus = 'Sedang diproses';
+                } elseif ($outstandingAmt <= 0.01) {
+                    $payrollStatus = 'Terbayar';
+                } else {
+                    $payrollStatus = 'Sebagian dibayar';
+                }
+
                 DB::table('operation_documents')->where('id', $docId)->update([
                     'subtotal' => $totalDocAmount,
                     'total_amount' => $totalDocAmount,
-                    'paid_amount' => $totalDocAmount,
+                    'paid_amount' => $paidAmt,
+                    'outstanding_amount' => $outstandingAmt,
+                    'status' => $payrollStatus,
+                    'is_closed' => ($payrollStatus === 'Terbayar'),
                 ]);
+
+                if ($paidAmt > 0) {
+                    $cpSeqNum = ++$monthlyCpSeq["$year-$m"];
+                    $cpDocNumber = sprintf('KK.%04d.%02d.%04d', $year, $m, $cpSeqNum);
+                    $payDate = $dueDate;
+                    $payDt = Carbon::parse($payDate);
+
+                    $cpId = DB::table('operation_documents')->insertGetId([
+                        'document_type' => 'cash_payment',
+                        'branch_id' => $branchId,
+                        'currency_id' => $currencyId,
+                        'primary_account_id' => $accBankBCA,
+                        'related_document_id' => $docId,
+                        'document_number' => $cpDocNumber,
+                        'status' => 'Posted',
+                        'entry_date' => $payDate,
+                        'subtotal' => $paidAmt,
+                        'total_amount' => $paidAmt,
+                        'paid_amount' => $paidAmt,
+                        'outstanding_amount' => 0,
+                        'notes' => 'Pembayaran ' . ($payFraction < 1.0 ? 'sebagian ' : '') . 'Gaji Karyawan Periode ' . $monthName . ' ' . $year,
+                        'metadata' => json_encode([
+                            'cash_bank_label' => '[110102] Bank BRI',
+                            'related_document_number' => $payrollDocNumber,
+                        ]),
+                        'is_closed' => true,
+                        'created_at' => $payDt,
+                        'updated_at' => $payDt,
+                    ]);
+
+                    DB::table('operation_document_lines')->insert([
+                        'operation_document_id' => $cpId,
+                        'line_type' => 'cash_payment',
+                        'account_id' => $accUtangGaji,
+                        'description' => 'Pembayaran ' . ($payFraction < 1.0 ? 'sebagian ' : '') . 'Gaji Karyawan Periode ' . $monthName . ' ' . $year,
+                        'reference_code' => '210201',
+                        'quantity' => 1,
+                        'unit_price' => $paidAmt,
+                        'total_amount' => $paidAmt,
+                        'sort_order' => 1,
+                        'attributes' => json_encode([
+                            'notes' => 'Pembayaran gaji ' . $payrollDocNumber,
+                        ]),
+                        'created_at' => $payDt,
+                        'updated_at' => $payDt,
+                    ]);
+                }
             }
         }
 
