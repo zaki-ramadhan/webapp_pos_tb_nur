@@ -66,7 +66,7 @@ export default function ExpenseEntryFormView({
             tabs.push({
                 id: 'summary',
                 label: 'Informasi Pencatatan Beban dan Riwayat Pembayaran',
-                icon: 'payment-history',
+                icon: 'file-search-corner',
             });
         }
         return tabs;

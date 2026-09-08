@@ -47,20 +47,20 @@ export default function ExpenseSummarySection({ config = {}, values = {}, onOpen
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 xl:gap-10 items-start">
                 {/* Left Column: Informasi Pencatatan Beban */}
                 <section>
-                    <h3 className="text-base sm:text-lg font-normal text-text-darkest mb-3">
+                    <h3 className="text-base sm:text-lg font-normal text-text-darkest mb-1.5 sm:mb-2">
                         {config.summaryTitle || 'Informasi Pencatatan Beban'}
                     </h3>
 
-                    <div className="overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-light">
-                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-ui-border-lightest px-4 py-3 text-sm text-brand-dark">
+                    <div className="overflow-hidden rounded-[4px] border border-ui-border bg-white">
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-ui-border px-4 py-2.5 sm:py-3 text-sm text-brand-dark">
                             <span>{config.summaryRows?.paidAmountLabel ?? 'Dibayar'}</span>
-                            <span className="text-right font-semibold text-text-darkest">
+                            <span className="text-right font-medium text-text-darkest">
                                 {values.paidAmount || 'Rp 0'}
                             </span>
                         </div>
-                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center px-4 py-3 text-sm text-brand-dark">
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center px-4 py-2.5 sm:py-3 text-sm text-brand-dark">
                             <span>{config.summaryRows?.statusLabel ?? 'Status'}</span>
-                            <span className="text-right font-normal text-text-darkest">
+                            <span className="text-right font-medium text-text-darkest">
                                 {values.status || '-'}
                             </span>
                         </div>
@@ -70,11 +70,11 @@ export default function ExpenseSummarySection({ config = {}, values = {}, onOpen
                 {/* Right Column: Riwayat Pembayaran (only if Terbayar / Lunas) */}
                 {isPaid ? (
                     <section>
-                        <h3 className="text-base sm:text-lg font-normal text-text-darkest mb-3">
+                        <h3 className="text-base sm:text-lg font-normal text-text-darkest mb-1.5 sm:mb-2">
                             Riwayat Pembayaran
                         </h3>
 
-                        <div className="space-y-3">
+                        <div className="space-y-2.5">
                             {paymentList.map((payment, index) => {
                                 const docNumber = payment.number || payment.document_number || payment.documentNumber || payment.id;
                                 const formattedDate = formatPaymentDate(payment.date || payment.entry_date);
@@ -84,18 +84,18 @@ export default function ExpenseSummarySection({ config = {}, values = {}, onOpen
                                     <div
                                         key={payment.id || `payment-${index}`}
                                         onClick={() => onOpenPayment?.(payment)}
-                                        className="rounded-[4px] border border-table-cell-border bg-white p-3.5 sm:p-4 transition-colors hover:bg-blue-50/60 cursor-pointer shadow-card-light"
+                                        className="rounded-[4px] border border-ui-border bg-white p-3.5 sm:p-4 transition-colors hover:bg-slate-50/80 cursor-pointer"
                                     >
                                         <div className="flex items-start justify-between gap-4">
                                             <div className="min-w-0">
-                                                <span className="text-sm sm:text-base font-normal text-brand-blue-accent hover:underline">
+                                                <span className="text-sm sm:text-base font-normal text-brand-blue-accent">
                                                     {docNumber}
                                                 </span>
                                                 <div className="mt-1 text-xs sm:text-[13px] text-slate-500 font-normal">
                                                     {formattedDate}
                                                 </div>
                                             </div>
-                                            <div className="shrink-0 text-right text-sm sm:text-base font-semibold text-text-darkest">
+                                            <div className="shrink-0 text-right text-sm sm:text-base font-medium text-text-darkest">
                                                 {amountText}
                                             </div>
                                         </div>
