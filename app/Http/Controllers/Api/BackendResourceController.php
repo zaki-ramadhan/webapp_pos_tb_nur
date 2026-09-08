@@ -133,6 +133,24 @@ class BackendResourceController extends Controller
             $entity->setAttribute('paid_amount', $paid);
             $entity->setAttribute('outstanding_amount', $outstanding);
             $entity->setAttribute('status', $computedStatus);
+
+            $paymentDocs = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'cash_payment')
+                ->where('related_document_id', $entity->id)
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->select(['id', 'document_number', 'entry_date', 'total_amount', 'status'])
+                ->get()
+                ->map(fn ($p) => [
+                    'id' => $p->id,
+                    'document_number' => $p->document_number,
+                    'number' => $p->document_number,
+                    'entry_date' => $p->entry_date,
+                    'date' => date('d/m/Y', strtotime($p->entry_date)),
+                    'amount' => (float) $p->total_amount,
+                    'status' => $p->status,
+                ]);
+
+            $entity->setAttribute('payments', $paymentDocs);
         }
 
         if (in_array($resource, ['sales-invoices', 'purchase-invoices'], true) && $entity instanceof \App\Domain\Support\Models\OperationDocument) {

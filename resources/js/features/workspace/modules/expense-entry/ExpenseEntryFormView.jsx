@@ -60,13 +60,25 @@ export default function ExpenseEntryFormView({
     });
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
 
-    const [lineModalOpen, setLineModalOpen] = useState(false);
-    const [lineModalRecord, setLineModalRecord] = useState(null);
-    const [lineModalCurrentItem, setLineModalCurrentItem] = useState(null);
+    const sectionTabs = useMemo(() => {
+        const tabs = [...(config.sectionTabs || [])];
+        if (isDetail) {
+            tabs.push({
+                id: 'summary',
+                label: 'Informasi Pencatatan Beban dan Riwayat Pembayaran',
+                icon: 'payment-history',
+            });
+        }
+        return tabs;
+    }, [config.sectionTabs, isDetail]);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
-    }, [config.sectionTabs]);
+    }, [activeRecordId]);
+
+    const [lineModalOpen, setLineModalOpen] = useState(false);
+    const [lineModalRecord, setLineModalRecord] = useState(null);
+    const [lineModalCurrentItem, setLineModalCurrentItem] = useState(null);
 
     const validationMessage = useMemo(() => validateExpenseEntryValues(values, config), [config, values]);
 
@@ -204,12 +216,15 @@ export default function ExpenseEntryFormView({
     }
 
     const handlers = {
-        onSelectLiabilityAccount: (record) =>
+        onSelectLiabilityAccount: (record) => {
+            const rawName = record?.name ?? record?.account_name ?? record?.accountName ?? record?.title ?? '';
+            const accountName = String(rawName).replace(/^\[[^\]]+\]\s*/, '').trim();
             setValues((current) => ({
                 ...current,
                 __liabilityAccountId: record.id,
-                liabilityAccounts: [buildLookupLabel(record)],
-            })),
+                liabilityAccounts: accountName ? [accountName] : [],
+            }));
+        },
         onRemoveLiabilityAccount: () =>
             setValues((current) => ({
                 ...current,
@@ -244,13 +259,27 @@ export default function ExpenseEntryFormView({
                 })
             );
         },
+        onOpenPayment: (payment) => {
+            const paymentId = payment.id || payment.number || payment.documentNumber || payment.document_number;
+            const paymentNumber = payment.number || payment.documentNumber || payment.document_number || payment.id;
+            window.dispatchEvent(
+                new CustomEvent('workspace:open-page', {
+                    detail: {
+                        pageId: 'cash-payment',
+                        recordId: paymentId,
+                        label: paymentNumber,
+                        tabLabel: paymentNumber,
+                    },
+                })
+            );
+        },
     };
 
     return (
         <>
             <TransactionFormLayout
-            isLoading={isLoading}
-            validationMessage={validationMessage}
+                isLoading={isLoading}
+                validationMessage={validationMessage}
                 header={
                     <ExpenseEntryHeader
                         config={config}
@@ -261,7 +290,7 @@ export default function ExpenseEntryFormView({
                         handlers={handlers}
                     />
                 }
-                sectionTabs={config.sectionTabs}
+                sectionTabs={sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
                 footer={<TransactionTotalCard label={config.totalCardLabel} value={values.totalValue} />}
@@ -270,7 +299,7 @@ export default function ExpenseEntryFormView({
                 {activeSectionId === 'additional-info' ? (
                     <ExpenseAdditionalInfoSection config={config} values={values} setValues={setValues} handlers={handlers} />
                 ) : activeSectionId === 'summary' ? (
-                    <ExpenseSummarySection config={config} values={values} />
+                    <ExpenseSummarySection config={config} values={values} onOpenPayment={handlers.onOpenPayment} />
                 ) : (
                     <ExpenseLineItemsSection config={config} values={values} setValues={setValues} handlers={handlers} />
                 )}
