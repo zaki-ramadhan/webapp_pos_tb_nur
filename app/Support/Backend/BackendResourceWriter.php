@@ -878,7 +878,7 @@ class BackendResourceWriter
     /**
      * Posting otomatis transaksi ke Jurnal Umum.
      */
-    protected function postToGeneralJournal(Model $record): void
+    public function postToGeneralJournal(Model $record): void
     {
         if (!($record instanceof \App\Domain\Support\Models\OperationDocument)) {
             return;
@@ -950,7 +950,9 @@ class BackendResourceWriter
         }
 
         $journal->branch_id       = $record->branch_id;
-        $journal->document_number = $this->generateNextSequentialNumber('general-journals', $record->entry_date);
+        if (!$journal->document_number) {
+            $journal->document_number = $this->generateNextSequentialNumber('general-journals', $record->entry_date);
+        }
         $journal->entry_date      = $record->entry_date;
         $journal->status          = 'Posted';
         $journal->notes           = $cleanNotes;
@@ -970,13 +972,19 @@ class BackendResourceWriter
         $recordLines = $record->lines ?? collect();
 
         if ($docType === 'expense_entry' || $docType === 'payroll_entry') {
+            $defaultDebitAcc = ($docType === 'payroll_entry')
+                ? (DB::table('accounts')->where('code', '610101')->value('id') ?? DB::table('accounts')->where('code', 'like', '6101%')->value('id'))
+                : null;
             foreach ($recordLines as $line) {
-                if ($line->account_id && $line->total_amount > 0) {
-                    $lines[] = ['account_id' => $line->account_id, 'description' => $line->description ?? 'Beban', 'debit_amount' => $line->total_amount, 'credit_amount' => 0.00, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];
+                $lineAcc = $line->account_id ?: $defaultDebitAcc;
+                if ($lineAcc && $line->total_amount > 0) {
+                    $lines[] = ['account_id' => $lineAcc, 'description' => $line->description ?? ($docType === 'payroll_entry' ? 'Beban Gaji Karyawan' : 'Beban Operasional'), 'debit_amount' => $line->total_amount, 'credit_amount' => 0.00, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];
                 }
             }
-            if ($record->primary_account_id) {
-                $lines[] = ['account_id' => $record->primary_account_id, 'description' => 'Utang / Kewajiban', 'debit_amount' => 0.00, 'credit_amount' => $record->total_amount, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
+            $creditAcc = $record->primary_account_id
+                ?? ($docType === 'payroll_entry' ? (DB::table('accounts')->where('code', '210201')->value('id') ?? DB::table('accounts')->where('code', 'like', '2102%')->value('id')) : null);
+            if ($creditAcc && $record->total_amount > 0) {
+                $lines[] = ['account_id' => $creditAcc, 'description' => 'Utang / Kewajiban', 'debit_amount' => 0.00, 'credit_amount' => $record->total_amount, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
             }
         } elseif ($docType === 'cash_payment') {
             foreach ($recordLines as $line) {
@@ -1020,8 +1028,11 @@ class BackendResourceWriter
                 $lines[] = ['account_id' => $record->primary_account_id, 'description' => 'Kas/Bank Pengirim', 'debit_amount' => 0.00, 'credit_amount' => $totalSenderCredit, 'total_amount' => $totalSenderCredit, 'sort_order' => $sortOrder++];
             }
         } elseif ($docType === 'sales_invoice') {
-            if ($record->primary_account_id) {
-                $lines[] = ['account_id' => $record->primary_account_id, 'description' => 'Piutang Penjualan', 'debit_amount' => $record->total_amount, 'credit_amount' => 0.00, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
+            $piutangAcc = $record->primary_account_id
+                ?? DB::table('accounts')->where('code', '110301')->value('id')
+                ?? DB::table('accounts')->where('code', 'like', '1103%')->value('id');
+            if ($piutangAcc && $record->total_amount > 0) {
+                $lines[] = ['account_id' => $piutangAcc, 'description' => 'Piutang Penjualan', 'debit_amount' => $record->total_amount, 'credit_amount' => 0.00, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
             }
             foreach ($recordLines as $line) {
                 if ($line->total_amount > 0) {
@@ -1029,13 +1040,16 @@ class BackendResourceWriter
                         ?? optional(optional($line->product)->category)->sales_account_id
                         ?? DB::table('accounts')->where('code', 'like', '41%')->value('id');
                     if ($accId) {
-                        $lines[] = ['account_id' => $accId, 'description' => 'Pendapatan - ' . (optional($line->product)->name ?? 'Barang'), 'debit_amount' => 0.00, 'credit_amount' => $line->total_amount, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];
+                        $lines[] = ['account_id' => $accId, 'description' => 'Pendapatan - ' . (optional($line->product)->name ?? $line->description ?? 'Barang'), 'debit_amount' => 0.00, 'credit_amount' => $line->total_amount, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];
                     }
                 }
             }
         } elseif ($docType === 'purchase_invoice') {
-            if ($record->primary_account_id) {
-                $lines[] = ['account_id' => $record->primary_account_id, 'description' => 'Hutang Usaha', 'debit_amount' => 0.00, 'credit_amount' => $record->total_amount, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
+            $hutangAcc = $record->primary_account_id
+                ?? DB::table('accounts')->where('code', '210101')->value('id')
+                ?? DB::table('accounts')->where('code', 'like', '2101%')->value('id');
+            if ($hutangAcc && $record->total_amount > 0) {
+                $lines[] = ['account_id' => $hutangAcc, 'description' => 'Hutang Usaha', 'debit_amount' => 0.00, 'credit_amount' => $record->total_amount, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
             }
             foreach ($recordLines as $line) {
                 if ($line->total_amount > 0) {
@@ -1043,7 +1057,7 @@ class BackendResourceWriter
                         ?? optional(optional($line->product)->category)->inventory_account_id
                         ?? DB::table('accounts')->where('code', 'like', '11%')->value('id');
                     if ($accId) {
-                        $lines[] = ['account_id' => $accId, 'description' => 'Persediaan - ' . (optional($line->product)->name ?? 'Barang'), 'debit_amount' => $line->total_amount, 'credit_amount' => 0.00, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];
+                        $lines[] = ['account_id' => $accId, 'description' => 'Persediaan - ' . (optional($line->product)->name ?? $line->description ?? 'Barang'), 'debit_amount' => $line->total_amount, 'credit_amount' => 0.00, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];
                     }
                 }
             }
