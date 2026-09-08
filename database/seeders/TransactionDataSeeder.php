@@ -1062,64 +1062,7 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 20. General Journal Entries
-        $gjSeq = 0;
-        for ($year = $startYear; $year <= $currentYear; $year++) {
-            $maxM = ($year === $currentYear) ? $currentMonth : 12;
-            for ($m = 1; $m <= $maxM; $m++) {
-                $isCurrentMonthNow = ($year === $currentYear && $m === $currentMonth);
-                $gjCountThisMonth = $isCurrentMonthNow ? 3 : 1;
-                for ($gjK = 1; $gjK <= $gjCountThisMonth; $gjK++) {
-                    $gjSeq++;
-                    $gjDay = $isCurrentMonthNow ? max(1, min($currentDay, (int) round(($gjK / $gjCountThisMonth) * $currentDay))) : 13;
-                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $gjDay);
-                    $dt = Carbon::parse($entryDate);
-                    $docId = DB::table('operation_documents')->insertGetId([
-                        'document_type' => 'general_journal',
-                        'branch_id' => $branchId,
-                        'warehouse_id' => $warehouseId,
-                        'responsible_user_id' => $userAdminId,
-                        'document_number' => sprintf('JU.%04d.%02d.%04d', $year, $m, $gjK),
-                        'reference_number' => 'REF-OPS-' . $gjSeq,
-                        'status' => 'Posted',
-                        'entry_date' => $entryDate,
-                        'subtotal' => 500000,
-                        'total_amount' => 500000,
-                        'notes' => 'Jurnal penyesuaian operasional',
-                        'is_closed' => true,
-                        'created_at' => $dt,
-                        'updated_at' => $dt,
-                    ]);
-
-                    DB::table('operation_document_lines')->insert([
-                        'operation_document_id' => $docId,
-                        'line_type' => 'general_journal',
-                        'account_id' => $accPerlengkapan,
-                        'description' => 'Debet Perlengkapan Toko',
-                        'reference_code' => '120101',
-                        'debit_amount' => 500000,
-                        'credit_amount' => 0,
-                        'total_amount' => 500000,
-                        'sort_order' => 1,
-                        'created_at' => $dt,
-                        'updated_at' => $dt,
-                    ]);
-                    DB::table('operation_document_lines')->insert([
-                        'operation_document_id' => $docId,
-                        'line_type' => 'general_journal',
-                        'account_id' => $accKasKecil,
-                        'description' => 'Kredit Kas Kecil Toko',
-                        'reference_code' => '110101',
-                        'debit_amount' => 0,
-                        'credit_amount' => 500000,
-                        'total_amount' => 500000,
-                        'sort_order' => 2,
-                        'created_at' => $dt,
-                        'updated_at' => $dt,
-                    ]);
-                }
-            }
-        }
+        // 20. General Journal Entries (akan disinkronkan otomatis di akhir setelah seluruh transaksi operasional terisi)
 
         // 21. Expense Entries (Monthly Expenses - Calibrated with Realistic Variety & Varied Status)
         $accUtangBeban = DB::table('accounts')->where('code', '210202')->value('id')
@@ -1558,6 +1501,9 @@ class TransactionDataSeeder extends Seeder
                 }
             }
         }
+
+        // 22b. Sinkronisasi Jurnal Umum (Posting transaksi operasional & buat penyesuaian manual realistis)
+        app(\App\Domain\Finance\Services\GeneralJournalSyncService::class)->syncAll(true);
 
         // 23. Seed operation_document_user pivot table
         DB::table('operation_document_user')->truncate();
