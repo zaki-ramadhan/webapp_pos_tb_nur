@@ -329,11 +329,11 @@ final class PosBlueprint
             self::navModule('cash-bank', 'Kas & Bank', 'bank', [
                 self::navItem('cash-payment', 'Pembayaran', 'payment', 'green'),
                 self::navItem('cash-receipt', 'Penerimaan', 'receipt', 'green'),
-                self::navItem('bank-transfer', 'Transfer Bank', 'transfer', 'green'),
+                self::navItem('bank-transfer', 'Transfer Bank', 'bank-transfer', 'green'),
                 self::navItem('smartlink-bank', 'SmartLink e-Banking', 'link', 'purple'),
-                self::navItem('bank-statement', 'Rekening Koran', 'bank', 'purple'),
-                self::navItem('bank-reconciliation', 'Rekonsiliasi Bank', 'invoice', 'purple'),
+                self::navItem('bank-statement', 'Rekening Koran', 'bank-statement', 'purple'),
                 self::navItem('bank-history', 'Histori Bank', 'history', 'purple'),
+                self::navItem('bank-reconciliation', 'Rekonsiliasi Bank', 'bank-reconciliation', 'purple'),
             ]),
             self::navModule('sales', 'Penjualan', 'sales', [
               // self::navItem('sales-quote', 'Penawaran Penjualan', 'receipt', 'green'),
