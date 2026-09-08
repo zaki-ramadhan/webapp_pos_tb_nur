@@ -361,14 +361,14 @@ final class PosBlueprint
             self::navModule('purchases', 'Pembelian', 'purchase', [
               // self::navItem('purchase-order', 'Pesanan Pembelian', 'invoice', 'green'),
               // self::navItem('goods-receipt', 'Penerimaan Barang', 'receipt', 'green'),
-                self::navItem('purchase-deposit', 'Uang Muka Pembelian', 'payment', 'green'),
-                self::navItem('purchase-invoice', 'Faktur Pembelian', 'invoice', 'green'),
-                self::navItem('purchase-payment', 'Pembayaran Pembelian', 'payment', 'green'),
-                self::navItem('purchase-return', 'Retur Pembelian', 'transfer', 'green'),
+                self::navItem('purchase-deposit', 'Uang Muka Pembelian', 'purchase-deposit', 'green'),
+                self::navItem('purchase-invoice', 'Faktur Pembelian', 'purchase-invoice', 'green'),
+                self::navItem('purchase-payment', 'Pembayaran Pembelian', 'purchase-payment', 'green'),
+                self::navItem('purchase-return', 'Retur Pembelian', 'purchase-return', 'green'),
               // self::navItem('supplier-price', 'Harga Pemasok', 'salary', 'amber'),
               // self::navItem('supplier-category', 'Kategori Pemasok', 'group', 'blue'),
 
-                self::navItem('suppliers', 'Pemasok', 'supplier', 'blue'),
+                self::navItem('suppliers', 'Pemasok', 'suppliers', 'blue'),
               // self::navItem('payment-order', 'Perintah Pembayaran', 'payment', 'green'),
 
               // self::navItem('supplier-transfer', 'Transfer Pemasok', 'transfer', 'purple'),
