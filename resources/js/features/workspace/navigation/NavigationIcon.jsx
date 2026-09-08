@@ -91,7 +91,7 @@ import {
 } from '@/features/workspace/navigation/ModuleCustomIcons';
 
 const iconMap = {
-    settings: PreferencesModuleIcon,
+    settings: Settings,
     preferences: PreferencesModuleIcon,
     cog: Settings,
     company: StoreModuleIcon,
