@@ -69,6 +69,72 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api', \App\Http\M
     });
     Route::get('/live-updates', [BackendResourceController::class, 'liveUpdates']);
     Route::get('/resources', [BackendResourceController::class, 'resources']);
+    Route::get('/employees/last-payroll-lines', function (\Illuminate\Http\Request $request) {
+        $blueprint = \App\Support\Backend\BackendResourceRegistry::find('payroll-entries');
+        if ($blueprint) {
+            app(\App\Support\Backend\BackendResourceAccessService::class)->authorize($request->user(), $blueprint, 'view');
+        }
+
+        $user = $request->user();
+        $excludeDocId = $request->query('exclude_document_id');
+
+        $query = \App\Domain\Support\Models\OperationDocumentLine::query()
+            ->whereHas('document', function ($query) use ($user, $excludeDocId) {
+                $query->where('document_type', 'payroll_entry')
+                    ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+
+                if ($excludeDocId) {
+                    $query->where('id', '!=', (int) $excludeDocId);
+                }
+
+                if ($user && ! $user->isPrivileged() && ! $user->hasAnyRoleCodes(['super_admin', 'owner', 'admin'])) {
+                    if ($user->branches()->exists()) {
+                        $query->whereIn('branch_id', $user->branches->pluck('id')->all());
+                    }
+                }
+            })
+            ->latest('id');
+
+        $lines = $query->get();
+
+        $map = [];
+        foreach ($lines as $line) {
+            $attr = (array) ($line->attributes ?? []);
+            $empId = $attr['employee_id'] ?? $attr['employeeId'] ?? null;
+            $empCode = (string) ($attr['employee_code'] ?? $attr['employeeCode'] ?? '');
+            $empName = (string) ($attr['employee_name'] ?? $attr['employeeName'] ?? $line->description ?? '');
+
+            if (! $empId && empty($empCode) && empty($empName)) {
+                continue;
+            }
+
+            if (empty($attr['basicSalary']) && (float) $line->unit_price > 0) {
+                $attr['basicSalary'] = (float) $line->unit_price;
+            }
+
+            $entry = [
+                'employee_id' => $empId,
+                'gross_income' => (float) $line->unit_price,
+                'tax_amount' => (float) $line->tax_amount,
+                'total_amount' => (float) $line->total_amount,
+                'attributes' => $attr,
+            ];
+
+            if ($empId && ! isset($map[(string) $empId])) {
+                $map[(string) $empId] = $entry;
+            }
+            if (! empty($empCode) && ! isset($map['code:'.$empCode])) {
+                $map['code:'.$empCode] = $entry;
+            }
+            if (! empty($empName) && ! isset($map['name:'.$empName])) {
+                $map['name:'.$empName] = $entry;
+            }
+        }
+
+        return response()->json([
+            'data' => $map,
+        ]);
+    });
     Route::get('/employees/{employee}/last-payroll-line', function (\Illuminate\Http\Request $request, $employeeId) {
         $blueprint = \App\Support\Backend\BackendResourceRegistry::find('payroll-entries');
         if ($blueprint) {
