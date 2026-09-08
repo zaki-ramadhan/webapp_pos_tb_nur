@@ -36,8 +36,8 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
             </AccountsFormFieldRow>
 
 
-            <div className="border-b border-ui-border-medium pb-2.5">
-                <h3 className="text-lg font-medium text-brand-dark">{config.headingLabels.userAccess}</h3>
+            <div className="pt-2">
+                <h3 className="text-base sm:text-lg font-medium text-brand-dark">{config.headingLabels.userAccess}</h3>
             </div>
 
             <div className="space-y-3">
@@ -61,12 +61,10 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                 />
 
                 {!values.allUsers && (
-                    <div className="space-y-3 pt-2">
-                        <div className="text-xs sm:text-sm font-medium text-brand-dark">
+                    <div className="space-y-3 pt-1 pl-6 sm:pl-7">
+                        <div className="text-sm sm:text-base font-medium text-brand-dark">
                             Isikan pengguna-pengguna yang bisa menggunakan akun ini
                         </div>
-
-
 
                         <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
                             <div className="pt-2 lg:pt-1.5">

@@ -46,6 +46,43 @@ export function mapUiToDbType(type) {
     return UI_TO_DB_TYPE_MAP[type] ?? type;
 }
 
+export function shouldShowSaldoTab(type) {
+    if (!type) return false;
+    const normalized = String(type).toLowerCase().replace(/_/g, ' ').replace(/\//g, ' ').trim();
+    const excludedTypes = [
+        'piutang usaha',
+        'piutang',
+        'receivable',
+        'accounts receivable',
+        'persediaan',
+        'inventory',
+        'aset tetap',
+        'fixed asset',
+        'fixed assets',
+        'akumulasi penyusutan',
+        'accumulated depreciation',
+        'utang usaha',
+        'utang',
+        'payable',
+        'accounts payable',
+    ];
+
+    return !excludedTypes.includes(normalized);
+}
+
+export function isCashBankType(type) {
+    if (!type) return false;
+    const normalized = String(type).toLowerCase().replace(/_/g, ' ').replace(/\//g, ' ').trim();
+    return (
+        normalized === 'kas dan bank' ||
+        normalized === 'kas & bank' ||
+        normalized === 'cash bank' ||
+        normalized === 'cash/bank' ||
+        normalized === 'bank' ||
+        normalized === 'kas'
+    );
+}
+
 export function buildFormState(source = {}) {
     return {
         ...source,

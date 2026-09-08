@@ -7,7 +7,7 @@ import {
     AccountsFieldLabel,
     AccountsFormFieldRow,
 } from '../../accountsViewShared';
-import { mapDbToUiType, mapUiToDbType, buildHierarchicalAccounts } from '../../accountsShared';
+import { mapDbToUiType, mapUiToDbType, buildHierarchicalAccounts, isCashBankType } from '../../accountsShared';
 
 export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData, excludeId }) {
     const selectedParentAccount = useMemo(() => {
@@ -142,7 +142,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                         className="h-[40px] rounded-[4px] border-ui-border"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
-                    {['kas dan bank', 'cash/bank'].includes(String(values.type ?? '').toLowerCase().trim()) ? (
+                    {isCashBankType(values.type) ? (
                         <p className="mt-2.5 text-xs sm:text-sm font-normal italic text-text-light leading-relaxed">
                             {config.helperText.nameExample}
                         </p>
