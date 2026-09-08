@@ -60,9 +60,18 @@ export default function ExpenseEntryFormView({
     });
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
 
+    const hasPayments = useMemo(() => {
+        if (Array.isArray(values.payments) && values.payments.length > 0) return true;
+        const paidNum = parseNumericInput(values.paidAmount);
+        if (paidNum > 0) return true;
+        const status = String(values.status ?? '').toLowerCase();
+        if (['draft', 'void', 'cancelled'].includes(status)) return false;
+        return status.includes('bayar') || status.includes('lunas') || status.includes('partial');
+    }, [values.payments, values.paidAmount, values.status]);
+
     const sectionTabs = useMemo(() => {
         const tabs = [...(config.sectionTabs || [])];
-        if (isDetail) {
+        if (isDetail && hasPayments) {
             tabs.push({
                 id: 'summary',
                 label: 'Informasi Pencatatan Beban dan Riwayat Pembayaran',
@@ -70,7 +79,13 @@ export default function ExpenseEntryFormView({
             });
         }
         return tabs;
-    }, [config.sectionTabs, isDetail]);
+    }, [config.sectionTabs, isDetail, hasPayments]);
+
+    useEffect(() => {
+        if (!hasPayments && activeSectionId === 'summary') {
+            setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
+        }
+    }, [hasPayments, activeSectionId, config.sectionTabs]);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
