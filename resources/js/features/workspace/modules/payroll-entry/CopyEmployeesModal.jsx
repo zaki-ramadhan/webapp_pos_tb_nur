@@ -103,7 +103,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
             onClose={onClose}
             title="Salin Karyawan"
             maxWidthClassName="max-w-[580px]"
-            contentClassName="bg-white px-2.5 py-2.5 sm:px-3.5 sm:py-3.5"
+            contentClassName="bg-white px-2.5 py-2.5 sm:px-3.5 sm:py-3.5 min-h-[360px] sm:min-h-[380px] flex flex-col"
             footerClassName="border-t border-ui-border-medium bg-white px-2.5 py-2 sm:px-3.5"
             footer={
                 <div className="flex justify-between items-center w-full">
@@ -121,7 +121,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
                 </div>
             }
         >
-            <DataTable wrapperClassName="max-h-[380px] bg-white">
+            <DataTable bordered={false} wrapperClassName="max-h-[380px] overflow-y-auto bg-white">
                 <DataTableHeader>
                     <DataTableRow className="border-t-0 text-white">
                         <DataTableHead className="w-px px-3 text-center">

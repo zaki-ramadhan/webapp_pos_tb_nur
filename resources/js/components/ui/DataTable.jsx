@@ -15,12 +15,14 @@ function calculateMinWidth(label) {
     return Math.ceil(label.trim().length * 8) + 24;
 }
 
-export function DataTable({ className = '', wrapperClassName = '', children, ...props }) {
+export function DataTable({ className = '', wrapperClassName = '', bordered = true, children, ...props }) {
     const cleanedClassName = className.replace(/\b(?:[a-z-]*:)?min-w-\[[^\]]+\]/g, '').trim();
+    const isExplicitlyBorderFree = /\b(?:border-0|border-none|!border-0)\b/.test(wrapperClassName);
+    const borderClass = bordered && !isExplicitlyBorderFree ? 'border border-table-border' : '';
 
     return (
         <div
-            className={`w-full overflow-auto overscroll-x-contain rounded-[4px] border border-table-border ${wrapperClassName}`.trim()}
+            className={`w-full overflow-auto overscroll-x-contain rounded-[4px] ${borderClass} ${wrapperClassName}`.trim()}
         >
             <table className={`w-full min-w-full border-collapse ${cleanedClassName}`.trim()} {...props}>
                 {children}
