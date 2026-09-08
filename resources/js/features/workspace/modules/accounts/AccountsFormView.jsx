@@ -24,30 +24,11 @@ import {
     buildAccountSourceRecord,
     buildComparableFormValues,
     buildFormState,
+    shouldShowSaldoTab,
 } from './accountsShared';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
-
-function shouldShowSaldoTab(type) {
-    if (!type) return false;
-    const normalized = type.toLowerCase().trim();
-    const noSaldoTypes = [
-        'piutang usaha',
-        'piutang',
-        'accounts receivable',
-        'persediaan',
-        'inventory',
-        'aset tetap',
-        'fixed asset',
-        'fixed assets',
-        'utang usaha',
-        'utang',
-        'accounts payable',
-        'kewajiban',
-    ];
-    return !noSaldoTypes.includes(normalized);
-}
 
 export default function AccountsFormView({ pageId, config, backendRows, activeLevel2Tab, onOpenDetail, onCloseTab, onReload }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
@@ -82,35 +63,37 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     });
     
     const { leftTabs, rightTabs } = useMemo(() => {
-        const isSub = isDetail
-            ? (backendRecord ? Boolean(backendRecord.is_sub_account || backendRecord.parent_id || !backendRecord.has_children) : true)
-            : Boolean(values.isSubAccount || values.parentId);
-
         if (isDetail) {
-            if (isSub) {
-                // Akun Anak / Akun Transaksi: Left (Informasi Umum, Saldo, Lain-lain), Right (Histori).
-                const subTabs = [
-                    { id: 'general', label: 'Informasi Umum' },
-                    { id: 'others', label: 'Lain-lain' },
-                ];
-                if (shouldShowSaldoTab(values.type || backendRecord?.type || backendRecord?.account_type)) {
-                    subTabs.splice(1, 0, { id: 'opening-balance', label: 'Saldo' });
-                }
-                return {
-                    leftTabs: subTabs,
-                    rightTabs: [{ id: 'history', label: 'Histori' }],
-                };
-            } else {
-                // Akun Induk: Informasi Umum, Lain-lain, Akun Anak.
+            const hasChildren = Boolean(
+                backendRecord?.has_children ||
+                (Array.isArray(backendRecord?.children) && backendRecord.children.length > 0)
+            );
+
+            if (hasChildren) {
+                // Akun Induk yang memiliki akun anak:
                 return {
                     leftTabs: [
                         { id: 'general', label: 'Informasi Umum' },
                         { id: 'others', label: 'Lain-lain' },
                         { id: 'children', label: 'Akun Anak' },
                     ],
-                    rightTabs: [],
+                    rightTabs: [{ id: 'history', label: 'Histori' }],
                 };
             }
+
+            // Akun tanpa akun anak (akun transaksi / akun reguler):
+            const tabs = [
+                { id: 'general', label: 'Informasi Umum' },
+                { id: 'others', label: 'Lain-lain' },
+            ];
+            const accountType = values.type || backendRecord?.type || backendRecord?.account_type;
+            if (shouldShowSaldoTab(accountType)) {
+                tabs.splice(1, 0, { id: 'opening-balance', label: 'Saldo' });
+            }
+            return {
+                leftTabs: tabs,
+                rightTabs: [{ id: 'history', label: 'Histori' }],
+            };
         }
 
         // Mode Tambah Data Baru:
@@ -118,14 +101,14 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             { id: 'general', label: 'Informasi Umum' },
             { id: 'others', label: 'Lain-lain' },
         ];
-        if (isSub && shouldShowSaldoTab(values.type)) {
+        if (shouldShowSaldoTab(values.type)) {
             createTabs.splice(1, 0, { id: 'opening-balance', label: 'Saldo' });
         }
         return {
             leftTabs: createTabs,
             rightTabs: [],
         };
-    }, [isDetail, backendRecord, values.isSubAccount, values.parentId, values.type]);
+    }, [isDetail, backendRecord, values.type]);
 
     const activeTabInstanceId = activeLevel2Tab?.id;
 
