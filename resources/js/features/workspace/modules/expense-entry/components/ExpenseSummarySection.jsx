@@ -78,7 +78,7 @@ export default function ExpenseSummarySection({ config = {}, values = {}, onOpen
                             Riwayat Pembayaran
                         </h3>
 
-                        <div className="border-t border-ui-border">
+                        <div className="overflow-hidden rounded-[4px] border border-ui-border bg-white">
                             {paymentList.map((payment, index) => {
                                 const docNumber = payment.number || payment.document_number || payment.documentNumber || payment.id;
                                 const formattedDate = formatPaymentDate(payment.date || payment.entry_date);
@@ -88,7 +88,7 @@ export default function ExpenseSummarySection({ config = {}, values = {}, onOpen
                                     <div
                                         key={payment.id || `payment-${index}`}
                                         onClick={() => onOpenPayment?.(payment)}
-                                        className="flex items-center justify-between py-2 sm:py-2.5 border-b border-ui-border transition-colors hover:bg-slate-50/80 cursor-pointer"
+                                        className="flex items-center justify-between px-4 py-2.5 sm:py-3 border-b border-ui-border last:border-b-0 transition-colors hover:bg-slate-50/80 cursor-pointer"
                                     >
                                         <div className="min-w-0">
                                             <span className="text-sm font-normal text-brand-blue-accent">
