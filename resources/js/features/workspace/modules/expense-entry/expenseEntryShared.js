@@ -78,6 +78,11 @@ export function buildExpenseEntryRow(record) {
     };
 }
 
+function extractAccountName(account = {}, fallback = '') {
+    const raw = account?.name ?? account?.accountName ?? account?.title ?? fallback;
+    return String(raw || '').replace(/^\[[^\]]+\]\s*/, '').trim();
+}
+
 export function buildExpenseEntryRecord(record = {}, config) {
     const lineItems = (record.lines ?? []).map((line, index) => ({
         id: String(line.id ?? `line-${index + 1}`),
@@ -90,17 +95,31 @@ export function buildExpenseEntryRecord(record = {}, config) {
     }));
     const totalAmount = Number(record.total_amount ?? 0);
     const paidAmount = Number(record.paid_amount ?? 0);
-    const primaryAccountLabel = buildLookupLabel(record.primary_account ?? {}, 'code');
+    const rawPrimaryAccount = record.primary_account ?? {};
+    const primaryAccountLabel = extractAccountName(rawPrimaryAccount, record.primary_account_name ?? record.liability_account_label ?? '');
+    const liabilityAccounts = primaryAccountLabel
+        ? [primaryAccountLabel]
+        : (record.liabilityAccounts ?? []).map((item) => extractAccountName({ name: item }));
+
+    const rawPayments = record.payments ?? record.payment_history ?? [];
+    const payments = Array.isArray(rawPayments)
+        ? rawPayments.map((p) => ({
+              id: String(p.id ?? p.document_number ?? p.number ?? ''),
+              number: p.number ?? p.document_number ?? String(p.id ?? ''),
+              date: p.date ?? p.entry_date ?? '',
+              amount: typeof p.amount === 'number' ? formatCurrencyLabel(p.amount) : (p.amount ?? ''),
+          }))
+        : [];
 
     return applyExpenseLineItems(
         {
             __backendRecordId: record.id ?? null,
             __liabilityAccountId: record.primary_account_id ?? null,
             __branchId: null,
-            liabilityAccounts: primaryAccountLabel ? [primaryAccountLabel] : [],
+            liabilityAccounts,
             entryDate: formatIsoDate(record.entry_date),
             autoNumber: false,
-            numberingType: record.numbering_type ?? config.draft?.numberingType ?? 'Pencatatan Beban',
+            numberingType: record.numbering_type ?? config?.draft?.numberingType ?? 'Pencatatan Beban',
             documentNumber: record.document_number ?? '',
             dueDate: formatIsoDate(record.due_date),
             branches: [],
@@ -108,6 +127,7 @@ export function buildExpenseEntryRecord(record = {}, config) {
             lineLookup: '',
             paidAmount: formatCurrencyLabel(paidAmount),
             status: record.status ?? 'Sedang diproses',
+            payments,
             saveTone: 'muted',
         },
         lineItems,
@@ -120,7 +140,7 @@ export function buildFormState(source = {}) {
             __backendRecordId: source.__backendRecordId ?? null,
             __liabilityAccountId: source.__liabilityAccountId ?? null,
             __branchId: null,
-            liabilityAccounts: [...(source.liabilityAccounts ?? [])],
+            liabilityAccounts: (source.liabilityAccounts ?? []).map((item) => extractAccountName({ name: item })),
             entryDate: source.entryDate ?? '',
             autoNumber: source.autoNumber ?? true,
             numberingType: source.numberingType ?? '',
@@ -131,6 +151,7 @@ export function buildFormState(source = {}) {
             lineLookup: source.lineLookup ?? '',
             paidAmount: source.paidAmount ?? 'Rp 0',
             status: source.status ?? '-',
+            payments: source.payments ?? [],
             saveTone: source.saveTone ?? 'primary',
         },
         [...(source.lineItems ?? [])],
