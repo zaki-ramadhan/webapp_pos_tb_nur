@@ -557,6 +557,7 @@ export default function PayrollEntryFormView({
                     <PayrollSummarySection
                         config={config}
                         values={values}
+                        employeeRows={employeeRows}
                         incomeTax={totalIncomeTax}
                         isLoading={isLoading}
                         onOpenPayment={handlers.onOpenPayment}
