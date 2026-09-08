@@ -121,7 +121,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
                 </div>
             }
         >
-            <DataTable wrapperClassName="max-h-[380px] min-h-[320px] bg-white">
+            <DataTable wrapperClassName="max-h-[380px] bg-white">
                 <DataTableHeader>
                     <DataTableRow className="border-t-0 text-white">
                         <DataTableHead className="w-px px-3 text-center">
