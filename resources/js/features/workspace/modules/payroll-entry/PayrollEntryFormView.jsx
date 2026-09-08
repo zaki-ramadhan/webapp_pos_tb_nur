@@ -576,6 +576,7 @@ export default function PayrollEntryFormView({
                 onClose={() => setCopyModalOpen(false)}
                 onConfirm={handleCopyEmployees}
                 existingEmployeeIds={employeeRows.map((r) => r.employeeId || r.id)}
+                currentDocumentId={values.__backendRecordId || values.id || null}
             />
             <ConfirmationModal
                 open={deleteConfirmationOpen}

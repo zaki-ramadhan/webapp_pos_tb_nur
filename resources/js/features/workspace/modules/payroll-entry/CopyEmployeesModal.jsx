@@ -12,29 +12,58 @@ import {
 } from '@/components/ui/DataTable';
 import { listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 
-export default function CopyEmployeesModal({ open, onClose, onConfirm, existingEmployeeIds = [] }) {
+export default function CopyEmployeesModal({ open, onClose, onConfirm, existingEmployeeIds = [], currentDocumentId = null }) {
     const [allEmployees, setAllEmployees] = useState([]);
+    const [lastPayrolls, setLastPayrolls] = useState({});
     const [loading, setLoading] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
 
     useEffect(() => {
+        let isMounted = true;
         if (open) {
             setLoading(true);
-            listBackendResource('employees')
-                .then((data) => {
+            Promise.all([
+                listBackendResource('employees', { per_page: 250 }),
+                window.axios
+                    ? window.axios
+                          .get('/api/backend/employees/last-payroll-lines', {
+                              params: currentDocumentId ? { exclude_document_id: currentDocumentId } : {},
+                          })
+                          .then((res) => res?.data?.data || {})
+                          .catch(() => ({}))
+                    : Promise.resolve({}),
+            ])
+                .then(([data, lastPayrollMap]) => {
+                    if (!isMounted) return;
                     const rows = data?.data || data || [];
-                    setAllEmployees(rows);
+                    setAllEmployees(Array.isArray(rows) ? rows : []);
+                    setLastPayrolls(lastPayrollMap || {});
                     setLoading(false);
                 })
                 .catch((err) => {
+                    if (!isMounted) return;
                     console.error('Gagal memuat data karyawan:', err);
                     setLoading(false);
                 });
         } else {
             setAllEmployees([]);
+            setLastPayrolls({});
             setSelectedIds([]);
         }
-    }, [open]);
+        return () => {
+            isMounted = false;
+        };
+    }, [open, currentDocumentId]);
+
+    const getLastData = (emp) => {
+        return (
+            lastPayrolls[String(emp.id)] ||
+            lastPayrolls[emp.id] ||
+            (emp.employee_code ? lastPayrolls[`code:${emp.employee_code}`] : null) ||
+            (emp.full_name ? lastPayrolls[`name:${emp.full_name}`] : null) ||
+            null
+        );
+    };
 
     const existingSet = new Set((existingEmployeeIds || []).map((id) => String(id)));
     const availableEmployees = allEmployees.filter((emp) => !existingSet.has(String(emp.id)));
@@ -60,29 +89,41 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
         const selectedList = availableEmployees
             .filter((emp) => selectedIds.includes(emp.id))
             .map((emp) => {
-                const rawValue = Number(emp.previous_income || 0);
-                const taxRate = emp.subject_to_income_tax ? 0.05 : 0;
-                const taxAmount = rawValue * taxRate;
-                const paidSalary = rawValue - taxAmount;
+                const lastData = getLastData(emp);
+                const attr = lastData?.attributes || {};
+
+                const grossValue = lastData ? Number(lastData.gross_income || 0) : 0;
+                const taxAmount = lastData ? Number(lastData.tax_amount || 0) : 0;
+                const paidSalary = lastData ? Number(lastData.total_amount || 0) : (grossValue - taxAmount);
+
+                const basicSalary = Number(attr.basicSalary ?? grossValue);
+                const mealAllowance = Number(attr.mealAllowance ?? 0);
+                const transportAllowance = Number(attr.transportAllowance ?? 0);
+                const overtimeAllowance = Number(attr.overtimeAllowance ?? 0);
+                const installmentDeduction = Number(attr.installmentDeduction ?? 0);
+                const salaryReduction = Number(attr.salaryReduction ?? 0);
+                const positionAllowance = Number(attr.positionAllowance ?? 0);
+                const notes = attr.notes ?? '';
 
                 return {
                     id: String(emp.id),
                     employeeId: emp.id,
                     employeeCode: emp.employee_code ?? '',
                     employeeName: emp.full_name ?? '',
-                    grossIncomeRaw: rawValue,
-                    grossIncome: rawValue.toLocaleString('id-ID'),
+                    grossIncomeRaw: grossValue,
+                    grossIncome: grossValue.toLocaleString('id-ID'),
                     incomeTaxRaw: taxAmount,
                     incomeTax: taxAmount.toLocaleString('id-ID'),
                     paidSalaryRaw: paidSalary,
                     paidSalary: paidSalary.toLocaleString('id-ID'),
-                    basicSalary: rawValue,
-                    mealAllowance: 0,
-                    transportAllowance: 0,
-                    overtimeAllowance: 0,
-                    installmentDeduction: 0,
-                    salaryReduction: 0,
-                    notes: '',
+                    basicSalary: basicSalary,
+                    mealAllowance: mealAllowance,
+                    transportAllowance: transportAllowance,
+                    overtimeAllowance: overtimeAllowance,
+                    installmentDeduction: installmentDeduction,
+                    salaryReduction: salaryReduction,
+                    positionAllowance: positionAllowance,
+                    notes: notes,
                 };
             });
 
@@ -143,11 +184,19 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
                 </DataTableHeader>
                 <DataTableBody>
                     {loading ? (
-                        <DataTableRow>
-                            <DataTableCell colSpan={3} className="text-center py-2 text-black">
-                                Memuat data karyawan...
-                            </DataTableCell>
-                        </DataTableRow>
+                        Array.from({ length: 4 }).map((_, idx) => (
+                            <DataTableRow key={`skeleton-${idx}`} className="animate-pulse">
+                                <DataTableCell className="w-px px-3 text-center">
+                                    <div className="w-4 h-4 bg-slate-200 rounded mx-auto" />
+                                </DataTableCell>
+                                <DataTableCell className="py-2.5">
+                                    <div className="h-4 bg-slate-200 rounded w-36" />
+                                </DataTableCell>
+                                <DataTableCell className="py-2.5 pr-4 text-right">
+                                    <div className="h-4 bg-slate-200 rounded w-24 ml-auto" />
+                                </DataTableCell>
+                            </DataTableRow>
+                        ))
                     ) : availableEmployees.length === 0 ? (
                         <DataTableRow>
                             <DataTableCell colSpan={3} className="text-center py-2 text-xs sm:text-sm font-normal text-black">
@@ -159,6 +208,9 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
                     ) : (
                         availableEmployees.map((emp) => {
                             const checked = selectedIds.includes(emp.id);
+                            const lastData = getLastData(emp);
+                            const rawValue = lastData ? Number(lastData.gross_income || 0) : 0;
+
                             return (
                                 <DataTableRow
                                     key={emp.id}
@@ -177,7 +229,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
                                         <span className="text-black font-normal">{emp.full_name}</span>
                                     </DataTableCell>
                                     <DataTableCell className="text-right text-black font-normal pr-4 w-[160px]">
-                                        {Number(emp.previous_income || 0).toLocaleString('id-ID')}
+                                        {rawValue.toLocaleString('id-ID')}
                                     </DataTableCell>
                                 </DataTableRow>
                             );
