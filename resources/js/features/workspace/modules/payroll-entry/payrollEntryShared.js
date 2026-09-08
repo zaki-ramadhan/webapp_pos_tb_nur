@@ -28,7 +28,7 @@ export function buildDefaultValues(config = {}) {
         entryDate: config?.defaults?.entryDate ?? '',
         dueDate: config?.defaults?.dueDate ?? '',
         employeeLookup: config?.defaults?.employeeLookup ?? '',
-        liabilityAccounts: [...(config?.defaults?.liabilityAccounts ?? [])],
+        liabilityAccounts: [...(config?.defaults?.liabilityAccounts ?? ['[210201] Utang Gaji & Upah Karyawan'])],
         __liabilityAccountId: null,
         notes: config?.defaults?.notes ?? '',
     };

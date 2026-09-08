@@ -6,6 +6,7 @@ import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/Wo
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { TransactionFormLayout, TransactionDualTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
+import { showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
 import {
     areComparableValuesEqual,
     validateRequiredChecks,
@@ -444,10 +445,6 @@ export default function PayrollEntryFormView({
             },
             onSelectEmployee: (emp) => {
                 if (!emp) return;
-                if (!values.liabilityAccounts || values.liabilityAccounts.length === 0) {
-                    showCrudValidationToast('Akun Hutang Beban (Utang Gaji) harus diisi.');
-                    return;
-                }
                 const existingIds = new Set(employeeRows.map((r) => String(r.employeeId)));
                 if (existingIds.has(String(emp.id))) {
                     showErrorToast({ message: `Karyawan ${emp.full_name ?? emp.name} sudah ada di daftar.` });
@@ -568,10 +565,6 @@ export default function PayrollEntryFormView({
                         values={values}
                         setValues={setValues}
                         onTake={() => {
-                            if (!values.liabilityAccounts || values.liabilityAccounts.length === 0) {
-                                showCrudValidationToast('Akun Hutang Beban (Utang Gaji) harus diisi.');
-                                return;
-                            }
                             setCopyModalOpen(true);
                         }}
                         handlers={handlers}
