@@ -56,9 +56,9 @@ export default function ExpenseSummarySection({ config = {}, values = {}, isLoad
                     </h3>
 
                     <div className="overflow-hidden rounded-[4px] border border-ui-border bg-white">
-                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-ui-border px-4 py-2.5 sm:py-3 text-sm text-brand-dark">
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-ui-border px-4 py-2 sm:py-2.5 text-sm text-brand-dark">
                             <span>{config.summaryRows?.paidAmountLabel ?? 'Dibayar'}</span>
-                            <span className="text-right font-medium text-text-darkest">
+                            <span className="text-right font-semibold text-text-darkest">
                                 {isLoading ? (
                                     <span className="inline-block h-4 w-24 bg-slate-200 rounded animate-pulse" />
                                 ) : (
@@ -66,9 +66,9 @@ export default function ExpenseSummarySection({ config = {}, values = {}, isLoad
                                 )}
                             </span>
                         </div>
-                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center px-4 py-2.5 sm:py-3 text-sm text-brand-dark">
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center px-4 py-2 sm:py-2.5 text-sm text-brand-dark">
                             <span>{config.summaryRows?.statusLabel ?? 'Status'}</span>
-                            <span className="text-right font-medium text-text-darkest">
+                            <span className="text-right font-semibold text-text-darkest">
                                 {isLoading ? (
                                     <span className="inline-block h-4 w-20 bg-slate-200 rounded animate-pulse" />
                                 ) : (
@@ -90,7 +90,7 @@ export default function ExpenseSummarySection({ config = {}, values = {}, isLoad
                             [1, 2, 3].map((skeletonKey) => (
                                 <div
                                     key={`skeleton-${skeletonKey}`}
-                                    className="flex items-center justify-between px-4 py-2.5 sm:py-3 border-b border-ui-border last:border-b-0 animate-pulse"
+                                    className="flex items-center justify-between px-4 py-2 sm:py-2.5 border-b border-ui-border last:border-b-0 animate-pulse"
                                 >
                                     <div className="min-w-0 space-y-1.5">
                                         <div className="h-3.5 w-32 bg-slate-200 rounded" />
@@ -109,17 +109,17 @@ export default function ExpenseSummarySection({ config = {}, values = {}, isLoad
                                     <div
                                         key={payment.id || `payment-${index}`}
                                         onClick={() => onOpenPayment?.(payment)}
-                                        className="flex items-center justify-between px-4 py-2.5 sm:py-3 border-b border-ui-border last:border-b-0 transition-colors hover:bg-brand-blue-light cursor-pointer"
+                                        className="flex items-center justify-between px-4 py-2 sm:py-2.5 border-b border-ui-border last:border-b-0 transition-colors hover:bg-brand-blue-light cursor-pointer"
                                     >
                                         <div className="min-w-0">
-                                            <span className="text-sm font-normal text-brand-blue-accent">
+                                            <span className="text-sm font-semibold text-brand-blue-accent">
                                                 {docNumber}
                                             </span>
                                             <div className="mt-0.5 text-xs text-slate-500 font-normal">
                                                 {formattedDate}
                                             </div>
                                         </div>
-                                        <div className="shrink-0 text-right text-sm font-medium text-text-darkest">
+                                        <div className="shrink-0 text-right text-sm font-semibold text-text-darkest">
                                             {amountText}
                                         </div>
                                     </div>
