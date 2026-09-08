@@ -20,7 +20,7 @@ function formatPaymentDate(dateStr) {
     return str;
 }
 
-export default function ExpenseSummarySection({ config = {}, values = {}, onOpenPayment = null }) {
+export default function ExpenseSummarySection({ config = {}, values = {}, isLoading = false, onOpenPayment = null }) {
     const statusText = String(values.status ?? '').toLowerCase();
     const isPaid = statusText.includes('bayar') || statusText.includes('lunas');
 
@@ -59,27 +59,48 @@ export default function ExpenseSummarySection({ config = {}, values = {}, onOpen
                         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-ui-border px-4 py-2.5 sm:py-3 text-sm text-brand-dark">
                             <span>{config.summaryRows?.paidAmountLabel ?? 'Dibayar'}</span>
                             <span className="text-right font-medium text-text-darkest">
-                                {values.paidAmount || 'Rp 0'}
+                                {isLoading ? (
+                                    <span className="inline-block h-4 w-24 bg-slate-200 rounded animate-pulse" />
+                                ) : (
+                                    values.paidAmount || 'Rp 0'
+                                )}
                             </span>
                         </div>
                         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center px-4 py-2.5 sm:py-3 text-sm text-brand-dark">
                             <span>{config.summaryRows?.statusLabel ?? 'Status'}</span>
                             <span className="text-right font-medium text-text-darkest">
-                                {values.status || '-'}
+                                {isLoading ? (
+                                    <span className="inline-block h-4 w-20 bg-slate-200 rounded animate-pulse" />
+                                ) : (
+                                    values.status || '-'
+                                )}
                             </span>
                         </div>
                     </div>
                 </section>
 
                 {/* Right Column: Riwayat Pembayaran */}
-                {paymentList.length > 0 ? (
-                    <section>
-                        <h3 className="text-base sm:text-lg font-normal text-text-darkest mb-1.5 sm:mb-2">
-                            Riwayat Pembayaran
-                        </h3>
+                <section>
+                    <h3 className="text-base sm:text-lg font-normal text-text-darkest mb-1.5 sm:mb-2">
+                        Riwayat Pembayaran
+                    </h3>
 
-                        <div className="overflow-hidden rounded-[4px] border border-ui-border bg-white">
-                            {paymentList.map((payment, index) => {
+                    <div className="overflow-hidden rounded-[4px] border border-ui-border bg-white">
+                        {isLoading ? (
+                            [1, 2, 3].map((skeletonKey) => (
+                                <div
+                                    key={`skeleton-${skeletonKey}`}
+                                    className="flex items-center justify-between px-4 py-2.5 sm:py-3 border-b border-ui-border last:border-b-0 animate-pulse"
+                                >
+                                    <div className="min-w-0 space-y-1.5">
+                                        <div className="h-3.5 w-32 bg-slate-200 rounded" />
+                                        <div className="h-2.5 w-20 bg-slate-100 rounded" />
+                                    </div>
+                                    <div className="h-4 w-24 bg-slate-200 rounded" />
+                                </div>
+                            ))
+                        ) : paymentList.length > 0 ? (
+                            paymentList.map((payment, index) => {
                                 const docNumber = payment.number || payment.document_number || payment.documentNumber || payment.id;
                                 const formattedDate = formatPaymentDate(payment.date || payment.entry_date);
                                 const amountText = payment.amount ?? values.paidAmount ?? values.totalValue ?? 'Rp 0';
@@ -88,7 +109,7 @@ export default function ExpenseSummarySection({ config = {}, values = {}, onOpen
                                     <div
                                         key={payment.id || `payment-${index}`}
                                         onClick={() => onOpenPayment?.(payment)}
-                                        className="flex items-center justify-between px-4 py-2.5 sm:py-3 border-b border-ui-border last:border-b-0 transition-colors hover:bg-slate-50/80 cursor-pointer"
+                                        className="flex items-center justify-between px-4 py-2.5 sm:py-3 border-b border-ui-border last:border-b-0 transition-colors hover:bg-brand-blue-light cursor-pointer"
                                     >
                                         <div className="min-w-0">
                                             <span className="text-sm font-normal text-brand-blue-accent">
@@ -103,10 +124,14 @@ export default function ExpenseSummarySection({ config = {}, values = {}, onOpen
                                         </div>
                                     </div>
                                 );
-                            })}
-                        </div>
-                    </section>
-                ) : null}
+                            })
+                        ) : (
+                            <div className="px-4 py-6 text-center text-xs sm:text-sm text-slate-400 font-normal">
+                                Tidak ada riwayat pembayaran
+                            </div>
+                        )}
+                    </div>
+                </section>
             </div>
         </div>
     );

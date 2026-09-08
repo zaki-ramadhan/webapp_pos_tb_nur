@@ -61,13 +61,14 @@ export default function ExpenseEntryFormView({
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
 
     const hasPayments = useMemo(() => {
+        if (isLoading) return true;
         if (Array.isArray(values.payments) && values.payments.length > 0) return true;
         const paidNum = parseNumericInput(values.paidAmount);
         if (paidNum > 0) return true;
         const status = String(values.status ?? '').toLowerCase();
         if (['draft', 'void', 'cancelled'].includes(status)) return false;
         return status.includes('bayar') || status.includes('lunas') || status.includes('partial');
-    }, [values.payments, values.paidAmount, values.status]);
+    }, [isLoading, values.payments, values.paidAmount, values.status]);
 
     const sectionTabs = useMemo(() => {
         const tabs = [...(config.sectionTabs || [])];
@@ -314,7 +315,7 @@ export default function ExpenseEntryFormView({
                 {activeSectionId === 'additional-info' ? (
                     <ExpenseAdditionalInfoSection config={config} values={values} setValues={setValues} handlers={handlers} />
                 ) : activeSectionId === 'summary' ? (
-                    <ExpenseSummarySection config={config} values={values} onOpenPayment={handlers.onOpenPayment} />
+                    <ExpenseSummarySection config={config} values={values} isLoading={isLoading} onOpenPayment={handlers.onOpenPayment} />
                 ) : (
                     <ExpenseLineItemsSection config={config} values={values} setValues={setValues} handlers={handlers} />
                 )}

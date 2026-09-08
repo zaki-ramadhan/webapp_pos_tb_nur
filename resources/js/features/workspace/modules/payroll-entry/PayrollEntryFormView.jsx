@@ -59,6 +59,7 @@ export default function PayrollEntryFormView({
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
 
     const hasPayments = useMemo(() => {
+        if (isLoading) return true;
         if (Array.isArray(values.payments) && values.payments.length > 0) return true;
         const paidNum = typeof values.paidAmount === 'number'
             ? values.paidAmount
@@ -67,7 +68,7 @@ export default function PayrollEntryFormView({
         const status = String(values.status ?? '').toLowerCase();
         if (['draft', 'void', 'cancelled'].includes(status)) return false;
         return status.includes('bayar') || status.includes('lunas') || status.includes('partial');
-    }, [values.payments, values.paidAmount, values.status]);
+    }, [isLoading, values.payments, values.paidAmount, values.status]);
 
     const sectionTabs = useMemo(() => {
         const tabs = [...(config.sectionTabs || [])];
@@ -557,6 +558,7 @@ export default function PayrollEntryFormView({
                         config={config}
                         values={values}
                         incomeTax={totalIncomeTax}
+                        isLoading={isLoading}
                         onOpenPayment={handlers.onOpenPayment}
                     />
                 ) : (
