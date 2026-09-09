@@ -233,12 +233,11 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
                     <MonthInput
                         value={selectedMonth}
                         onChange={setSelectedMonth}
-                        className="w-[145px]"
                     />
                     <YearInput
                         value={selectedYear}
                         onChange={setSelectedYear}
-                        className="w-[130px]"
+                        align="end"
                     />
                 </div>
             </div>

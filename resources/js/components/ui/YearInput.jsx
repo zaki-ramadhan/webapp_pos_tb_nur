@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
-import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
-import TextInput from '@/components/ui/TextInput';
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import PortalDropdown from '@/components/ui/PortalDropdown';
 
 export default function YearInput({
@@ -10,8 +9,9 @@ export default function YearInput({
     disabled = false,
     allowAll = true,
     allLabel = 'Semua Tahun',
+    align = 'start',
     className = '',
-    inputClassName = 'text-xs sm:text-sm text-brand-dark font-normal',
+    buttonClassName = '',
     ariaLabel = 'Pilih tahun',
     ...props
 }) {
@@ -44,18 +44,7 @@ export default function YearInput({
 
     return (
         <>
-            <div ref={wrapperRef} className={`relative inline-block ${className}`.trim()}>
-                <TextInput
-                    value={displayValue}
-                    readOnly
-                    interactiveReadOnly
-                    disabled={disabled}
-                    trailing={<Calendar className="h-3.5 w-3.5 text-slate-500" />}
-                    className="h-[36px] rounded-[4px] border-ui-border bg-white"
-                    inputClassName={`cursor-pointer ${inputClassName}`.trim()}
-                    trailingClassName="pointer-events-none w-[28px] shrink-0 justify-center px-0"
-                    {...props}
-                />
+            <div ref={wrapperRef} className={`relative inline-block w-fit ${className}`.trim()}>
                 <button
                     id={id}
                     type="button"
@@ -63,9 +52,14 @@ export default function YearInput({
                     disabled={disabled}
                     aria-label={ariaLabel}
                     aria-expanded={open}
-                    className="absolute inset-0 z-10 h-full w-full cursor-pointer rounded-[4px] disabled:cursor-not-allowed"
+                    className={`inline-flex h-[36px] items-center justify-between gap-2 rounded-[4px] border border-ui-border bg-white px-2.5 sm:px-3 text-xs sm:text-sm text-brand-dark font-normal shadow-2xs hover:border-slate-400 focus:outline-hidden disabled:cursor-not-allowed disabled:bg-slate-100/80 cursor-pointer ${buttonClassName}`.trim()}
+                    {...props}
                 >
-                    <span className="sr-only">{ariaLabel}</span>
+                    <span className="whitespace-nowrap">{displayValue}</span>
+                    <ChevronDown
+                        aria-hidden="true"
+                        className={`h-3.5 w-3.5 shrink-0 text-slate-500 transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
+                    />
                 </button>
             </div>
 
@@ -73,7 +67,7 @@ export default function YearInput({
                 open={open}
                 onClose={() => setOpen(false)}
                 anchorRef={wrapperRef}
-                align="start"
+                align={align}
                 side="auto"
                 minHeightNeeded={240}
                 maxHeightLimit={340}
