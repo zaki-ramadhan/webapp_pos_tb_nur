@@ -36,6 +36,10 @@ export default function PortalDropdown({
         function updatePosition() {
             if (!anchorEl || !anchorEl.isConnected) return;
             const rect = anchorEl.getBoundingClientRect();
+            const panelEl = panelRef.current;
+            const panelWidth = panelEl ? panelEl.offsetWidth : 0;
+            const panelHeight = panelEl ? panelEl.offsetHeight : 0;
+
             setCoords((prev) => {
                 const nextTop = rect.bottom;
                 const nextLeft = rect.left;
@@ -43,6 +47,8 @@ export default function PortalDropdown({
                 const nextWidth = rect.width;
                 const nextSpaceBelow = window.innerHeight - rect.bottom;
                 const nextRectTop = rect.top;
+                const nextPanelWidth = panelWidth || prev?.panelWidth || 0;
+                const nextPanelHeight = panelHeight || prev?.panelHeight || 0;
 
                 if (
                     prev &&
@@ -51,7 +57,9 @@ export default function PortalDropdown({
                     prev.right === nextRight &&
                     prev.width === nextWidth &&
                     prev.spaceBelow === nextSpaceBelow &&
-                    prev.rectTop === nextRectTop
+                    prev.rectTop === nextRectTop &&
+                    prev.panelWidth === nextPanelWidth &&
+                    prev.panelHeight === nextPanelHeight
                 ) {
                     return prev;
                 }
@@ -63,6 +71,8 @@ export default function PortalDropdown({
                     width: nextWidth,
                     spaceBelow: nextSpaceBelow,
                     rectTop: nextRectTop,
+                    panelWidth: nextPanelWidth,
+                    panelHeight: nextPanelHeight,
                 };
             });
         }
@@ -157,6 +167,34 @@ export default function PortalDropdown({
         };
     }, [open, stopMouseDownPropagation, coords]);
 
+    useLayoutEffect(() => {
+        if (!open || !panelRef.current) return;
+        const panelEl = panelRef.current;
+        const w = panelEl.offsetWidth;
+        const h = panelEl.offsetHeight;
+        if (w > 0 && (w !== coords?.panelWidth || h !== coords?.panelHeight)) {
+            setCoords((prev) => (prev ? { ...prev, panelWidth: w, panelHeight: h } : prev));
+        }
+
+        let observer = null;
+        if (typeof ResizeObserver !== 'undefined') {
+            observer = new ResizeObserver(() => {
+                const nextW = panelEl.offsetWidth;
+                const nextH = panelEl.offsetHeight;
+                if (nextW > 0) {
+                    setCoords((prev) => {
+                        if (!prev || (prev.panelWidth === nextW && prev.panelHeight === nextH)) return prev;
+                        return { ...prev, panelWidth: nextW, panelHeight: nextH };
+                    });
+                }
+            });
+            observer.observe(panelEl);
+        }
+        return () => {
+            if (observer) observer.disconnect();
+        };
+    }, [open]);
+
     if (!open) return null;
 
     const showDropdown = coords !== null;
@@ -178,23 +216,59 @@ export default function PortalDropdown({
         position: 'fixed',
         zIndex: 9999,
         maxHeight: `${finalMaxHeight}px`,
+        maxWidth: 'calc(100vw - 16px)',
+        boxSizing: 'border-box',
         ...style,
     };
 
     if (coords) {
         if (align === 'stretch') {
-            positionStyle.left = `${coords.left}px`;
-            positionStyle.width = `${coords.width}px`;
-        } else if (align === 'start') {
-            const panelWidth = panelRef.current?.offsetWidth || 0;
-            if (panelWidth > 0 && coords.left + panelWidth > window.innerWidth - 8) {
-                positionStyle.left = `${Math.max(8, window.innerWidth - panelWidth - 8)}px`;
-            } else {
-                positionStyle.left = `${coords.left}px`;
+            const targetWidth = Math.min(coords.width, window.innerWidth - 16);
+            const targetLeft = Math.max(8, Math.min(coords.left, window.innerWidth - targetWidth - 8));
+            positionStyle.left = `${targetLeft}px`;
+            positionStyle.width = `${targetWidth}px`;
+        } else {
+            const currentWidth = coords.panelWidth || panelRef.current?.offsetWidth || 0;
+            const safeViewportWidth = window.innerWidth;
+            const minMargin = 8;
+
+            const spaceRight = safeViewportWidth - coords.left - minMargin;
+            const spaceLeft = coords.right - minMargin;
+
+            let resolvedAlign = align;
+            if (align === 'auto') {
+                if (spaceRight >= currentWidth) {
+                    resolvedAlign = 'start';
+                } else if (spaceLeft >= currentWidth) {
+                    resolvedAlign = 'end';
+                } else {
+                    resolvedAlign = spaceRight >= spaceLeft ? 'start' : 'end';
+                }
+            } else if (align === 'start') {
+                if (currentWidth > 0 && spaceRight < currentWidth && spaceLeft > spaceRight) {
+                    resolvedAlign = 'end';
+                }
+            } else if (align === 'end') {
+                if (currentWidth > 0 && spaceLeft < currentWidth && spaceRight > spaceLeft) {
+                    resolvedAlign = 'start';
+                }
             }
-        } else if (align === 'end') {
-            positionStyle.left = `${coords.right}px`;
-            positionStyle.transform = 'translateX(-100%)';
+
+            let targetLeft;
+            if (resolvedAlign === 'end') {
+                targetLeft = currentWidth > 0 ? (coords.right - currentWidth) : coords.left;
+            } else {
+                targetLeft = coords.left;
+            }
+
+            if (currentWidth > 0) {
+                const maxLeft = Math.max(minMargin, safeViewportWidth - currentWidth - minMargin);
+                targetLeft = Math.max(minMargin, Math.min(targetLeft, maxLeft));
+            } else {
+                targetLeft = Math.max(minMargin, Math.min(targetLeft, safeViewportWidth - minMargin));
+            }
+
+            positionStyle.left = `${targetLeft}px`;
         }
 
         if (renderAbove) {
