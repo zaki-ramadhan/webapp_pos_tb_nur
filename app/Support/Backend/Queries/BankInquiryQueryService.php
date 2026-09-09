@@ -292,8 +292,26 @@ class BankInquiryQueryService
         $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
         $endDate = $this->resolveDateFilter($filters['end_date'] ?? null);
 
+        $syncedOperationalDocIds = OperationDocument::query()
+            ->where('document_type', 'general_journal')
+            ->whereNotNull('related_document_id')
+            ->pluck('related_document_id')
+            ->filter()
+            ->unique()
+            ->all();
+
         return OperationDocument::query()
-            ->with(['primaryAccount', 'secondaryAccount', 'lines.account'])
+            ->with(['primaryAccount', 'secondaryAccount', 'lines.account', 'relatedDocument'])
+            ->where(function ($query) use ($syncedOperationalDocIds): void {
+                $query->where('document_type', 'general_journal');
+
+                $query->orWhere(function ($fallbackQ) use ($syncedOperationalDocIds): void {
+                    $fallbackQ->where('document_type', '!=', 'general_journal');
+                    if (!empty($syncedOperationalDocIds)) {
+                        $fallbackQ->whereNotIn('id', $syncedOperationalDocIds);
+                    }
+                });
+            })
             ->when(!empty($accountIds), function ($query) use ($accountIds): void {
                 $query->where(function ($q) use ($accountIds) {
                     $q->whereIn('primary_account_id', $accountIds)
@@ -457,19 +475,39 @@ class BankInquiryQueryService
             'purchase_payment' => 'Pembayaran Pembelian',
             'payroll_entry' => 'Pencatatan Gaji',
             'expense_entry' => 'Pencatatan Beban',
+            'sales_invoice' => 'Faktur Penjualan',
+            'purchase_invoice' => 'Faktur Pembelian',
+            'sales_return' => 'Retur Penjualan',
+            'purchase_return' => 'Retur Pembelian',
+            'sales_deposit' => 'Uang Muka Penjualan',
         ];
 
+        $meta = is_array($document->metadata) ? $document->metadata : (json_decode($document->metadata ?? '[]', true) ?: []);
         $docType = $document->document_type;
-        $transactionType = $typeTranslations[$docType] ?? str($docType)->replace('_', ' ')->title()->toString();
+        $docNumber = (string) ($meta['transaction_number'] ?? $document->document_number);
+
+        $relDoc = $document->relatedDocument;
+        $relDocType = $relDoc?->document_type;
+        if ($relDocType && isset($typeTranslations[$relDocType])) {
+            $transactionType = $typeTranslations[$relDocType];
+        } elseif (!empty($meta['transaction_type_label'])) {
+            $transactionType = $meta['transaction_type_label'];
+        } else {
+            $transactionType = $typeTranslations[$docType] ?? str($docType)->replace('_', ' ')->title()->toString();
+        }
+
+        $targetDocId = $document->related_document_id ?: $document->id;
+        $targetDocType = $relDocType ?: $docType;
+        $checkNumber = (string) ($document->external_number ?? $relDoc?->external_number ?? '');
 
         return [
             'id' => $id,
-            'document_id' => $document->id,
-            'document_type' => $document->document_type,
+            'document_id' => $targetDocId,
+            'document_type' => $targetDocType,
             'account_id' => $accountId,
             'account_name' => $accountName,
-            'document_number' => (string) $document->document_number,
-            'check_number' => (string) ($document->external_number ?? ''),
+            'document_number' => $docNumber,
+            'check_number' => $checkNumber,
             'transaction_type' => $transactionType,
             'description' => $description,
             'debit' => $this->formatNumber($debit),
@@ -480,7 +518,7 @@ class BankInquiryQueryService
             'date_label' => $date->format('Y-m-d'),
             'sortable_date' => $date->toDateString(),
             'net_amount' => $netAmount,
-            'is_opening_balance' => (bool) ($document->metadata['is_opening_balance'] ?? false),
+            'is_opening_balance' => (bool) ($meta['is_opening_balance'] ?? false),
         ];
     }
 
