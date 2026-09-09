@@ -11,13 +11,13 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
         : 'gap-2 px-3.5 md:gap-2.5 md:px-4.5';
     const className = useViewTabStyle
         ? active
-            ? 'border-x-[1px] border-t-[3px] border-b-[2px] border-b-tab-active-bg -mb-[2px] border-tab-view-active-border-x border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text'
-            : 'border-l-[1px] border-r-[1px] border-t-[2px] border-b-0 -mb-px border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text'
+            ? 'z-20 border-x-[1px] border-t-[3px] border-b-0 -mb-[2px] pb-[2px] border-tab-view-active-border-x border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text'
+            : '-mb-px border-l-[1px] border-r-[1px] border-t-[2px] border-b border-b-ui-border-medium border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text'
         : active
           ? tabsCount > 1
-            ? 'border-l-[1px] border-r-[1px] border-t-[3px] border-b-[2px] border-b-tab-active-bg -mb-[2px] border-l-tab-active-border-x border-r-tab-active-border-x border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text'
-            : 'border-l-[1px] border-r-[1px] border-t-[1px] border-b-[2px] border-b-tab-active-bg -mb-[2px] border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-active-bg font-normal text-tab-active-text'
-          : 'border-l-[1px] border-r-[1px] border-t-[2px] border-b-0 -mb-px border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text hover:bg-brand-primary hover:text-white';
+            ? 'z-20 border-l-[1px] border-r-[1px] border-t-[3px] border-b-0 -mb-[2px] pb-[2px] border-l-tab-active-border-x border-r-tab-active-border-x border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text'
+            : 'z-20 border-l-[1px] border-r-[1px] border-t-[1px] border-b-0 -mb-[2px] pb-[2px] border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-active-bg font-normal text-tab-active-text'
+          : '-mb-px border-l-[1px] border-r-[1px] border-t-[2px] border-b border-b-ui-border-medium border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text hover:bg-brand-primary hover:text-white';
     const closeButtonClassName = active
         ? 'text-abc-label-dark hover:text-red-600 transition-colors'
         : 'text-slate-400 group-hover:text-white/90 hover:!text-white';
@@ -142,7 +142,7 @@ export default function SecondaryTabs({
     return (
         <div
             ref={containerRef}
-            className={`min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`.trim()}
+            className={`min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`.trim()}
         >
             <div className={`flex w-max min-w-full items-end ${gapClassName}`}>
                 {tabs.map((tab) => (

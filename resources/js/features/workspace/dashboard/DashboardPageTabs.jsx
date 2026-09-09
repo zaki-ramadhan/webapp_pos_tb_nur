@@ -297,7 +297,7 @@ export default function DashboardPageTabs({
     );
 
     return (
-        <div className={`bg-ui-bg-panel pt-[3px] ${hasLevel2 ? 'border-b border-ui-border-medium' : ''}`.trim()}>
+        <div className="bg-ui-bg-panel pt-[3px]">
             <div className="border-b border-brand-primary bg-ui-bg-panel-light px-1 pt-0 sm:px-1.5">
                 <div className="flex items-stretch justify-between gap-1 sm:gap-2">
                     <div
@@ -323,18 +323,18 @@ export default function DashboardPageTabs({
             </div>
 
             {activePage?.id !== 'dashboard' && level2Tabs.length ? (
-                <div className="bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5">
-                    <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                <div className="border-b border-ui-border-medium bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5 relative z-10">
+                    <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
                         <SecondaryTabs
                             tabs={level2Tabs}
                             activeTabId={activeLevel2TabId}
                             onSelectTab={onSelectLevel2Tab}
                             onCloseTab={onCloseLevel2Tab}
-                            className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                            className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mb-px"
                         />
 
                         {level2Actions.filter(action => action.id !== 'tips' && action.icon !== 'idea' && action.id !== 'settings' && action.icon !== 'settings').length ? (
-                            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 pt-0.5">
+                            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 pb-1 pt-0.5">
                                 {level2Actions.filter(action => action.id !== 'tips' && action.icon !== 'idea' && action.id !== 'settings' && action.icon !== 'settings').map((action) => (
                                     <HeaderActionButton key={action.id} action={action} />
                                 ))}
