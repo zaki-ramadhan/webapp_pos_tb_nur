@@ -52,39 +52,39 @@ export function AccountsChildrenTab({ values, onOpenDetail }) {
     }
 
     return (
-        <div className="grid gap-7 grid-cols-[minmax(0,1fr)_310px] max-w-[850px]">
-            <div className="space-y-1.5">
-                {allRows.map((item) => (
+        <div className="space-y-1.5 max-w-[850px]">
+            {allRows.map((item) => (
+                <div
+                    key={item.isCurrent ? 'current' : `child-${item.id}`}
+                    onClick={() => handleRowClick(item)}
+                    className={`grid gap-7 grid-cols-[minmax(0,1fr)_310px] ${
+                        item.isCurrent
+                            ? 'cursor-default select-none'
+                            : 'group cursor-pointer active:scale-[0.995] transition-transform'
+                    }`}
+                >
                     <div
-                        key={`name-${item.id}`}
-                        onClick={() => handleRowClick(item)}
-                        className={`rounded-[3px] px-4 py-2.5 text-xs sm:text-sm text-brand-dark transition-all ${
+                        className={`rounded-[3px] px-4 py-2.5 text-xs sm:text-sm text-brand-dark transition-colors ${
                             item.isCurrent
-                                ? 'bg-[#d8dbde] font-medium cursor-default select-none'
-                                : 'bg-[#d8dbde] hover:bg-[#c4c9d1] cursor-pointer active:scale-[0.995]'
+                                ? 'bg-[#d8dbde] font-medium'
+                                : 'bg-[#d8dbde] group-hover:bg-[#c4c9d1]'
                         }`}
                         style={{ paddingLeft: `${16 + item.level * 20}px` }}
                     >
                         {item.name}
                     </div>
-                ))}
-            </div>
 
-            <div className="space-y-1.5">
-                {allRows.map((item) => (
                     <div
-                        key={`code-${item.id}`}
-                        onClick={() => handleRowClick(item)}
-                        className={`rounded-[3px] px-4 py-2.5 text-xs sm:text-sm text-brand-dark transition-all ${
+                        className={`rounded-[3px] px-4 py-2.5 text-xs sm:text-sm text-brand-dark transition-colors ${
                             item.isCurrent
-                                ? 'bg-[#d8dbde] font-medium cursor-default select-none'
-                                : 'bg-[#d8dbde] hover:bg-[#c4c9d1] cursor-pointer active:scale-[0.995]'
+                                ? 'bg-[#d8dbde] font-medium'
+                                : 'bg-[#d8dbde] group-hover:bg-[#c4c9d1]'
                         }`}
                     >
                         {item.code}
                     </div>
-                ))}
-            </div>
+                </div>
+            ))}
         </div>
     );
 }
