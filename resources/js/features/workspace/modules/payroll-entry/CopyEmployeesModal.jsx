@@ -184,19 +184,11 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
                 </DataTableHeader>
                 <DataTableBody>
                     {loading ? (
-                        Array.from({ length: 4 }).map((_, idx) => (
-                            <DataTableRow key={`skeleton-${idx}`} className="animate-pulse">
-                                <DataTableCell className="w-px px-3 text-center">
-                                    <div className="w-4 h-4 bg-slate-200 rounded mx-auto" />
-                                </DataTableCell>
-                                <DataTableCell className="py-2.5">
-                                    <div className="h-4 bg-slate-200 rounded w-36" />
-                                </DataTableCell>
-                                <DataTableCell className="py-2.5 pr-4 text-right">
-                                    <div className="h-4 bg-slate-200 rounded w-24 ml-auto" />
-                                </DataTableCell>
-                            </DataTableRow>
-                        ))
+                        <DataTableRow>
+                            <DataTableCell colSpan={3} className="text-center py-2 text-xs sm:text-sm font-normal text-black">
+                                Memuat data...
+                            </DataTableCell>
+                        </DataTableRow>
                     ) : availableEmployees.length === 0 ? (
                         <DataTableRow>
                             <DataTableCell colSpan={3} className="text-center py-2 text-xs sm:text-sm font-normal text-black">
