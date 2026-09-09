@@ -36,7 +36,7 @@ export default function ExpenseEntryHeader({ config, values, setValues, showAuto
                             placeholder={config.liabilityAccountPlaceholder}
                             dialogTitle="Pilih Akun Hutang Beban"
                             showType={true}
-                            queryParams={{ account_type: ['Payable', 'Other Current Liability'] }}
+                            queryParams={{ account_type: ['Payable', 'Other Current Liability'], leaf_only: true }}
                             onRemove={(value) =>
                                 handlers.onRemoveLiabilityAccount
                                     ? handlers.onRemoveLiabilityAccount(value)

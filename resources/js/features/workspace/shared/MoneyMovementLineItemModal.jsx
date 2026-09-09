@@ -176,7 +176,7 @@ export default function MoneyMovementLineItemModal({
                                     placeholder="Cari/Pilih Akun Perkiraan..."
                                     searchLabel="Cari akun perkiraan"
                                     showType={true}
-                                    queryParams={{ exclude_type: ['Cash/Bank', 'Receivable', 'Payable', 'Inventory', 'Accumulated Depreciation'] }}
+                                    queryParams={{ exclude_type: ['Cash/Bank', 'Receivable', 'Payable', 'Inventory', 'Accumulated Depreciation'], leaf_only: true }}
                                     onSelectAccount={(rec) => setSelectedAccount(rec)}
                                     onRemove={() => setSelectedAccount(null)}
                                 />

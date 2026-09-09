@@ -69,6 +69,19 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
         };
     }, [query, resource, title, queryParamsStr]);
 
+    const visibleRows = useMemo(() => {
+        if (resource !== 'accounts') {
+            return rows;
+        }
+        return rows.filter((record) => {
+            const isParent = Boolean(
+                record.has_children ||
+                (Array.isArray(record.children) && record.children.length > 0)
+            );
+            return !isParent;
+        });
+    }, [rows, resource]);
+
     return (
         <WorkspaceDialog
             open={open}
@@ -97,14 +110,14 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
             </div>
 
             <div className="flex-1 overflow-y-auto max-h-[280px] border border-table-row-border rounded-[4px] divide-y divide-table-row-border">
-                {loading && rows.length === 0 ? (
+                {loading && visibleRows.length === 0 ? (
                     <LookupLoadingState className="p-4" />
                 ) : error ? (
                     <div className="p-4 text-center text-red-500 text-xs">
                         {error}
                     </div>
-                ) : rows.length > 0 ? (
-                    rows.map((record) => (
+                ) : visibleRows.length > 0 ? (
+                    visibleRows.map((record) => (
                         <button
                             key={record.id}
                             type="button"
