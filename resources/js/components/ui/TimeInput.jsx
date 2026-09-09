@@ -10,7 +10,7 @@ export default function TimeInput({
     onChange,
     disabled = false,
     className = '',
-    inputClassName = 'text-xs sm:text-sm text-brand-dark font-medium',
+    inputClassName = 'text-xs sm:text-sm text-brand-dark font-normal',
     ariaLabel = 'Pilih jam',
     ...props
 }) {
