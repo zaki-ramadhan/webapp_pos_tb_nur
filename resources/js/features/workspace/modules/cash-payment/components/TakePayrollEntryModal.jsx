@@ -4,6 +4,8 @@ import TextInput from '@/components/ui/TextInput';
 import SelectField from '@/components/ui/SelectField';
 import CheckboxField from '@/components/ui/CheckboxField';
 import Button from '@/components/ui/Button';
+import MonthInput from '@/components/ui/MonthInput';
+import YearInput from '@/components/ui/YearInput';
 import { SearchIcon, LoadingIcon } from '@/features/workspace/shared/Icons';
 import { listBackendResource, extractBackendRows } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
@@ -196,7 +198,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
             {/* Filter controls */}
             <div className="flex flex-wrap items-center justify-between gap-2.5">
                 <div className="flex flex-wrap items-center gap-2">
-                    <div className="w-full sm:w-[170px]">
+                    <div className="w-full sm:w-[260px]">
                         <TextInput
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -228,32 +230,16 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
 
                 <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-brand-dark font-normal ml-auto">
                     <span className="whitespace-nowrap">Periode:</span>
-                    <div className="min-w-[140px]">
-                        <SelectField
-                            value={selectedMonth}
-                            onChange={(e) => setSelectedMonth(e.target.value)}
-                            className="h-[36px] rounded-[4px] border-ui-border bg-white"
-                            selectClassName="text-xs sm:text-sm text-brand-dark pl-2.5 pr-7"
-                        >
-                            <option value="all">Semua Bulan</option>
-                            {INDONESIAN_MONTHS.map((month) => (
-                                <option key={month} value={month}>{month}</option>
-                            ))}
-                        </SelectField>
-                    </div>
-                    <div className="min-w-[125px]">
-                        <SelectField
-                            value={selectedYear}
-                            onChange={(e) => setSelectedYear(e.target.value)}
-                            className="h-[36px] rounded-[4px] border-ui-border bg-white"
-                            selectClassName="text-xs sm:text-sm text-brand-dark pl-2.5 pr-7"
-                        >
-                            <option value="all">Semua Tahun</option>
-                            {YEAR_OPTIONS.map((year) => (
-                                <option key={year} value={year}>{year}</option>
-                            ))}
-                        </SelectField>
-                    </div>
+                    <MonthInput
+                        value={selectedMonth}
+                        onChange={setSelectedMonth}
+                        className="w-[145px]"
+                    />
+                    <YearInput
+                        value={selectedYear}
+                        onChange={setSelectedYear}
+                        className="w-[130px]"
+                    />
                 </div>
             </div>
 

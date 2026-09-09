@@ -156,7 +156,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
         >
             {/* Filter controls */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                <div className="w-full sm:max-w-[200px]">
+                <div className="w-full sm:w-[260px]">
                     <TextInput
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
