@@ -7,15 +7,26 @@ import ErrorIllustration from '@/components/ui/ErrorIllustration';
 import { AlertTriangleIcon, CloseIcon, InfoIcon } from '@/features/workspace/shared/Icons';
 
 function normalizeMessages(messages = [], message = '') {
-    if (messages.length) {
-        return messages;
-    }
+    const raw = (Array.isArray(messages) && messages.length > 0)
+        ? messages
+        : (message ? (Array.isArray(message) ? message : [message]) : []);
 
-    if (message) {
-        return [message];
-    }
+    const flattened = raw.flatMap((item) => {
+        if (typeof item === 'string') {
+            if (item.includes(' • ')) return item.split(' • ');
+            if (item.includes('\n')) return item.split('\n');
+        }
+        return item;
+    });
 
-    return [];
+    return flattened.map((item) => {
+        const s = String(item ?? '').trim();
+        if (!s) return '';
+        if (!s.toLowerCase().includes('harus') && !s.toLowerCase().includes('wajib') && !s.toLowerCase().includes('tidak') && !s.toLowerCase().includes('minimal') && !s.toLowerCase().includes('melebihi') && !s.toLowerCase().includes('sudah') && !s.toLowerCase().includes('gagal') && !s.toLowerCase().includes('sesuai')) {
+            return `${s} harus diisi`;
+        }
+        return s.replace(/\.$/, '');
+    }).filter(Boolean);
 }
 
 export default function SystemErrorModal({
@@ -155,7 +166,7 @@ export default function SystemErrorModal({
                                         {finalMessages[0]}
                                     </p>
                                 ) : (
-                                    <ul className="list-disc pl-5 space-y-1">
+                                    <ul className="list-disc pl-5 space-y-1 marker:text-black">
                                         {finalMessages.map((item, index) => (
                                             <li key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-6 text-[#A20025]">
                                                 {item}

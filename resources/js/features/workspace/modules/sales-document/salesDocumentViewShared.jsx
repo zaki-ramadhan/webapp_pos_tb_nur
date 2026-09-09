@@ -82,7 +82,7 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
                 detail: validationDetail
             }));
 
-            showCrudValidationToast(errorMessages.join(' • '));
+            showCrudValidationToast(errorMessages);
             return;
         }
 
