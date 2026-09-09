@@ -15,4 +15,5 @@ Artisan::command('journal:sync-general {--keep-dummy : Tidak menghapus dummy REF
     $this->info("Sinkronisasi Jurnal Umum selesai!");
     $this->line("- Transaksi operasional terposting: {$result['posted_transactions']}");
     $this->line("- Jurnal penyesuaian manual terbuat: {$result['manual_adjustments']}");
+    $this->line("- Log aktivitas jurnal tersinkronisasi: {$result['synced_activity_logs']}");
 })->purpose('Sinkronisasi seluruh transaksi operasional dan buat jurnal penyesuaian realistis ke Jurnal Umum');

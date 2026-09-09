@@ -256,13 +256,13 @@ class SecuritySeeder extends Seeder
         $logs = [];
         $logTemplates = [
             ['group' => 'sales', 'res' => 'sales-invoices', 'label' => 'Faktur Penjualan', 'perm' => 'sales-invoice', 'action' => 'create', 'desc' => 'Buat Faktur Penjualan Kasir', 'subj' => 'Faktur Penjualan'],
-            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penjualan Kasir', 'perm' => 'general-journal', 'action' => 'create', 'desc' => 'Buat Jurnal Penjualan Kasir', 'subj' => 'Jurnal Penjualan'],
+            ['group' => 'sales', 'res' => 'sales-orders', 'label' => 'Pesanan Penjualan', 'perm' => 'sales-order', 'action' => 'create', 'desc' => 'Buat Pesanan Penjualan', 'subj' => 'Pesanan Penjualan'],
             ['group' => 'purchasing', 'res' => 'purchase-orders', 'label' => 'Pesanan Pembelian', 'perm' => 'purchase-order', 'action' => 'create', 'desc' => 'Buat Pesanan Pembelian Stok', 'subj' => 'Pesanan Pembelian'],
-            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Pembelian Supplier', 'perm' => 'general-journal', 'action' => 'create', 'desc' => 'Buat Jurnal Faktur Pembelian Supplier', 'subj' => 'Jurnal Pembelian'],
+            ['group' => 'purchasing', 'res' => 'goods-receipts', 'label' => 'Penerimaan Barang', 'perm' => 'goods-receipt', 'action' => 'create', 'desc' => 'Buat Penerimaan Barang Supplier', 'subj' => 'Penerimaan Barang'],
             ['group' => 'inventory', 'res' => 'stock-opname', 'label' => 'Opname Persediaan', 'perm' => 'inventory-adjustment', 'action' => 'create', 'desc' => 'Buat Penyesuaian Stok Gudang', 'subj' => 'Penyesuaian Stok'],
-            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Kas & Bank', 'perm' => 'general-journal', 'action' => 'create', 'desc' => 'Buat Jurnal Penerimaan Kas Kecil', 'subj' => 'Jurnal Penerimaan Kas'],
+            ['group' => 'inventory', 'res' => 'stock-transfers', 'label' => 'Transfer Stok', 'perm' => 'stock-transfer', 'action' => 'create', 'desc' => 'Buat Transfer Barang Antar Gudang', 'subj' => 'Transfer Stok'],
             ['group' => 'finance', 'res' => 'cash-payments', 'label' => 'Pengeluaran Kas', 'perm' => 'cash-payment', 'action' => 'create', 'desc' => 'Buat Pengeluaran Kas Toko', 'subj' => 'Pengeluaran Kas Toko'],
-            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penyesuaian Operasional', 'perm' => 'general-journal', 'action' => 'create', 'desc' => 'Buat Jurnal Penyesuaian Beban Perlengkapan', 'subj' => 'Jurnal Penyesuaian'],
+            ['group' => 'finance', 'res' => 'cash-receipts', 'label' => 'Penerimaan Kas', 'perm' => 'cash-receipt', 'action' => 'create', 'desc' => 'Buat Penerimaan Kas', 'subj' => 'Penerimaan Kas'],
             ['group' => 'general', 'res' => 'products', 'label' => 'Data Barang', 'perm' => 'product', 'action' => 'update', 'desc' => 'Ubah Data & Harga Barang', 'subj' => 'Data Barang'],
             ['group' => 'finance', 'res' => 'sales-receipts', 'label' => 'Penerimaan Piutang', 'perm' => 'sales-receipt', 'action' => 'create', 'desc' => 'Buat Penerimaan Pelunasan Piutang', 'subj' => 'Penerimaan Piutang'],
         ];

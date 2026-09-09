@@ -310,13 +310,24 @@ export function mapJournalActivityRows(records) {
     const totalCount = filteredRecords.length;
 
     return filteredRecords.map((record, index) => {
-        const transactionDate = normalizeDisplayDate(record.metadata?.transaction_date) || normalizeDisplayDate(record.occurred_at);
+        let meta = record.metadata;
+        if (typeof meta === 'string') {
+            try { meta = JSON.parse(meta); } catch (e) { meta = {}; }
+        }
+        meta = meta || {};
+
+        const transactionDate = normalizeDisplayDate(meta.transaction_date) || normalizeDisplayDate(record.occurred_at);
         const dateObj = record.occurred_at ? new Date(record.occurred_at) : new Date();
         const year = dateObj.getFullYear();
         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
         const seq = String(totalCount - index).padStart(5, '0');
-        const jvNumber = record.metadata?.jv_number ?? `JV.${year}.${month}.${seq}`;
-        const transNumber = record.document_number ?? record.subject_label ?? '-';
+        const jvNumber = meta.jv_number ?? record.metadata?.jv_number ?? `JV.${year}.${month}.${seq}`;
+        
+        let transNumber = record.document_number ?? record.subject_label ?? '-';
+        if (transNumber === jvNumber) {
+            transNumber = '-';
+        }
+
         const rawAction = String(record.action ?? '').toLowerCase();
         const normalizedAction = rawAction === 'post' ? 'create' : (record.action ?? '');
         const isDeleted = String(normalizedAction).toLowerCase() === 'delete' || String(normalizedAction).toLowerCase() === 'void';
@@ -326,11 +337,11 @@ export function mapJournalActivityRows(records) {
             __backendRecord: record,
             date: formatIsoDate(record.occurred_at),
             number: jvNumber,
-            transactionNumber: transNumber,
+            transactionNumber: transNumber || '-',
             typeLabel: mapResourceLabel(record.resource_key, record.permission_key, record.resource_label),
             isDeleted: isDeleted ? 'Ya' : 'Tidak',
             isDeletedValue: isDeleted ? 'yes' : 'no',
-            amount: record.metadata?.amount ?? '',
+            amount: meta.amount ?? record.metadata?.amount ?? '',
             actorName: record.actor_name ?? record.actor_email ?? 'Zaki Ramadhan',
             dateValue: normalizeDisplayDate(record.occurred_at),
             transactionDateValue: transactionDate || 'empty',

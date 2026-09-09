@@ -18,7 +18,7 @@ class GeneralJournalSyncService
     /**
      * Sinkronisasi transaksi operasional ke Jurnal Umum dan buat jurnal penyesuaian realistis.
      *
-     * @return array{posted_transactions: int, manual_adjustments: int}
+     * @return array{posted_transactions: int, manual_adjustments: int, synced_activity_logs: int}
      */
     public function syncAll(bool $cleanOldDummy = true): array
     {
@@ -29,10 +29,12 @@ class GeneralJournalSyncService
         $postedCount = $this->syncOperationalTransactions();
         $adjustmentCount = $this->seedManualAdjustments();
         $this->ensureDocumentUsers();
+        $syncedLogs = $this->syncJournalActivityLogs();
 
         return [
             'posted_transactions' => $postedCount,
             'manual_adjustments' => $adjustmentCount,
+            'synced_activity_logs' => $syncedLogs,
         ];
     }
 
@@ -416,4 +418,168 @@ class GeneralJournalSyncService
             }
         }
     }
+
+    /**
+     * Sinkronisasi rekam jejak Log Aktivitas Jurnal (activity_logs) agar konsisten dengan Jurnal Umum.
+     */
+    public function syncJournalActivityLogs(): int
+    {
+        // Bersihkan seluruh log dummy/statis jurnal sebelumnya agar 100% konsisten
+        DB::table('activity_logs')
+            ->where('log_group', 'journal')
+            ->delete();
+
+        $journals = OperationDocument::query()
+            ->where('document_type', 'general_journal')
+            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->with(['lines.account'])
+            ->orderBy('entry_date')
+            ->orderBy('id')
+            ->get();
+
+        if ($journals->isEmpty()) {
+            return 0;
+        }
+
+        $relatedDocIds = $journals->pluck('related_document_id')->filter()->unique()->all();
+        $relatedDocs = !empty($relatedDocIds)
+            ? OperationDocument::whereIn('id', $relatedDocIds)->get()->keyBy('id')
+            : collect();
+
+        $users = DB::table('users')->get()->keyBy('id');
+        $adminUser = DB::table('users')->where('email', 'piscokpiscok2610@gmail.com')->first()
+            ?? DB::table('users')->first();
+
+        $accounts = DB::table('accounts')->get()->keyBy('id');
+
+        $typeConfig = [
+            'expense_entry' => [
+                'resource_key' => 'expense-entries',
+                'permission_key' => 'expense-entry',
+                'resource_label' => 'Pencatatan Beban',
+            ],
+            'payroll_entry' => [
+                'resource_key' => 'payroll-entries',
+                'permission_key' => 'payroll-entry',
+                'resource_label' => 'Pencatatan Gaji',
+            ],
+            'cash_payment' => [
+                'resource_key' => 'cash-payments',
+                'permission_key' => 'cash-payment',
+                'resource_label' => 'Pembayaran Kas & Bank',
+            ],
+            'cash_receipt' => [
+                'resource_key' => 'cash-receipts',
+                'permission_key' => 'cash-receipt',
+                'resource_label' => 'Penerimaan Kas & Bank',
+            ],
+            'bank_transfer' => [
+                'resource_key' => 'bank-transfers',
+                'permission_key' => 'bank-transfer',
+                'resource_label' => 'Transfer Bank',
+            ],
+            'sales_invoice' => [
+                'resource_key' => 'sales-invoices',
+                'permission_key' => 'sales-invoice',
+                'resource_label' => 'Faktur Penjualan',
+            ],
+            'purchase_invoice' => [
+                'resource_key' => 'purchase-invoices',
+                'permission_key' => 'purchase-invoice',
+                'resource_label' => 'Faktur Pembelian',
+            ],
+            'general_journal' => [
+                'resource_key' => 'general-journals',
+                'permission_key' => 'general-journal',
+                'resource_label' => 'Jurnal Umum',
+            ],
+        ];
+
+        $logs = [];
+
+        foreach ($journals as $journal) {
+            $related = $journal->related_document_id ? $relatedDocs->get($journal->related_document_id) : null;
+
+            if ($related) {
+                $docType = $related->document_type;
+                $cfg = $typeConfig[$docType] ?? $typeConfig['general_journal'];
+                $transNumber = $related->document_number;
+                $subjectLabel = $related->document_number;
+                $description = "Buat {$cfg['resource_label']} {$transNumber}";
+                $userId = $related->responsible_user_id ?: ($adminUser->id ?? null);
+            } else {
+                $cfg = $typeConfig['general_journal'];
+                $transNumber = null;
+                $subjectLabel = '-';
+                $description = "Buat Jurnal Penyesuaian {$journal->document_number}" . ($journal->notes ? ' - ' . $journal->notes : '');
+                $userId = $journal->responsible_user_id ?: ($adminUser->id ?? null);
+            }
+
+            $actor = $users->get($userId) ?? $adminUser;
+            $actorName = $actor->name ?? 'Zaki Ramadhan';
+            $actorEmail = $actor->email ?? 'piscokpiscok2610@gmail.com';
+
+            $linesPayload = [];
+            foreach ($journal->lines as $line) {
+                $acc = $line->account ?? ($accounts->get($line->account_id) ?? null);
+                $linesPayload[] = [
+                    'id' => $line->id,
+                    'account_code' => $acc?->code ?? '',
+                    'account_name' => $acc?->name ?? $line->description ?? 'Akun Perkiraan',
+                    'debit_amount' => (float) $line->debit_amount,
+                    'credit_amount' => (float) $line->credit_amount,
+                    'description' => $line->description,
+                ];
+            }
+
+            $entryDate = Carbon::parse($journal->entry_date);
+            $occurredAt = $entryDate->copy()->setTime(rand(8, 16), rand(10, 59), rand(10, 59));
+
+            $afterPayload = [
+                'document_number' => $transNumber ?: $journal->document_number,
+                'status' => 'Posted',
+                'total_amount' => (float) $journal->total_amount,
+                'lines' => $linesPayload,
+            ];
+
+            $metadata = [
+                'resource_model' => OperationDocument::class,
+                'transaction_date' => $journal->entry_date,
+                'jv_number' => $journal->document_number,
+                'transaction_number' => $transNumber,
+                'amount' => (float) $journal->total_amount,
+                'lines' => $linesPayload,
+            ];
+
+            $logs[] = [
+                'log_group' => 'journal',
+                'resource_key' => $cfg['resource_key'],
+                'resource_label' => $cfg['resource_label'],
+                'permission_key' => $cfg['permission_key'],
+                'action' => 'create',
+                'subject_type' => OperationDocument::class,
+                'subject_id' => $journal->related_document_id ?: $journal->id,
+                'subject_label' => $subjectLabel,
+                'document_number' => $transNumber,
+                'description' => $description,
+                'actor_user_id' => $actor?->id,
+                'actor_name' => $actorName,
+                'actor_email' => $actorEmail,
+                'ip_address' => '192.168.1.' . rand(10, 50),
+                'occurred_at' => $occurredAt,
+                'before_payload' => null,
+                'after_payload' => json_encode($afterPayload),
+                'metadata' => json_encode($metadata),
+                'created_at' => $occurredAt,
+                'updated_at' => $occurredAt,
+            ];
+        }
+
+        foreach (array_chunk($logs, 100) as $chunk) {
+            DB::table('activity_logs')->insert($chunk);
+        }
+
+        return count($logs);
+    }
 }
+
