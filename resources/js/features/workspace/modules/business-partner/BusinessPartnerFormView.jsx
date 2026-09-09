@@ -64,7 +64,6 @@ export default function BusinessPartnerFormView({
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [errorModal, setErrorModal] = useState({ open: false, title: '', message: '' });
 
     useEffect(() => {
         setActiveTabId(config.tabs[0]?.id ?? 'general');
@@ -158,11 +157,7 @@ export default function BusinessPartnerFormView({
                 window.dispatchEvent(new CustomEvent('form-validation-error', { detail: flat }));
                 const missingList = Object.values(flat).filter(Boolean);
                 if (missingList.length > 0) {
-                    setErrorModal({
-                        open: true,
-                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                        message: formatErrorMessageList(missingList),
-                    });
+                    showCrudValidationToast(missingList);
                 }
             }
         }
@@ -248,17 +243,6 @@ export default function BusinessPartnerFormView({
                 onConfirm={performDelete}
             />
 
-            <ConfirmationModal
-                open={errorModal.open}
-                title={errorModal.title || 'Terjadi Permasalahan pada Pemrosesan'}
-                message={errorModal.message}
-                confirmLabel="OK"
-                cancelLabel=""
-                confirmVariant="brand-blue"
-                iconVariant="error"
-                onClose={() => setErrorModal({ open: false, title: '', message: '' })}
-                onConfirm={() => setErrorModal({ open: false, title: '', message: '' })}
-            />
         </FormErrorProvider>
     );
 }

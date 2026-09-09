@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ModalBase from '@/components/ui/ModalBase';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import {
     DataTable,
     DataTableBody,
@@ -167,19 +168,17 @@ export function PartnerInlineTableSection({
     const [showModal, setShowModal] = useState(false);
     const [form, setForm] = useState({});
     const [errors, setErrors] = useState({});
-    const [errorModal, setErrorModal] = useState({ open: false, title: '', message: '' });
-
     const handleOpen = (e) => {
         e?.preventDefault?.();
         e?.stopPropagation?.();
         if (onValidateBeforeOpen) {
             const res = onValidateBeforeOpen();
             if (typeof res === 'string') {
-                setErrorModal({ open: true, title: 'Terjadi Permasalahan pada Pemrosesan', message: formatErrorMessageList(res) });
+                showSystemErrorModal({ message: res });
                 return;
             }
             if (res === false) {
-                setErrorModal({ open: true, title: 'Terjadi Permasalahan pada Pemrosesan', message: formatErrorMessageList('Nama Pemasok harus diisi') });
+                showSystemErrorModal({ message: 'Nama Pemasok harus diisi' });
                 return;
             }
         }
@@ -200,10 +199,8 @@ export function PartnerInlineTableSection({
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            setErrorModal({
-                open: true,
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                message: formatErrorMessageList(missingLabels),
+            showSystemErrorModal({
+                messages: missingLabels,
             });
             return;
         }
@@ -311,16 +308,6 @@ export function PartnerInlineTableSection({
                 </ModalBase>
             )}
 
-            <ConfirmationModal
-                open={errorModal.open}
-                onClose={() => setErrorModal({ open: false, title: '', message: '' })}
-                onConfirm={() => setErrorModal({ open: false, title: '', message: '' })}
-                title={errorModal.title || 'Terjadi Permasalahan pada Pemrosesan'}
-                message={errorModal.message}
-                confirmLabel="OK"
-                cancelLabel=""
-                iconVariant="error"
-            />
         </div>
     );
 }

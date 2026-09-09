@@ -6,6 +6,7 @@ import {
     showWarningToast,
     updateToastToSuccess,
 } from '@/components/feedback/toast';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export function showCrudLoadingToast(message) {
     return showLoadingToast({
@@ -29,11 +30,15 @@ export function showCrudErrorToast(message) {
 }
 
 export function showCrudValidationToast(message) {
-    showWarningToast({
-        title: 'Periksa Form',
-        message,
+    return showSystemErrorModal({
+        title: 'Terjadi Permasalahan pada Pemrosesan',
+        description: 'Silakan perbaiki permasalahan berikut ini:',
+        messages: Array.isArray(message) ? message : undefined,
+        message: typeof message === 'string' ? message : (Array.isArray(message) ? undefined : String(message ?? '')),
     });
 }
+
+export const showCrudValidationModal = showCrudValidationToast;
 
 export function finishCrudLoadingToast(toastId, message = 'Data berhasil disimpan.') {
     if (toastId) {

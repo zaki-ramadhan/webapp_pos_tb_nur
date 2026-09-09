@@ -91,13 +91,12 @@ export async function executeCrudFormAction({
             dispatchValidationErrors(flat);
 
             const fieldMessages = Array.from(new Set(Object.values(flat).filter(Boolean)));
-            const toastMessage = fieldMessages.length > 0
-                ? fieldMessages.slice(0, 3).join(' • ') + (fieldMessages.length > 3 ? ` (+${fieldMessages.length - 3} lainnya)` : '')
-                : errorMessage;
+            const validationErrorsList = fieldMessages.length > 0 ? fieldMessages : [errorMessage];
+            const summaryMessage = fieldMessages.length > 0 ? fieldMessages.join(' • ') : errorMessage;
 
             dismissCrudLoadingToast(loadingToastId);
-            setStatus?.({ tone: 'error', message: toastMessage });
-            showCrudValidationToast(toastMessage);
+            setStatus?.({ tone: 'error', message: summaryMessage });
+            showCrudValidationToast(validationErrorsList);
         } else {
             dismissCrudLoadingToast(loadingToastId);
             setStatus?.({ tone: 'error', message: errorMessage });

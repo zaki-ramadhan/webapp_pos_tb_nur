@@ -9,8 +9,6 @@ import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults'
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { formatErrorMessageList } from '@/features/workspace/modules/business-partner/BusinessPartnerViewShared';
 import { CloseIcon } from '@/features/workspace/shared/Icons';
-import ConfirmationModal from '@/components/ui/ConfirmationModal';
-
 export function OpeningBalanceModal({
     isOpen,
     onClose,
@@ -26,7 +24,6 @@ export function OpeningBalanceModal({
     const [salesperson, setSalesperson] = useState([]);
     const [amount, setAmount] = useState('');
     const [notes, setNotes] = useState('');
-    const [errorModal, setErrorModal] = useState({ open: false, title: '', message: '' });
 
     useEffect(() => {
         if (isOpen) {
@@ -61,8 +58,7 @@ export function OpeningBalanceModal({
     };
 
     return (
-        <>
-            <ModalBase
+        <ModalBase
                 open={isOpen}
                 isOpen={isOpen}
                 onBackdropClick={onClose}
@@ -172,18 +168,6 @@ export function OpeningBalanceModal({
                     </button>
                 </div>
             </ModalBase>
-
-            <ConfirmationModal
-                open={errorModal.open}
-                onClose={() => setErrorModal({ open: false, title: '', message: '' })}
-                onConfirm={() => setErrorModal({ open: false, title: '', message: '' })}
-                title={errorModal.title || 'Terjadi Permasalahan pada Pemrosesan'}
-                message={errorModal.message}
-                confirmLabel="OK"
-                cancelLabel=""
-                iconVariant="error"
-            />
-        </>
     );
 }
 
