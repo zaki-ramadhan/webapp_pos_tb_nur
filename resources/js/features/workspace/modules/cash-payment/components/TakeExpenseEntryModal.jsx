@@ -193,73 +193,72 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
             </div>
 
             {/* Table */}
-            <div className="flex-1 overflow-x-auto border border-slate-200 rounded-[4px] bg-white min-h-[220px]">
-                <TransactionDataTable
-                    columns={columns}
-                    rows={filteredRecords}
-                    emptyLabel={loading ? 'Memuat data...' : 'Tidak ada data'}
-                    minWidthClassName="min-w-[800px]"
-                    showNumbering={false}
-                    onRowClick={(row) => handleToggleRecord(row.id)}
-                    getRowClassName={(row) => {
+            <TransactionDataTable
+                bordered={false}
+                columns={columns}
+                rows={filteredRecords}
+                emptyLabel={loading ? 'Memuat data...' : 'Tidak ada data'}
+                minWidthClassName="min-w-[800px]"
+                showNumbering={false}
+                onRowClick={(row) => handleToggleRecord(row.id)}
+                getRowClassName={(row) => {
+                    const isSelected = selectedIds.has(String(row.id));
+                    return `cursor-pointer transition hover:bg-workspace-hover-bg ${
+                        isSelected ? 'bg-blue-50/40 hover:bg-blue-50' : ''
+                    }`;
+                }}
+                renderHeaderCell={(column) => {
+                    if (column.id === 'checkbox') {
+                        return (
+                            <CheckboxField
+                                id="take-expense-select-all"
+                                checked={allChecked}
+                                onChange={handleSelectAll}
+                                align="center"
+                                inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                containerClassName="flex justify-center"
+                            />
+                        );
+                    }
+                    return column.label;
+                }}
+                renderCell={({ row, column }) => {
+                    if (column.id === 'checkbox') {
                         const isSelected = selectedIds.has(String(row.id));
-                        return `cursor-pointer transition hover:bg-workspace-hover-bg ${
-                            isSelected ? 'bg-blue-50/40 hover:bg-blue-50' : ''
-                        }`;
-                    }}
-                    renderHeaderCell={(column) => {
-                        if (column.id === 'checkbox') {
+                        return (
+                            <CheckboxField
+                                id={`take-expense-item-${row.id}`}
+                                checked={isSelected}
+                                onChange={() => handleToggleRecord(row.id)}
+                                align="center"
+                                inputClassName="h-3.5 w-3.5 rounded-[3px] pointer-events-none"
+                                containerClassName="flex justify-center"
+                            />
+                        );
+                    }
+                    if (column.id === 'entry_date' || column.id === 'due_date') {
+                        return row[column.id] ? formatIsoDate(row[column.id]) : '-';
+                    }
+                    if (column.id === 'total_amount') {
+                        const total = Number(row.total_amount ?? 0);
+                        const outstanding = row.outstanding_amount !== undefined ? Number(row.outstanding_amount) : total;
+                        if (outstanding < total && outstanding > 0) {
                             return (
-                                <CheckboxField
-                                    id="take-expense-select-all"
-                                    checked={allChecked}
-                                    onChange={handleSelectAll}
-                                    align="center"
-                                    inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                    containerClassName="flex justify-center"
-                                />
+                                <div className="flex flex-col items-end gap-0.5 leading-snug">
+                                    <span className="font-normal text-text-darkest text-xs sm:text-sm">
+                                        Sisa: Rp {outstanding.toLocaleString('id-ID')}
+                                    </span>
+                                    <span className="text-xs text-text-muted line-through">
+                                        Total: Rp {total.toLocaleString('id-ID')}
+                                    </span>
+                                </div>
                             );
                         }
-                        return column.label;
-                    }}
-                    renderCell={({ row, column }) => {
-                        if (column.id === 'checkbox') {
-                            const isSelected = selectedIds.has(String(row.id));
-                            return (
-                                <CheckboxField
-                                    id={`take-expense-item-${row.id}`}
-                                    checked={isSelected}
-                                    onChange={() => handleToggleRecord(row.id)}
-                                    align="center"
-                                    inputClassName="h-3.5 w-3.5 rounded-[3px] pointer-events-none"
-                                    containerClassName="flex justify-center"
-                                />
-                            );
-                        }
-                        if (column.id === 'entry_date' || column.id === 'due_date') {
-                            return row[column.id] ? formatIsoDate(row[column.id]) : '-';
-                        }
-                        if (column.id === 'total_amount') {
-                            const total = Number(row.total_amount ?? 0);
-                            const outstanding = row.outstanding_amount !== undefined ? Number(row.outstanding_amount) : total;
-                            if (outstanding < total && outstanding > 0) {
-                                return (
-                                    <div className="flex flex-col items-end gap-0.5 leading-snug">
-                                        <span className="font-normal text-text-darkest text-xs sm:text-sm">
-                                            Sisa: Rp {outstanding.toLocaleString('id-ID')}
-                                        </span>
-                                        <span className="text-xs text-text-muted line-through">
-                                            Total: Rp {total.toLocaleString('id-ID')}
-                                        </span>
-                                    </div>
-                                );
-                            }
-                            return formatCurrencyValue(total);
-                        }
-                        return row[column.id] || '-';
-                    }}
-                />
-            </div>
+                        return formatCurrencyValue(total);
+                    }
+                    return row[column.id] || '-';
+                }}
+            />
         </WorkspaceDialog>
     );
 }
