@@ -106,19 +106,32 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
         });
     }, [records]);
 
-  // Filter records client-side by type, month, and year
+    const availableTypes = useMemo(() => {
+        const types = new Set();
+        parsedRecords.forEach((r) => {
+            if (r.parsedType) types.add(r.parsedType);
+        });
+        return Array.from(types);
+    }, [parsedRecords]);
 
+    useEffect(() => {
+        if (availableTypes.length <= 1 && selectedType !== 'all') {
+            setSelectedType('all');
+        }
+    }, [availableTypes, selectedType]);
+
+    // Filter records client-side by type, month, and year
     const filteredRecords = useMemo(() => {
         return parsedRecords.filter((record) => {
             const rawStatus = String(record.status ?? '').toLowerCase();
             const isFullyPaid = rawStatus === 'terbayar' || rawStatus === 'lunas' || (record.outstanding_amount !== undefined && Number(record.outstanding_amount) <= 0.01 && Number(record.paid_amount) > 0);
             if (isFullyPaid) return false;
-            if (selectedType !== 'all' && record.parsedType !== selectedType) return false;
+            if (availableTypes.length > 1 && selectedType !== 'all' && record.parsedType !== selectedType) return false;
             if (selectedMonth !== 'all' && record.parsedMonth !== selectedMonth) return false;
             if (selectedYear !== 'all' && record.parsedYear !== selectedYear) return false;
             return true;
         });
-    }, [parsedRecords, selectedType, selectedMonth, selectedYear]);
+    }, [parsedRecords, availableTypes, selectedType, selectedMonth, selectedYear]);
 
   // Checkbox toggles
 
@@ -215,17 +228,24 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
                         />
                     </div>
 
-                    <div className="min-w-[130px]">
-                        <SelectField
-                            value={selectedType}
-                            onChange={(e) => setSelectedType(e.target.value)}
-                            className="h-[36px] rounded-[4px] border-ui-border bg-white"
-                            selectClassName="text-xs sm:text-sm text-brand-dark pl-2.5 pr-7"
-                        >
-                            <option value="all">Semua Tipe</option>
-                            <option value="Bulanan">Bulanan</option>
-                        </SelectField>
-                    </div>
+                    {availableTypes.length > 1 && (
+                        <div className="w-fit">
+                            <SelectField
+                                value={selectedType}
+                                onChange={(e) => setSelectedType(e.target.value)}
+                                containerClassName="w-fit"
+                                className="h-[36px] w-fit rounded-[4px] border-ui-border bg-white"
+                                selectClassName="text-xs sm:text-sm text-brand-dark pl-2.5 pr-2 whitespace-nowrap"
+                            >
+                                <option value="all">Semua Tipe</option>
+                                {availableTypes.map((type) => (
+                                    <option key={type} value={type}>
+                                        {type}
+                                    </option>
+                                ))}
+                            </SelectField>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-brand-dark font-normal ml-auto">
