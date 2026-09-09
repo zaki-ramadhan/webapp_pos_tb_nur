@@ -9,6 +9,7 @@ export default function YearInput({
     disabled = false,
     allowAll = true,
     allLabel = 'Semua Tahun',
+    maxYear = new Date().getFullYear(),
     align = 'start',
     className = '',
     buttonClassName = '',
@@ -19,13 +20,17 @@ export default function YearInput({
     const [open, setOpen] = useState(false);
 
     const currentYear = new Date().getFullYear();
+    const effectiveMaxYear = maxYear !== null && maxYear !== undefined ? Number(maxYear) : null;
     const initialYear = value && value !== 'all' ? parseInt(value, 10) : currentYear;
-    const [baseYear, setBaseYear] = useState(initialYear);
+    const [baseYear, setBaseYear] = useState(
+        effectiveMaxYear !== null ? Math.min(initialYear, effectiveMaxYear) : initialYear
+    );
 
     const handleOpen = () => {
         if (disabled) return;
         if (value && value !== 'all') {
-            setBaseYear(parseInt(value, 10));
+            const parsed = parseInt(value, 10);
+            setBaseYear(effectiveMaxYear !== null ? Math.min(parsed, effectiveMaxYear) : parsed);
         } else {
             setBaseYear(currentYear);
         }
@@ -35,12 +40,14 @@ export default function YearInput({
     const displayValue = value === 'all' ? allLabel : (value ? String(value) : allLabel);
 
     const handleSelect = (year) => {
+        if (effectiveMaxYear !== null && Number(year) > effectiveMaxYear) return;
         onChange?.(String(year));
         setOpen(false);
     };
 
     // Generate 9 years around baseYear
     const years = Array.from({ length: 9 }, (_, i) => baseYear - 7 + i);
+    const canGoNext = effectiveMaxYear === null || (baseYear + 2) <= effectiveMaxYear;
 
     return (
         <>
@@ -91,10 +98,16 @@ export default function YearInput({
                             type="button"
                             onClick={(e) => {
                                 e.stopPropagation();
+                                if (!canGoNext) return;
                                 setBaseYear((prev) => prev + 9);
                             }}
+                            disabled={!canGoNext}
                             aria-label="Tahun berikutnya"
-                            className="p-1 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition cursor-pointer"
+                            className={`p-1 rounded transition ${
+                                canGoNext
+                                    ? 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 cursor-pointer'
+                                    : 'text-slate-300 cursor-not-allowed'
+                            }`}
                         >
                             <ChevronRight className="h-4 w-4" />
                         </button>
@@ -119,16 +132,21 @@ export default function YearInput({
                         {years.map((yr) => {
                             const strYear = String(yr);
                             const isSelected = String(value) === strYear;
+                            const isFuture = effectiveMaxYear !== null && yr > effectiveMaxYear;
+                            const isYrDisabled = disabled || isFuture;
+
                             return (
                                 <button
                                     key={strYear}
                                     type="button"
                                     onClick={() => handleSelect(strYear)}
-                                    disabled={disabled}
-                                    className={`inline-flex items-center justify-center rounded-[6px] py-2 px-1 text-xs sm:text-sm font-normal transition-colors cursor-pointer select-none text-center focus:outline-hidden ${
-                                        isSelected
-                                            ? 'bg-brand-blue text-white font-normal shadow-2xs border border-brand-blue'
-                                            : 'border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                                    disabled={isYrDisabled}
+                                    className={`inline-flex items-center justify-center rounded-[6px] py-2 px-1 text-xs sm:text-sm font-normal transition-colors select-none text-center focus:outline-hidden ${
+                                        isYrDisabled
+                                            ? 'opacity-35 cursor-not-allowed bg-slate-50 text-slate-400 border border-slate-200'
+                                            : isSelected
+                                                ? 'bg-brand-blue text-white font-normal shadow-2xs border border-brand-blue cursor-pointer'
+                                                : 'border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 cursor-pointer'
                                     }`}
                                 >
                                     {strYear}
