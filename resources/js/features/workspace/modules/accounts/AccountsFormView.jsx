@@ -70,14 +70,14 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             );
 
             if (hasChildren) {
-                // Akun Induk yang memiliki akun anak:
+                // Akun Induk pada tingkat berapapun tidak memiliki tab Histori:
                 return {
                     leftTabs: [
                         { id: 'general', label: 'Informasi Umum' },
                         { id: 'others', label: 'Lain-lain' },
                         { id: 'children', label: 'Akun Anak' },
                     ],
-                    rightTabs: [{ id: 'history', label: 'Histori' }],
+                    rightTabs: [],
                 };
             }
 
