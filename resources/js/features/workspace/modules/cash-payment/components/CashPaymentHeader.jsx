@@ -26,7 +26,7 @@ export default function CashPaymentHeader({ config, values, setValues, activeRec
                             value={values.bankAccounts?.[0] ?? ''}
                             placeholder={config.cashBankPlaceholder}
                             searchLabel="Cari kas atau bank"
-                            queryParams={{ account_type: 'Cash/Bank' }}
+                            queryParams={{ account_type: 'Cash/Bank', leaf_only: true }}
                             onRemove={() =>
                                 setValues((current) => ({
                                     ...current,
