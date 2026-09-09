@@ -78,9 +78,9 @@ export default function MonthInput({
                             type="button"
                             onClick={() => handleSelect('all')}
                             disabled={disabled}
-                            className={`w-full py-1.5 px-2 rounded-[6px] text-xs sm:text-sm font-medium transition-colors cursor-pointer select-none text-center ${
+                            className={`w-full py-1.5 px-2 rounded-[6px] text-xs sm:text-sm font-normal transition-colors cursor-pointer select-none text-center ${
                                 value === 'all'
-                                    ? 'bg-brand-blue text-white font-semibold shadow-2xs border border-brand-blue'
+                                    ? 'bg-brand-blue text-white font-normal shadow-2xs border border-brand-blue'
                                     : 'border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                             }`}
                         >
@@ -97,9 +97,9 @@ export default function MonthInput({
                                     type="button"
                                     onClick={() => handleSelect(m)}
                                     disabled={disabled}
-                                    className={`inline-flex items-center justify-center rounded-[6px] py-2 px-1 text-xs font-medium transition-colors cursor-pointer select-none text-center focus:outline-hidden ${
+                                    className={`inline-flex items-center justify-center rounded-[6px] py-2 px-1 text-xs sm:text-sm font-normal transition-colors cursor-pointer select-none text-center focus:outline-hidden ${
                                         isSelected
-                                            ? 'bg-brand-blue text-white font-semibold shadow-2xs border border-brand-blue'
+                                            ? 'bg-brand-blue text-white font-normal shadow-2xs border border-brand-blue'
                                             : 'border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                                     }`}
                                 >
