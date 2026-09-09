@@ -9,6 +9,23 @@ import {
 } from '../../accountsViewShared';
 import { mapDbToUiType, mapUiToDbType, buildHierarchicalAccounts, isCashBankType } from '../../accountsShared';
 
+function formatDisplayBalance(label, isNegative) {
+    const raw = String(label ?? '').trim();
+    if (!raw || raw === '0' || raw === 'Rp 0') {
+        return 'Rp 0';
+    }
+    if (raw.startsWith('Rp ') || raw.startsWith('-Rp ')) {
+        return raw;
+    }
+    if (raw.startsWith('-')) {
+        return `-Rp ${raw.slice(1).trim()}`;
+    }
+    if (isNegative) {
+        return `-Rp ${raw}`;
+    }
+    return `Rp ${raw}`;
+}
+
 export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData, excludeId }) {
     const selectedParentAccount = useMemo(() => {
         if (!values.parentId) return '';
@@ -153,7 +170,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
             {isDetail ? (
                 <AccountsFormFieldRow label={config.labels.balance}>
                     <div className={`pt-1 text-lg font-medium ${values.negative ? 'text-red-600' : 'text-brand-dark'}`}>
-                        {values.balanceLabel || 'Rp 0'}
+                        {formatDisplayBalance(values.balanceLabel, values.negative)}
                     </div>
                 </AccountsFormFieldRow>
             ) : null}
