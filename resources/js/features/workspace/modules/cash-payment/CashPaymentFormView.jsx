@@ -268,7 +268,7 @@ export default function CashPaymentFormView({
                             bankAccounts: [buildLookupLabel(record)],
                         })),
                     buildLookupLabel,
-                    { account_type: 'Cash/Bank' }
+                    { account_type: 'Cash/Bank', leaf_only: true }
                 ),
             onRemoveBankAccount: () =>
                 setValues((current) => ({

@@ -9,7 +9,7 @@ export default function PaymentLineItemsSection({ config, values, setValues, han
             handlers={handlers}
             searchLabel="Cari akun pembayaran"
             dialogTitle="Pilih Akun Pembayaran"
-            queryParams={{ exclude_type: 'Cash/Bank' }}
+            queryParams={{ exclude_type: 'Cash/Bank', leaf_only: true }}
         />
     );
 }

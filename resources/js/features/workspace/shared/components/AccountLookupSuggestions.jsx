@@ -5,6 +5,7 @@ import { buildAccountLookupLabel, buildAccountLookupMeta, translateAccountType }
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 import { formatPhoneDisplay } from '@/features/workspace/shared/phoneFormatting';
+import { showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
 
 function resolveDocumentTypeLabel(record, resource) {
     if (record.numbering_type) return record.numbering_type;
@@ -143,19 +144,41 @@ export default function AccountLookupSuggestions({
                             subtitleRight = translateAccountType(record.account_type);
                         }
 
+                        const isParentAccount = resource === 'accounts' && Boolean(
+                            record.has_children ||
+                            (Array.isArray(record.children) && record.children.length > 0)
+                        );
+
+                        if (isParentAccount && resource === 'accounts') {
+                            subtitleRight = `${subtitleRight || ''} • Akun Induk`.trim();
+                        }
+
                         return (
                             <button
                                 key={record.id}
                                 type="button"
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    if (isParentAccount) {
+                                        showCrudValidationToast(`Akun [${code}] ${title} adalah Akun Induk. Silakan pilih akun anak / sub-akun.`);
+                                        return;
+                                    }
                                     onSelectAccount(record, label);
                                 }}
-                                className={`flex w-full flex-col gap-1 border-t border-slate-200 px-4 py-2 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#F8F8F8] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
+                                className={`flex w-full flex-col gap-1 border-t border-slate-200 px-4 py-2 text-left transition first:border-t-0 ${
+                                    isParentAccount
+                                        ? '!cursor-not-allowed bg-slate-100/80 opacity-70 hover:bg-slate-200/60'
+                                        : 'hover:bg-ui-bg-hover odd:bg-white even:bg-[#F8F8F8]'
+                                } ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
                             >
                                 <span className="flex w-full items-center justify-between gap-4">
-                                    <span className="truncate text-xs sm:text-sm font-normal text-black">
+                                    <span className="truncate text-xs sm:text-sm font-normal text-black flex items-center gap-2">
                                         <HighlightText text={title} search={query} />
+                                        {isParentAccount ? (
+                                            <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 font-medium">
+                                                Induk
+                                            </span>
+                                        ) : null}
                                     </span>
                                     {titleRight ? (
                                         <span className="shrink-0 text-xs sm:text-sm font-normal text-black">

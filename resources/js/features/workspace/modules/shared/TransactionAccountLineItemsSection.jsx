@@ -8,7 +8,7 @@ export default function TransactionAccountLineItemsSection({
     handlers = {},
     searchLabel = 'Cari akun',
     dialogTitle = 'Pilih Akun',
-    queryParams = { exclude_type: 'Cash/Bank' },
+    queryParams = { exclude_type: 'Cash/Bank', leaf_only: true },
 }) {
     const lineItems = values?.lineItems ?? [];
     const detailTitle = lineItems.length

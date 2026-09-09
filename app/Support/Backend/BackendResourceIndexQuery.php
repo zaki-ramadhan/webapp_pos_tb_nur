@@ -186,6 +186,13 @@ class BackendResourceIndexQuery
                 }
                 continue;
             }
+            if ($key === 'leaf_only' && $tableName === 'accounts' && filter_var($value, FILTER_VALIDATE_BOOLEAN)) {
+                $parentIds = \Illuminate\Support\Facades\DB::table('accounts')->whereNotNull('parent_id')->pluck('parent_id')->unique()->all();
+                if (!empty($parentIds)) {
+                    $query->whereNotIn("{$tableName}.id", $parentIds);
+                }
+                continue;
+            }
             if ($key === 'exclude_id' && Schema::hasColumn($tableName, 'id')) {
                 if (empty($value) && $value !== 0 && $value !== '0') {
                     continue;
