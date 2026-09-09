@@ -60,6 +60,23 @@ class BackendActivityLogger
             $metadata['transaction_date'] = $transactionDate;
         }
 
+        if ($record instanceof \App\Domain\Support\Models\OperationDocument) {
+            if ($record->document_type === 'general_journal') {
+                $metadata['jv_number'] = $record->document_number;
+            } else {
+                $jvDoc = \App\Domain\Support\Models\OperationDocument::where('document_type', 'general_journal')
+                    ->where('related_document_id', $record->id)
+                    ->first(['document_number']);
+                if ($jvDoc) {
+                    $metadata['jv_number'] = $jvDoc->document_number;
+                }
+            }
+        }
+
+        if (isset($after['lines']) && is_array($after['lines'])) {
+            $metadata['lines'] = $after['lines'];
+        }
+
         ActivityLog::query()->create([
             'log_group' => $this->resolveLogGroup($blueprint, $record),
             'resource_key' => $blueprint->key,
@@ -94,6 +111,8 @@ class BackendActivityLogger
             'payroll-entry',
             'sales-receipt',
             'purchase-payment',
+            'sales-invoice',
+            'purchase-invoice',
         ];
 
         if (in_array($blueprint->permissionKey(), $journalKeys, true)) {

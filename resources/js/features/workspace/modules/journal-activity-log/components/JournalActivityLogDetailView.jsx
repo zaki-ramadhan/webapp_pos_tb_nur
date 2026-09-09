@@ -8,8 +8,19 @@ function formatAmount(val) {
 
 function buildDetailFromRecord(row, config) {
     const record = row?.__backendRecord ?? {};
-    const payload = record.after_payload ?? record.before_payload ?? {};
-    const lines = payload.lines ?? record.metadata?.lines ?? [];
+    let payload = record.after_payload ?? record.before_payload ?? {};
+    if (typeof payload === 'string') {
+        try { payload = JSON.parse(payload); } catch (e) { payload = {}; }
+    }
+    payload = payload || {};
+
+    let meta = record.metadata ?? {};
+    if (typeof meta === 'string') {
+        try { meta = JSON.parse(meta); } catch (e) { meta = {}; }
+    }
+    meta = meta || {};
+
+    const lines = payload.lines ?? meta.lines ?? record.metadata?.lines ?? [];
 
     let entries = [];
     let totalDebitNum = 0;
@@ -34,27 +45,29 @@ function buildDetailFromRecord(row, config) {
             };
         });
     } else {
-        const rawAmount = Number(record.total_amount ?? record.metadata?.amount ?? row?.amount ?? 8000000);
-        const amountNum = isNaN(rawAmount) || rawAmount === 0 ? 8000000 : rawAmount;
+        const rawAmount = Number(record.total_amount ?? meta.amount ?? row?.amount ?? 0);
+        const amountNum = isNaN(rawAmount) ? 0 : rawAmount;
 
-        entries = [
-            {
-                id: `${row?.id ?? '1'}-line-1`,
-                accountCode: '110102',
-                accountName: 'Bank',
-                debit: formatAmount(amountNum),
-                credit: '',
-            },
-            {
-                id: `${row?.id ?? '1'}-line-2`,
-                accountCode: '110101',
-                accountName: 'Kas Kecil',
-                debit: '',
-                credit: formatAmount(amountNum),
-            },
-        ];
-        totalDebitNum = amountNum;
-        totalCreditNum = amountNum;
+        if (amountNum > 0) {
+            entries = [
+                {
+                    id: `${row?.id ?? '1'}-line-1`,
+                    accountCode: '110101',
+                    accountName: 'Kas Kecil Toko',
+                    debit: formatAmount(amountNum),
+                    credit: '',
+                },
+                {
+                    id: `${row?.id ?? '1'}-line-2`,
+                    accountCode: '410101',
+                    accountName: 'Pendapatan Penjualan',
+                    debit: '',
+                    credit: formatAmount(amountNum),
+                },
+            ];
+            totalDebitNum = amountNum;
+            totalCreditNum = amountNum;
+        }
     }
 
     const actorName = record.actor_name ?? row?.actorName ?? 'Zaki Ramadhan';
@@ -64,10 +77,10 @@ function buildDetailFromRecord(row, config) {
         : '07:43:51';
 
     return {
-        documentNumber: row?.number ?? record.metadata?.jv_number ?? 'JV.2026.07.00008',
-        transactionNumber: record.document_number ?? row?.transactionNumber ?? 'BT.2026.07.00001',
+        documentNumber: row?.number ?? meta.jv_number ?? record.metadata?.jv_number ?? '-',
+        transactionNumber: (record.document_number && record.document_number !== row?.number) ? record.document_number : (row?.transactionNumber ?? '-'),
         date: dateStr,
-        transactionType: row?.typeLabel ?? 'Transfer Bank',
+        transactionType: row?.typeLabel ?? 'Jurnal Umum',
         reviewedAt: `Per ${dateStr} ${occurredTime} (Aktif)`,
         reviewer: `Pengguna : ${actorName}`,
         entries,
