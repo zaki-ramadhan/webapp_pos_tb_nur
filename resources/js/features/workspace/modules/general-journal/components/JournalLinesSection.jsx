@@ -25,6 +25,7 @@ export default function JournalLinesSection({ config, values, setValues, handler
                         placeholder={config.lineSearchPlaceholder}
                         searchLabel="Cari akun jurnal"
                         dialogTitle="Pilih Akun Jurnal"
+                        queryParams={{ leaf_only: true }}
                         onSelectAccount={(record) => handlers.onSelectLineAccount?.(record)}
                         showType={true}
                     />
