@@ -330,7 +330,7 @@ export default function DashboardPageTabs({
                             activeTabId={activeLevel2TabId}
                             onSelectTab={onSelectLevel2Tab}
                             onCloseTab={onCloseLevel2Tab}
-                            className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mb-px"
+                            className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                         />
 
                         {level2Actions.filter(action => action.id !== 'tips' && action.icon !== 'idea' && action.id !== 'settings' && action.icon !== 'settings').length ? (
