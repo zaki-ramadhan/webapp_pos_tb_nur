@@ -28,8 +28,8 @@ export default function PreferencesTabs({
                 onClick={() => onSelectTab(tab.id)}
                 className={`relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] px-3 text-sm cursor-pointer select-none sm:h-8 sm:px-4 sm:text-sm md:h-8.5 md:text-base max-w-[120px] sm:max-w-[160px] md:max-w-[200px] ${
                     isActive
-                        ? 'z-20 border-x border-t-[3px] border-b-0 -mb-[2px] pb-[2px] border-x-ui-border border-t-tab-active-border-t bg-white font-normal text-blue-550'
-                        : '-mb-px border border-ui-border bg-tab-primary-inactive-bg font-normal text-tab-primary-inactive-text hover:z-10 hover:bg-brand-primary hover:text-white hover:border-b-white hover:shadow-[inset_0_-2px_0_0_#ffffff]'
+                        ? 'z-20 border-x border-t-[3px] border-b-0 -mb-[2px] pb-[2px] border-x-ui-border border-t-tab-active-border-t bg-white font-normal text-blue-550 shadow-[inset_0_-1px_0_0_#ffffff]'
+                        : '-mb-px border border-ui-border bg-tab-primary-inactive-bg font-normal text-tab-primary-inactive-text shadow-[inset_0_-1px_0_0_#b8c1d1] hover:z-10 hover:bg-brand-primary hover:text-white hover:border-b-white hover:shadow-[inset_0_-1px_0_0_#ffffff]'
                 } ${isActive ? activeTabClassName : inactiveTabClassName} ${tabClassName}`.trim()}
             >
                 <span className="block truncate">{renderTabLabel(tab.label, isActive, false)}</span>

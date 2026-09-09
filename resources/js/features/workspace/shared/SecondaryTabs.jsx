@@ -11,13 +11,13 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
         : 'gap-2 px-3.5 md:gap-2.5 md:px-4.5';
     const className = useViewTabStyle
         ? active
-            ? 'z-20 border-x-[1px] border-t-[3px] border-b-0 -mb-[2px] pb-[2px] border-tab-view-active-border-x border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text'
-            : '-mb-px border-l-[1px] border-r-[1px] border-t-[2px] border-b border-b-ui-border-medium border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text hover:z-10 hover:border-b-tab-active-bg hover:shadow-[inset_0_-2px_0_0_#f2f2f2]'
+            ? 'z-20 border-x-[1px] border-t-[3px] border-b-0 -mb-[2px] pb-[2px] border-tab-view-active-border-x border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text shadow-[inset_0_-1px_0_0_#f2f2f2]'
+            : '-mb-px border-l-[1px] border-r-[1px] border-t-[2px] border-b border-b-ui-border-medium border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text shadow-[inset_0_-1px_0_0_#b0bacd] hover:z-10 hover:border-b-tab-active-bg hover:shadow-[inset_0_-1px_0_0_#f2f2f2]'
         : active
           ? tabsCount > 1
-            ? 'z-20 border-l-[1px] border-r-[1px] border-t-[3px] border-b-0 -mb-[2px] pb-[2px] border-l-tab-active-border-x border-r-tab-active-border-x border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text'
-            : 'z-20 border-l-[1px] border-r-[1px] border-t-[1px] border-b-0 -mb-[2px] pb-[2px] border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-active-bg font-normal text-tab-active-text'
-          : '-mb-px border-l-[1px] border-r-[1px] border-t-[2px] border-b border-b-ui-border-medium border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text hover:z-10 hover:border-b-tab-active-bg hover:shadow-[inset_0_-2px_0_0_#f2f2f2]';
+            ? 'z-20 border-l-[1px] border-r-[1px] border-t-[3px] border-b-0 -mb-[2px] pb-[2px] border-l-tab-active-border-x border-r-tab-active-border-x border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text shadow-[inset_0_-1px_0_0_#f2f2f2]'
+            : 'z-20 border-l-[1px] border-r-[1px] border-t-[1px] border-b-0 -mb-[2px] pb-[2px] border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-active-bg font-normal text-tab-active-text shadow-[inset_0_-1px_0_0_#f2f2f2]'
+          : '-mb-px border-l-[1px] border-r-[1px] border-t-[2px] border-b border-b-ui-border-medium border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text shadow-[inset_0_-1px_0_0_#b0bacd] hover:z-10 hover:border-b-tab-active-bg hover:shadow-[inset_0_-1px_0_0_#f2f2f2]';
     const closeButtonClassName = active
         ? 'text-abc-label-dark hover:text-red-600 transition-colors'
         : 'text-slate-400 hover:text-slate-700';
