@@ -156,7 +156,7 @@ class GeneralJournalPage
                     'columns' => [
                         [
                             'id' => 'accountCode',
-                            'label' => 'Kode Barang',
+                            'label' => 'Akun Perkiraan',
                             'widthClassName' => 'w-[30%]',
                             'align' => 'left',
                         ],
