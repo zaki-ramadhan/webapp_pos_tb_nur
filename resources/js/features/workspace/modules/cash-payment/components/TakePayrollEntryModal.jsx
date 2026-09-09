@@ -170,8 +170,8 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
             onClose={onClose}
             title="Pencatatan Gaji"
             headerIcon={() => null}
-            maxWidthClassName="!max-w-[860px] w-full"
-            contentClassName="bg-white px-4 py-3 flex flex-col gap-3 min-h-[320px] max-h-[60vh] overflow-y-auto"
+            maxWidthClassName="!max-w-[960px] w-full"
+            contentClassName="bg-white px-4 py-3 flex flex-col gap-3 min-h-[380px] max-h-[72vh] overflow-y-auto"
             footer={
                 <div className="flex justify-between items-center w-full">
                     <Button
@@ -259,7 +259,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
 
             {/* Table */}
             <TransactionDataTable
-                bordered={false}
+                bordered="x"
                 columns={columns}
                 rows={filteredRecords}
                 emptyLabel={loading ? 'Memuat data...' : 'Tidak ada data'}

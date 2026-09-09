@@ -162,7 +162,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
                 </div>
             }
         >
-            <DataTable bordered={false} wrapperClassName="max-h-[380px] overflow-y-auto bg-white">
+            <DataTable bordered="x" wrapperClassName="max-h-[380px] overflow-y-auto bg-white">
                 <DataTableHeader>
                     <DataTableRow className="border-t-0 text-white">
                         <DataTableHead className="w-px px-3 text-center">

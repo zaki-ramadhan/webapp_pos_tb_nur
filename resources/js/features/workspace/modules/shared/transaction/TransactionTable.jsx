@@ -42,6 +42,8 @@ export function TransactionDataTable({
     from = null,
     bordered = true,
     wrapperClassName = '',
+    className = '',
+    tableClassName = '',
 }) {
     const rowOffset = (pagination?.from && pagination.from > 0) ? pagination.from : (from && from > 0 ? from : 1);
     const cleanedColumns = useMemo(() => {
@@ -79,12 +81,12 @@ export function TransactionDataTable({
     const hasLeadingEmptyCell = visibleColumns[0]?.kind === 'spacer' && emptyLeadingCellContent !== null;
 
     const cleanedMinWidthClassName = (minWidthClassName ?? '').replace(/\b(?:[a-z-]*:)?min-w-\[[^\]]+\]/g, '').trim();
-    const defaultWrapperClass = bordered ? 'border-table-wrapper-border' : '';
+    const defaultWrapperClass = bordered === true ? 'border-table-wrapper-border' : '';
     const combinedWrapperClass = [defaultWrapperClass, wrapperClassName].filter(Boolean).join(' ');
 
     return (
         <div className={cleanedMinWidthClassName || 'w-full'}>
-            <DataTable bordered={bordered} wrapperClassName={combinedWrapperClass}>
+            <DataTable bordered={bordered} className={className || tableClassName} wrapperClassName={combinedWrapperClass}>
                 <DataTableHeader className="bg-table-header-bg">
                     <tr>
                         {activeShowNumbering && (
