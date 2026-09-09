@@ -345,8 +345,7 @@ export default function BankTransferFormView({
                     }
                     
                     if (missing.length > 0) {
-                        const msg = missing.map((item) => `${item} harus diisi.`).join(' • ');
-                        showCrudValidationToast(msg);
+                        showCrudValidationToast(missing);
                         return;
                     }
                     
