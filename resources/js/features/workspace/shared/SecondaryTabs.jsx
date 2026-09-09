@@ -20,7 +20,7 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
           : 'border-l-[1px] border-r-[1px] border-t-[2px] border-b-0 -mb-px border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text hover:bg-brand-primary hover:text-white';
     const closeButtonClassName = active
         ? 'text-abc-label-dark hover:text-red-600 transition-colors'
-        : 'text-slate-400 group-hover:text-white/90 hover:!text-white transition-colors';
+        : 'text-slate-400 group-hover:text-white/90 hover:!text-white';
 
     const canClick = tabsCount > 1;
     const cursorClass = canClick ? 'cursor-pointer' : 'cursor-default';
@@ -41,7 +41,7 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
                     onSelect(tab.id);
                 }
             }}
-            className={`group relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] text-xs leading-normal whitespace-nowrap select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${cursorClass} ${className}`.trim()}
+            className={`group relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] text-xs leading-normal whitespace-nowrap select-none sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${cursorClass} ${className}`.trim()}
             aria-label={tab.ariaLabel ?? tab.label}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[100px] sm:max-w-[130px] md:max-w-[160px]">
