@@ -94,17 +94,18 @@ class Account extends DomainModel
             $debitSum = (float) \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)->sum('debit_amount');
             $creditSum = (float) \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)->sum('credit_amount');
 
-            $ownBalance = 0.0;
-            if ($debitSum == 0.0 && $creditSum == 0.0) {
-                $ownBalance = (float) ($this->opening_balance ?? 0);
-            } else {
-                $type = strtolower($this->account_type ?? '');
-                if (str_contains($type, 'liability') || str_contains($type, 'equity') || str_contains($type, 'revenue') || str_contains($type, 'utang') || str_contains($type, 'modal') || str_contains($type, 'pendapatan') || str_contains($type, 'liabilitas')) {
-                    $ownBalance = $creditSum - $debitSum;
-                } else {
-                    $ownBalance = $debitSum - $creditSum;
-                }
-            }
+            $opening = (float) ($this->opening_balance ?? 0);
+            $type = strtolower($this->account_type ?? '');
+            $isCreditNormal = str_contains($type, 'liability')
+                || str_contains($type, 'equity')
+                || str_contains($type, 'revenue')
+                || str_contains($type, 'utang')
+                || str_contains($type, 'modal')
+                || str_contains($type, 'pendapatan')
+                || str_contains($type, 'liabilitas');
+
+            $movement = $isCreditNormal ? ($creditSum - $debitSum) : ($debitSum - $creditSum);
+            $ownBalance = $opening + $movement;
 
             return $childrenBalance + $ownBalance;
         } catch (\Throwable $e) {

@@ -52,12 +52,12 @@ export function AccountsChildrenTab({ values, onOpenDetail }) {
     }
 
     return (
-        <div className="space-y-1.5 max-w-[850px]">
+        <div className="space-y-1 max-w-[850px]">
             {allRows.map((item) => (
                 <div
                     key={item.isCurrent ? 'current' : `child-${item.id}`}
                     onClick={() => handleRowClick(item)}
-                    className={`grid gap-7 grid-cols-[minmax(0,1fr)_310px] ${
+                    className={`grid gap-1.5 grid-cols-[minmax(0,1fr)_310px] ${
                         item.isCurrent
                             ? 'cursor-default select-none'
                             : 'group cursor-pointer active:scale-[0.995] transition-transform'
