@@ -66,7 +66,7 @@ export function TransactionSectionRail({ tabs, activeTabId, onSelectTab }) {
                         className={`relative inline-flex items-center justify-center rounded-l-sm border border-r-0 px-2 py-2.5 transition ${
                             active
                                 ? 'z-10 -mr-px border-ui-border border-l-[3px] border-l-tab-active-border-t bg-white text-text-pink-active'
-                                : 'border-ui-border bg-disabled-border text-tab-active-text hover:bg-brand-primary hover:border-brand-primary'
+                                : 'border-ui-border bg-disabled-border text-tab-active-text hover:bg-brand-primary hover:text-white'
                         }`.trim()}
                     >
                         <NavigationIcon type={tab.icon} className="h-[22px] w-[22px] text-current" />
