@@ -18,13 +18,14 @@ function calculateMinWidth(label) {
 export function DataTable({ className = '', wrapperClassName = '', bordered = true, children, ...props }) {
     const cleanedClassName = className.replace(/\b(?:[a-z-]*:)?min-w-\[[^\]]+\]/g, '').trim();
     const isExplicitlyBorderFree = /\b(?:border-0|border-none|!border-0)\b/.test(wrapperClassName);
-    const borderClass = bordered && !isExplicitlyBorderFree ? 'border border-table-border' : '';
+    const borderClass = (bordered === true) && !isExplicitlyBorderFree ? 'border border-table-border' : '';
+    const tableBorderClass = bordered === 'x' ? 'border-x border-table-border' : '';
 
     return (
         <div
             className={`w-full overflow-auto overscroll-x-contain rounded-[4px] ${borderClass} ${wrapperClassName}`.trim()}
         >
-            <table className={`w-full min-w-full border-collapse ${cleanedClassName}`.trim()} {...props}>
+            <table className={`w-full min-w-full border-collapse ${tableBorderClass} ${cleanedClassName}`.trim()} {...props}>
                 {children}
             </table>
         </div>
