@@ -183,7 +183,7 @@ export default function AccountLookupSuggestions({
                                             <HighlightText text={subtitleLeft} search={query} />
                                         </span>
                                         {subtitleRight ? (
-                                            <span className="shrink-0 text-black font-normal">
+                                            <span className={`shrink-0 text-black font-normal ${resource === 'accounts' ? 'italic' : ''}`.trim()}>
                                                 {subtitleRight}
                                             </span>
                                         ) : null}
