@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
-import { PencilIcon } from '@/features/workspace/shared/Icons';
+import { PencilFilledIcon } from '@/features/workspace/shared/Icons';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
 import { formatCurrencyValue, parseNumericInput } from './expenseEntryShared';
 
@@ -80,7 +80,7 @@ export default function ExpenseEntryLineItemModal({
             open={open}
             onClose={onClose}
             title="Rincian Beban"
-            headerIcon={PencilIcon}
+            headerIcon={PencilFilledIcon}
             maxWidthClassName="max-w-[480px]"
             contentClassName="bg-white px-5 py-0 sm:px-6 min-h-[220px] flex flex-col pt-0 pb-4"
             footer={

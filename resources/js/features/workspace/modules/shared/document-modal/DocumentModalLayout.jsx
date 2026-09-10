@@ -1,5 +1,5 @@
 import ModalBase from '@/components/ui/ModalBase';
-import { CloseIcon, PencilIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, PencilFilledIcon } from '@/features/workspace/shared/Icons';
 
 function DocumentModalTabButton({ active, label, onClick }) {
     return (
@@ -64,7 +64,7 @@ export default function DocumentModalLayout({
             <div className="bg-[#0A2A55] px-4 py-2 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5">
-                        <PencilIcon className="h-4 w-4 text-white" />
+                        <PencilFilledIcon className="h-4 w-4 text-white" />
                         <h2 className="text-sm font-normal">{title}</h2>
                     </div>
  

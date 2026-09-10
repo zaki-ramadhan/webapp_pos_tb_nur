@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
-import { PencilIcon } from '@/features/workspace/shared/Icons';
+import { PencilFilledIcon } from '@/features/workspace/shared/Icons';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import SelectField from '@/components/ui/SelectField';
@@ -105,7 +105,7 @@ export default function MoneyMovementLineItemModal({
             open={open}
             onClose={onClose}
             title={isPayment ? 'Rincian Pembayaran' : 'Rincian Penerimaan'}
-            headerIcon={PencilIcon}
+            headerIcon={PencilFilledIcon}
             maxWidthClassName="max-w-[500px]"
             contentClassName="bg-white px-5 py-0 sm:px-6 min-h-[220px] flex flex-col pt-0 pb-4"
             footer={

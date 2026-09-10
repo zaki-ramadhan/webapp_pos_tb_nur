@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import Button from '@/components/ui/Button';
 import ModalBase from '@/components/ui/ModalBase';
 import ErrorIllustration from '@/components/ui/ErrorIllustration';
-import { AlertTriangleFilledIcon, CloseIcon, InfoIcon } from '@/features/workspace/shared/Icons';
+import { AlertTriangleFilledIcon, CloseIcon, InfoFilledIcon } from '@/features/workspace/shared/Icons';
 
 function normalizeMessages(messages = [], message = '') {
     const raw = (Array.isArray(messages) && messages.length > 0)
@@ -128,7 +128,7 @@ export default function SystemErrorModal({
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-2">
                         {isConfirmationTitle ? (
-                            <InfoIcon className="h-5 w-5 text-white shrink-0" strokeWidth={2.4} />
+                            <InfoFilledIcon className="h-5 w-5 text-white shrink-0" />
                         ) : (
                             <AlertTriangleFilledIcon className="h-5 w-5 text-white shrink-0" />
                         )}

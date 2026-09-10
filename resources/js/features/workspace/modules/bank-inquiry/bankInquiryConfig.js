@@ -53,7 +53,6 @@ export const bankInquiryPageConfigs = {
                 createAction('reload', 'link', 'Muat ulang'),
                 createAction('open-reference', 'external-link', 'Buka referensi histori akun'),
                 createAction('switch-account', 'transfer', 'Pindah akun perkiraan'),
-                createAction('help', 'idea', 'Bantuan histori akun', 'warning'),
             ],
             table: {
                 columns: [
@@ -96,7 +95,6 @@ export const bankInquiryPageConfigs = {
                 createAction('reload', 'link', 'Muat ulang'),
                 createAction('import', 'download', 'Impor data'),
                 createAction('export', 'upload', 'Ekspor data'),
-                createAction('help', 'idea', 'Bantuan rekening koran', 'warning'),
             ],
             table: {
                 columns: [
@@ -152,7 +150,6 @@ export const bankInquiryPageConfigs = {
             actions: [
                 createAction('reload', 'link', 'Muat ulang'),
                 createAction('switch-account', 'transfer', 'Pindah akun bank'),
-                createAction('help', 'idea', 'Bantuan rekonsiliasi bank', 'warning'),
             ],
             table: {
                 columns: [
