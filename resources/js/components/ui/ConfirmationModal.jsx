@@ -53,6 +53,7 @@ export default function ConfirmationModal({
     actionsOrder = 'cancel-first',
     iconVariant = 'warning',
     actionsAlign = 'between',
+    actionsGap = 'gap-2',
     hideCloseButton = false,
 }) {
     return (
@@ -67,7 +68,7 @@ export default function ConfirmationModal({
             contentClassName="bg-white px-5 pt-4 pb-2 sm:px-6 sm:pt-5 sm:pb-2.5"
             footerClassName="bg-white px-4 pt-1 pb-3.5 sm:px-5 sm:pb-4"
             footer={(
-                <div className={`flex items-center ${actionsAlign === 'end' ? 'justify-end gap-3' : 'justify-between'} w-full`}>
+                <div className={`flex items-center ${actionsAlign === 'end' ? `justify-end ${actionsGap}` : 'justify-between'} w-full`}>
                     {actionsAlign === 'end' ? (
                         actionsOrder === 'confirm-first' ? (
                             <>
