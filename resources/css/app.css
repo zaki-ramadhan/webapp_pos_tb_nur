@@ -10,6 +10,7 @@
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --breakpoint-3xl: 2000px;
+    --animate-spin: spin 0.8s linear infinite;
 
     /* Custom theme variables */
     --color-surface: #fffaf3;
