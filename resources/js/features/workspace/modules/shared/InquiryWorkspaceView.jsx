@@ -8,8 +8,8 @@ import { parseNumericInput } from '@/features/workspace/shared/transactionFormat
 import {
     ChevronDownIcon,
     DownloadIcon,
+    ExportIcon,
     RefreshIcon,
-    UploadIcon,
 } from '@/features/workspace/shared/Icons';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import BankStatementFileImportModal from '@/features/workspace/modules/bank-inquiry/components/BankStatementFileImportModal';
@@ -262,7 +262,7 @@ export default function InquiryWorkspaceView({
                                     className="inline-flex h-[40px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-2.5 text-brand-blue shadow-none transition hover:bg-brand-blue-light cursor-pointer active:scale-[0.98]"
                                     aria-label="Ekspor data"
                                 >
-                                    <UploadIcon className="h-4 w-4" />
+                                    <ExportIcon className="h-4 w-4" />
                                     <ChevronDownIcon className="h-3 w-3" />
                                 </button>
                             </>
