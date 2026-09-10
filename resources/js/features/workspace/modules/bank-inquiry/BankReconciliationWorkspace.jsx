@@ -7,6 +7,7 @@ import axios from 'axios';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import Pagination from '@/components/ui/Pagination';
 import { saveInquiryFilter } from '@/features/workspace/shared/inquiryFilterPersistence';
+import Tooltip from '@/components/ui/Tooltip';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 
@@ -263,18 +264,20 @@ export default function BankReconciliationWorkspace({
                     ) : null}
 
                     {hasBankSelected && (
-                        <button
-                            type="button"
-                            onClick={() => setIsSwapped((v) => !v)}
-                            className={`inline-flex items-center justify-center h-[40px] w-[40px] rounded-[4px] border transition shrink-0 cursor-pointer active:scale-[0.98] ${
-                                isSwapped
-                                    ? 'bg-brand-blue text-white border-brand-blue shadow-button-primary'
-                                    : 'bg-white text-slate-600 border-ui-border hover:bg-slate-50 shadow-2xs'
-                            }`}
-                            aria-label="Tukar posisi kolom"
-                        >
-                            <ArrowRightLeft className="h-4 w-4" />
-                        </button>
+                        <Tooltip content="Tukar posisi kolom" portal>
+                            <button
+                                type="button"
+                                onClick={() => setIsSwapped((v) => !v)}
+                                className={`inline-flex shrink-0 items-center justify-center h-[40px] w-[40px] rounded-[4px] border transition cursor-pointer active:scale-[0.98] ${
+                                    isSwapped
+                                        ? 'bg-brand-blue-light border-brand-blue-border text-brand-blue'
+                                        : 'bg-white border-brand-blue-border text-brand-blue hover:bg-brand-blue-light'
+                                }`}
+                                aria-label="Tukar posisi kolom"
+                            >
+                                <ArrowRightLeft className="h-4 w-4" />
+                            </button>
+                        </Tooltip>
                     )}
 
                     {hasBankSelected && (
