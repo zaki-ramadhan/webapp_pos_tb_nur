@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
@@ -7,6 +7,8 @@ import axios from 'axios';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import Pagination from '@/components/ui/Pagination';
 import { saveInquiryFilter } from '@/features/workspace/shared/inquiryFilterPersistence';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 
 import JurnalCard from './components/JurnalCard';
 import BankReconcileActionCard from './components/BankReconcileActionCard';
@@ -14,7 +16,7 @@ import BankReconciliationHeader from './components/BankReconciliationHeader';
 import BankStatementImportModal from './components/BankStatementImportModal';
 import BankReconciliationMatchedRow from './components/BankReconciliationMatchedRow';
 import { runReconciliationMatching } from './reconciliationExcelParser';
-import { Check } from 'lucide-react';
+import { Check, ArrowRightLeft } from 'lucide-react';
 import { FileFormatBadgeIcon } from '@/components/ui/FileUpload';
 import starterStateImg from './assets/rekonsiliasi_starter_state.webp';
 import emptyStateImg from './assets/rekonsiliasi_empty_state.png';
@@ -32,6 +34,8 @@ export default function BankReconciliationWorkspace({
     const [selectedAccount, setSelectedAccount] = useState(null);
     const [bankError, setBankError] = useState('');
     const [isSwapped, setIsSwapped] = useState(false);
+    const [importDropdownOpen, setImportDropdownOpen] = useState(false);
+    const importAnchorRef = useRef(null);
     const [startDate, setStartDate] = useState(filters.start_date || '');
     const [endDate, setEndDate] = useState(filters.end_date || '');
 
@@ -269,33 +273,49 @@ export default function BankReconciliationWorkspace({
                             }`}
                             aria-label="Tukar posisi kolom"
                         >
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
-                            </svg>
+                            <ArrowRightLeft className="h-4 w-4" />
                         </button>
                     )}
 
-                    <button
-                        type="button"
-                        onClick={() => {
-                            if (!hasBankSelected) {
-                                setBankError('Bank harus dipilih terlebih dahulu');
-                                showWarningToast({
-                                    title: 'Pilih Bank Terlebih Dahulu',
-                                    message: 'Silakan cari dan pilih kas/bank terlebih dahulu sebelum mengimpor rekening koran.',
-                                });
-                                return;
-                            }
-                            setBankError('');
-                            setImportModalOpen(true);
-                        }}
-                        className="inline-flex items-center gap-1.5 h-[40px] px-3.5 rounded-[4px] text-xs sm:text-sm font-normal text-white bg-brand-blue hover:bg-brand-blue-hover border border-transparent shadow-button-primary cursor-pointer active:scale-[0.98] transition shrink-0"
-                    >
-                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                        </svg>
-                        <span>Impor Mutasi</span>
-                    </button>
+                    {hasBankSelected && (
+                        <div className="relative shrink-0">
+                            <button
+                                ref={importAnchorRef}
+                                type="button"
+                                onClick={() => setImportDropdownOpen((v) => !v)}
+                                className="inline-flex items-center h-[40px] rounded-[4px] text-xs sm:text-sm font-normal text-white bg-brand-blue hover:bg-brand-blue-hover border border-transparent shadow-button-primary cursor-pointer active:scale-[0.98] transition overflow-hidden"
+                            >
+                                <span className="flex items-center gap-1.5 px-3.5">
+                                    <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                    </svg>
+                                    <span>Impor data</span>
+                                </span>
+                                <span className="inline-flex items-center justify-center w-[34px] h-full border-l border-white/30">
+                                    <svg className={`h-4 w-4 transition-transform duration-200 ${importDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </span>
+                            </button>
+                            <DropdownMenu
+                                open={importDropdownOpen}
+                                onClose={() => setImportDropdownOpen(false)}
+                                anchorRef={importAnchorRef}
+                                align="end"
+                                widthClassName="w-[180px]"
+                            >
+                                <DropdownMenuItem
+                                    onClick={() => {
+                                        setImportDropdownOpen(false);
+                                        setBankError('');
+                                        setImportModalOpen(true);
+                                    }}
+                                >
+                                    Impor file mutasi
+                                </DropdownMenuItem>
+                            </DropdownMenu>
+                        </div>
+                    )}
                 </div>
             </div>
 
