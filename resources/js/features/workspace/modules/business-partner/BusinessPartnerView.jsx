@@ -63,7 +63,7 @@ export default function BusinessPartnerView({
                 ...baseConfig.table,
                 ...tableProps,
                 error,
-                emptyLabel: error || baseConfig.table?.emptyLabel || 'Tidak ada data',
+                emptyLabel: error || baseConfig.table?.emptyLabel || 'Belum ada data',
                 rows: rowsWithFilters,
                 filters: updatedFilters,
                 pageValue: tableProps.total.toLocaleString('id-ID'),

@@ -89,7 +89,7 @@ export default function ItemWarehouseTab({ productId }) {
                     ) : (
                         <DataTableRow className="border-ui-border-row bg-white">
                             <DataTableCell colSpan={2} className="px-3 py-2 text-center text-sm text-black">
-                                Tidak ada data
+                                Belum ada data
                             </DataTableCell>
                         </DataTableRow>
                     )}

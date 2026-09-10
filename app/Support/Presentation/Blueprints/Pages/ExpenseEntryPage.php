@@ -366,7 +366,7 @@ class ExpenseEntryPage
                             'align' => 'right',
                         ],
                     ],
-                    'emptyLabel' => 'Tidak ada data',
+                    'emptyLabel' => 'Belum ada data',
                 ],
                 'summaryRows' => [
                     'paidAmountLabel' => 'Dibayar',
@@ -500,7 +500,7 @@ class ExpenseEntryPage
                             'statusFilter' => 'paid',
                         ],
                     ],
-                    'emptyLabel' => 'Tidak ada data',
+                    'emptyLabel' => 'Belum ada data',
                 ],
             ],
         ]);

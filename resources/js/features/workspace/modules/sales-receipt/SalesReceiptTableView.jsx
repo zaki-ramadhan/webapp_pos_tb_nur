@@ -175,7 +175,7 @@ export default function SalesReceiptTableView({
                     columns={config.table.columns}
                     rows={sortedRows}
                     pagination={config.table.pagination}
-                    emptyLabel={loading ? 'Memuat data...' : (error || 'Tidak ada data')}
+                    emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
                     minWidthClassName="min-w-[1520px]"
                     onRowClick={(row) =>
                         onOpenDetail?.({

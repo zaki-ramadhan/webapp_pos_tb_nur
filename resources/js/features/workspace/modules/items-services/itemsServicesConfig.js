@@ -199,7 +199,7 @@ const defaultConfig = {
     },
     openingStockTable: {
         columns: stockOpeningColumns,
-        emptyLabel: 'Tidak ada data',
+        emptyLabel: 'Belum ada data',
     },
     accountNote:
         'Akun-akun yang dapat dipilih sesuai dengan akun-akun yang dimasukkan pada formulir Preferensi bagian akun default barang',

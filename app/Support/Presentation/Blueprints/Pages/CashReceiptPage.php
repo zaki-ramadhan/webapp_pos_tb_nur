@@ -120,7 +120,7 @@ class CashReceiptPage
                         ['id' => 'accountName', 'label' => 'Nama Akun', 'align' => 'left'],
                         ['id' => 'amount', 'label' => 'Nilai', 'widthClassName' => 'w-[150px]', 'align' => 'right'],
                     ],
-                    'emptyLabel' => 'Tidak ada data',
+                    'emptyLabel' => 'Belum ada data',
                 ],
                 'table' => [
                     'createLabel' => 'Tambah Penerimaan',

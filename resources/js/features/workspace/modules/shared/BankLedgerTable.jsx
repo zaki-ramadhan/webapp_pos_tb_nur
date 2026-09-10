@@ -54,7 +54,7 @@ export default function BankLedgerTable({
     loading = false,
     startDate = '',
     initialOpeningBalance = 0,
-    emptyLabel = 'Tidak ada data',
+    emptyLabel = 'Belum ada data',
     onRowClick = openSourceDocument,
     hasCheckNumberColumn = true,
     className = 'min-w-[1200px]',

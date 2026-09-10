@@ -89,7 +89,7 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, level2Tabs
                 })(),
                 pageValue: departmentResource.total.toLocaleString('id-ID'),
                 refreshLabel: page.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: departmentResource.loading ? 'Memuat data...' : (departmentResource.error || page.table?.emptyLabel || 'Tidak ada data'),
+                emptyLabel: departmentResource.loading ? 'Memuat data...' : (departmentResource.error || page.table?.emptyLabel || 'Belum ada data'),
             },
         };
     }, [branchResource.rows, departmentResource.error, departmentResource.loading, departmentResource.mappedRows, departmentResource.tableProps, departmentResource.total, page, userResource.rows]);

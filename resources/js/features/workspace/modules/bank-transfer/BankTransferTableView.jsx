@@ -129,7 +129,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                     columns={config.table.columns}
                     rows={sortedRows}
                     pagination={config.table.pagination}
-                    emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Tidak ada data')}
+                    emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Belum ada data')}
                     minWidthClassName="min-w-[1280px]"
                     onRowClick={(row) => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                     getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}

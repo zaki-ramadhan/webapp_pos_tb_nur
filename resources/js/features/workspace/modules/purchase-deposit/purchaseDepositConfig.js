@@ -94,7 +94,7 @@ const defaultPurchaseDepositConfig = {
         createLabel: 'Tambah Uang Muka Pembelian',
         refreshLabel: 'Muat ulang',
         searchPlaceholder: 'Cari data...',
-        emptyLabel: 'Tidak ada data',
+        emptyLabel: 'Belum ada data',
         pageValue: '1',
         columns: purchaseDepositListColumns,
         rows: [],

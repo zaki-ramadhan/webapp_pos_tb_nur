@@ -166,7 +166,7 @@ const defaultSalesOrderConfig = {
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: salesOrderItemColumns,
-        emptyLabel: 'Tidak ada data',
+        emptyLabel: 'Belum ada data',
         minWidthClassName: 'min-w-[1280px]',
     },
     additionalInfoTitle: 'Info lainnya',
@@ -177,7 +177,7 @@ const defaultSalesOrderConfig = {
     costSearchPlaceholder: 'Cari/Pilih Akun Perkiraan...',
     costTable: {
         columns: salesOrderCostColumns,
-        emptyLabel: 'Tidak ada data',
+        emptyLabel: 'Belum ada data',
         minWidthClassName: 'min-w-[980px]',
     },
     orderInfoTitle: 'Informasi Pesanan',
@@ -258,12 +258,12 @@ export const defaultSalesInvoiceConfig = {
     advancePaymentSearchResource: 'sales-deposits',
     advancePaymentTable: {
         columns: salesInvoiceAdvanceColumns,
-        emptyLabel: 'Tidak ada data',
+        emptyLabel: 'Belum ada data',
         minWidthClassName: 'min-w-[760px]',
     },
     orderInfoTitle: 'Informasi Faktur',
     processedByTitle: 'Uang Muka Terpakai/Retur',
-    processedByEmptyLabel: 'Tidak ada data.',
+    processedByEmptyLabel: 'Belum ada data.',
     showSummarySecondarySection: false,
     showPreInvoiceOption: false,
     showContactField: false,

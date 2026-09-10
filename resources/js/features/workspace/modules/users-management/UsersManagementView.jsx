@@ -16,7 +16,7 @@ export default function UsersManagementView({ page, mode, activeLevel2Tab, level
         pageValue: usersResource.total.toLocaleString('id-ID'),
         loading: usersResource.loading,
         error: usersResource.error,
-        emptyLabel: usersResource.error || page.table?.emptyLabel || 'Tidak ada data',
+        emptyLabel: usersResource.error || page.table?.emptyLabel || 'Belum ada data',
         refreshLabel: page.table?.refreshLabel || 'Muat ulang',
         onRefresh: usersResource.reload,
         ...usersResource.serverTableProps,

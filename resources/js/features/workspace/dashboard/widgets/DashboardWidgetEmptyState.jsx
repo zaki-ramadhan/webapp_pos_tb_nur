@@ -1,7 +1,7 @@
 import EmptyState from '@/components/ui/EmptyState';
 
 export default function DashboardWidgetEmptyState({
-    title = 'Tidak ada data',
+    title = 'Belum ada data',
     description = 'Data widget akan muncul setelah tersedia.',
     className = 'min-h-[228px]',
 }) {
@@ -9,13 +9,13 @@ export default function DashboardWidgetEmptyState({
     let resolvedDescription = description;
 
     if (title === 'Kegiatan Mendatang') {
-        resolvedTitle = 'Tidak ada data';
+        resolvedTitle = 'Belum ada data';
         resolvedDescription = 'Belum ada jadwal kegiatan mendatang.';
     } else if (title === 'Kegiatan Terlewat') {
-        resolvedTitle = 'Tidak ada data';
+        resolvedTitle = 'Belum ada data';
         resolvedDescription = 'Belum ada jadwal kegiatan yang lewat jatuh tempo.';
     } else if (typeof description === 'string' && description.includes('Widget ini siap dihubungkan')) {
-        resolvedTitle = 'Tidak ada data';
+        resolvedTitle = 'Belum ada data';
         resolvedDescription = 'Data widget akan muncul setelah tersedia.';
     }
 

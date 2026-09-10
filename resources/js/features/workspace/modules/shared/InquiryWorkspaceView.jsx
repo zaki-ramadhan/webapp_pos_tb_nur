@@ -414,7 +414,7 @@ export default function InquiryWorkspaceView({
                                     ) : (
                                         <DataTableRow className="bg-white">
                                             <DataTableCell colSpan={resolvedColumns.length} className="px-3 py-2 text-center text-base text-black">
-                                                {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
+                                                {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                             </DataTableCell>
                                         </DataTableRow>
                                     )}
@@ -542,7 +542,7 @@ export default function InquiryWorkspaceView({
                                     ) : (
                                         <DataTableRow className="bg-white">
                                             <DataTableCell colSpan={resolvedColumns.length} className="px-3 py-2 text-center text-base text-black">
-                                                {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
+                                                {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                             </DataTableCell>
                                         </DataTableRow>
                                     )}

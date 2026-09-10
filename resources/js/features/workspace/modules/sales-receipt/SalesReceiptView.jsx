@@ -35,7 +35,7 @@ export default function SalesReceiptView({ page, mode, activeLevel2Tab, level2Ta
             table: {
                 loading,
                 error,
-                emptyLabel: loading ? 'Memuat data...' : (error || baseConfig.table?.emptyLabel || 'Tidak ada data'),
+                emptyLabel: loading ? 'Memuat data...' : (error || baseConfig.table?.emptyLabel || 'Belum ada data'),
                 ...baseConfig.table,
                 rows: mappedRows,
                 filters: buildSalesReceiptFilters(baseConfig.table?.filters, mappedRows),

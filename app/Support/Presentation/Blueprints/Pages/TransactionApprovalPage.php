@@ -21,7 +21,7 @@ class TransactionApprovalPage
                 'createLabel' => 'Tambah Penyetuju Transaksi',
                 'refreshLabel' => 'Muat ulang',
                 'actionsLabel' => 'Aksi daftar penyetuju transaksi',
-                'emptyLabel' => 'Tidak ada data',
+                'emptyLabel' => 'Belum ada data',
                 'filters' => [
                     [
                         'id' => 'transactionType',

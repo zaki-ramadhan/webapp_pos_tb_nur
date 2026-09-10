@@ -49,7 +49,7 @@ export default function PurchaseDepositView({
                 filters: buildPurchaseDepositFilters(baseConfig.table?.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
-                emptyLabel: loading ? 'Memuat data...' : 'Tidak ada data',
+                emptyLabel: loading ? 'Memuat data...' : 'Belum ada data',
                 onRefresh: reload,
                 refreshLoading: loading,
                 ...serverTableProps,

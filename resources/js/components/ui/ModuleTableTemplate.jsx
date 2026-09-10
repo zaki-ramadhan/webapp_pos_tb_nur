@@ -320,7 +320,7 @@ export default function ModuleTableTemplate({
                                         ) : isAccessRestricted || (table.error && String(table.error).toLowerCase().includes('hak akses')) || (table.emptyLabel && String(table.emptyLabel).toLowerCase().includes('hak akses')) ? (
                                             'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.'
                                         ) : (
-                                            'Tidak ada data'
+                                            table.emptyLabel ?? 'Belum ada data'
                                         )}
                                     </DataTableCell>
                                 </DataTableRow>

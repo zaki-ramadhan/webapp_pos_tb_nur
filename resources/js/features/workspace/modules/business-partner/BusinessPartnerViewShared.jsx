@@ -159,7 +159,7 @@ export function PartnerInlineTableSection({
     modalTitle = 'Tambah Data Baru',
     columns = [],
     items = [],
-    emptyLabel = 'Tidak ada data',
+    emptyLabel = 'Belum ada data',
     fields = [],
     onValidateBeforeOpen,
     onAdd,

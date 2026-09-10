@@ -168,7 +168,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                                     </span>
                                 </DataTableCell>
                                 <DataTableCell colSpan={2} className="px-2.5 py-2 text-center text-base text-black">
-                                    Tidak ada data
+                                    Belum ada data
                                 </DataTableCell>
                             </DataTableRow>
                         )}

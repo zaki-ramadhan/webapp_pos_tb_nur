@@ -15,13 +15,13 @@ export const CONTACTS_TABLE = {
         { id: 'email', label: 'Email' },
         { id: 'mobilePhone', label: 'Handphone' },
     ],
-    emptyLabel: 'Tidak ada data',
+    emptyLabel: 'Belum ada data',
 };
 
 export const SHIPPING_TABLE = {
     title: 'Alamat lainnya',
     columns: [{ id: 'address', label: 'Alamat' }],
-    emptyLabel: 'Tidak ada data',
+    emptyLabel: 'Belum ada data',
 };
 
 export const CUSTOMER_BALANCE_TABLE = {
@@ -33,7 +33,7 @@ export const CUSTOMER_BALANCE_TABLE = {
         { id: 'number', label: 'Nomor', widthClassName: 'w-[180px]' },
         { id: 'notes', label: 'Keterangan' },
     ],
-    emptyLabel: 'Tidak ada data',
+    emptyLabel: 'Belum ada data',
 };
 
 export const SUPPLIER_BALANCE_TABLE = {
@@ -45,7 +45,7 @@ export const SUPPLIER_BALANCE_TABLE = {
         { id: 'number', label: 'Nomor', widthClassName: 'w-[180px]' },
         { id: 'notes', label: 'Keterangan' },
     ],
-    emptyLabel: 'Tidak ada data',
+    emptyLabel: 'Belum ada data',
 };
 
 export const SUPPLIER_BANK_TABLE = {
@@ -55,7 +55,7 @@ export const SUPPLIER_BANK_TABLE = {
         { id: 'accountName', label: 'Atas Nama', widthClassName: 'w-[24%]' },
         { id: 'bankName', label: 'Nama Bank' },
     ],
-    emptyLabel: 'Tidak ada data',
+    emptyLabel: 'Belum ada data',
 };
 
 export const LOOKUP_PLACEHOLDERS = {
