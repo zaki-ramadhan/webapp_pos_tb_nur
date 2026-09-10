@@ -45,12 +45,13 @@ trait HasQueryHelpers
         return ArrayPaginatorFactory::make($rows, $perPage, $page);
     }
 
-    protected function formatNumber(float $value): string
+    protected function formatNumber(float|int|string|null $value): string
     {
-        if (floor($value) == $value) {
-            return number_format($value, 0, '.', '');
+        $floatVal = (float) ($value ?? 0);
+        if (floor($floatVal) == $floatVal) {
+            return number_format($floatVal, 0, '.', '');
         }
 
-        return rtrim(rtrim(number_format($value, 4, '.', ''), '0'), '.');
+        return rtrim(rtrim(number_format($floatVal, 4, '.', ''), '0'), '.');
     }
 }
