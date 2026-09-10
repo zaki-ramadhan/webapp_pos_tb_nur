@@ -183,6 +183,7 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api', \App\Http\M
         ]);
     });
     Route::post('/bank-reconciliations/reconcile', [BackendResourceController::class, 'reconcileDocuments']);
+    Route::post('/bank-statements/import-file', [\App\Http\Controllers\Api\BankStatementController::class, 'importFile']);
     Route::post('/{resource}/import', [BackendResourceController::class, 'import']);
     Route::get('/{resource}', [BackendResourceController::class, 'index']);
     Route::post('/{resource}', [BackendResourceController::class, 'store']);

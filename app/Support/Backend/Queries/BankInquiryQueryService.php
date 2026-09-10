@@ -26,23 +26,64 @@ class BankInquiryQueryService
             return $this->paginateRows(collect(), $filters);
         }
 
-        $rows = $this->buildLedgerRows($filters)
-            ->map(function (array $row): array {
+        $accountNumber = null;
+        if (preg_match('/#([0-9\-\.]+)/', $search, $m)) {
+            $accountNumber = $m[1];
+        } elseif (preg_match('/[0-9\-\.]{4,}/', $search, $m)) {
+            $accountNumber = $m[0];
+        }
+
+        $query = \App\Domain\Finance\Models\BankStatementMutation::query();
+
+        if ($accountId) {
+            $query->where(function ($q) use ($accountId, $accountNumber): void {
+                $q->where('account_id', $accountId);
+                if ($accountNumber) {
+                    $q->orWhere('bank_account_number', 'like', "%{$accountNumber}%");
+                }
+            });
+        } elseif ($accountNumber) {
+            $query->where('bank_account_number', 'like', "%{$accountNumber}%");
+        } else {
+            $query->where(function ($q) use ($search): void {
+                $q->where('bank_name', 'like', "%{$search}%")
+                    ->orWhere('bank_account_number', 'like', "%{$search}%");
+            });
+        }
+
+        $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
+        $endDate = $this->resolveDateFilter($filters['end_date'] ?? null);
+
+        if ($startDate) {
+            $query->whereDate('transaction_date', '>=', $startDate->toDateString());
+        }
+        if ($endDate) {
+            $query->whereDate('transaction_date', '<=', $endDate->toDateString());
+        }
+
+        $mutations = $query->orderBy('transaction_date', 'asc')->orderBy('id', 'asc')->get();
+
+        if ($mutations->isNotEmpty()) {
+            $rows = $mutations->map(function ($m): array {
+                $dateLabel = $m->transaction_date ? \Carbon\Carbon::parse($m->transaction_date)->format('d/m/Y') : '-';
                 return [
-                    'id' => $row['id'],
-                    'date' => $row['date_label'],
-                    'description' => $row['description'],
-                    'mutation' => $row['mutation'],
-                    'type' => $row['type'],
-                    'balance' => $row['balance'],
-                    'account_id' => $row['account_id'],
-                    'account_name' => $row['account_name'],
-                    'document_number' => $row['document_number'],
-                    'transaction_type' => $row['transaction_type'],
+                    'id' => $m->id,
+                    'date' => $dateLabel,
+                    'description' => $m->description,
+                    'mutation' => $this->formatNumber($m->amount),
+                    'type' => $m->type,
+                    'balance' => $this->formatNumber($m->balance),
+                    'account_id' => $m->account_id,
+                    'account_name' => $m->bank_name ?? '',
+                    'document_number' => $m->import_file_name ?? '-',
+                    'transaction_type' => 'Rekening Koran',
                 ];
             });
 
-        return $this->paginateRows($rows, $filters);
+            return $this->paginateRows($rows, $filters);
+        }
+
+        return $this->paginateRows(collect(), $filters);
     }
 
     /**

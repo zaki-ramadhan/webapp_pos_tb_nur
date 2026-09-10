@@ -24,25 +24,36 @@ return new class extends Migration
             $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id') ?? 1;
             $suppCatId = DB::table('supplier_categories')->value('id') ?? 1;
 
+            $supplierColumns = array_flip(Schema::getColumnListing('suppliers'));
+
             foreach ($realSuppliers as $supp) {
                 $exists = DB::table('suppliers')->where('code', $supp['code'])->first();
+                $updateData = array_intersect_key([
+                    'name' => $supp['name'],
+                    'business_phone' => $supp['business_phone'],
+                    'mobile_phone' => $supp['mobile_phone'],
+                    'email' => $supp['email'],
+                    'billing_address' => $supp['billing_address'],
+                    'updated_at' => now(),
+                ], $supplierColumns);
+
                 if ($exists) {
-                    DB::table('suppliers')->where('id', $exists->id)->update([
+                    DB::table('suppliers')->where('id', $exists->id)->update($updateData);
+                } else {
+                    $insertData = array_intersect_key([
+                        'code' => $supp['code'],
                         'name' => $supp['name'],
+                        'category_id' => $suppCatId,
+                        'currency_id' => $currencyId,
                         'business_phone' => $supp['business_phone'],
                         'mobile_phone' => $supp['mobile_phone'],
                         'email' => $supp['email'],
                         'billing_address' => $supp['billing_address'],
-                        'updated_at' => now(),
-                    ]);
-                } else {
-                    DB::table('suppliers')->insert(array_merge($supp, [
-                        'category_id' => $suppCatId,
-                        'currency_id' => $currencyId,
                         'is_active' => true,
                         'created_at' => now(),
                         'updated_at' => now(),
-                    ]));
+                    ], $supplierColumns);
+                    DB::table('suppliers')->insert($insertData);
                 }
             }
         }
