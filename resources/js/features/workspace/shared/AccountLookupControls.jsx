@@ -39,6 +39,7 @@ export function AccountLookupField({
     queryParams = {},
     showType = false,
     resource = 'accounts',
+    filterRows = null,
 }) {
     const isProducts = resource === 'products';
     const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
@@ -49,7 +50,7 @@ export function AccountLookupField({
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : (error || ''));
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
 
-    const controller = useAccountLookupController({ value, values, disabled, queryParams, resource });
+    const controller = useAccountLookupController({ value, values, disabled, queryParams, resource, filterRows });
     const isMultiValue = Array.isArray(values);
     const inputWrapperRef = useRef(null);
 
@@ -150,6 +151,7 @@ export function AccountLookupTextInput({
     queryParams = {},
     showType = false,
     resource = 'accounts',
+    filterRows = null,
 }) {
     const isProducts = resource === 'products';
     const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
@@ -160,7 +162,7 @@ export function AccountLookupTextInput({
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : (error || ''));
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
 
-    const controller = useAccountLookupController({ value, disabled, queryParams, resource, onBeforeOpen });
+    const controller = useAccountLookupController({ value, disabled, queryParams, resource, onBeforeOpen, filterRows });
     const inputWrapperRef = useRef(null);
 
     return (

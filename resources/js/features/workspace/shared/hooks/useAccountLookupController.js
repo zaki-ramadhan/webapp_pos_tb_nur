@@ -67,7 +67,7 @@ export function normalizeSelectedLabels({ value, values }) {
     return [];
 }
 
-export default function useAccountLookupController({ value, values, disabled = false, queryParams = {}, resource = 'accounts', onBeforeOpen = null }) {
+export default function useAccountLookupController({ value, values, disabled = false, queryParams = {}, resource = 'accounts', onBeforeOpen = null, filterRows = null }) {
     const selectedLabels = useMemo(() => normalizeSelectedLabels({ value, values }), [value, values]);
     const selectedValue = selectedLabels[0] ?? '';
     const rootRef = useRef(null);
@@ -78,6 +78,11 @@ export default function useAccountLookupController({ value, values, disabled = f
     const [error, setError] = useState('');
     const [rows, setRows] = useState([]);
     const lastFetchKeyRef = useRef(null);
+    const filterRowsRef = useRef(filterRows);
+
+    useEffect(() => {
+        filterRowsRef.current = filterRows;
+    });
 
     useEffect(() => {
         if (!open) {
@@ -151,7 +156,11 @@ export default function useAccountLookupController({ value, values, disabled = f
 
                 if (!ignore) {
                     lastFetchKeyRef.current = fetchParamsKey;
-                    setRows(extractBackendRows(payload));
+                    let extracted = extractBackendRows(payload);
+                    if (typeof filterRowsRef.current === 'function') {
+                        extracted = extracted.filter(filterRowsRef.current);
+                    }
+                    setRows(extracted);
                 }
             } catch (lookupError) {
                 if (!ignore) {

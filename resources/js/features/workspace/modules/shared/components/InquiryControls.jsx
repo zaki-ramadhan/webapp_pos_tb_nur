@@ -1,7 +1,7 @@
 import TextInput from '@/components/ui/TextInput';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import SmartlinkBankLookupInput from '@/features/workspace/modules/smartlink-ebanking/SmartlinkBankLookupInput';
+import { getSmartlinkAccounts } from '@/features/workspace/modules/smartlink-ebanking/smartlinkStore';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import {
@@ -103,21 +103,7 @@ export function InquiryControl({ control, value, onChange }) {
     }
 
     if (control.type === 'search') {
-        if (control.lookupType === 'smartlink-bank') {
-            return (
-                <SmartlinkBankLookupInput
-                    id={control.id}
-                    value={value}
-                    placeholder={control.placeholder ?? 'Cari/Pilih...'}
-                    className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
-                    inputClassName="text-sm text-brand-dark py-1 h-full"
-                    trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
-                    onChange={(label, extra) => {
-                        onChange(control.id, label, extra || {});
-                    }}
-                />
-            );
-        }
+        const isSmartlink = control.lookupType === 'smartlink-bank';
 
         return (
             <AccountLookupTextInput
@@ -127,6 +113,22 @@ export function InquiryControl({ control, value, onChange }) {
                 searchLabel="Cari kas/bank"
                 dialogTitle="Pilih Kas/Bank"
                 queryParams={{ account_type: 'Cash/Bank' }}
+                filterRows={
+                    isSmartlink
+                        ? (record) => {
+                              const smartAccounts = getSmartlinkAccounts();
+                              return smartAccounts.some((acc) => {
+                                  const relName = String(acc.accountRelation || acc.accountName || '').trim().toLowerCase();
+                                  const recName = String(record.name || '').trim().toLowerCase();
+                                  return (
+                                      (acc.accountId && String(acc.accountId) === String(record.id)) ||
+                                      (acc.accountId && String(acc.accountId) === String(record.code)) ||
+                                      (relName && relName === recName)
+                                  );
+                              });
+                          }
+                        : null
+                }
                 className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
                 inputClassName="text-sm text-brand-dark py-1 h-full"
                 trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
