@@ -8,7 +8,7 @@ import { AccountLookupField } from '@/features/workspace/shared/AccountLookupCon
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { formatErrorMessageList } from '@/features/workspace/modules/business-partner/BusinessPartnerViewShared';
-import { CloseIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, InfoFilledIcon } from '@/features/workspace/shared/Icons';
 export function OpeningBalanceModal({
     isOpen,
     onClose,
@@ -69,9 +69,7 @@ export function OpeningBalanceModal({
                 <div className="bg-[#0A2A55] px-4 py-2 text-white">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2.5">
-                            <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                            </svg>
+                            <InfoFilledIcon className="h-4 w-4 text-white" />
                             <h2 className="text-sm font-normal text-white">{modalTitle}</h2>
                         </div>
 

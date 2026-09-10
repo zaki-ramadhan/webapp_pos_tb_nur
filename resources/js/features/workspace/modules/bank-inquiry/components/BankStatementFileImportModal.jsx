@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
-import { FolderOpen, TriangleAlert } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
+import { AlertTriangleFilledIcon } from '@/features/workspace/shared/Icons';
 import axios from 'axios';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
 
@@ -141,7 +142,7 @@ export default function BankStatementFileImportModal({
                 open={isErrorModalOpen}
                 onClose={() => setIsErrorModalOpen(false)}
                 title="Terjadi Permasalahan pada Pemrosesan"
-                headerIcon={() => <TriangleAlert className="h-4 w-4 shrink-0 text-yellow-400" />}
+                headerIcon={AlertTriangleFilledIcon}
                 maxWidthClassName="max-w-[480px]"
                 contentClassName="bg-white px-6 pt-5 pb-3"
                 footerClassName="bg-white px-5 pb-4 pt-1"

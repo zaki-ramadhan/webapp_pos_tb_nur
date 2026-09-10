@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import { TransactionHeaderButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
-import { PencilIcon } from '@/features/workspace/shared/Icons';
+import { PencilFilledIcon } from '@/features/workspace/shared/Icons';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
 import { sanitizeTextValue } from '@/utils/textSanitizer';
 import { formatNum, parse, calculatePayrollTotals } from './payrollEntryEmployeeModalUtils';
@@ -159,7 +159,7 @@ export default function PayrollEntryEmployeeModal({
             open={open}
             onClose={onClose}
             title="Rincian Gaji Karyawan"
-            headerIcon={PencilIcon}
+            headerIcon={PencilFilledIcon}
             maxWidthClassName="max-w-[540px]"
             contentClassName="bg-white px-4 py-0 flex flex-col pt-3 pb-3"
             footerClassName="border-t border-ui-border-medium bg-white px-4 py-2.5"

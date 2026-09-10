@@ -5,7 +5,7 @@ import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import Button from '@/components/ui/Button';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import { PencilIcon } from '@/features/workspace/shared/Icons';
+import { PencilFilledIcon } from '@/features/workspace/shared/Icons';
 
 function AccountDetailModalContainer({
     accountCode,
@@ -82,7 +82,7 @@ function AccountDetailModalContainer({
             open={open}
             onClose={handleClose}
             title="Detail Akun"
-            headerIcon={PencilIcon}
+            headerIcon={PencilFilledIcon}
             maxWidthClassName="max-w-[480px]"
             contentClassName="bg-white px-5 py-0 sm:px-6 min-h-[320px] flex flex-col"
             footer={

@@ -5,7 +5,7 @@ import Button from '@/components/ui/Button';
 import TextInput from '@/components/ui/TextInput';
 import SelectField from '@/components/ui/SelectField';
 import TextareaField from '@/components/ui/TextareaField';
-import { PencilIcon } from '@/features/workspace/shared/Icons';
+import { PencilFilledIcon } from '@/features/workspace/shared/Icons';
 import { showErrorToast } from '@/components/feedback/toast';
 import { parseNumericInput, formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 
@@ -71,7 +71,7 @@ export default function TransferFeeModal({
             open={open}
             onClose={onClose}
             title="Biaya Transfer"
-            headerIcon={PencilIcon}
+            headerIcon={PencilFilledIcon}
             maxWidthClassName="max-w-[500px]"
             contentClassName="bg-white px-5 py-0 sm:px-6 min-h-[220px] flex flex-col pt-0 pb-4"
             footer={

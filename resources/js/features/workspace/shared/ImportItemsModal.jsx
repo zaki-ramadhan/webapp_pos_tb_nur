@@ -10,7 +10,7 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
-import { CloseIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, TableActionIcon, TableFilledIcon } from '@/features/workspace/shared/Icons';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
@@ -164,7 +164,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             <div className="bg-[#0A2A55] px-5 py-2 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5">
-                        <TableActionIcon className="h-4 w-4 text-white" />
+                        <TableFilledIcon className="h-4 w-4 text-white" />
                         <h2 className="text-sm font-medium">Ekstraksi File CSV / Excel</h2>
                     </div>
                     <button

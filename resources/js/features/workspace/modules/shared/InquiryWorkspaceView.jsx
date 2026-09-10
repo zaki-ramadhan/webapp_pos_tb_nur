@@ -162,7 +162,6 @@ export default function InquiryWorkspaceView({
 
     const reloadAction = (config.actions ?? []).find((action) => action.id === 'reload');
     const exportAction = (config.actions ?? []).find((action) => action.id === 'export-excel');
-    const helpAction = (config.actions ?? []).find((action) => action.id === 'help' || action.icon === 'idea' || action.tone === 'warning');
     const otherActions = (config.actions ?? []).filter(
         (action) =>
             action.id !== 'reload' &&
@@ -301,7 +300,7 @@ export default function InquiryWorkspaceView({
                         ))}
                     </div>
 
-                    {otherActions.length || helpAction ? (
+                    {otherActions.length > 0 ? (
                         <div className="flex flex-wrap items-center gap-2">
                             {otherActions.map((action) => {
                                 if (action.type === 'switch-view') {
@@ -322,13 +321,6 @@ export default function InquiryWorkspaceView({
                                     />
                                 );
                             })}
-                            {helpAction ? (
-                                <InquiryActionButton
-                                    key={helpAction.id}
-                                    action={helpAction}
-                                    onClick={undefined}
-                                />
-                            ) : null}
                         </div>
                     ) : null}
                 </div>

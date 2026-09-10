@@ -1,12 +1,47 @@
 import ModalBase from '@/components/ui/ModalBase';
-import { CloseIcon, InfoIcon } from '@/features/workspace/shared/Icons';
+import {
+    CloseIcon,
+    InfoIcon,
+    InfoFilledIcon,
+    PencilIcon,
+    PencilFilledIcon,
+    AlertTriangleIcon,
+    AlertTriangleFilledIcon,
+    TableActionIcon,
+    TableFilledIcon,
+    CircleCheckIcon,
+    CircleCheckFilledIcon,
+} from '@/features/workspace/shared/Icons';
+import { TriangleAlert, Info, Pencil, CheckCircle, CircleCheck } from 'lucide-react';
+
+function resolveFilledHeaderIcon(headerIcon) {
+    if (headerIcon === null || headerIcon === false) {
+        return null;
+    }
+    if (headerIcon === undefined || headerIcon === InfoIcon || headerIcon === Info) {
+        return InfoFilledIcon;
+    }
+    if (headerIcon === PencilIcon || headerIcon === Pencil) {
+        return PencilFilledIcon;
+    }
+    if (headerIcon === AlertTriangleIcon || headerIcon === AlertTriangleFilledIcon || headerIcon === TriangleAlert) {
+        return AlertTriangleFilledIcon;
+    }
+    if (headerIcon === TableActionIcon) {
+        return TableFilledIcon;
+    }
+    if (headerIcon === CircleCheckIcon || headerIcon === CircleCheck || headerIcon === CheckCircle) {
+        return CircleCheckFilledIcon;
+    }
+    return headerIcon;
+}
 
 export default function WorkspaceDialog({
     open,
     onClose,
     title = '',
     closeLabel = 'Tutup modal',
-    headerIcon = null,
+    headerIcon = undefined,
     disableClose = false,
     hideCloseButton = false,
     maxWidthClassName = 'max-w-[620px]',
@@ -15,7 +50,7 @@ export default function WorkspaceDialog({
     footer = null,
     footerClassName = 'bg-white px-3.5 pt-1 pb-3 sm:px-4 sm:pb-3.5',
 }) {
-    const HeaderIcon = headerIcon ?? InfoIcon;
+    const HeaderIcon = resolveFilledHeaderIcon(headerIcon);
 
     return (
         <ModalBase
