@@ -16,45 +16,78 @@ function HeaderColumn({ title, iconPath, borderColor = 'border-[#0c6b96]', child
     );
 }
 
-export default function BankReconciliationHeader({ lastKnownBalance = '0', rawBalanceNum = 0, unreconciledCount = 0, hasData = false }) {
+export default function BankReconciliationHeader({
+    lastKnownBalance = '0',
+    rawBalanceNum = 0,
+    unreconciledCount = 0,
+    hasData = false,
+    isSwapped = false,
+    statementBalance = '0',
+    hasStatement = false,
+}) {
     const isNegative = rawBalanceNum < 0 || String(lastKnownBalance).includes('-');
+
+    const systemColumn = (
+        <HeaderColumn
+            key="system"
+            title="JURNAL SISTEM"
+            iconPath="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            borderColor="border-[#f2356d]"
+        >
+            {hasData ? (
+                <>
+                    <span className="font-normal text-slate-900 inline-flex items-center gap-3">
+                        <span>Saldo</span>
+                        <span className={`font-semibold ${isNegative ? 'text-red-600' : 'text-slate-900'}`}>
+                            Rp {lastKnownBalance}
+                        </span>
+                    </span>
+                    {unreconciledCount > 0 && !isSwapped && (
+                        <span className="text-red-700 font-normal flex items-center gap-1.5 text-sm">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 shrink-0">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                <line x1="12" y1="9" x2="12" y2="13" />
+                                <line x1="12" y1="17" x2="12.01" y2="17" />
+                            </svg>
+                            <span>{unreconciledCount} data belum cocok</span>
+                        </span>
+                    )}
+                </>
+            ) : null}
+        </HeaderColumn>
+    );
+
+    const bankColumn = (
+        <HeaderColumn
+            key="bank"
+            title="REKENING BANK"
+            iconPath="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+            borderColor="border-[#0c6b96]"
+        >
+            {hasData ? (
+                <span className="font-normal text-slate-900 inline-flex items-center gap-3">
+                    <span>Saldo</span>
+                    <span className="font-semibold text-slate-900">
+                        Rp {hasStatement ? statementBalance : '0'}
+                    </span>
+                </span>
+            ) : null}
+        </HeaderColumn>
+    );
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-            {/* Left Section: JURNAL SISTEM */}
-            <HeaderColumn
-                title="JURNAL SISTEM"
-                iconPath="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                borderColor="border-[#f2356d]"
-            >
-                {hasData ? (
-                    <>
-                        <span className="font-normal text-slate-900 inline-flex items-center gap-3">
-                            <span>Saldo</span>
-                            <span className={`font-semibold ${isNegative ? 'text-red-600' : 'text-slate-900'}`}>
-                                Rp {lastKnownBalance}
-                            </span>
-                        </span>
-                        {unreconciledCount > 0 && (
-                            <span className="text-red-700 font-normal flex items-center gap-1.5 text-sm">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 shrink-0">
-                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                                    <line x1="12" y1="9" x2="12" y2="13" />
-                                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                                </svg>
-                                <span>{unreconciledCount} data belum cocok</span>
-                            </span>
-                        )}
-                    </>
-                ) : null}
-            </HeaderColumn>
-
-            {/* Right Section: REKENING BANK */}
-            <HeaderColumn
-                title="REKENING BANK"
-                iconPath="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                borderColor="border-[#0c6b96]"
-            />
+            {isSwapped ? (
+                <>
+                    {bankColumn}
+                    {systemColumn}
+                </>
+            ) : (
+                <>
+                    {systemColumn}
+                    {bankColumn}
+                </>
+            )}
         </div>
     );
 }

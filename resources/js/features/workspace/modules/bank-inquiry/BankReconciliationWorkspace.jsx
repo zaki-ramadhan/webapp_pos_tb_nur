@@ -31,6 +31,7 @@ export default function BankReconciliationWorkspace({
     const [keyword, setKeyword] = useState(filters.search || '');
     const [selectedAccount, setSelectedAccount] = useState(null);
     const [bankError, setBankError] = useState('');
+    const [isSwapped, setIsSwapped] = useState(false);
     const [startDate, setStartDate] = useState(filters.start_date || '');
     const [endDate, setEndDate] = useState(filters.end_date || '');
 
@@ -257,6 +258,23 @@ export default function BankReconciliationWorkspace({
                         />
                     ) : null}
 
+                    {hasBankSelected && (
+                        <button
+                            type="button"
+                            onClick={() => setIsSwapped((v) => !v)}
+                            className={`inline-flex items-center justify-center h-[40px] w-[40px] rounded-[4px] border transition shrink-0 cursor-pointer active:scale-[0.98] ${
+                                isSwapped
+                                    ? 'bg-brand-blue text-white border-brand-blue shadow-button-primary'
+                                    : 'bg-white text-slate-600 border-ui-border hover:bg-slate-50 shadow-2xs'
+                            }`}
+                            aria-label="Tukar posisi kolom"
+                        >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
+                            </svg>
+                        </button>
+                    )}
+
                     <button
                         type="button"
                         onClick={() => {
@@ -356,6 +374,7 @@ export default function BankReconciliationWorkspace({
                     rawBalanceNum={rawBalanceNum}
                     unreconciledCount={unreconciledCount}
                     hasData={hasBankSelected}
+                    isSwapped={isSwapped}
                 />
 
                 {/* Body Section */}
@@ -395,6 +414,7 @@ export default function BankReconciliationWorkspace({
                                             }}
                                             selectedAccount={selectedAccount}
                                             bankLabel={keyword}
+                                            isSwapped={isSwapped}
                                         />
                                     );
                                 })}
@@ -416,19 +436,33 @@ export default function BankReconciliationWorkspace({
 
                                 return (
                                     <div key={key || index} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 items-stretch">
-                                        {/* Left Column Card: Jurnal Sistem */}
-                                        <JurnalCard row={row} />
-
-                                        {/* Right Column Card: Rekening Bank */}
-                                        <BankReconcileActionCard
-                                            isReconciled={isReconciled}
-                                            isReconciling={Boolean(reconcilingIds[key])}
-                                            onReconcile={() => {
-                                                setSelectedRow(row);
-                                                setConfirmOpen(true);
-                                            }}
-                                            onUnreconcile={() => handleReconcileSingle(key, false, row.account_id)}
-                                        />
+                                        {isSwapped ? (
+                                            <>
+                                                <BankReconcileActionCard
+                                                    isReconciled={isReconciled}
+                                                    isReconciling={Boolean(reconcilingIds[key])}
+                                                    onReconcile={() => {
+                                                        setSelectedRow(row);
+                                                        setConfirmOpen(true);
+                                                    }}
+                                                    onUnreconcile={() => handleReconcileSingle(key, false, row.account_id)}
+                                                />
+                                                <JurnalCard row={row} />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <JurnalCard row={row} />
+                                                <BankReconcileActionCard
+                                                    isReconciled={isReconciled}
+                                                    isReconciling={Boolean(reconcilingIds[key])}
+                                                    onReconcile={() => {
+                                                        setSelectedRow(row);
+                                                        setConfirmOpen(true);
+                                                    }}
+                                                    onUnreconcile={() => handleReconcileSingle(key, false, row.account_id)}
+                                                />
+                                            </>
+                                        )}
                                     </div>
                                 );
                             })}
