@@ -6,7 +6,6 @@ import { TransactionToolbarIconButton, TransactionExportExcelButton, Transaction
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import {
-    ChevronDownIcon,
     DownloadIcon,
     ExportIcon,
     RefreshIcon,
@@ -238,11 +237,23 @@ export default function InquiryWorkspaceView({
                         ))}
 
                         {reloadAction ? (
-                            <RefreshButton
-                                label="Muat ulang"
-                                onClick={onRefresh}
-                                loading={loading}
-                            />
+                            isBankStatement ? (
+                                <button
+                                    type="button"
+                                    onClick={onRefresh}
+                                    disabled={loading}
+                                    className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-none transition hover:bg-brand-blue-hover cursor-pointer active:scale-[0.98] disabled:opacity-60"
+                                    aria-label="Muat ulang"
+                                >
+                                    <RefreshIcon className={`h-4 w-4 text-white ${loading ? 'animate-spin' : ''}`} />
+                                </button>
+                            ) : (
+                                <RefreshButton
+                                    label="Muat ulang"
+                                    onClick={onRefresh}
+                                    loading={loading}
+                                />
+                            )
                         ) : null}
 
                         {isBankStatement ? (
@@ -259,11 +270,10 @@ export default function InquiryWorkspaceView({
                                 <button
                                     type="button"
                                     onClick={() => setIsExportConfirmOpen(true)}
-                                    className="inline-flex h-[40px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-2.5 text-brand-blue shadow-none transition hover:bg-brand-blue-light cursor-pointer active:scale-[0.98]"
+                                    className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue shadow-none transition hover:bg-brand-blue-light cursor-pointer active:scale-[0.98]"
                                     aria-label="Ekspor data"
                                 >
                                     <ExportIcon className="h-4 w-4" />
-                                    <ChevronDownIcon className="h-3 w-3" />
                                 </button>
                             </>
                         ) : (
@@ -579,7 +589,6 @@ export default function InquiryWorkspaceView({
                 actionsOrder="confirm-first"
                 actionsGap="gap-2"
                 cancelVariant="secondary"
-                hideCloseButton
                 maxWidthClassName="max-w-[590px]"
             />
 
