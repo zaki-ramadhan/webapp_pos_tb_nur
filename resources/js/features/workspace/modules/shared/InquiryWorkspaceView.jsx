@@ -603,6 +603,7 @@ export default function InquiryWorkspaceView({
                                 startDate={values.startDate ?? ''}
                                 emptyLabel={isAccessRestricted ? restrictionText : config.table.emptyLabel}
                                 className={config.table.tableClassName ?? 'min-w-[1200px]'}
+                                hasReconciliationColumn={activePageId === 'bank-history'}
                             />
                         ) : (
                             <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="border-table-wrapper-border">

@@ -209,6 +209,8 @@ class BankInquiryQueryService
                     'debit' => $row['debit'],
                     'credit' => $row['credit'],
                     'balance' => $row['balance'],
+                    'status' => (string) ($row['status'] ?? 'Open'),
+                    'is_reconciled' => (bool) ($row['is_reconciled'] ?? (($row['status'] ?? '') === 'Reconciled')),
                     'is_opening_balance' => (bool) ($row['is_opening_balance'] ?? false),
                     'index' => $index + 1,
                     'account_id' => $row['account_id'],

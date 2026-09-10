@@ -57,6 +57,7 @@ export default function BankLedgerTable({
     emptyLabel = 'Belum ada data',
     onRowClick = openSourceDocument,
     hasCheckNumberColumn = true,
+    hasReconciliationColumn = false,
     className = 'min-w-[1200px]',
 }) {
     const openingBalanceRow = useMemo(() => {
@@ -142,7 +143,10 @@ export default function BankLedgerTable({
         : formatCurrencyValue(finalEndingBalance);
 
     const totalColSpan = hasCheckNumberColumn ? 5 : 4;
-    const totalHeadColSpan = hasCheckNumberColumn ? 8 : 7;
+    let totalHeadColSpan = hasCheckNumberColumn ? 8 : 7;
+    if (hasReconciliationColumn) {
+        totalHeadColSpan += 1;
+    }
     const hasData = rows.length > 0;
 
     return (
@@ -159,6 +163,9 @@ export default function BankLedgerTable({
                     <DataTableHead className="text-right w-[140px] text-white">Mutasi</DataTableHead>
                     <DataTableHead className="text-center w-[80px] text-white">Tipe</DataTableHead>
                     <DataTableHead className="text-right w-[150px] text-white">Saldo</DataTableHead>
+                    {hasReconciliationColumn && (
+                        <DataTableHead className="w-[50px] text-center text-white font-light">#</DataTableHead>
+                    )}
                 </DataTableRow>
             </DataTableHeader>
 
@@ -191,6 +198,9 @@ export default function BankLedgerTable({
                             <DataTableCell className={`text-right ${isOpeningBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
                                 {formattedOpeningBalance}
                             </DataTableCell>
+                            {hasReconciliationColumn && (
+                                <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
+                            )}
                         </DataTableRow>
 
                         {/* Baris Transaksi Riil */}
@@ -203,6 +213,7 @@ export default function BankLedgerTable({
                                 ? `-${formatCurrencyValue(Math.abs(balVal))}`
                                 : formatCurrencyValue(balVal);
                             const isClickable = Boolean((row.document_id || row.id) && (row.document_type || row.documentType));
+                            const isReconciled = Boolean(row.is_reconciled || row.status === 'Reconciled');
 
                             return (
                                 <DataTableRow
@@ -238,6 +249,17 @@ export default function BankLedgerTable({
                                     <DataTableCell className={`text-right ${isNegativeBalance ? 'text-red-600' : 'text-slate-700'}`}>
                                         {formattedBalance}
                                     </DataTableCell>
+                                    {hasReconciliationColumn && (
+                                        <DataTableCell className="text-center">
+                                            {isReconciled ? (
+                                                <span className="inline-flex items-center justify-center text-emerald-600 font-bold" aria-label="Sudah direkonsiliasi">
+                                                    <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </span>
+                                            ) : null}
+                                        </DataTableCell>
+                                    )}
                                 </DataTableRow>
                             );
                         })}
@@ -256,6 +278,9 @@ export default function BankLedgerTable({
                             <DataTableCell className={`text-right ${isFinalBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
                                 {formattedFinalBalance}
                             </DataTableCell>
+                            {hasReconciliationColumn && (
+                                <DataTableCell className="text-center" />
+                            )}
                         </DataTableRow>
                     </>
                 )}
