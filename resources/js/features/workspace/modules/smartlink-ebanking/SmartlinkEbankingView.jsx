@@ -99,7 +99,7 @@ export default function SmartlinkEbankingView({
     const tableConfig = useMemo(() => ({
         columns: page?.table?.columns || [
             { id: 'accountNumber', label: 'No. Rekening Bank', align: 'left', widthClassName: 'w-[30%]' },
-            { id: 'accountRelation', label: 'Relasi Akun...', align: 'left', widthClassName: 'w-[35%]' },
+            { id: 'accountRelation', label: 'Relasi Akun Bank', align: 'left', widthClassName: 'w-[35%]' },
             { id: 'serviceType', label: 'Jenis Internet Banking', align: 'left', widthClassName: 'w-[35%]' },
         ],
         rows: accounts,
