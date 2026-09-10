@@ -410,11 +410,11 @@ export default function InquiryWorkspaceView({
 
             {hasSidePanel ? (
                 <div
-                    className="grid min-h-0 flex-1 gap-3.5 mt-3 grid-cols-1 xl:grid-cols-[minmax(0,3fr)_minmax(250px,1fr)] items-stretch xl:min-h-[calc(100vh-210px)]"
+                    className="grid min-h-0 flex-1 gap-3.5 mt-3 grid-cols-1 xl:grid-cols-[minmax(0,3fr)_minmax(250px,1fr)] items-start xl:min-h-[calc(100vh-210px)]"
                 >
-                    <div className="min-w-0 overflow-hidden flex flex-col flex-1">
-                        <div className="min-h-0 flex-1 flex flex-col overflow-hidden">
-                            <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="flex-1 min-h-0 overflow-auto border-table-wrapper-border">
+                    <div className="min-w-0 overflow-hidden">
+                        <div className="min-h-0 overflow-hidden">
+                            <DataTable bordered="table" className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="border-0 overflow-auto">
                                 <DataTableHeader className="bg-table-header-bg">
                                     <tr>
                                         {sortedRows.length > 0 && !isBankStatement && (
@@ -535,7 +535,7 @@ export default function InquiryWorkspaceView({
 
                     {isBankStatement ? (
                         <div
-                            className="overflow-hidden rounded-[4px] border border-ui-border-medium bg-white p-5 shadow-card-light h-full min-h-[calc(100vh-210px)] flex flex-col"
+                            className="overflow-hidden rounded-[4px] border border-ui-border-medium bg-white p-5 shadow-card-light self-stretch min-h-[calc(100vh-210px)] flex flex-col"
                         >
                             <div className="text-xl font-normal text-[#15529A] leading-snug">
                                 {bankStatementAccountInfo.bankName || '-'}
