@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
-import { FolderOpen } from 'lucide-react';
 import { AlertTriangleFilledIcon } from '@/features/workspace/shared/Icons';
 import axios from 'axios';
 import { parseBankStatementFile } from '../reconciliationExcelParser';
@@ -102,14 +101,20 @@ export default function BankStatementFileImportModal({
                             File Mutasi <span className="text-red-500">*</span>
                         </label>
 
-                        <div
-                            onClick={() => fileInputRef.current?.click()}
-                            className="flex flex-1 items-center justify-between h-[38px] px-3 border border-slate-300 rounded-[4px] bg-white cursor-pointer hover:border-brand-blue transition select-none"
-                        >
-                            <span className={`text-sm truncate ${file ? 'text-slate-800' : 'text-slate-400'}`}>
+                        <div className="flex flex-1 items-center justify-between h-[38px] px-3 border border-slate-300 rounded-[4px] bg-white min-w-0">
+                            <span className={`text-sm truncate min-w-0 flex-1 mr-2 ${file ? 'text-slate-800' : 'text-slate-400'}`}>
                                 {file ? file.name : 'Pilih file...'}
                             </span>
-                            <FolderOpen className="h-4.5 w-4.5 shrink-0 text-slate-600 ml-2" />
+                            <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="shrink-0 p-0.5 text-slate-500 hover:text-brand-blue transition cursor-pointer"
+                                aria-label="Pilih file"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]">
+                                    <path d="M19.5 21a3 3 0 0 0 3-3v-4.5a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3V18a3 3 0 0 0 3 3h15ZM1.5 10.146V6a3 3 0 0 1 3-3h5.379a2.25 2.25 0 0 1 1.59.659l2.122 2.121c.14.141.331.22.53.22H19.5a3 3 0 0 1 3 3v1.146A4.483 4.483 0 0 0 19.5 9h-15a4.483 4.483 0 0 0-3 1.146Z" />
+                                </svg>
+                            </button>
 
                             <input
                                 ref={fileInputRef}
