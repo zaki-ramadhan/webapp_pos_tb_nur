@@ -244,6 +244,7 @@ class FinanceBackendResources
         $journal->fill([
             'branch_id' => 1,
             'document_number' => $docNumber,
+            'reference_number' => $docNumber,
             'document_type' => 'general_journal',
             'entry_date' => $date,
             'effective_date' => $date,
@@ -251,6 +252,7 @@ class FinanceBackendResources
             'notes' => $description,
             'total_amount' => abs($balance),
             'metadata' => [
+                'transaction_number' => $docNumber,
                 'transaction_type_label' => 'Jurnal Umum',
                 'transaction_type_value' => 'general-journal',
                 'is_opening_balance' => true,

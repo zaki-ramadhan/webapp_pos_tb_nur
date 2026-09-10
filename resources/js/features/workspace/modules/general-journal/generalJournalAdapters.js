@@ -113,21 +113,21 @@ export function buildGeneralJournalRow(record) {
         || record?.related_document?.document_number 
         || record?.reference_number;
 
-    if (txNum === docNum) {
-        txNum = '';
+    if (!txNum && (transactionTypeValue === 'general-journal' || !record?.related_document_id)) {
+        txNum = docNum;
     }
 
     const rawNotes = record?.notes ?? '';
     let cleanNotes = rawNotes.replace(/^Posting otomatis dari\s*/i, '').trim();
     if (!cleanNotes || cleanNotes === '-') {
-        cleanNotes = txNum ? `${transactionTypeLabel} ${txNum}` : transactionTypeLabel;
+        cleanNotes = (txNum && txNum !== docNum) ? `${transactionTypeLabel} ${txNum}` : (record?.notes || transactionTypeLabel);
     }
 
     return {
         id: String(record?.id ?? ''),
         __backendRecord: record,
         documentNumber: docNum,
-        transactionNumber: txNum || '-',
+        transactionNumber: txNum || docNum || '-',
         date: entryDate,
         description: cleanNotes,
         total: formatCurrencyValue(totalAmount),

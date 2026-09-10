@@ -144,10 +144,10 @@ export default function GeneralJournalHeader({ config, values, setValues, active
                             </button>
                         ) : (
                             <TextInput
-                                value="-"
+                                value={values.transactionNumber || values.documentNumber || '-'}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-ui-border"
-                                inputClassName="text-xs sm:text-sm text-text-workspace-muted font-normal"
+                                inputClassName="text-xs sm:text-sm text-text-workspace-dark font-normal"
                             />
                         )}
                     </div>
