@@ -36,7 +36,7 @@ class SmartlinkEbankingPage
                     ],
                     [
                         'id' => 'accountRelation',
-                        'label' => 'Relasi Akun...',
+                        'label' => 'Relasi Akun Bank',
                         'align' => 'left',
                         'widthClassName' => 'w-[35%]',
                     ],
