@@ -13,7 +13,18 @@ import { loadInquiryFilter } from '@/features/workspace/shared/inquiryFilterPers
 export default function BankInquiryView({ page }) {
     const config = bankInquiryPageConfigs[page.id] ?? bankInquiryPageConfigs['bank-statement'];
     const initialSavedValues = useMemo(() => loadInquiryFilter(page.id), [page.id]);
-    const [filters, setFilters] = useState(() => buildBankFilters(initialSavedValues || {}));
+    const [filters, setFilters] = useState(() => {
+        const saved = initialSavedValues || {};
+        if (page.id === 'bank-reconciliation' && !saved.startDate && !saved.endDate) {
+            const today = new Date();
+            const sevenDaysAgo = new Date(today);
+            sevenDaysAgo.setDate(today.getDate() - 7);
+            const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            saved.startDate = fmt(sevenDaysAgo);
+            saved.endDate = fmt(today);
+        }
+        return buildBankFilters(saved);
+    });
     const resource = BACKEND_BANK_RESOURCES[page.id] ?? BACKEND_BANK_RESOURCES['bank-statement'];
     const {
         rows,
