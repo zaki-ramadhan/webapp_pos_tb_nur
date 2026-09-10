@@ -1,38 +1,12 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useMemo } from 'react';
 import SmartlinkEbankingTableView from './SmartlinkEbankingTableView';
 import SmartlinkEbankingFormView from './SmartlinkEbankingFormView';
-
-const STORAGE_KEY = 'pos_tb_nur_smartlink_accounts';
-
-const DEFAULT_ACCOUNTS = [
-    {
-        id: '1',
-        serviceType: 'BRI Mobile (BRIMO)',
-        accountNumber: '0129-01-002847-50-8',
-        name: '0129-01-002847-50-8',
-        tabLabel: '0129-01-002847-50-8',
-        label: '0129-01-002847-50-8',
-        accountId: '110102',
-        accountRelation: 'Bank BRI',
-        accountName: 'Bank BRI',
-    },
-];
-
-function sanitizeAccount(item) {
-    const accNumber = item.accountNumber || item.name || '';
-    const cleanRelation = (item.accountRelation || '').replace(/^\[.*?\]\s*/, '');
-    return {
-        ...item,
-        id: String(item.id),
-        accountNumber: accNumber,
-        name: accNumber,
-        tabLabel: accNumber,
-        label: accNumber,
-        accountRelation: cleanRelation,
-        accountName: item.accountName || cleanRelation,
-        serviceType: item.serviceType || 'BRI Mobile (BRIMO)',
-    };
-}
+import {
+    useSmartlinkAccounts,
+    saveSmartlinkAccounts,
+    sanitizeSmartlinkAccount,
+    getSmartlinkAccounts,
+} from './smartlinkStore';
 
 export default function SmartlinkEbankingView({
     page,
@@ -44,41 +18,17 @@ export default function SmartlinkEbankingView({
     onCloseDetail,
     onCloseTab,
 }) {
-    const [accounts, setAccounts] = useState(() => {
-        try {
-            const saved = window.localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    return parsed.map(sanitizeAccount);
-                }
-            }
-        } catch {
-            // fallback
-        }
-        const initialRows = page?.table?.rows?.length ? page.table.rows : DEFAULT_ACCOUNTS;
-        return initialRows.map(sanitizeAccount);
-    });
-
-    const persistAccounts = useCallback((newAccounts) => {
-        const sanitized = newAccounts.map(sanitizeAccount);
-        setAccounts(sanitized);
-        try {
-            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
-        } catch {
-            // ignore
-        }
-    }, []);
+    const { accounts, updateAccounts } = useSmartlinkAccounts();
 
     const handleSaveAccount = (record, isEdit) => {
-        const cleanRecord = sanitizeAccount(record);
+        const cleanRecord = sanitizeSmartlinkAccount(record);
         let updated;
         if (isEdit) {
             updated = accounts.map((item) => (String(item.id) === String(cleanRecord.id) ? cleanRecord : item));
         } else {
             updated = [cleanRecord, ...accounts];
         }
-        persistAccounts(updated);
+        updateAccounts(updated);
 
         if (isEdit) {
             onCloseDetail?.(cleanRecord.id);
@@ -89,7 +39,7 @@ export default function SmartlinkEbankingView({
 
     const handleDeleteAccount = (id) => {
         const updated = accounts.filter((item) => String(item.id) !== String(id));
-        persistAccounts(updated);
+        updateAccounts(updated);
         onCloseDetail?.(id);
         if (activeLevel2Tab?.id) {
             onCloseTab?.(activeLevel2Tab.id);
@@ -127,17 +77,7 @@ export default function SmartlinkEbankingView({
                     onCreate={onOpenContent}
                     onOpenDetail={handleOpenRowDetail}
                     onRefresh={() => {
-                        try {
-                            const saved = window.localStorage.getItem(STORAGE_KEY);
-                            if (saved) {
-                                const parsed = JSON.parse(saved);
-                                if (Array.isArray(parsed) && parsed.length > 0) {
-                                    setAccounts(parsed.map(sanitizeAccount));
-                                }
-                            }
-                        } catch {
-                            // ignore
-                        }
+                        updateAccounts(getSmartlinkAccounts());
                     }}
                 />
             </div>

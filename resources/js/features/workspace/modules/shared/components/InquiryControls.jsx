@@ -1,6 +1,7 @@
 import TextInput from '@/components/ui/TextInput';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import SmartlinkBankLookupInput from '@/features/workspace/modules/smartlink-ebanking/SmartlinkBankLookupInput';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import {
@@ -102,6 +103,22 @@ export function InquiryControl({ control, value, onChange }) {
     }
 
     if (control.type === 'search') {
+        if (control.lookupType === 'smartlink-bank') {
+            return (
+                <SmartlinkBankLookupInput
+                    id={control.id}
+                    value={value}
+                    placeholder={control.placeholder ?? 'Cari/Pilih...'}
+                    className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+                    inputClassName="text-sm text-brand-dark py-1 h-full"
+                    trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
+                    onChange={(label, extra) => {
+                        onChange(control.id, label, extra || {});
+                    }}
+                />
+            );
+        }
+
         return (
             <AccountLookupTextInput
                 id={control.id}
