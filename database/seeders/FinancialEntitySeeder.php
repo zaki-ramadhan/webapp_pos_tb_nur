@@ -312,23 +312,12 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 9. Ekuitas & Modal (Induk 3000 -> 3101)
-        $parentModal = DB::table('accounts')->insertGetId([
-            'currency_id' => $currencyId,
-            'code' => '3000',
-            'name' => 'Modal',
-            'account_type' => 'Modal',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
+        // 9. Ekuitas & Modal (Induk 3101)
         $parentEquity = DB::table('accounts')->insertGetId([
-            'parent_id' => $parentModal,
             'currency_id' => $currencyId,
             'code' => '3101',
             'name' => 'Ekuitas & Modal',
-            'account_type' => 'Equity',
+            'account_type' => 'Modal',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
@@ -339,7 +328,7 @@ class FinancialEntitySeeder extends Seeder
                 'currency_id' => $currencyId,
                 'code' => '310101',
                 'name' => 'Modal Usaha / Pemilik',
-                'account_type' => 'Equity',
+                'account_type' => 'Modal',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -349,7 +338,7 @@ class FinancialEntitySeeder extends Seeder
                 'currency_id' => $currencyId,
                 'code' => '310102',
                 'name' => 'Laba Ditahan Tahun Lalu',
-                'account_type' => 'Equity',
+                'account_type' => 'Modal',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -359,21 +348,11 @@ class FinancialEntitySeeder extends Seeder
                 'currency_id' => $currencyId,
                 'code' => '310103',
                 'name' => 'Ambil Uang Pribadi (Owner)',
-                'account_type' => 'Equity',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentModal,
-                'currency_id' => $currencyId,
-                'code' => '300001',
-                'name' => 'Equitas Saldo Awal',
                 'account_type' => 'Modal',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ]);
 
         // 10. Pendapatan Usaha (Induk 4101)
