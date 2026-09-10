@@ -537,47 +537,51 @@ export default function InquiryWorkspaceView({
                         <div
                             className="overflow-hidden rounded-[4px] border border-ui-border-medium bg-white p-5 shadow-card-light self-stretch min-h-[calc(100vh-210px)] flex flex-col"
                         >
-                            <div className="text-xl font-normal text-[#15529A] leading-snug">
-                                {bankStatementAccountInfo.bankName || '-'}
-                            </div>
+                            {Boolean(bankStatementAccountInfo.bankName || bankStatementAccountInfo.accountNumber) ? (
+                                <>
+                                    <div className="text-xl font-normal text-[#15529A] leading-snug">
+                                        {bankStatementAccountInfo.bankName}
+                                    </div>
 
-                            <div className="mt-2.5">
-                                <div className="text-xs text-slate-900 font-normal">
-                                    No. Rekening Bank
-                                </div>
-                                <div className="text-sm font-bold text-slate-900 mt-0.5">
-                                    {bankStatementAccountInfo.accountNumber || '-'}
-                                </div>
-                            </div>
+                                    <div className="mt-2.5">
+                                        <div className="text-sm text-slate-900 font-normal">
+                                            No. Rekening Bank
+                                        </div>
+                                        <div className="text-sm font-bold text-slate-900 mt-0.5">
+                                            {bankStatementAccountInfo.accountNumber || '-'}
+                                        </div>
+                                    </div>
 
-                            <div className="mt-8 space-y-2.5 text-sm text-slate-900">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-slate-900 font-normal">Saldo Awal</span>
-                                    <span className="font-bold text-slate-900">
-                                        {formatTableTextValue(statementSummary.saldoAwal, { align: 'right' })}
-                                    </span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-slate-900 font-normal">Masuk</span>
-                                    <span className="font-bold text-slate-900">
-                                        {formatTableTextValue(statementSummary.totalMasuk, { align: 'right' })}
-                                    </span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-slate-900 font-normal">Keluar</span>
-                                    <span className="font-bold text-slate-900">
-                                        {formatTableTextValue(statementSummary.totalKeluar, { align: 'right' })}
-                                    </span>
-                                </div>
-                                <div className="flex items-start justify-between">
-                                    <span className="text-slate-900 font-normal leading-tight">
-                                        Saldo<br />Akhir
-                                    </span>
-                                    <span className="font-bold text-slate-900 self-center">
-                                        {formatTableTextValue(statementSummary.saldoAkhir, { align: 'right' })}
-                                    </span>
-                                </div>
-                            </div>
+                                    <div className="mt-8 space-y-2.5 text-sm text-slate-900">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-slate-900 font-normal">Saldo Awal</span>
+                                            <span className="font-bold text-slate-900">
+                                                {formatTableTextValue(statementSummary.saldoAwal, { align: 'right' })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-slate-900 font-normal">Masuk</span>
+                                            <span className="font-bold text-slate-900">
+                                                {formatTableTextValue(statementSummary.totalMasuk, { align: 'right' })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-slate-900 font-normal">Keluar</span>
+                                            <span className="font-bold text-slate-900">
+                                                {formatTableTextValue(statementSummary.totalKeluar, { align: 'right' })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-start justify-between">
+                                            <span className="text-slate-900 font-normal leading-tight">
+                                                Saldo<br />Akhir
+                                            </span>
+                                            <span className="font-bold text-slate-900 self-center">
+                                                {formatTableTextValue(statementSummary.saldoAkhir, { align: 'right' })}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : null}
                         </div>
                     ) : (
                         <div
