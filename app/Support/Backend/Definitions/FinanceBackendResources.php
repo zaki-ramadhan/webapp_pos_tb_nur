@@ -271,21 +271,44 @@ class FinanceBackendResources
             'sort_order' => 0,
         ]);
 
-        $equityAccount = Account::where('code', '310.100-01')
-            ->orWhere('account_type', 'like', '%equity%')
-            ->orWhere('account_type', 'like', '%modal%')
+        $equityAccount = self::getOrCreateEquitasSaldoAwalAccount();
+
+        $journal->lines()->create([
+            'account_id' => $equityAccount->id,
+            'reference_code' => $equityAccount->code,
+            'description' => 'Equitas Saldo Awal',
+            'debit_amount' => $creditAmount,
+            'credit_amount' => $debitAmount,
+            'total_amount' => abs($balance),
+            'sort_order' => 1,
+        ]);
+    }
+
+    public static function getOrCreateEquitasSaldoAwalAccount(): Account
+    {
+        $existing = Account::where('code', '300001')
+            ->orWhere('name', 'Equitas Saldo Awal')
+            ->orWhere('name', 'Ekuitas Saldo Awal')
             ->first();
 
-        if ($equityAccount) {
-            $journal->lines()->create([
-                'account_id' => $equityAccount->id,
-                'reference_code' => $equityAccount->code,
-                'description' => 'Ekuitas Saldo Awal',
-                'debit_amount' => $creditAmount,
-                'credit_amount' => $debitAmount,
-                'total_amount' => abs($balance),
-                'sort_order' => 1,
-            ]);
+        if ($existing) {
+            return $existing;
         }
+
+        $parentEquity = Account::where('code', '3101')
+            ->orWhere(function ($q) {
+                $q->whereNull('parent_id')
+                  ->where('account_type', 'Equity');
+            })
+            ->first();
+
+        return Account::create([
+            'parent_id' => $parentEquity?->id,
+            'currency_id' => 1,
+            'code' => '300001',
+            'name' => 'Equitas Saldo Awal',
+            'account_type' => 'Equity',
+            'is_active' => true,
+        ]);
     }
 }

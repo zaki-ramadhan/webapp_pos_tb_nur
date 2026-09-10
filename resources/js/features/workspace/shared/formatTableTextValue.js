@@ -67,6 +67,14 @@ export default function formatTableTextValue(value, column = null) {
                 return value;
             }
 
+            const isTypeColumn = colId === 'type' || colId === 'tipe' || colLabel === 'tipe' || colLabel === 'type';
+            if (isTypeColumn) {
+                const s = String(value ?? '').trim().toUpperCase();
+                if (s === 'DR' || s === 'DEBIT' || s === 'DB' || s === 'D') return 'Dr';
+                if (s === 'CR' || s === 'KREDIT' || s === 'CREDIT' || s === 'K') return 'Cr';
+                return value;
+            }
+
             const isNumeric = column.align === 'right' ||
                               colId.includes('price') || 
                               colId.includes('amount') || 

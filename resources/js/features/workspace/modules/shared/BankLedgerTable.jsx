@@ -63,14 +63,10 @@ export default function BankLedgerTable({
     const openingBalanceRow = useMemo(() => {
         return rows.find(
             (r) =>
-                r.is_opening_balance ||
                 r.id === 'opening-balance' ||
                 r.transaction_type === 'Saldo Awal' ||
                 r.transactionType === 'Saldo Awal' ||
-                (r.description && (
-                    String(r.description).toLowerCase().startsWith('saldo awal') ||
-                    String(r.description).toLowerCase().startsWith('saldo per')
-                ))
+                (r.is_opening_balance && r.document_type !== 'general_journal' && r.documentType !== 'general_journal' && r.transaction_type !== 'Jurnal Umum' && r.transactionType !== 'Jurnal Umum')
         );
     }, [rows]);
 
@@ -83,11 +79,11 @@ export default function BankLedgerTable({
 
     const realRows = useMemo(() => {
         return rows.filter((r) => {
-            if (r.is_opening_balance) return false;
             if (r.id === 'opening-balance') return false;
             if (r.transaction_type === 'Saldo Awal' || r.transactionType === 'Saldo Awal') return false;
-            const desc = String(r.description || '').toLowerCase().trim();
-            if (desc.startsWith('saldo awal') || desc.startsWith('saldo per')) return false;
+            if (r.is_opening_balance && r.document_type !== 'general_journal' && r.documentType !== 'general_journal' && r.transaction_type !== 'Jurnal Umum' && r.transactionType !== 'Jurnal Umum') {
+                return false;
+            }
             return true;
         });
     }, [rows]);
@@ -96,8 +92,9 @@ export default function BankLedgerTable({
         let currentBal = openingBalValue;
         return realRows.map((r) => {
             const isCreditMutation =
-                r.type === 'Kredit' ||
                 r.type === 'Cr' ||
+                r.type === 'CR' ||
+                r.type === 'Kredit' ||
                 r.type === 'Credit' ||
                 Number(r.credit ?? 0) > 0;
 
@@ -127,7 +124,7 @@ export default function BankLedgerTable({
         const diff = debits - credits;
         return {
             amount: Math.abs(diff),
-            type: diff < 0 ? 'Kredit' : 'Debit',
+            type: diff < 0 ? 'Cr' : 'Dr',
             isCredit: diff < 0,
         };
     }, [computedRows]);
@@ -213,7 +210,7 @@ export default function BankLedgerTable({
                         {/* Baris Transaksi Riil */}
                         {computedRows.map((row, index) => {
                             const isCreditMutation = row.isCreditMutation;
-                            const typeLabel = isCreditMutation ? 'Kredit' : 'Debit';
+                            const typeLabel = isCreditMutation ? 'Cr' : 'Dr';
                             const balVal = Number(row.computedBalance ?? row.balance ?? 0);
                             const isNegativeBalance = balVal < 0;
                             const formattedBalance = isNegativeBalance
