@@ -66,15 +66,22 @@ class BankInquiryQueryService
         if ($mutations->isNotEmpty()) {
             $rows = $mutations->map(function ($m): array {
                 $dateLabel = $m->transaction_date ? \Carbon\Carbon::parse($m->transaction_date)->format('d/m/Y') : '-';
+                $isReconciled = ($m->status === 'Reconciled' || !empty($m->is_reconciled));
                 return [
                     'id' => $m->id,
                     'date' => $dateLabel,
                     'description' => $m->description,
                     'mutation' => $this->formatNumber($m->amount),
+                    'raw_amount' => (float) $m->amount,
                     'type' => $m->type,
                     'balance' => $this->formatNumber($m->balance),
+                    'raw_balance' => (float) $m->balance,
+                    'status' => $m->status ?? ($isReconciled ? 'Reconciled' : 'Unreconciled'),
+                    'is_reconciled' => $isReconciled,
                     'account_id' => $m->account_id,
                     'account_name' => $m->bank_name ?? '',
+                    'bank_name' => $m->bank_name ?? '',
+                    'bank_account_number' => $m->bank_account_number ?? '',
                     'document_number' => $m->import_file_name ?? '-',
                     'transaction_type' => 'Rekening Koran',
                 ];

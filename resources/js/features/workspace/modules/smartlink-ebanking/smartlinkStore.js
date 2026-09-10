@@ -7,6 +7,17 @@ export const DEFAULT_SMARTLINK_ACCOUNTS = [
     {
         id: '1',
         serviceType: 'BRI Mobile (BRIMO)',
+        accountNumber: '123123',
+        name: '123123',
+        tabLabel: '123123',
+        label: '123123',
+        accountId: '110102',
+        accountRelation: 'Bank BRI',
+        accountName: 'Bank BRI',
+    },
+    {
+        id: '2',
+        serviceType: 'BRI Mobile (BRIMO)',
         accountNumber: '0129-01-002847-50-8',
         name: '0129-01-002847-50-8',
         tabLabel: '0129-01-002847-50-8',

@@ -99,19 +99,20 @@ export const bankInquiryPageConfigs = {
             table: {
                 columns: [
                     { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
-                    { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[520px]', align: 'left' },
-                    { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[150px]', align: 'right' },
-                    { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
-                    { id: 'balance', label: 'Saldo', widthClassName: 'w-[200px]', align: 'right' },
+                    { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[420px]', align: 'left' },
+                    { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[140px]', align: 'right' },
+                    { id: 'type', label: 'Tipe', widthClassName: 'w-[70px]', align: 'center' },
+                    { id: 'balance', label: 'Saldo', widthClassName: 'w-[160px]', align: 'right' },
+                    { id: 'is_reconciled', label: '#', widthClassName: 'w-[50px]', align: 'center', sortable: false },
                 ],
                 rows: [],
                 emptyLabel: 'Belum ada data',
                 emptySpaceClassName: DEFAULT_EMPTY_SPACE_CLASS_NAME,
-                tableClassName: 'min-w-[1100px]',
+                tableClassName: 'min-w-[950px]',
                 searchKeys: ['date', 'description', 'mutation', 'type', 'balance'],
             },
             sidePanel: {
-                hidden: true,
+                hidden: false,
             },
         };
     },
