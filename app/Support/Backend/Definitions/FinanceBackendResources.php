@@ -187,17 +187,37 @@ class FinanceBackendResources
         $balance = (float) ($account->opening_balance ?? 0);
         $date = $account->opening_balance_date ? \Carbon\Carbon::parse($account->opening_balance_date)->format('Y-m-d') : date('Y-m-d');
 
-        $journal = \App\Domain\Support\Models\OperationDocument::where('document_type', 'general_journal')
-            ->where('metadata->is_opening_balance', true)
-            ->where('metadata->account_id', $account->id)
-            ->first();
+        $journals = \App\Domain\Support\Models\OperationDocument::where('document_type', 'general_journal')
+            ->where(function ($query) use ($account) {
+                $query->where(function ($sub) use ($account) {
+                    $sub->where('metadata->is_opening_balance', true)
+                        ->where('metadata->account_id', $account->id);
+                })
+                ->orWhere('notes', 'Saldo Awal akun ' . $account->name)
+                ->orWhere('notes', 'Saldo Awal ' . $account->name)
+                ->orWhereHas('lines', function ($lineQuery) use ($account) {
+                    $lineQuery->where('account_id', $account->id)
+                        ->where('description', 'like', 'Saldo Awal%');
+                });
+            })
+            ->get();
 
         if (abs($balance) < 0.001) {
-            if ($journal) {
-                $journal->lines()->delete();
-                $journal->delete();
+            foreach ($journals as $j) {
+                $j->lines()->delete();
+                $j->delete();
             }
             return;
+        }
+
+        if ($journals->count() > 1) {
+            $journal = $journals->first();
+            foreach ($journals->slice(1) as $dup) {
+                $dup->lines()->delete();
+                $dup->delete();
+            }
+        } else {
+            $journal = $journals->first();
         }
 
         $type = strtolower($account->account_type ?? '');

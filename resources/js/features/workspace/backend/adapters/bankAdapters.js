@@ -75,6 +75,7 @@ export function mapBankRows(pageId, records) {
                 sourceNumber: record.source_number ?? record.document_number ?? '',
                 checkNumber: record.check_number ?? '',
                 transactionType: record.transaction_type ?? '',
+                transaction_type: record.transaction_type ?? '',
                 description: record.description ?? '',
                 mutation: record.mutation ?? '',
                 type: record.type ?? '',
@@ -83,7 +84,8 @@ export function mapBankRows(pageId, records) {
                 balance: record.balance ?? '',
                 index: record.index ?? index + 1,
                 status: record.status ?? 'Open',
-                is_reconciled: Boolean(record.is_reconciled || record.status === 'Reconciled'),
+                is_opening_balance: Boolean(record.is_opening_balance || record.id === 'opening-balance'),
+                is_reconciled: Boolean(!record.is_opening_balance && record.id !== 'opening-balance' && (record.is_reconciled || record.status === 'Reconciled')),
             };
         }
 

@@ -272,8 +272,12 @@ class BankInquiryQueryService
         $realRows = collect();
 
         foreach ($allRows as $row) {
+            $desc = mb_strtolower(trim((string) ($row['description'] ?? '')));
+            $transType = trim((string) ($row['transaction_type'] ?? ''));
             $isOpBal = (bool) ($row['is_opening_balance'] ?? false)
-                || (isset($row['description']) && str_starts_with($row['description'], 'Saldo Awal akun'));
+                || str_starts_with($desc, 'saldo awal')
+                || str_starts_with($desc, 'saldo per')
+                || $transType === 'Saldo Awal';
 
             if ($isOpBal) {
                 $openingRows->push($row);
@@ -283,13 +287,50 @@ class BankInquiryQueryService
         }
 
         $balances = [];
+        $accountHasOpeningBalance = [];
         foreach ($accountMap as $accId => $account) {
-            $balances[(int) $accId] = (float) ($account->opening_balance ?? 0);
+            $opBal = (float) ($account->opening_balance ?? 0);
+            $balances[(int) $accId] = $opBal;
+            $accountHasOpeningBalance[(int) $accId] = abs($opBal) > 0.0001;
         }
 
         foreach ($openingRows as $opRow) {
             $accId = (int) $opRow['account_id'];
-            $balances[$accId] = ($balances[$accId] ?? 0) + (float) $opRow['net_amount'];
+            if (! ($accountHasOpeningBalance[$accId] ?? false)) {
+                $balances[$accId] = ($balances[$accId] ?? 0) + (float) $opRow['net_amount'];
+                $accountHasOpeningBalance[$accId] = true;
+            }
+        }
+
+        $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
+
+        if ($startDate) {
+            $priorFilters = $filters;
+            $priorFilters['start_date'] = null;
+            $priorFilters['end_date'] = $startDate->copy()->subDay()->toDateString();
+            $priorDocuments = $this->queryDocuments($priorFilters, $accountIds);
+            foreach ($priorDocuments as $pDoc) {
+                foreach ($this->rowsFromDocumentLines($pDoc, $accountMap) as $pRow) {
+                    $desc = mb_strtolower(trim((string) ($pRow['description'] ?? '')));
+                    $isOp = (bool) ($pRow['is_opening_balance'] ?? false)
+                        || str_starts_with($desc, 'saldo awal')
+                        || ($pRow['transaction_type'] ?? '') === 'Saldo Awal';
+                    if (! $isOp) {
+                        $accId = (int) $pRow['account_id'];
+                        $balances[$accId] = ($balances[$accId] ?? 0) + (float) $pRow['net_amount'];
+                    }
+                }
+                foreach ($this->rowsFromSyntheticAccounts($pDoc, $accountMap) as $pRow) {
+                    $desc = mb_strtolower(trim((string) ($pRow['description'] ?? '')));
+                    $isOp = (bool) ($pRow['is_opening_balance'] ?? false)
+                        || str_starts_with($desc, 'saldo awal')
+                        || ($pRow['transaction_type'] ?? '') === 'Saldo Awal';
+                    if (! $isOp) {
+                        $accId = (int) $pRow['account_id'];
+                        $balances[$accId] = ($balances[$accId] ?? 0) + (float) $pRow['net_amount'];
+                    }
+                }
+            }
         }
 
         $sortedRealRows = $realRows->sortBy([
@@ -299,7 +340,6 @@ class BankInquiryQueryService
             ['id', 'asc'],
         ])->values();
 
-        $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
         $outputRows = collect();
 
         if ($includeOpeningBalanceRow && count($accountIds) === 1) {
@@ -322,7 +362,8 @@ class BankInquiryQueryService
                 'credit' => $this->formatNumber(0),
                 'mutation' => $this->formatNumber(0),
                 'type' => '-',
-                'status' => 'Reconciled',
+                'status' => '',
+                'is_reconciled' => false,
                 'balance' => $this->formatNumber($initialBal),
                 'net_amount' => 0,
                 'is_opening_balance' => true,
