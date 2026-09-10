@@ -41,11 +41,11 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
                     onSelect(tab.id);
                 }
             }}
-            className={`relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] text-xs leading-normal whitespace-nowrap select-none sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${cursorClass} ${className}`.trim()}
+            className={`relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] text-xs leading-normal whitespace-nowrap select-none sm:h-8 sm:text-sm md:h-8.75 md:text-base ${spacingClassName} ${cursorClass} ${className}`.trim()}
             aria-label={tab.ariaLabel ?? tab.label}
         >
-            <span className="inline-flex h-full items-center min-w-0 max-w-[100px] sm:max-w-[130px] md:max-w-[160px]">
-                {isViewTab ? <ViewModeIcon /> : <span className="block w-full truncate py-1">{renderTabLabel(tab.label, active, false)}</span>}
+            <span className="inline-flex h-full items-center min-w-0">
+                {isViewTab ? <ViewModeIcon /> : <span className="block w-full py-1">{renderTabLabel(tab.label, active, false)}</span>}
             </span>
 
             {tab.closable ? (
