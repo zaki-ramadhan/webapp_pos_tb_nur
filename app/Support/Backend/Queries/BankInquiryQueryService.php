@@ -124,6 +124,55 @@ class BankInquiryQueryService
 
                 return $this->paginateRows($rows, $filters);
             }
+
+            // Fallback: If no imported bank statement records exist, read and synchronize from the related bank account ledger
+            $filtersWithAccount = $filters;
+            if ($accountId) {
+                $filtersWithAccount['account_id'] = $accountId;
+            }
+
+            $accountMap = $this->resolveAccountMap($filtersWithAccount);
+            if ($accountMap->isNotEmpty()) {
+                $targetAccount = $accountMap->first();
+                $filtersWithAccount['account_id'] = $targetAccount->id;
+
+                $ledgerRows = $this->buildLedgerRows($filtersWithAccount, includeOpeningBalanceRow: false);
+
+                if ($ledgerRows->isNotEmpty()) {
+                    $bankName = $targetAccount->name ?? 'Bank';
+                    $accNum = $accountNumber ?: ($targetAccount->cash_bank_reference ?? '');
+
+                    $rows = $ledgerRows->map(function ($row) use ($bankName, $accNum): array {
+                        $netAmt = (float) ($row['net_amount'] ?? 0);
+                        $rawAmount = abs($netAmt);
+                        $rawBalance = (float) preg_replace('/[^0-9.-]/', '', str_replace(['.', ','], ['', '.'], (string) ($row['balance'] ?? 0)));
+                        $type = $netAmt >= 0 ? 'DB' : 'CR';
+
+                        return [
+                            'id' => $row['id'],
+                            'document_id' => $row['document_id'] ?? null,
+                            'document_type' => $row['document_type'] ?? null,
+                            'date' => $row['date_label'] ?? $row['date'] ?? '-',
+                            'description' => (string) ($row['description'] ?: ($row['transaction_type'] . ' ' . ($row['document_number'] ?? ''))),
+                            'mutation' => $row['mutation'] ?: $this->formatNumber($rawAmount),
+                            'raw_amount' => $rawAmount,
+                            'type' => $type,
+                            'balance' => $row['balance'] ?: $this->formatNumber($rawBalance),
+                            'raw_balance' => $rawBalance,
+                            'status' => (string) ($row['status'] ?? 'Unreconciled'),
+                            'is_reconciled' => (bool) ($row['is_reconciled'] ?? ($row['status'] === 'Reconciled')),
+                            'account_id' => $row['account_id'] ?? null,
+                            'account_name' => (string) ($row['account_name'] ?? $bankName),
+                            'bank_name' => $bankName,
+                            'bank_account_number' => (string) $accNum,
+                            'document_number' => (string) ($row['document_number'] ?? '-'),
+                            'transaction_type' => (string) ($row['transaction_type'] ?? 'Rekening Koran'),
+                        ];
+                    });
+
+                    return $this->paginateRows($rows, $filters);
+                }
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::error('Bank statement query error: ' . $e->getMessage());
         }
@@ -335,12 +384,27 @@ class BankInquiryQueryService
             $codeQuery = mb_strtolower($searchParts[0] ?? $cleanSearch);
             $nameQuery = mb_strtolower(count($searchParts) > 1 ? implode(' ', array_slice($searchParts, 1)) : $cleanSearch);
 
+            $accNum = null;
+            if (preg_match('/#([0-9\-\.]+)/', $search, $m)) {
+                $accNum = $m[1];
+            } elseif (preg_match('/[0-9\-\.]{4,}/', $search, $m)) {
+                $accNum = $m[0];
+            }
+
             $matchedAccounts = $query
-                ->where(function ($builder) use ($cleanSearch, $codeQuery, $nameQuery): void {
+                ->where(function ($builder) use ($cleanSearch, $codeQuery, $nameQuery, $accNum): void {
                     $builder->whereRaw('LOWER(name) LIKE ?', ["%{$cleanSearch}%"])
                         ->orWhereRaw('LOWER(code) LIKE ?', ["%{$cleanSearch}%"])
                         ->orWhereRaw('LOWER(name) LIKE ?', ["%{$nameQuery}%"])
                         ->orWhereRaw('LOWER(code) LIKE ?', ["%{$codeQuery}%"]);
+
+                    if ($accNum) {
+                        $builder->orWhere('cash_bank_reference', 'like', "%{$accNum}%")
+                            ->orWhere('code', 'like', "%{$accNum}%");
+                    }
+                    if (preg_match('/\b(bri|bca|mandiri|bni|bsi|cimb|danamon|permata)\b/i', $cleanSearch, $bm)) {
+                        $builder->orWhereRaw('LOWER(name) LIKE ?', ['%' . strtolower($bm[1]) . '%']);
+                    }
                 })
                 ->where(function ($builder): void {
                     $builder
