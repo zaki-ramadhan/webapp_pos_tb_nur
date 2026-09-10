@@ -12,7 +12,8 @@ import {
     UploadIcon,
 } from '@/features/workspace/shared/Icons';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import BankStatementImportModal from '@/features/workspace/modules/bank-inquiry/components/BankStatementImportModal';
+import BankStatementFileImportModal from '@/features/workspace/modules/bank-inquiry/components/BankStatementFileImportModal';
+import { getSmartlinkAccounts } from '@/features/workspace/modules/smartlink-ebanking/smartlinkStore';
 import { exportToExcelXML } from '@/features/workspace/shared/exportUtils';
 import { showSuccessToast, showWarningToast } from '@/components/feedback/toast';
 import Pagination from '@/components/ui/Pagination';
@@ -73,6 +74,21 @@ export default function InquiryWorkspaceView({
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
     const isBankStatement = activePageId === 'bank-statement';
+
+    const expectedAccountNumber = useMemo(() => {
+        const smartAccounts = getSmartlinkAccounts();
+        const matched = smartAccounts.find(
+            (acc) =>
+                (values.account_id && String(acc.accountId) === String(values.account_id)) ||
+                (keyword && (keyword.includes(acc.accountNumber) || keyword.includes(acc.serviceType) || keyword.includes(acc.accountRelation)))
+        );
+        if (matched?.accountNumber) return matched.accountNumber;
+        if (keyword) {
+            const match = keyword.match(/#([0-9\-\.]+)/) || keyword.match(/([0-9\-\.]{4,})/);
+            if (match) return match[1];
+        }
+        return '';
+    }, [keyword, values.account_id]);
 
     const handleOpenImport = () => {
         const hasAccountSelected = Boolean(keyword && keyword.trim());
@@ -567,16 +583,18 @@ export default function InquiryWorkspaceView({
             />
 
             {isBankStatement ? (
-                <BankStatementImportModal
+                <BankStatementFileImportModal
                     open={isImportModalOpen}
                     bankName={keyword}
+                    expectedAccountNumber={expectedAccountNumber}
+                    accountId={values.account_id}
                     onClose={() => setIsImportModalOpen(false)}
                     onImportSuccess={(data) => {
                         setIsImportModalOpen(false);
                         onRefresh?.();
                         showSuccessToast({
                             title: 'Impor Berhasil',
-                            message: `${data.rows?.length || 0} baris mutasi bank berhasil dimuat.`,
+                            message: `${data.count || data.rows?.length || 'Semua'} baris mutasi bank berhasil dimuat.`,
                         });
                     }}
                 />

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('products') && ! Schema::hasColumn('products', 'main_supplier_id')) {
             Schema::table('products', function (Blueprint $table) {
-                $table->foreignId('main_supplier_id')->nullable()->after('sales_unit_id')->constrained('suppliers')->nullOnDelete();
+                $table->foreignId('main_supplier_id')->nullable()->constrained('suppliers')->nullOnDelete();
             });
         }
     }
