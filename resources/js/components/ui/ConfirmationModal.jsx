@@ -49,6 +49,8 @@ export default function ConfirmationModal({
     confirmDisabled = false,
     confirmLoading = false,
     cancelDisabled = false,
+    cancelVariant = 'secondary',
+    actionsOrder = 'cancel-first',
     iconVariant = 'warning',
     actionsAlign = 'between',
     hideCloseButton = false,
@@ -67,30 +69,65 @@ export default function ConfirmationModal({
             footer={(
                 <div className={`flex items-center ${actionsAlign === 'end' ? 'justify-end gap-3' : 'justify-between'} w-full`}>
                     {actionsAlign === 'end' ? (
-                        <>
-                            {cancelLabel ? (
+                        actionsOrder === 'confirm-first' ? (
+                            <>
                                 <Button
-                                    variant="secondary"
+                                    variant={confirmVariant}
                                     size="md"
-                                    onClick={onClose}
-                                    disabled={cancelDisabled || confirmLoading}
-                                    className="min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
+                                    onClick={onConfirm}
+                                    disabled={confirmDisabled}
+                                    loading={confirmLoading}
+                                    loadingLabel={confirmLabel}
+                                    className="min-w-[60px] rounded-[4px] shadow-none"
                                 >
-                                    {cancelLabel}
+                                    {confirmLabel}
                                 </Button>
-                            ) : null}
-                            <Button
-                                variant={confirmVariant}
-                                size="md"
-                                onClick={onConfirm}
-                                disabled={confirmDisabled}
-                                loading={confirmLoading}
-                                loadingLabel={confirmLabel}
-                                className="min-w-[60px] rounded-[4px] shadow-none"
-                            >
-                                {confirmLabel}
-                            </Button>
-                        </>
+                                {cancelLabel ? (
+                                    <Button
+                                        variant={cancelVariant}
+                                        size="md"
+                                        onClick={onClose}
+                                        disabled={cancelDisabled || confirmLoading}
+                                        className={
+                                            cancelVariant === 'ghost'
+                                                ? 'min-w-[60px] rounded-[4px] text-brand-blue hover:underline shadow-none'
+                                                : 'min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none'
+                                        }
+                                    >
+                                        {cancelLabel}
+                                    </Button>
+                                ) : null}
+                            </>
+                        ) : (
+                            <>
+                                {cancelLabel ? (
+                                    <Button
+                                        variant={cancelVariant}
+                                        size="md"
+                                        onClick={onClose}
+                                        disabled={cancelDisabled || confirmLoading}
+                                        className={
+                                            cancelVariant === 'ghost'
+                                                ? 'min-w-[60px] rounded-[4px] text-brand-blue hover:underline shadow-none'
+                                                : 'min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none'
+                                        }
+                                    >
+                                        {cancelLabel}
+                                    </Button>
+                                ) : null}
+                                <Button
+                                    variant={confirmVariant}
+                                    size="md"
+                                    onClick={onConfirm}
+                                    disabled={confirmDisabled}
+                                    loading={confirmLoading}
+                                    loadingLabel={confirmLabel}
+                                    className="min-w-[60px] rounded-[4px] shadow-none"
+                                >
+                                    {confirmLabel}
+                                </Button>
+                            </>
+                        )
                     ) : (
                         <>
                             {cancelLabel ? (
