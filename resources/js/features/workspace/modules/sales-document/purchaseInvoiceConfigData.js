@@ -198,14 +198,14 @@ export const defaultPurchaseInvoiceConfig = {
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: purchaseInvoiceItemColumns,
-        emptyLabel: 'Tidak ada data',
+        emptyLabel: 'Belum ada data',
         minWidthClassName: 'min-w-[1080px]',
     },
     costSearchPlaceholder: 'Cari/Pilih Akun Perkiraan...',
     additionalCostsTitle: 'Biaya Lainnya',
     costTable: {
         columns: purchaseInvoiceCostColumns,
-        emptyLabel: 'Tidak ada data',
+        emptyLabel: 'Belum ada data',
     },
     additionalInfoTitle: 'Info lainnya',
     taxInfoTitle: 'Info Pajak',

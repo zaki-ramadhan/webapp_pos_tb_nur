@@ -500,7 +500,7 @@ export function SummaryMetric({ widget }) {
             labels: ['Status'],
             datasets: [
                 {
-                    label: 'Tidak ada data',
+                    label: 'Belum ada data',
                     data: [1],
                     backgroundColor: 'var(--color-chart-grid-light)',
                     borderColor: 'var(--color-chart-grid-light)',

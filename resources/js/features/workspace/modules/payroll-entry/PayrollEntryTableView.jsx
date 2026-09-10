@@ -176,7 +176,7 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
                         columns={config.table.columns}
                         rows={sortedRows}
                         pagination={config.table.pagination}
-                        emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Tidak ada data')}
+                        emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Belum ada data')}
                         minWidthClassName="min-w-[1180px]"
                         onRowClick={(row) =>
                             onOpenDetail?.({

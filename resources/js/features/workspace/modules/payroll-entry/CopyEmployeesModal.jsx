@@ -194,7 +194,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm, existingE
                             <DataTableCell colSpan={3} className="text-center py-2 text-xs sm:text-sm font-normal text-black">
                                 {allEmployees.length > 0
                                     ? 'Semua karyawan sudah ditambahkan'
-                                    : 'Tidak ada data'}
+                                    : 'Belum ada data'}
                             </DataTableCell>
                         </DataTableRow>
                     ) : (

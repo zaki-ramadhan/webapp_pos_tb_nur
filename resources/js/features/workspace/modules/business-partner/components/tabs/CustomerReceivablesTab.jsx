@@ -83,7 +83,7 @@ export function CustomerReceivablesTab({ recordId }) {
             <PartnerLedgerTable
                 rows={rows}
                 loading={loading}
-                emptyLabel="Tidak ada data."
+                emptyLabel="Belum ada data."
             />
         </div>
     );

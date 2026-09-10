@@ -91,7 +91,7 @@ export default function SalaryAllowanceView({
                 ...tableProps,
                 rows: resolvedRows,
                 pageValue: tableProps.total.toLocaleString('id-ID'),
-                emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
+                emptyLabel: loading ? 'Memuat data...' : (error || 'Belum ada data'),
             },
         }),
         [config, error, tableProps, resolvedRows],

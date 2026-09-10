@@ -29,7 +29,7 @@ export default function JournalActivityLogView({ page, activeLevel2Tab, onOpenDe
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
                 refreshLabel: page.journalActivityLog?.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
+                emptyLabel: loading ? 'Memuat data...' : (error || 'Belum ada data'),
                 onRefresh: reload,
                 ...serverTableProps,
             },

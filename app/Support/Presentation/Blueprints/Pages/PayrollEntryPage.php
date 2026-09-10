@@ -160,7 +160,7 @@ class PayrollEntryPage
                         ],
                     ],
                     'rows' => [],
-                    'emptyLabel' => 'Tidak ada data',
+                    'emptyLabel' => 'Belum ada data',
                 ],
                 'summaryItems' => [
                     [

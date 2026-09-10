@@ -116,7 +116,7 @@ class SalesCheckinPage
                         'salesFilter' => 'nur-aulia',
                     ],
                 ],
-                'emptyLabel' => 'Tidak ada data',
+                'emptyLabel' => 'Belum ada data',
             ],
         ]);
     }

@@ -60,7 +60,7 @@ export default function SalesDocumentSummarySection({ config, values }) {
                                     </div>
                                 ))
                             ) : (
-                                <div className="px-4 py-6 text-base text-tab-view-active-text">{config.processedByEmptyLabel ?? 'Tidak ada data.'}</div>
+                                <div className="px-4 py-6 text-base text-tab-view-active-text">{config.processedByEmptyLabel ?? 'Belum ada data.'}</div>
                             )}
                         </div>
                     </div>

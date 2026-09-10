@@ -50,7 +50,7 @@ export default function SalesDocumentView({
                 loading,
                 error,
                 refreshLabel: config.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
+                emptyLabel: loading ? 'Memuat data...' : (error || 'Belum ada data'),
                 onRefresh: reload,
                 ...serverTableProps,
             },

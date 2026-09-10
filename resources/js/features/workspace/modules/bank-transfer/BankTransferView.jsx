@@ -66,7 +66,7 @@ export default function BankTransferView({
                 loading,
                 error,
                 refreshLabel: tableConfigBase.refreshLabel || 'Muat ulang',
-                emptyLabel: loading ? 'Memuat data...' : (error || tableConfigBase.emptyLabel || 'Tidak ada data'),
+                emptyLabel: loading ? 'Memuat data...' : (error || tableConfigBase.emptyLabel || 'Belum ada data'),
                 onRefresh: reload,
                 ...serverTableProps,
             },

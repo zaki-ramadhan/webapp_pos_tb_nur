@@ -83,7 +83,7 @@ export function TopProductsWidget({ widget }) {
     if (!items.length) {
         return (
             <DashboardWidgetEmptyState
-                title="Tidak ada data"
+                title="Belum ada data"
                 description="Belum ada peringkat barang terlaris."
             />
         );

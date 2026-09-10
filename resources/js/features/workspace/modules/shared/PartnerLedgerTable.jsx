@@ -26,7 +26,7 @@ export function formatPartnerLedgerAmount(value) {
 export default function PartnerLedgerTable({
     rows = [],
     loading = false,
-    emptyLabel = 'Tidak ada data',
+    emptyLabel = 'Belum ada data',
     onRowClick = openSourceDocument,
     className = 'w-full min-w-[800px]',
 }) {

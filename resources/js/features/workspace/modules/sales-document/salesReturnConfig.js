@@ -149,7 +149,7 @@ const defaultSalesReturnConfig = {
     hideItemSearchField: true,
     itemTable: {
         columns: salesReturnItemColumns,
-        emptyLabel: 'Tidak ada data',
+        emptyLabel: 'Belum ada data',
         minWidthClassName: 'min-w-[1060px]',
     },
     additionalInfoTitle: 'Info lainnya',
@@ -194,7 +194,7 @@ const defaultSalesReturnConfig = {
     hideCostSearchField: true,
     costTable: {
         columns: salesReturnCostColumns,
-        emptyLabel: 'Tidak ada data',
+        emptyLabel: 'Belum ada data',
         minWidthClassName: 'min-w-[860px]',
     },
     takeButtonLabel: 'Ambil',

@@ -23,7 +23,7 @@ class DepartmentPage
                 'printLabel' => 'Cetak',
                 'settingsLabel' => 'Pengaturan tabel departemen',
                 'searchPlaceholder' => 'Cari...',
-                'emptyLabel' => 'Tidak ada data',
+                'emptyLabel' => 'Belum ada data',
                 'pageValue' => '3',
                 'filterOptions' => [
                     ['value' => 'all', 'label' => 'Non Aktif: Semua'],
@@ -123,7 +123,7 @@ class DepartmentPage
                     'title' => 'Saldo Awal',
                     'dateLabel' => 'Per Tgl',
                     'accountPlaceholder' => 'Cari/Pilih Akun Perkiraan...',
-                    'emptyLabel' => 'Tidak ada data',
+                    'emptyLabel' => 'Belum ada data',
                     'columns' => [
                         [
                             'id' => 'code',

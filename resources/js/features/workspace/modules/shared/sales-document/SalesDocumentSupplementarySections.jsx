@@ -78,7 +78,7 @@ export function SalesDocumentAdvancePaymentsSection({ config, values, handlers }
             title={config.advancePaymentTitle ?? 'Uang Muka'}
             columns={config.advancePaymentTable?.columns ?? []}
             rows={values.advancePayments ?? []}
-            emptyLabel={config.advancePaymentTable?.emptyLabel ?? 'Tidak ada data'}
+            emptyLabel={config.advancePaymentTable?.emptyLabel ?? 'Belum ada data'}
             minWidthClassName={config.advancePaymentTable?.minWidthClassName ?? 'min-w-[760px]'}
             titleRequired={false}
             onRowClick={handlers?.onEditAdvancePayment}

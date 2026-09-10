@@ -41,7 +41,7 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, level2Ta
                 filters: buildSalesDepositFilters(baseConfig.table?.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
-                emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
+                emptyLabel: loading ? 'Memuat data...' : (error || 'Belum ada data'),
                 onRefresh: reload,
                 refreshLoading: loading,
                 ...serverTableProps,

@@ -72,7 +72,7 @@ export default function AccountLookupSuggestions({
     };
 
     const entityName = entityLabels[resource] ?? 'data';
-    const resolvedEmptyLabel = emptyLabel ?? 'Tidak ada data.';
+    const resolvedEmptyLabel = emptyLabel ?? 'Belum ada data.';
     const resolvedLoadingLabel = loadingLabel ?? `Memuat ${entityName}...`;
 
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
@@ -91,7 +91,7 @@ export default function AccountLookupSuggestions({
     }, [rows, resource]);
 
     const emptyMessage = query.trim()
-        ? 'Tidak ada data.'
+        ? 'Belum ada data.'
         : resolvedEmptyLabel;
 
     if (!open) {

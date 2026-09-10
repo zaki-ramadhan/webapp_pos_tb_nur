@@ -197,7 +197,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                 bordered="x"
                 columns={columns}
                 rows={filteredRecords}
-                emptyLabel={loading ? 'Memuat data...' : 'Tidak ada data'}
+                emptyLabel={loading ? 'Memuat data...' : 'Belum ada data'}
                 minWidthClassName="min-w-[800px]"
                 showNumbering={false}
                 onRowClick={(row) => handleToggleRecord(row.id)}

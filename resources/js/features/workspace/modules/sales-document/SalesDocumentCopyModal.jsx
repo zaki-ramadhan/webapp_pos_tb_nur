@@ -658,7 +658,7 @@ export default function SalesDocumentCopyModal({
                                     ) : (
                                         <DataTableRow className="bg-white">
                                             <DataTableCell colSpan={mode === 'products_by_supplier' ? 4 : 6} className="px-3 py-2 text-center text-sm text-black bg-white">
-                                                Tidak ada data
+                                                Belum ada data
                                             </DataTableCell>
                                         </DataTableRow>
                                     )}
@@ -730,7 +730,7 @@ export default function SalesDocumentCopyModal({
                                 ) : (
                                     <DataTableRow className="bg-white">
                                         <DataTableCell colSpan={4} className="px-3 py-2 text-center text-sm text-black bg-white">
-                                            Tidak ada data biaya lainnya.
+                                            Belum ada data biaya lainnya.
                                         </DataTableCell>
                                     </DataTableRow>
                                 )}
@@ -801,7 +801,7 @@ export default function SalesDocumentCopyModal({
                                 ) : (
                                     <DataTableRow className="bg-white">
                                         <DataTableCell colSpan={4} className="px-3 py-2 text-center text-sm text-black bg-white">
-                                            Tidak ada data uang muka.
+                                            Belum ada data uang muka.
                                         </DataTableCell>
                                     </DataTableRow>
                                 )}

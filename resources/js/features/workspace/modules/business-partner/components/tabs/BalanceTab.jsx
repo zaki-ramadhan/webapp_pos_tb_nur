@@ -76,7 +76,7 @@ export default function BalanceTab({ config, values, onChange }) {
                     {rows.length === 0 ? (
                         <DataTableRow className="bg-white table-row-empty" data-empty-row="true">
                             <DataTableCell colSpan={6} className="px-3 py-2 text-center text-base text-text-workspace-dark">
-                                Tidak ada data
+                                Belum ada data
                             </DataTableCell>
                         </DataTableRow>
                     ) : (

@@ -96,7 +96,7 @@ export default function EmployeeView({
                 loading: employeeResource.loading,
                 error: employeeResource.error,
                 refreshLabel: page.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: employeeResource.loading ? 'Memuat data...' : (employeeResource.error || page.table?.emptyLabel || 'Tidak ada data'),
+                emptyLabel: employeeResource.loading ? 'Memuat data...' : (employeeResource.error || page.table?.emptyLabel || 'Belum ada data'),
                 onRefresh: employeeResource.reload,
                 ...employeeResource.serverTableProps,
             },

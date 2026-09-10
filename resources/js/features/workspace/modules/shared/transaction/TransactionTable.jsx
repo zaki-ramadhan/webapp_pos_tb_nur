@@ -217,7 +217,7 @@ export function TransactionDataTable({
                                 ) : emptyLabel === 'Memuat data...' ? (
                                     'Memuat data...'
                                 ) : (
-                                    'Tidak ada data'
+                                    emptyLabel || 'Belum ada data'
                                 )}
                             </DataTableCell>
                         </DataTableRow>

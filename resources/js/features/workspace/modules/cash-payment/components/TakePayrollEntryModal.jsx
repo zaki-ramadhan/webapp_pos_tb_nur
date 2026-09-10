@@ -267,7 +267,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
                 bordered="x"
                 columns={columns}
                 rows={filteredRecords}
-                emptyLabel={loading ? 'Memuat data...' : 'Tidak ada data'}
+                emptyLabel={loading ? 'Memuat data...' : 'Belum ada data'}
                 minWidthClassName="min-w-[700px]"
                 showNumbering={false}
                 onRowClick={(row) => handleToggleRecord(row.id)}

@@ -435,7 +435,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                 ? 'Silakan cari dan pilih gudang untuk melihat daftar stok barang di gudang tersebut.'
                 : 'Silakan cari dan pilih barang untuk melihat sebaran stok di setiap gudang.';
         }
-        return config.table.emptyLabel || 'Tidak ada data';
+        return config.table.emptyLabel || 'Belum ada data';
     }, [loading, error, isItemLocation, hasTarget, isWarehouseMode, config.table.emptyLabel]);
 
     return (

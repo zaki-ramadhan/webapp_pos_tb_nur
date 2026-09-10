@@ -44,7 +44,7 @@ export default function WorkOrderSerialTab({ values }) {
                     {values.serialNumbers.length ? (
                         values.serialNumbers.map((serialNumber) => <SerialRow key={serialNumber} value={serialNumber} />)
                     ) : (
-                        <div className="px-4 py-6 text-center text-xs text-text-placeholder">Tidak ada data</div>
+                        <div className="px-4 py-6 text-center text-xs text-text-placeholder">Belum ada data</div>
                     )}
                 </div>
             </div>

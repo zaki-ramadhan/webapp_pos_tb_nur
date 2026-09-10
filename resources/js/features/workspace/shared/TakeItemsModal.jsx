@@ -218,7 +218,7 @@ export default function TakeItemsModal({ open, onClose, onApply, mode = 'purchas
                                     colSpan={3}
                                     className="px-3 py-2 text-center text-sm text-black"
                                 >
-                                    Tidak ada data
+                                    Belum ada data
                                 </DataTableCell>
                             </DataTableRow>
                         )}

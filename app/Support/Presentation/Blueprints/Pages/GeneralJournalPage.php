@@ -179,7 +179,7 @@ class GeneralJournalPage
                             'align' => 'right',
                         ],
                     ],
-                    'emptyLabel' => 'Tidak ada data',
+                    'emptyLabel' => 'Belum ada data',
                 ],
                 'table' => [
                     'createLabel' => 'Tambah Jurnal Umum',
