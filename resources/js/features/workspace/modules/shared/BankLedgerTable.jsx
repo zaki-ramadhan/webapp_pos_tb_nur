@@ -64,8 +64,13 @@ export default function BankLedgerTable({
         return rows.find(
             (r) =>
                 r.is_opening_balance ||
-                (r.description && String(r.description).startsWith('Saldo Awal')) ||
-                r.transaction_type === 'Saldo Awal'
+                r.id === 'opening-balance' ||
+                r.transaction_type === 'Saldo Awal' ||
+                r.transactionType === 'Saldo Awal' ||
+                (r.description && (
+                    String(r.description).toLowerCase().startsWith('saldo awal') ||
+                    String(r.description).toLowerCase().startsWith('saldo per')
+                ))
         );
     }, [rows]);
 
@@ -77,12 +82,14 @@ export default function BankLedgerTable({
     }, [openingBalanceRow, initialOpeningBalance]);
 
     const realRows = useMemo(() => {
-        return rows.filter(
-            (r) =>
-                !r.is_opening_balance &&
-                !(r.description && String(r.description).startsWith('Saldo Awal akun')) &&
-                r.transaction_type !== 'Saldo Awal'
-        );
+        return rows.filter((r) => {
+            if (r.is_opening_balance) return false;
+            if (r.id === 'opening-balance') return false;
+            if (r.transaction_type === 'Saldo Awal' || r.transactionType === 'Saldo Awal') return false;
+            const desc = String(r.description || '').toLowerCase().trim();
+            if (desc.startsWith('saldo awal') || desc.startsWith('saldo per')) return false;
+            return true;
+        });
     }, [rows]);
 
     const computedRows = useMemo(() => {
@@ -213,7 +220,13 @@ export default function BankLedgerTable({
                                 ? `-${formatCurrencyValue(Math.abs(balVal))}`
                                 : formatCurrencyValue(balVal);
                             const isClickable = Boolean((row.document_id || row.id) && (row.document_type || row.documentType));
-                            const isReconciled = Boolean(row.is_reconciled || row.status === 'Reconciled');
+                            const isOpening = Boolean(
+                                row.is_opening_balance ||
+                                row.id === 'opening-balance' ||
+                                row.transaction_type === 'Saldo Awal' ||
+                                row.transactionType === 'Saldo Awal'
+                            );
+                            const isReconciled = !isOpening && Boolean(row.is_reconciled || row.status === 'Reconciled');
 
                             return (
                                 <DataTableRow

@@ -464,7 +464,13 @@ export default function InquiryWorkspaceView({
                                                         if (column.id === 'action' || column.cell) {
                                                             cellContent = column.cell ? column.cell(row) : null;
                                                         } else if (column.id === 'is_reconciled' || column.id === 'reconciliation_status' || column.label === '#') {
-                                                            const isReconciled = Boolean(row.is_reconciled || row.status === 'Reconciled');
+                                                            const isOpening = Boolean(
+                                                                row.is_opening_balance ||
+                                                                row.id === 'opening-balance' ||
+                                                                row.transaction_type === 'Saldo Awal' ||
+                                                                row.transactionType === 'Saldo Awal'
+                                                            );
+                                                            const isReconciled = !isOpening && Boolean(row.is_reconciled || row.status === 'Reconciled');
                                                             cellContent = isReconciled ? (
                                                                 <span className="inline-flex items-center justify-center text-emerald-600 font-bold" aria-label="Sudah direkonsiliasi">
                                                                     <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
