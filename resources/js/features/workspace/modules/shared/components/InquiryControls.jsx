@@ -15,6 +15,7 @@ import {
 } from '@/features/workspace/shared/Icons';
 import SelectField from '@/components/ui/SelectField';
 import Button from '@/components/ui/Button';
+import Tooltip from '@/components/ui/Tooltip';
 
 function resolveActionIcon(action) {
     switch (action.icon) {
@@ -56,15 +57,17 @@ export function InquiryActionButton({ action, onClick, loading = false }) {
             : 'border-brand-blue-border bg-white text-brand-blue hover:bg-bg-brand-blue-toggled';
 
     return (
-        <Button
-            aria-label={action.label}
-            onClick={onClick}
-            variant="secondary"
-            size="sm"
-            className={`h-[40px] min-w-[40px] px-3 font-normal active:scale-[0.98] focus:outline-none ${toneClassName}`.trim()}
-        >
-            {resolveActionIcon(action)}
-        </Button>
+        <Tooltip content={action.label} portal>
+            <Button
+                aria-label={action.label}
+                onClick={onClick}
+                variant="secondary"
+                size="sm"
+                className={`h-[40px] min-w-[40px] px-3 font-normal active:scale-[0.98] focus:outline-none ${toneClassName}`.trim()}
+            >
+                {resolveActionIcon(action)}
+            </Button>
+        </Tooltip>
     );
 }
 
