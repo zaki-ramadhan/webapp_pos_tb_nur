@@ -577,7 +577,8 @@ export default function InquiryWorkspaceView({
                 onConfirm={handleConfirmExport}
                 actionsAlign="end"
                 actionsOrder="confirm-first"
-                cancelVariant="ghost"
+                actionsGap="gap-2"
+                cancelVariant="secondary"
                 hideCloseButton
                 maxWidthClassName="max-w-[590px]"
             />
