@@ -6,8 +6,15 @@ import { TransactionToolbarIconButton, TransactionExportExcelButton, Transaction
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import {
+    ChevronDownIcon,
+    DownloadIcon,
     RefreshIcon,
+    UploadIcon,
 } from '@/features/workspace/shared/Icons';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import BankStatementImportModal from '@/features/workspace/modules/bank-inquiry/components/BankStatementImportModal';
+import { exportToExcelXML } from '@/features/workspace/shared/exportUtils';
+import { showSuccessToast, showWarningToast } from '@/components/feedback/toast';
 import Pagination from '@/components/ui/Pagination';
 
 import {
@@ -62,6 +69,29 @@ export default function InquiryWorkspaceView({
     const keywordControl = controls.find((control) => control.type === 'search');
     const keyword = keywordControl ? values[keywordControl.id] ?? '' : '';
     const [isAlternativeView, setIsAlternativeView] = useState(false);
+    const [isExportConfirmOpen, setIsExportConfirmOpen] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
+    const isBankStatement = activePageId === 'bank-statement';
+
+    const handleOpenImport = () => {
+        const hasAccountSelected = Boolean(keyword && keyword.trim());
+        if (!hasAccountSelected) {
+            showWarningToast({
+                title: 'Pilih Bank Terlebih Dahulu',
+                message: 'Silakan cari dan pilih kas/bank terlebih dahulu sebelum mengimpor rekening koran.',
+            });
+            return;
+        }
+        setIsImportModalOpen(true);
+    };
+
+    const handleConfirmExport = () => {
+        setIsExportConfirmOpen(false);
+        const sanitizedBankName = keyword ? keyword.replace(/[^a-zA-Z0-9]/g, '_') : 'semua';
+        const filename = `rekening-koran-${sanitizedBankName}`;
+        exportToExcelXML(resolvedColumns, filteredRows, filename);
+    };
 
     const onValuesChangeRef = useRef(onValuesChange);
     useEffect(() => {
@@ -118,7 +148,14 @@ export default function InquiryWorkspaceView({
     const exportAction = (config.actions ?? []).find((action) => action.id === 'export-excel');
     const helpAction = (config.actions ?? []).find((action) => action.id === 'help' || action.icon === 'idea' || action.tone === 'warning');
     const otherActions = (config.actions ?? []).filter(
-        (action) => action.id !== 'reload' && action.id !== 'export-excel' && action.id !== 'help' && action.icon !== 'idea' && action.tone !== 'warning'
+        (action) =>
+            action.id !== 'reload' &&
+            action.id !== 'export-excel' &&
+            action.id !== 'export' &&
+            action.id !== 'import' &&
+            action.id !== 'help' &&
+            action.icon !== 'idea' &&
+            action.tone !== 'warning'
     );
 
     const searchControl = controls.find(c => c.type === 'search');
@@ -192,14 +229,37 @@ export default function InquiryWorkspaceView({
                             />
                         ) : null}
 
-                        {exportAction ? (
-                            <TransactionExportExcelButton
-                                columns={config.table.columns}
-                                rows={filteredRows}
-                                filename={config.label || 'histori-bank'}
-                                label={exportAction.label}
-                            />
-                        ) : null}
+                        {isBankStatement ? (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={handleOpenImport}
+                                    className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue shadow-none transition hover:bg-brand-blue-light cursor-pointer active:scale-[0.98]"
+                                    aria-label="Impor data"
+                                >
+                                    <DownloadIcon className="h-4 w-4" />
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setIsExportConfirmOpen(true)}
+                                    className="inline-flex h-[40px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-2.5 text-brand-blue shadow-none transition hover:bg-brand-blue-light cursor-pointer active:scale-[0.98]"
+                                    aria-label="Ekspor data"
+                                >
+                                    <UploadIcon className="h-4 w-4" />
+                                    <ChevronDownIcon className="h-3 w-3" />
+                                </button>
+                            </>
+                        ) : (
+                            exportAction ? (
+                                <TransactionExportExcelButton
+                                    columns={config.table.columns}
+                                    rows={filteredRows}
+                                    filename={config.label || 'histori-bank'}
+                                    label={exportAction.label}
+                                />
+                            ) : null
+                        )}
 
                         {selectControls.map((control) => (
                             <div key={control.id} className={control.wrapperClassName ?? ''}>
@@ -208,7 +268,7 @@ export default function InquiryWorkspaceView({
                         ))}
                     </div>
 
-                    {otherActions.length ? (
+                    {otherActions.length || helpAction ? (
                         <div className="flex flex-wrap items-center gap-2">
                             {otherActions.map((action) => {
                                 if (action.type === 'switch-view') {
@@ -229,6 +289,13 @@ export default function InquiryWorkspaceView({
                                     />
                                 );
                             })}
+                            {helpAction ? (
+                                <InquiryActionButton
+                                    key={helpAction.id}
+                                    action={helpAction}
+                                    onClick={undefined}
+                                />
+                            ) : null}
                         </div>
                     ) : null}
                 </div>
@@ -483,6 +550,37 @@ export default function InquiryWorkspaceView({
                     ) : null}
                 </>
             )}
+
+            <ConfirmationModal
+                open={isExportConfirmOpen}
+                title="Konfirmasi"
+                message="Sistem akan mengekspor semua data Rekening Koran. Anda setuju?"
+                confirmLabel="Ya"
+                cancelLabel="Batal"
+                onClose={() => setIsExportConfirmOpen(false)}
+                onConfirm={handleConfirmExport}
+                actionsAlign="end"
+                actionsOrder="confirm-first"
+                cancelVariant="ghost"
+                hideCloseButton
+                maxWidthClassName="max-w-[480px]"
+            />
+
+            {isBankStatement ? (
+                <BankStatementImportModal
+                    open={isImportModalOpen}
+                    bankName={keyword}
+                    onClose={() => setIsImportModalOpen(false)}
+                    onImportSuccess={(data) => {
+                        setIsImportModalOpen(false);
+                        onRefresh?.();
+                        showSuccessToast({
+                            title: 'Impor Berhasil',
+                            message: `${data.rows?.length || 0} baris mutasi bank berhasil dimuat.`,
+                        });
+                    }}
+                />
+            ) : null}
         </div>
     );
 }

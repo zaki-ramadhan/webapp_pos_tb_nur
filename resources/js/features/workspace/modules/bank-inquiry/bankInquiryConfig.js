@@ -94,6 +94,8 @@ export const bankInquiryPageConfigs = {
             ],
             actions: [
                 createAction('reload', 'link', 'Muat ulang'),
+                createAction('import', 'download', 'Impor data'),
+                createAction('export', 'upload', 'Ekspor data'),
                 createAction('help', 'idea', 'Bantuan rekening koran', 'warning'),
             ],
             table: {
