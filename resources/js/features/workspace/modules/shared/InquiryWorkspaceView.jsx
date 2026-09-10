@@ -579,7 +579,7 @@ export default function InquiryWorkspaceView({
                 actionsOrder="confirm-first"
                 cancelVariant="ghost"
                 hideCloseButton
-                maxWidthClassName="max-w-[480px]"
+                maxWidthClassName="max-w-[590px]"
             />
 
             {isBankStatement ? (
