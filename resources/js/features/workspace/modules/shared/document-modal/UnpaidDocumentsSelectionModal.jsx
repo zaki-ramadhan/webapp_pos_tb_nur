@@ -51,6 +51,12 @@ export default function UnpaidDocumentsSelectionModal({
         let isMounted = true;
         setLoading(true);
 
+        if (partnerQueryKey && !partnerId) {
+            setRecords([]);
+            setLoading(false);
+            return;
+        }
+
         const params = {
             status: 'Belum Lunas',
             per_page: 1000,
@@ -90,6 +96,13 @@ export default function UnpaidDocumentsSelectionModal({
             const st = String(rec.status ?? '').toLowerCase();
             if (st === 'lunas' || st === 'paid' || st === 'batal' || st === 'void') {
                 return false;
+            }
+
+            if (partnerId) {
+                const partnerRecordId = rec.customer_id ?? (typeof rec.customer === 'object' ? rec.customer?.id : null) ?? rec.supplier_id ?? (typeof rec.supplier === 'object' ? rec.supplier?.id : null);
+                if (partnerRecordId && String(partnerRecordId) !== String(partnerId)) {
+                    return false;
+                }
             }
 
             if (keyword.trim()) {

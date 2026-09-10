@@ -87,11 +87,21 @@ export default function SalesReceiptFormView({
                                         placeholder="Cari/Pilih Pelanggan..."
                                         searchLabel="Cari pelanggan"
                                         onSelectAccount={(record, label) => {
-                                            setValues((current) => ({
-                                                ...current,
-                                                __customerId: record ? record.id : null,
-                                                customer: label ? [label] : [],
-                                            }));
+                                            setValues((current) => {
+                                                const nextCustomerId = record ? record.id : null;
+                                                const customerChanged = Boolean(current.__customerId && nextCustomerId !== current.__customerId);
+                                                return {
+                                                    ...current,
+                                                    __customerId: nextCustomerId,
+                                                    customer: label ? [label] : [],
+                                                    ...(customerChanged ? {
+                                                        invoices: [],
+                                                        paymentAmount: '0',
+                                                        paymentAmountDisplay: '0',
+                                                        paymentAmountForSummary: '0',
+                                                    } : {}),
+                                                };
+                                            });
                                         }}
                                     />
                                 </div>
