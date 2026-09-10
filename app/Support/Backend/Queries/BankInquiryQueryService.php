@@ -17,8 +17,40 @@ class BankInquiryQueryService
     /**
      * @param  array<string, mixed>  $filters
      */
+    public function ensureBankStatementMutationsTable(): void
+    {
+        try {
+            if (! \Illuminate\Support\Facades\Schema::hasTable('bank_statement_mutations')) {
+                \Illuminate\Support\Facades\Schema::create('bank_statement_mutations', function (\Illuminate\Database\Schema\Blueprint $table): void {
+                    $table->id();
+                    $table->unsignedBigInteger('account_id')->nullable()->index();
+                    $table->string('bank_account_number', 100)->index();
+                    $table->string('bank_name', 150)->nullable();
+                    $table->string('import_file_name', 255)->nullable();
+                    $table->date('transaction_date')->index();
+                    $table->text('description');
+                    $table->decimal('amount', 18, 2);
+                    $table->string('type', 10);
+                    $table->decimal('balance', 18, 2)->default(0);
+                    $table->string('status', 50)->default('Unreconciled')->index();
+                    $table->timestamps();
+
+                    $table->index(['bank_account_number', 'transaction_date'], 'bsm_acc_date_idx');
+                    $table->index(['account_id', 'transaction_date'], 'bsm_aid_date_idx');
+                });
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Could not ensure bank_statement_mutations table: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     */
     public function paginateStatement(array $filters): LengthAwarePaginator
     {
+        $this->ensureBankStatementMutationsTable();
+
         $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
         $accountId = $filters['account_id'] ?? null;
 
@@ -26,68 +58,74 @@ class BankInquiryQueryService
             return $this->paginateRows(collect(), $filters);
         }
 
-        $accountNumber = null;
-        if (preg_match('/#([0-9\-\.]+)/', $search, $m)) {
-            $accountNumber = $m[1];
-        } elseif (preg_match('/[0-9\-\.]{4,}/', $search, $m)) {
-            $accountNumber = $m[0];
-        }
+        try {
+            $accountNumber = null;
+            if (preg_match('/#([0-9\-\.]+)/', $search, $m)) {
+                $accountNumber = $m[1];
+            } elseif (preg_match('/[0-9\-\.]{4,}/', $search, $m)) {
+                $accountNumber = $m[0];
+            }
 
-        $query = \App\Domain\Finance\Models\BankStatementMutation::query();
+            $query = \App\Domain\Finance\Models\BankStatementMutation::query();
 
-        if ($accountId) {
-            $query->where(function ($q) use ($accountId, $accountNumber): void {
-                $q->where('account_id', $accountId);
-                if ($accountNumber) {
-                    $q->orWhere('bank_account_number', 'like', "%{$accountNumber}%");
-                }
-            });
-        } elseif ($accountNumber) {
-            $query->where('bank_account_number', 'like', "%{$accountNumber}%");
-        } else {
-            $query->where(function ($q) use ($search): void {
-                $q->where('bank_name', 'like', "%{$search}%")
-                    ->orWhere('bank_account_number', 'like', "%{$search}%");
-            });
-        }
+            if ($accountId) {
+                $query->where(function ($q) use ($accountId, $accountNumber): void {
+                    $q->where('account_id', $accountId);
+                    if ($accountNumber) {
+                        $q->orWhere('bank_account_number', 'like', "%{$accountNumber}%");
+                    }
+                });
+            } elseif ($accountNumber) {
+                $query->where('bank_account_number', 'like', "%{$accountNumber}%");
+            } else {
+                $query->where(function ($q) use ($search): void {
+                    $q->where('bank_name', 'like', "%{$search}%")
+                        ->orWhere('bank_account_number', 'like', "%{$search}%");
+                });
+            }
 
-        $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
-        $endDate = $this->resolveDateFilter($filters['end_date'] ?? null);
+            $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
+            $endDate = $this->resolveDateFilter($filters['end_date'] ?? null);
 
-        if ($startDate) {
-            $query->whereDate('transaction_date', '>=', $startDate->toDateString());
-        }
-        if ($endDate) {
-            $query->whereDate('transaction_date', '<=', $endDate->toDateString());
-        }
+            if ($startDate) {
+                $query->whereDate('transaction_date', '>=', $startDate->toDateString());
+            }
+            if ($endDate) {
+                $query->whereDate('transaction_date', '<=', $endDate->toDateString());
+            }
 
-        $mutations = $query->orderBy('transaction_date', 'asc')->orderBy('id', 'asc')->get();
+            $mutations = $query->orderBy('transaction_date', 'asc')->orderBy('id', 'asc')->get();
 
-        if ($mutations->isNotEmpty()) {
-            $rows = $mutations->map(function ($m): array {
-                $dateLabel = $m->transaction_date ? \Carbon\Carbon::parse($m->transaction_date)->format('d/m/Y') : '-';
-                $isReconciled = ($m->status === 'Reconciled' || !empty($m->is_reconciled));
-                return [
-                    'id' => $m->id,
-                    'date' => $dateLabel,
-                    'description' => $m->description,
-                    'mutation' => $this->formatNumber($m->amount),
-                    'raw_amount' => (float) $m->amount,
-                    'type' => $m->type,
-                    'balance' => $this->formatNumber($m->balance),
-                    'raw_balance' => (float) $m->balance,
-                    'status' => $m->status ?? ($isReconciled ? 'Reconciled' : 'Unreconciled'),
-                    'is_reconciled' => $isReconciled,
-                    'account_id' => $m->account_id,
-                    'account_name' => $m->bank_name ?? '',
-                    'bank_name' => $m->bank_name ?? '',
-                    'bank_account_number' => $m->bank_account_number ?? '',
-                    'document_number' => $m->import_file_name ?? '-',
-                    'transaction_type' => 'Rekening Koran',
-                ];
-            });
+            if ($mutations->isNotEmpty()) {
+                $rows = $mutations->map(function ($m): array {
+                    $dateLabel = $m->transaction_date ? \Carbon\Carbon::parse($m->transaction_date)->format('d/m/Y') : '-';
+                    $isReconciled = ($m->status === 'Reconciled' || !empty($m->is_reconciled));
+                    $rawAmount = (float) ($m->amount ?? 0);
+                    $rawBalance = (float) ($m->balance ?? 0);
+                    return [
+                        'id' => $m->id,
+                        'date' => $dateLabel,
+                        'description' => (string) ($m->description ?? ''),
+                        'mutation' => $this->formatNumber($rawAmount),
+                        'raw_amount' => $rawAmount,
+                        'type' => (string) ($m->type ?? 'CR'),
+                        'balance' => $this->formatNumber($rawBalance),
+                        'raw_balance' => $rawBalance,
+                        'status' => (string) ($m->status ?? ($isReconciled ? 'Reconciled' : 'Unreconciled')),
+                        'is_reconciled' => $isReconciled,
+                        'account_id' => $m->account_id,
+                        'account_name' => (string) ($m->bank_name ?? ''),
+                        'bank_name' => (string) ($m->bank_name ?? ''),
+                        'bank_account_number' => (string) ($m->bank_account_number ?? ''),
+                        'document_number' => (string) ($m->import_file_name ?? '-'),
+                        'transaction_type' => 'Rekening Koran',
+                    ];
+                });
 
-            return $this->paginateRows($rows, $filters);
+                return $this->paginateRows($rows, $filters);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Bank statement query error: ' . $e->getMessage());
         }
 
         return $this->paginateRows(collect(), $filters);

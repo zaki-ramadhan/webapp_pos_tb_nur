@@ -106,6 +106,8 @@ class BankStatementController extends Controller
         }
 
         // 4. Save mutations atomically
+        app(\App\Support\Backend\Queries\BankInquiryQueryService::class)->ensureBankStatementMutationsTable();
+
         DB::transaction(function () use ($rows, $accountId, $expectedAccountNumber, $bankName, $fileName): void {
             $currentBalance = 0;
             $lastMutation = BankStatementMutation::query()

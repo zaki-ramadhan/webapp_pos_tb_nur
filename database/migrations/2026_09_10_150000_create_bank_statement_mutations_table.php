@@ -8,7 +8,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::dropIfExists('bank_statement_mutations');
         if (! Schema::hasTable('bank_statement_mutations')) {
             Schema::create('bank_statement_mutations', function (Blueprint $table): void {
                 $table->id();
