@@ -136,7 +136,27 @@ export function InquiryControl({ control, value, onChange }) {
                 inputClassName="text-sm text-brand-dark py-1 h-full"
                 trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
                 onSelectAccount={(record, label) => {
-                    onChange(control.id, label, record ? { account_id: record.id } : { account_id: '' });
+                    let nextLabel = label;
+                    if (isSmartlink && record) {
+                        const smartAccounts = getSmartlinkAccounts();
+                        const relName = String(record.name || '').trim().toLowerCase();
+                        const matched = smartAccounts.find(
+                            (acc) =>
+                                (acc.accountId && String(acc.accountId) === String(record.id)) ||
+                                (acc.accountId && String(acc.accountId) === String(record.code)) ||
+                                (acc.accountRelation && String(acc.accountRelation).toLowerCase() === relName) ||
+                                (acc.accountName && String(acc.accountName).toLowerCase() === relName)
+                        );
+                        if (matched) {
+                            const serviceType = matched.serviceType || record.name;
+                            const servicePrefix = serviceType.includes('(') ? serviceType.split('(')[0].trim() : serviceType;
+                            nextLabel = `[${servicePrefix}] ${serviceType} #${matched.accountNumber}`;
+                        } else {
+                            const accNum = record.account_number || record.code || '';
+                            nextLabel = accNum ? `${record.name} #${accNum}` : record.name;
+                        }
+                    }
+                    onChange(control.id, nextLabel, record ? { account_id: record.id } : { account_id: '' });
                 }}
             />
         );

@@ -75,20 +75,62 @@ export default function InquiryWorkspaceView({
 
     const isBankStatement = activePageId === 'bank-statement';
 
-    const expectedAccountNumber = useMemo(() => {
+    const bankStatementAccountInfo = useMemo(() => {
+        let resolvedBankName = '';
+        let resolvedAccNumber = '';
+
         const smartAccounts = getSmartlinkAccounts();
-        const matched = smartAccounts.find(
+        const matchedSmart = smartAccounts.find(
             (acc) =>
                 (values.account_id && String(acc.accountId) === String(values.account_id)) ||
-                (keyword && (keyword.includes(acc.accountNumber) || keyword.includes(acc.serviceType) || keyword.includes(acc.accountRelation)))
+                (keyword && (
+                    keyword.includes(acc.accountNumber) ||
+                    keyword.includes(acc.serviceType) ||
+                    keyword.includes(acc.accountRelation) ||
+                    keyword.includes(acc.accountName)
+                ))
         );
-        if (matched?.accountNumber) return matched.accountNumber;
-        if (keyword) {
-            const match = keyword.match(/#([0-9\-\.]+)/) || keyword.match(/([0-9\-\.]{4,})/);
-            if (match) return match[1];
+
+        if (matchedSmart) {
+            resolvedBankName = matchedSmart.serviceType || matchedSmart.accountRelation || matchedSmart.accountName;
+            resolvedAccNumber = matchedSmart.accountNumber;
         }
-        return '';
-    }, [keyword, values.account_id]);
+
+        if (!resolvedAccNumber && keyword) {
+            const hashMatch = keyword.match(/#([0-9\-\.]+)/);
+            if (hashMatch) {
+                resolvedAccNumber = hashMatch[1];
+            } else {
+                const numMatch = keyword.match(/([0-9\-\.]{4,})/);
+                if (numMatch) resolvedAccNumber = numMatch[0];
+            }
+        }
+
+        if (!resolvedBankName && keyword) {
+            const cleanName = keyword
+                .replace(/^\[.*?\]\s*/, '')
+                .replace(/\s*#.*$/, '')
+                .trim();
+            if (cleanName) {
+                resolvedBankName = cleanName;
+            }
+        }
+
+        if (!resolvedBankName && filteredRows.length > 0) {
+            resolvedBankName = filteredRows[0].account_name || filteredRows[0].bank_name || '';
+        }
+
+        if (!resolvedAccNumber && filteredRows.length > 0) {
+            resolvedAccNumber = filteredRows[0].bank_account_number || '';
+        }
+
+        return {
+            bankName: resolvedBankName,
+            accountNumber: resolvedAccNumber,
+        };
+    }, [keyword, values.account_id, filteredRows]);
+
+    const expectedAccountNumber = bankStatementAccountInfo.accountNumber;
 
     const handleOpenImport = () => {
         const hasAccountSelected = Boolean(keyword && keyword.trim());
@@ -197,6 +239,40 @@ export default function InquiryWorkspaceView({
         }
         return filteredRows;
     }, [filteredRows, activeSortKey, activeSortDir]);
+
+    const statementSummary = useMemo(() => {
+        let totalMasuk = 0;
+        let totalKeluar = 0;
+        let saldoAkhir = 0;
+
+        if (sortedRows.length > 0) {
+            sortedRows.forEach((r) => {
+                const rawAmt = r.raw_amount !== undefined && r.raw_amount !== null
+                    ? Number(r.raw_amount)
+                    : parseNumericInput(r.mutation);
+                const type = String(r.type || '').toUpperCase();
+                if (type === 'DB' || type === 'DEBIT' || type === 'MASUK') {
+                    totalMasuk += Math.abs(rawAmt);
+                } else {
+                    totalKeluar += Math.abs(rawAmt);
+                }
+            });
+
+            const lastRow = sortedRows[sortedRows.length - 1];
+            saldoAkhir = lastRow.raw_balance !== undefined && lastRow.raw_balance !== null
+                ? Number(lastRow.raw_balance)
+                : parseNumericInput(lastRow.balance);
+        }
+
+        const saldoAwal = saldoAkhir - totalMasuk + totalKeluar;
+
+        return {
+            saldoAwal,
+            totalMasuk,
+            totalKeluar,
+            saldoAkhir,
+        };
+    }, [sortedRows]);
     const { handleResizeStart, getCellStyle } = useColumnResize(config.id || 'bank-inquiry');
 
     const resolvedColumns = useMemo(() => {
@@ -334,14 +410,14 @@ export default function InquiryWorkspaceView({
 
             {hasSidePanel ? (
                 <div
-                    className="grid min-h-0 flex-1 gap-3 mt-3 xl:grid-cols-[minmax(0,1fr)_300px] 2xl:grid-cols-[minmax(0,1fr)_380px]"
+                    className="grid min-h-0 flex-1 gap-3.5 mt-3 grid-cols-1 xl:grid-cols-[minmax(0,3fr)_minmax(250px,1fr)] items-start"
                 >
                     <div className="min-w-0 overflow-hidden flex flex-col flex-1">
                         <div className="min-h-0 flex-1 flex flex-col overflow-hidden">
                             <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="flex-1 min-h-0 overflow-auto border-table-wrapper-border">
                                 <DataTableHeader className="bg-table-header-bg">
                                     <tr>
-                                        {sortedRows.length > 0 && (
+                                        {sortedRows.length > 0 && !isBankStatement && (
                                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-light text-white">
                                                 No.
                                             </DataTableHead>
@@ -376,15 +452,26 @@ export default function InquiryWorkspaceView({
                                                         index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
                                                     }`.trim()}
                                                 >
-                                                    <DataTableCell className="px-3 text-center text-base text-table-row-number">
-                                                        {displayIndex}
-                                                    </DataTableCell>
+                                                    {!isBankStatement && (
+                                                        <DataTableCell className="px-3 text-center text-base text-table-row-number">
+                                                            {displayIndex}
+                                                        </DataTableCell>
+                                                    )}
                                                     {resolvedColumns.map((column) => {
                                                         let cellContent = null;
                                                         const val = row[column.id];
 
                                                         if (column.id === 'action' || column.cell) {
                                                             cellContent = column.cell ? column.cell(row) : null;
+                                                        } else if (column.id === 'is_reconciled' || column.id === 'reconciliation_status' || column.label === '#') {
+                                                            const isReconciled = Boolean(row.is_reconciled || row.status === 'Reconciled');
+                                                            cellContent = isReconciled ? (
+                                                                <span className="inline-flex items-center justify-center text-emerald-600 font-bold" aria-label="Sudah direkonsiliasi">
+                                                                    <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                </span>
+                                                            ) : null;
                                                         } else if (column.id === 'sourceNumber') {
                                                             cellContent = (
                                                                 <span className="text-slate-900 font-normal">
@@ -422,7 +509,7 @@ export default function InquiryWorkspaceView({
                                         })
                                     ) : (
                                         <DataTableRow className="bg-white">
-                                            <DataTableCell colSpan={resolvedColumns.length} className="px-3 py-2 text-center text-base text-black">
+                                            <DataTableCell colSpan={resolvedColumns.length + (!isBankStatement ? 1 : 0)} className="px-3 py-2 text-center text-base text-black">
                                                 {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                             </DataTableCell>
                                         </DataTableRow>
@@ -446,13 +533,61 @@ export default function InquiryWorkspaceView({
                         ) : null}
                     </div>
 
-                    <div
-                        className={`overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light ${config.sidePanel?.className ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()}
-                    >
-                        {config.sidePanel?.content ? (
-                            <div className="h-full">{config.sidePanel.content}</div>
-                        ) : null}
-                    </div>
+                    {isBankStatement ? (
+                        <div
+                            className="overflow-hidden rounded-[4px] border border-ui-border-medium bg-white p-5 shadow-card-light"
+                        >
+                            <div className="text-xl font-normal text-[#15529A] leading-snug">
+                                {bankStatementAccountInfo.bankName || '-'}
+                            </div>
+
+                            <div className="mt-2.5">
+                                <div className="text-xs text-slate-500 font-normal">
+                                    No. Rekening Bank
+                                </div>
+                                <div className="text-sm font-bold text-slate-900 mt-0.5">
+                                    {bankStatementAccountInfo.accountNumber || '-'}
+                                </div>
+                            </div>
+
+                            <div className="mt-8 space-y-2.5 text-sm text-slate-700">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-slate-600 font-normal">Saldo Awal</span>
+                                    <span className="font-bold text-slate-900">
+                                        {formatTableTextValue(statementSummary.saldoAwal, { align: 'right' })}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-slate-600 font-normal">Masuk</span>
+                                    <span className="font-bold text-slate-900">
+                                        {formatTableTextValue(statementSummary.totalMasuk, { align: 'right' })}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-slate-600 font-normal">Keluar</span>
+                                    <span className="font-bold text-slate-900">
+                                        {formatTableTextValue(statementSummary.totalKeluar, { align: 'right' })}
+                                    </span>
+                                </div>
+                                <div className="flex items-start justify-between">
+                                    <span className="text-slate-600 font-normal leading-tight">
+                                        Saldo<br />Akhir
+                                    </span>
+                                    <span className="font-bold text-slate-900 self-center">
+                                        {formatTableTextValue(statementSummary.saldoAkhir, { align: 'right' })}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div
+                            className={`overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light ${config.sidePanel?.className ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()}
+                        >
+                            {config.sidePanel?.content ? (
+                                <div className="h-full">{config.sidePanel.content}</div>
+                            ) : null}
+                        </div>
+                    )}
                 </div>
             ) : (
                 <>
@@ -513,6 +648,15 @@ export default function InquiryWorkspaceView({
 
                                                         if (column.id === 'action' || column.cell) {
                                                             cellContent = column.cell ? column.cell(row) : null;
+                                                        } else if (column.id === 'is_reconciled' || column.id === 'reconciliation_status' || column.label === '#') {
+                                                            const isReconciled = Boolean(row.is_reconciled || row.status === 'Reconciled');
+                                                            cellContent = isReconciled ? (
+                                                                <span className="inline-flex items-center justify-center text-emerald-600 font-bold" aria-label="Sudah direkonsiliasi">
+                                                                    <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                </span>
+                                                            ) : null;
                                                         } else if (column.id === 'sourceNumber') {
                                                             cellContent = (
                                                                 <span className="text-slate-900 font-normal">

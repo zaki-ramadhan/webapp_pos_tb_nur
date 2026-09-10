@@ -104,8 +104,15 @@ export function mapBankRows(pageId, records) {
             date: formatIsoDate(record.date),
             description: record.description ?? '',
             mutation: record.mutation ?? '',
+            raw_amount: record.raw_amount,
             type: record.type ?? '',
             balance: record.balance ?? '',
+            raw_balance: record.raw_balance,
+            status: record.status ?? 'Unreconciled',
+            is_reconciled: Boolean(record.is_reconciled || record.status === 'Reconciled'),
+            account_name: record.account_name ?? '',
+            bank_name: record.bank_name ?? record.account_name ?? '',
+            bank_account_number: record.bank_account_number ?? '',
             index: index + 1,
         };
     });
