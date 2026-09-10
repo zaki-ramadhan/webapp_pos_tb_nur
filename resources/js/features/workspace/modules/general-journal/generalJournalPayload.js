@@ -28,11 +28,14 @@ export function buildGeneralJournalPayload(values) {
         sort_order: index,
     }));
     const totals = buildJournalTotals(values.lineItems ?? []);
+    const docNumber = values.documentNumber?.trim() || buildGeneratedJournalNumber(values.numberingType);
+    const isManual = !values.transactionTypeValue || values.transactionTypeValue === 'general-journal';
+    const txNumber = values.transactionNumber?.trim() || (isManual ? docNumber : null);
 
     return {
         branch_id: values.__branchId ?? 1,
-        document_number: values.documentNumber?.trim() || buildGeneratedJournalNumber(values.numberingType),
-        reference_number: values.transactionNumber?.trim() || null,
+        document_number: docNumber,
+        reference_number: txNumber,
         numbering_type: values.numberingType?.trim() || null,
         process_type: values.transactionTypeValue?.trim() || 'general-journal',
         status: 'Draft',
@@ -40,7 +43,7 @@ export function buildGeneralJournalPayload(values) {
         notes: values.notes?.trim() || null,
         total_amount: Math.max(totals.debitAmount, totals.creditAmount),
         metadata: {
-            transaction_number: values.transactionNumber?.trim() || null,
+            transaction_number: txNumber,
             transaction_type_label: values.transactionType?.trim() || 'Jurnal Umum',
             transaction_type_value: values.transactionTypeValue?.trim() || 'general-journal',
             branch_label: values.branches?.[0] ?? null,
