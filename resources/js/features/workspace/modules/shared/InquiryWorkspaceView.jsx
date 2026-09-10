@@ -296,7 +296,7 @@ export default function InquiryWorkspaceView({
     const restrictionText = 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.';
 
     return (
-        <div className="min-h-full">
+        <div className="min-h-full flex-1 flex flex-col">
             <fieldset disabled={isAccessRestricted} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
@@ -410,7 +410,7 @@ export default function InquiryWorkspaceView({
 
             {hasSidePanel ? (
                 <div
-                    className="grid min-h-0 flex-1 gap-3.5 mt-3 grid-cols-1 xl:grid-cols-[minmax(0,3fr)_minmax(250px,1fr)] items-start"
+                    className="grid min-h-0 flex-1 gap-3.5 mt-3 grid-cols-1 xl:grid-cols-[minmax(0,3fr)_minmax(250px,1fr)] items-stretch xl:min-h-[calc(100vh-210px)]"
                 >
                     <div className="min-w-0 overflow-hidden flex flex-col flex-1">
                         <div className="min-h-0 flex-1 flex flex-col overflow-hidden">
@@ -535,14 +535,14 @@ export default function InquiryWorkspaceView({
 
                     {isBankStatement ? (
                         <div
-                            className="overflow-hidden rounded-[4px] border border-ui-border-medium bg-white p-5 shadow-card-light"
+                            className="overflow-hidden rounded-[4px] border border-ui-border-medium bg-white p-5 shadow-card-light h-full min-h-[calc(100vh-210px)] flex flex-col"
                         >
                             <div className="text-xl font-normal text-[#15529A] leading-snug">
                                 {bankStatementAccountInfo.bankName || '-'}
                             </div>
 
                             <div className="mt-2.5">
-                                <div className="text-xs text-slate-500 font-normal">
+                                <div className="text-xs text-slate-900 font-normal">
                                     No. Rekening Bank
                                 </div>
                                 <div className="text-sm font-bold text-slate-900 mt-0.5">
@@ -550,27 +550,27 @@ export default function InquiryWorkspaceView({
                                 </div>
                             </div>
 
-                            <div className="mt-8 space-y-2.5 text-sm text-slate-700">
+                            <div className="mt-8 space-y-2.5 text-sm text-slate-900">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-slate-600 font-normal">Saldo Awal</span>
+                                    <span className="text-slate-900 font-normal">Saldo Awal</span>
                                     <span className="font-bold text-slate-900">
                                         {formatTableTextValue(statementSummary.saldoAwal, { align: 'right' })}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-slate-600 font-normal">Masuk</span>
+                                    <span className="text-slate-900 font-normal">Masuk</span>
                                     <span className="font-bold text-slate-900">
                                         {formatTableTextValue(statementSummary.totalMasuk, { align: 'right' })}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-slate-600 font-normal">Keluar</span>
+                                    <span className="text-slate-900 font-normal">Keluar</span>
                                     <span className="font-bold text-slate-900">
                                         {formatTableTextValue(statementSummary.totalKeluar, { align: 'right' })}
                                     </span>
                                 </div>
                                 <div className="flex items-start justify-between">
-                                    <span className="text-slate-600 font-normal leading-tight">
+                                    <span className="text-slate-900 font-normal leading-tight">
                                         Saldo<br />Akhir
                                     </span>
                                     <span className="font-bold text-slate-900 self-center">
