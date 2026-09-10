@@ -16,6 +16,7 @@ import { getSmartlinkAccounts } from '@/features/workspace/modules/smartlink-eba
 import { exportToExcelXML } from '@/features/workspace/shared/exportUtils';
 import { showSuccessToast, showWarningToast } from '@/components/feedback/toast';
 import Pagination from '@/components/ui/Pagination';
+import Tooltip from '@/components/ui/Tooltip';
 
 import {
     DataTable,
@@ -238,15 +239,17 @@ export default function InquiryWorkspaceView({
 
                         {reloadAction ? (
                             isBankStatement ? (
-                                <button
-                                    type="button"
-                                    onClick={onRefresh}
-                                    disabled={loading}
-                                    className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-none transition hover:bg-brand-blue-hover cursor-pointer active:scale-[0.98] disabled:opacity-60"
-                                    aria-label="Muat ulang"
-                                >
-                                    <RefreshIcon className={`h-4 w-4 text-white ${loading ? 'animate-spin' : ''}`} />
-                                </button>
+                                <Tooltip content="Muat ulang" portal>
+                                    <button
+                                        type="button"
+                                        onClick={onRefresh}
+                                        disabled={loading}
+                                        className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-none transition hover:bg-brand-blue-hover cursor-pointer active:scale-[0.98] disabled:opacity-60"
+                                        aria-label="Muat ulang"
+                                    >
+                                        <RefreshIcon className={`h-4 w-4 text-white ${loading ? 'animate-spin' : ''}`} />
+                                    </button>
+                                </Tooltip>
                             ) : (
                                 <RefreshButton
                                     label="Muat ulang"
@@ -258,23 +261,27 @@ export default function InquiryWorkspaceView({
 
                         {isBankStatement ? (
                             <>
-                                <button
-                                    type="button"
-                                    onClick={handleOpenImport}
-                                    className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue shadow-none transition hover:bg-brand-blue-light cursor-pointer active:scale-[0.98]"
-                                    aria-label="Impor data"
-                                >
-                                    <DownloadIcon className="h-4 w-4" />
-                                </button>
+                                <Tooltip content="Impor data" portal>
+                                    <button
+                                        type="button"
+                                        onClick={handleOpenImport}
+                                        className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue shadow-none transition hover:bg-brand-blue-light cursor-pointer active:scale-[0.98]"
+                                        aria-label="Impor data"
+                                    >
+                                        <DownloadIcon className="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
 
-                                <button
-                                    type="button"
-                                    onClick={() => setIsExportConfirmOpen(true)}
-                                    className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue shadow-none transition hover:bg-brand-blue-light cursor-pointer active:scale-[0.98]"
-                                    aria-label="Ekspor data"
-                                >
-                                    <ExportIcon className="h-4 w-4" />
-                                </button>
+                                <Tooltip content="Ekspor data" portal>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsExportConfirmOpen(true)}
+                                        className="inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue shadow-none transition hover:bg-brand-blue-light cursor-pointer active:scale-[0.98]"
+                                        aria-label="Ekspor data"
+                                    >
+                                        <ExportIcon className="h-4 w-4" />
+                                    </button>
+                                </Tooltip>
                             </>
                         ) : (
                             exportAction ? (
