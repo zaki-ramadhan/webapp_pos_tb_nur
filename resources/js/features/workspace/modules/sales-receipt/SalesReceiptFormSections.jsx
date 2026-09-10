@@ -62,6 +62,10 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
         );
     }, [keyword, values.invoices]);
 
+    const hasCustomer = Boolean(
+        values.__customerId || (values.customer && values.customer.length > 0 && values.customer[0]?.trim())
+    );
+
     return (
         <section className="flex-1 flex flex-col min-h-0">
             <div className="flex flex-col gap-3 pb-1 lg:flex-row lg:items-center lg:justify-between">
@@ -71,9 +75,11 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                             id="invoiceLookup"
                             resource="sales-invoices"
                             value={keyword}
-                            placeholder="Cari/Pilih Faktur Penjualan..."
+                            placeholder={hasCustomer ? "Cari/Pilih Faktur Penjualan..." : "Pilih pelanggan terlebih dahulu..."}
                             searchLabel="Cari faktur penjualan"
                             dialogTitle="Pilih Faktur Penjualan"
+                            disabled={!hasCustomer}
+                            queryParams={values.__customerId ? { customer_id: values.__customerId } : {}}
                             onSelectAccount={(record) => {
                                 if (record) {
                                     handlers.onSelectInvoiceRecord?.(record);
@@ -85,13 +91,15 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                         />
                     </div>
 
-                    <button
-                        type="button"
-                        className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-sm font-medium text-brand-blue-accent hover:bg-brand-blue-lightest transition cursor-pointer select-none"
-                        onClick={handlers.onOpenUnpaidInvoicesModal}
-                    >
-                        Ambil
-                    </button>
+                    {hasCustomer ? (
+                        <button
+                            type="button"
+                            className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-sm font-medium text-brand-blue-accent hover:bg-brand-blue-lightest transition cursor-pointer select-none"
+                            onClick={handlers.onOpenUnpaidInvoicesModal}
+                        >
+                            Ambil
+                        </button>
+                    ) : null}
                 </div>
 
                 <div className="flex items-center justify-end gap-3">
