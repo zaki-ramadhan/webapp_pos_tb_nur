@@ -309,12 +309,12 @@ export default function BankStatementImportModal({ open, onClose, onImportSucces
                                         <DataTableCell className="w-[90px] px-3 py-2 text-center whitespace-nowrap">
                                             <span
                                                 className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                    row.type === 'CR'
+                                                    row.type === 'CR' || row.type === 'Cr'
                                                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                                                         : 'bg-rose-50 text-rose-700 border border-rose-200'
                                                 }`}
                                             >
-                                                {row.type === 'CR' ? 'Kredit' : 'Debit'}
+                                                {row.type === 'CR' || row.type === 'Cr' ? 'Cr' : 'Dr'}
                                             </span>
                                         </DataTableCell>
                                     </DataTableRow>

@@ -352,6 +352,16 @@ class FinancialEntitySeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'parent_id' => $parentEquity,
+                'currency_id' => $currencyId,
+                'code' => '300001',
+                'name' => 'Equitas Saldo Awal',
+                'account_type' => 'Equity',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
 

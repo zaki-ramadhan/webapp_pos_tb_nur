@@ -59,6 +59,14 @@ export function openSourceDocument(row) {
     );
 }
 
+function formatTypeDrCr(typeVal) {
+    if (!typeVal) return '';
+    const s = String(typeVal).trim().toUpperCase();
+    if (s === 'DR' || s === 'DEBIT' || s === 'DB' || s === 'D') return 'Dr';
+    if (s === 'CR' || s === 'KREDIT' || s === 'CREDIT' || s === 'K') return 'Cr';
+    return String(typeVal);
+}
+
 export function mapBankRows(pageId, records) {
     return records.map((record, index) => {
         const base = {
@@ -78,7 +86,7 @@ export function mapBankRows(pageId, records) {
                 transaction_type: record.transaction_type ?? '',
                 description: record.description ?? '',
                 mutation: record.mutation ?? '',
-                type: record.type ?? '',
+                type: formatTypeDrCr(record.type),
                 debit: record.debit ?? '',
                 credit: record.credit ?? '',
                 balance: record.balance ?? '',
