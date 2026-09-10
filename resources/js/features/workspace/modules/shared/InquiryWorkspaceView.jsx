@@ -75,6 +75,46 @@ export default function InquiryWorkspaceView({
 
     const isBankStatement = activePageId === 'bank-statement';
 
+    const filteredRows = useMemo(() => {
+        if (rows !== null && rows !== undefined) {
+            return rows;
+        }
+
+        const sourceRows = config.table.rows ?? [];
+        const normalizedKeyword = keyword.trim().toLowerCase();
+
+        if (!normalizedKeyword) {
+            return sourceRows;
+        }
+
+        const searchKeys =
+            config.table.searchKeys?.length
+                ? config.table.searchKeys
+                : config.table.columns.map((column) => column.id);
+
+        return sourceRows.filter((row) =>
+            searchKeys.some((key) =>
+                String(row[key] ?? '')
+                    .toLowerCase()
+                    .includes(normalizedKeyword),
+            ),
+        );
+    }, [config.table.columns, config.table.rows, config.table.searchKeys, keyword, rows]);
+
+    const resolvedColumns = useMemo(() => {
+        return config.table.columns.map((col) => {
+            if (isAlternativeView) {
+                if (col.id === 'mutation') {
+                    return { ...col, id: 'debit', label: 'Debit' };
+                }
+                if (col.id === 'type') {
+                    return { ...col, id: 'credit', label: 'Kredit' };
+                }
+            }
+            return col;
+        });
+    }, [config.table.columns, isAlternativeView]);
+
     const bankStatementAccountInfo = useMemo(() => {
         let resolvedBankName = '';
         let resolvedAccNumber = '';
@@ -159,32 +199,6 @@ export default function InquiryWorkspaceView({
     useEffect(() => {
         onValuesChangeRef.current?.(values);
     }, [values]);
-
-    const filteredRows = useMemo(() => {
-        if (rows !== null && rows !== undefined) {
-            return rows;
-        }
-
-        const sourceRows = config.table.rows ?? [];
-        const normalizedKeyword = keyword.trim().toLowerCase();
-
-        if (!normalizedKeyword) {
-            return sourceRows;
-        }
-
-        const searchKeys =
-            config.table.searchKeys?.length
-                ? config.table.searchKeys
-                : config.table.columns.map((column) => column.id);
-
-        return sourceRows.filter((row) =>
-            searchKeys.some((key) =>
-                String(row[key] ?? '')
-                    .toLowerCase()
-                    .includes(normalizedKeyword),
-            ),
-        );
-    }, [config.table.columns, config.table.rows, config.table.searchKeys, keyword, rows]);
 
     function handleChange(controlId, nextValue, extra = null) {
         setValues((currentValues) => {
@@ -274,20 +288,6 @@ export default function InquiryWorkspaceView({
         };
     }, [sortedRows]);
     const { handleResizeStart, getCellStyle } = useColumnResize(config.id || 'bank-inquiry');
-
-    const resolvedColumns = useMemo(() => {
-        return config.table.columns.map((col) => {
-            if (isAlternativeView) {
-                if (col.id === 'mutation') {
-                    return { ...col, id: 'debit', label: 'Debit' };
-                }
-                if (col.id === 'type') {
-                    return { ...col, id: 'credit', label: 'Kredit' };
-                }
-            }
-            return col;
-        });
-    }, [config.table.columns, isAlternativeView]);
 
     const isAccessRestricted = Boolean(
         (error && String(error).toLowerCase().includes('hak akses'))
