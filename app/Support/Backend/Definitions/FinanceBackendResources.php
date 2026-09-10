@@ -286,29 +286,22 @@ class FinanceBackendResources
 
     public static function getOrCreateEquitasSaldoAwalAccount(): Account
     {
-        $existing = Account::where('code', '300001')
+        // Gunakan akun Modal Usaha / Pemilik (310101) yang sudah ada sebagai counterpart saldo awal
+        $account = Account::where('code', '310101')
+            ->orWhere('code', '300001')
+            ->orWhere('name', 'Modal Usaha / Pemilik')
             ->orWhere('name', 'Equitas Saldo Awal')
             ->orWhere('name', 'Ekuitas Saldo Awal')
             ->first();
 
-        if ($existing) {
-            return $existing;
+        if ($account) {
+            return $account;
         }
 
-        $parentModal = Account::where('code', '3000')
-            ->orWhere(function ($q) {
-                $q->whereNull('parent_id')
-                  ->where('account_type', 'Modal');
-            })
-            ->first();
-
-        return Account::create([
-            'parent_id' => $parentModal?->id,
-            'currency_id' => 1,
-            'code' => '300001',
-            'name' => 'Equitas Saldo Awal',
-            'account_type' => 'Modal',
-            'is_active' => true,
-        ]);
+        // Fallback: cari akun Modal/Equity apapun yang tersedia
+        return Account::whereIn('account_type', ['Modal', 'Equity'])
+            ->whereNotNull('parent_id')
+            ->first()
+            ?? Account::whereIn('account_type', ['Modal', 'Equity'])->firstOrFail();
     }
 }
