@@ -81,7 +81,8 @@ export const bankInquiryPageConfigs = {
             controls: [
                 {
                     ...createSearchControl(),
-                    placeholder: 'Cari/Pilih Bank...',
+                    placeholder: 'Cari/Pilih...',
+                    lookupType: 'smartlink-bank',
                 },
                 createDateControl('startDate', buildThirtyDaysAgoDisplayDate()),
                 {
