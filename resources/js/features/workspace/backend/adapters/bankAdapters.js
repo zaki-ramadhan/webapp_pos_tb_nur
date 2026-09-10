@@ -82,6 +82,8 @@ export function mapBankRows(pageId, records) {
                 credit: record.credit ?? '',
                 balance: record.balance ?? '',
                 index: record.index ?? index + 1,
+                status: record.status ?? 'Open',
+                is_reconciled: Boolean(record.is_reconciled || record.status === 'Reconciled'),
             };
         }
 

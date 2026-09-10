@@ -133,6 +133,7 @@ export const bankInquiryPageConfigs = {
                     { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[140px]', align: 'right' },
                     { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
                     { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'right' },
+                    { id: 'is_reconciled', label: '#', widthClassName: 'w-[50px]', align: 'center', sortable: false },
                 ],
                 rows: [],
                 emptyLabel: 'Belum ada data',
