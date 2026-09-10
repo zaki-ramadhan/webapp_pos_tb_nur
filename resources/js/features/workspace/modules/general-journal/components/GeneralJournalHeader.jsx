@@ -125,10 +125,13 @@ export default function GeneralJournalHeader({ config, values, setValues, active
                     </div>
                 </div>
 
-                {activeRecordId ? (
+                {activeRecordId &&
+                values.transactionNumber?.trim() &&
+                values.documentNumber?.trim() &&
+                values.transactionNumber.trim() !== values.documentNumber.trim() ? (
                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                         <TransactionFieldLabel label="No. Trans" />
-                        {values.transactionTypeValue && values.transactionTypeValue !== 'general-journal' && values.transactionNumber ? (
+                        {values.transactionTypeValue && values.transactionTypeValue !== 'general-journal' ? (
                             <button
                                 type="button"
                                 onClick={openSourceTransaction}
@@ -144,7 +147,7 @@ export default function GeneralJournalHeader({ config, values, setValues, active
                             </button>
                         ) : (
                             <TextInput
-                                value={values.transactionNumber || values.documentNumber || '-'}
+                                value={values.transactionNumber}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-ui-border"
                                 inputClassName="text-xs sm:text-sm text-text-workspace-dark font-normal"
