@@ -97,11 +97,11 @@ export default function SmartlinkEbankingView({
     };
 
     const tableConfig = useMemo(() => ({
-        columns: page?.table?.columns || [
+        columns: (page?.table?.columns || [
             { id: 'accountNumber', label: 'No. Rekening Bank', align: 'left', widthClassName: 'w-[30%]' },
             { id: 'accountRelation', label: 'Relasi Akun Bank', align: 'left', widthClassName: 'w-[35%]' },
             { id: 'serviceType', label: 'Jenis Internet Banking', align: 'left', widthClassName: 'w-[35%]' },
-        ],
+        ]).map((col) => (col.id === 'accountRelation' ? { ...col, label: 'Relasi Akun Bank' } : col)),
         rows: accounts,
         createLabel: page?.table?.createLabel || 'Tambah Akun e-Banking',
         refreshLabel: 'Muat ulang',
