@@ -6,11 +6,11 @@ function DocumentModalTabButton({ active, label, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className={`shrink-0 border-b-2 px-2.5 py-1.5 text-xs sm:text-sm font-normal text-brand-dark cursor-pointer select-none max-w-[120px] sm:max-w-[160px] md:max-w-[200px] -mb-[1px] ${
+            className={`shrink-0 border-b-2 px-2.5 py-1.5 text-xs sm:text-sm font-normal text-brand-dark cursor-pointer select-none whitespace-nowrap -mb-[1px] ${
                 active ? 'border-illustration-danger-bg text-illustration-danger-bg font-normal' : 'border-transparent text-tab-view-active-text'
             }`.trim()}
         >
-            <span className="block truncate">{label}</span>
+            <span className="block whitespace-nowrap">{label}</span>
         </button>
     );
 }

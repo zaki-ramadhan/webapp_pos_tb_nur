@@ -20,14 +20,14 @@ const PrimaryTab = forwardRef(function PrimaryTab({ tab, active, onSelect, onClo
             aria-label={tab.label}
             tabIndex={0}
             onClick={() => onSelect(tab.id)}
-            className={`relative -mb-[2px] inline-flex h-7.5 items-center rounded-t-[5px] text-xs leading-normal cursor-pointer select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
+            className={`relative -mb-[2px] inline-flex h-7.5 items-center rounded-t-[5px] text-xs leading-normal cursor-pointer select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base ${spacingClassName} ${
                 active
                     ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-normal text-white'
                     : 'border-x border-t border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
             } shrink-0 whitespace-nowrap`.trim()}
         >
-            <span className="inline-flex h-full items-center min-w-0 max-w-[90px] sm:max-w-[120px] md:max-w-[150px]">
-                <span className="block w-full truncate py-1">{renderTabLabel(tab.label, active, true)}</span>
+            <span className="inline-flex h-full items-center min-w-0">
+                <span className="block w-full py-1">{renderTabLabel(tab.label, active, true)}</span>
             </span>
             {tab.closable ? (
                 <button
