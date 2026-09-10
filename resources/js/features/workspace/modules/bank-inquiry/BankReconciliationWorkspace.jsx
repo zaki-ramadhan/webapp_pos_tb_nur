@@ -283,7 +283,7 @@ export default function BankReconciliationWorkspace({
                                 ref={importAnchorRef}
                                 type="button"
                                 onClick={() => setImportDropdownOpen((v) => !v)}
-                                className="inline-flex items-center h-[40px] rounded-[4px] text-xs sm:text-sm font-normal text-white bg-brand-blue hover:bg-brand-blue-hover border border-transparent shadow-button-primary cursor-pointer active:scale-[0.98] transition overflow-hidden"
+                                className="inline-flex items-center h-[40px] rounded-[4px] text-xs sm:text-sm font-normal text-slate-700 bg-white hover:bg-slate-50 border border-ui-border shadow-2xs cursor-pointer active:scale-[0.98] transition overflow-hidden"
                             >
                                 <span className="flex items-center gap-1.5 px-3.5">
                                     <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -291,7 +291,7 @@ export default function BankReconciliationWorkspace({
                                     </svg>
                                     <span>Impor data</span>
                                 </span>
-                                <span className="inline-flex items-center justify-center w-[34px] h-full border-l border-white/30">
+                                <span className="inline-flex items-center justify-center w-[34px] h-full border-l border-slate-200">
                                     <svg className={`h-4 w-4 transition-transform duration-200 ${importDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
