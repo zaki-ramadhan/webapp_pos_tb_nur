@@ -14,22 +14,22 @@ return new class extends Migration
             ->first();
 
         if (! $existing) {
-            $parentEquity = DB::table('accounts')
-                ->where('code', '3101')
+            $parentModal = DB::table('accounts')
+                ->where('code', '3000')
                 ->orWhere(function ($q) {
                     $q->whereNull('parent_id')
-                      ->where('account_type', 'Equity');
+                      ->where('account_type', 'Modal');
                 })
                 ->value('id');
 
             $currencyId = DB::table('currencies')->value('id') ?? 1;
 
             DB::table('accounts')->insert([
-                'parent_id' => $parentEquity,
+                'parent_id' => $parentModal,
                 'currency_id' => $currencyId,
                 'code' => '300001',
                 'name' => 'Equitas Saldo Awal',
-                'account_type' => 'Equity',
+                'account_type' => 'Modal',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),

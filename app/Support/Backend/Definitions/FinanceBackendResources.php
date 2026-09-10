@@ -295,19 +295,19 @@ class FinanceBackendResources
             return $existing;
         }
 
-        $parentEquity = Account::where('code', '3101')
+        $parentModal = Account::where('code', '3000')
             ->orWhere(function ($q) {
                 $q->whereNull('parent_id')
-                  ->where('account_type', 'Equity');
+                  ->where('account_type', 'Modal');
             })
             ->first();
 
         return Account::create([
-            'parent_id' => $parentEquity?->id,
+            'parent_id' => $parentModal?->id,
             'currency_id' => 1,
             'code' => '300001',
             'name' => 'Equitas Saldo Awal',
-            'account_type' => 'Equity',
+            'account_type' => 'Modal',
             'is_active' => true,
         ]);
     }
