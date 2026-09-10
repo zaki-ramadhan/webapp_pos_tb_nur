@@ -499,7 +499,7 @@ export default function InquiryWorkspaceView({
                                                         return (
                                                             <DataTableCell
                                                                 key={column.id}
-                                                                className={`px-2.5 text-base text-text-workspace-dark ${
+                                                                className={`px-2.5 text-[15px] tabular-nums text-text-workspace-dark ${
                                                                     column.align === 'right' ? 'text-right' : 
                                                                     column.align === 'center' ? 'text-center' : 'text-left'
                                                                 }`.trim()}
