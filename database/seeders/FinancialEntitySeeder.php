@@ -312,8 +312,19 @@ class FinancialEntitySeeder extends Seeder
             ]
         ]);
 
-        // 9. Ekuitas & Modal (Induk 3101)
+        // 9. Ekuitas & Modal (Induk 3000 -> 3101)
+        $parentModal = DB::table('accounts')->insertGetId([
+            'currency_id' => $currencyId,
+            'code' => '3000',
+            'name' => 'Modal',
+            'account_type' => 'Modal',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         $parentEquity = DB::table('accounts')->insertGetId([
+            'parent_id' => $parentModal,
             'currency_id' => $currencyId,
             'code' => '3101',
             'name' => 'Ekuitas & Modal',
@@ -354,11 +365,11 @@ class FinancialEntitySeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'parent_id' => $parentEquity,
+                'parent_id' => $parentModal,
                 'currency_id' => $currencyId,
                 'code' => '300001',
                 'name' => 'Equitas Saldo Awal',
-                'account_type' => 'Equity',
+                'account_type' => 'Modal',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
