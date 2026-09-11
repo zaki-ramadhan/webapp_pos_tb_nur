@@ -76,7 +76,7 @@
     --color-table-header-bg: #5B6F85;
     --color-table-row-border: #e2e8f0;
     --color-table-row-text: #1b2436;
-    --color-table-cell-border: #AAAAAA;
+    --color-table-cell-border: rgba(170, 170, 170, 0.1);
     --color-layout-bg: #9ab8ea;
     --color-layout-text: #4f5679;
     --color-tab-active-border-x: #bcc3cf;
