@@ -246,6 +246,24 @@ class BankInquiryQueryService
         return $this->paginateRows($rows, $filters);
     }
 
+    protected array $lastComputedBalances = [];
+
+    /**
+     * @param  array<int, int>  $accountIds
+     * @return array<int, float>
+     */
+    public function calculateAccountsBalanceMap(array $accountIds): array
+    {
+        $cleanIds = array_values(array_unique(array_filter(array_map('intval', $accountIds), fn ($id) => $id > 0)));
+        if (empty($cleanIds)) {
+            return [];
+        }
+
+        $this->buildLedgerRows(['account_ids' => $cleanIds], includeOpeningBalanceRow: false);
+
+        return $this->lastComputedBalances;
+    }
+
     public function calculateAccountBalance(Account $account): float
     {
         $rows = $this->buildLedgerRows(['account_id' => $account->id], includeOpeningBalanceRow: true);
@@ -469,6 +487,8 @@ class BankInquiryQueryService
             return $row;
         });
 
+        $this->lastComputedBalances = $balances;
+
         $outputRows = $outputRows->concat($computedRealRows);
 
         return $outputRows->values();
@@ -480,6 +500,15 @@ class BankInquiryQueryService
      */
     protected function resolveAccountMap(array $filters): Collection
     {
+        if (!empty($filters['account_ids'])) {
+            $ids = array_values(array_unique(array_filter(array_map('intval', (array) $filters['account_ids']), fn ($id) => $id > 0)));
+            if (empty($ids)) {
+                return collect();
+            }
+
+            return Account::whereIn('id', $ids)->get()->keyBy('id');
+        }
+
         $query = Account::query();
 
         if (filled($filters['account_id'] ?? null)) {

@@ -62,7 +62,7 @@ class Account extends DomainModel
         return $this->belongsToMany(User::class);
     }
 
-    protected $appends = ['current_balance', 'has_children'];
+    protected $appends = ['has_children'];
 
     protected static array $balanceCalculationStack = [];
 
@@ -77,6 +77,10 @@ class Account extends DomainModel
 
     public function getCurrentBalanceAttribute(): float
     {
+        if (array_key_exists('current_balance', $this->attributes)) {
+            return (float) $this->attributes['current_balance'];
+        }
+
         if (isset(static::$balanceCalculationStack[$this->id])) {
             return (float) ($this->opening_balance ?? 0);
         }

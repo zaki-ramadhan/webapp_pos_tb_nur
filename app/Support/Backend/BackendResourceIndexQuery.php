@@ -266,6 +266,94 @@ class BackendResourceIndexQuery
             }
         }
 
+        if ($blueprint->key === 'accounts') {
+            $items = $paginator->items();
+            $collectIds = function ($accounts) use (&$collectIds): array {
+                $ids = [];
+                foreach ($accounts as $acc) {
+                    $ids[] = (int) $acc->id;
+                    if ($acc->relationLoaded('children') && $acc->children->isNotEmpty()) {
+                        $ids = array_merge($ids, $collectIds($acc->children));
+                    }
+                }
+                return $ids;
+            };
+
+            $allIds = array_values(array_unique(array_filter($collectIds($items))));
+            if (!empty($allIds)) {
+                $balanceMap = app(\App\Support\Backend\Queries\BankInquiryQueryService::class)
+                    ->calculateAccountsBalanceMap($allIds);
+
+                $applyBalance = function ($acc) use (&$applyBalance, $balanceMap): float {
+                    $acc->append('current_balance');
+                    if ($acc->relationLoaded('children') && $acc->children->isNotEmpty()) {
+                        $sum = 0.0;
+                        foreach ($acc->children as $child) {
+                            $sum += $applyBalance($child);
+                        }
+                        $acc->setAttribute('current_balance', $sum);
+                        return $sum;
+                    }
+
+                    $bal = (float) ($balanceMap[$acc->id] ?? $acc->opening_balance ?? 0);
+                    $acc->setAttribute('current_balance', $bal);
+                    return $bal;
+                };
+
+                foreach ($items as $acc) {
+                    $applyBalance($acc);
+                }
+            }
+        }
+
+        if ($blueprint->key === 'customers') {
+            $items = $paginator->items();
+            $customerIds = collect($items)->pluck('id')->filter()->all();
+            if (!empty($customerIds)) {
+                $invoiceSums = \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->where('document_type', 'sales_invoice')
+                    ->whereIn('customer_id', $customerIds)
+                    ->where(function ($query) {
+                        $query->whereNull('status')
+                            ->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })
+                    ->groupBy('customer_id')
+                    ->select('customer_id', \Illuminate\Support\Facades\DB::raw('SUM(outstanding_amount) as total_outstanding'))
+                    ->pluck('total_outstanding', 'customer_id')
+                    ->all();
+
+                foreach ($items as $customer) {
+                    $invBalance = (float) ($invoiceSums[$customer->id] ?? 0.0);
+                    $customer->setAttribute('balance', round($invBalance, 2));
+                    $customer->append('balance');
+                }
+            }
+        }
+
+        if ($blueprint->key === 'suppliers') {
+            $items = $paginator->items();
+            $supplierIds = collect($items)->pluck('id')->filter()->all();
+            if (!empty($supplierIds)) {
+                $invoiceSums = \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->where('document_type', 'purchase_invoice')
+                    ->whereIn('supplier_id', $supplierIds)
+                    ->where(function ($query) {
+                        $query->whereNull('status')
+                            ->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']);
+                    })
+                    ->groupBy('supplier_id')
+                    ->select('supplier_id', \Illuminate\Support\Facades\DB::raw('SUM(outstanding_amount) as total_outstanding'))
+                    ->pluck('total_outstanding', 'supplier_id')
+                    ->all();
+
+                foreach ($items as $supplier) {
+                    $invBalance = (float) ($invoiceSums[$supplier->id] ?? 0.0);
+                    $supplier->setAttribute('balance', round($invBalance, 2));
+                    $supplier->append('balance');
+                }
+            }
+        }
+
         if (in_array($blueprint->key, ['payroll-entries', 'expense-entries'], true)) {
             $items = $paginator->items();
             $docIds = collect($items)->pluck('id')->all();
