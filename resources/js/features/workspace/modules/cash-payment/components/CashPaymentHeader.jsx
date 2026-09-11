@@ -45,13 +45,22 @@ export default function CashPaymentHeader({ config, values, setValues, activeRec
                     </div>
                 </div>
 
-                <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4 relative">
                     <TransactionFieldLabel label={config.labels.entryDate} required htmlFor="entryDate" />
                     <TransactionDateInput
                         id="entryDate"
                         value={values.entryDate}
                         onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
                     />
+                    {values.voided && (
+                        <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <input
+                                readOnly
+                                value="VOID"
+                                className="h-[34px] w-[80px] rounded-[4px] border border-red-400 bg-red-50 text-center text-sm font-bold text-red-600 tracking-widest cursor-default select-none outline-none"
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
