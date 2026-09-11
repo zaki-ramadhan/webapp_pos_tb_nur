@@ -51,7 +51,7 @@ export default function CashPaymentFormView({
     onRefresh,
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
-    const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : (activeLevel2Tab?.recordId ?? null);
     const buildRecord = useCallback((data, cfg) => {
         return buildCashPaymentRecord(data, cfg);
     }, []);
@@ -70,7 +70,7 @@ export default function CashPaymentFormView({
         activeTabId: activeLevel2Tab?.id,
     });
 
-    const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
+    const isDetail = Boolean(activeLevel2Tab?.tabType === 'detail' || values.__backendRecordId || activeRecordId);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');

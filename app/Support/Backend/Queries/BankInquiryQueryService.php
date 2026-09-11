@@ -264,8 +264,35 @@ class BankInquiryQueryService
         $allRows = collect();
 
         foreach ($documents as $document) {
-            $allRows = $allRows->merge($this->rowsFromDocumentLines($document, $accountMap));
-            $allRows = $allRows->merge($this->rowsFromSyntheticAccounts($document, $accountMap));
+            $docRows = collect();
+            $docRows = $docRows->merge($this->rowsFromDocumentLines($document, $accountMap));
+            $docRows = $docRows->merge($this->rowsFromSyntheticAccounts($document, $accountMap));
+
+            $meta = is_array($document->metadata) ? $document->metadata : (json_decode((string) ($document->metadata ?? '[]'), true) ?: []);
+            $isVoided = strcasecmp((string) $document->status, 'Void') === 0
+                || !empty($meta['flags']['voided'])
+                || !empty($meta['voided']);
+
+            if ($isVoided) {
+                $reversals = $docRows->map(function (array $r): array {
+                    $debit = (float) str_replace(',', '', (string) ($r['credit'] ?? 0));
+                    $credit = (float) str_replace(',', '', (string) ($r['debit'] ?? 0));
+                    $netAmount = $debit - $credit;
+
+                    return array_merge($r, [
+                        'id' => $r['id'] . ':void_reversal',
+                        'description' => 'Cek Kosong',
+                        'debit' => $this->formatNumber($debit),
+                        'credit' => $this->formatNumber($credit),
+                        'mutation' => $this->formatNumber(abs($netAmount)),
+                        'type' => $netAmount >= 0 ? 'Dr' : 'Cr',
+                        'net_amount' => $netAmount,
+                    ]);
+                });
+                $docRows = $docRows->merge($reversals);
+            }
+
+            $allRows = $allRows->merge($docRows);
         }
 
         $openingRows = collect();
