@@ -171,24 +171,31 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     }
 
     const validationMessage = useMemo(() => {
-        const isCodeRequired = !values.isSubAccount || !values.autoCode;
         const checks = [
             { label: config.labels.type, value: values.type },
             { label: config.labels.name, value: values.name },
         ];
-        if (isCodeRequired) {
+
+        if (values.isSubAccount) {
+            checks.push({ label: config.labels.isSubAccount, value: values.parentId, type: 'lookup' });
+        }
+
+        if (isDetail) {
             checks.push({ label: config.labels.code, value: values.code });
         }
+
         return validateRequiredChecks(checks);
     }, [
         config.labels.code,
+        config.labels.isSubAccount,
         config.labels.name,
         config.labels.type,
+        isDetail,
         values.code,
-        values.name,
-        values.type,
         values.isSubAccount,
-        values.autoCode,
+        values.name,
+        values.parentId,
+        values.type,
     ]);
     const saveDisabled = saving || Boolean(validationMessage);
 
