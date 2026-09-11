@@ -177,7 +177,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
             title="Impor Excel Ke Detail Barang"
             headerIcon={null}
             closeLabel="Tutup dialog"
-            maxWidthClassName="max-w-[480px]"
+            maxWidthClassName="max-w-[580px] w-full"
             contentClassName="bg-white p-5 sm:p-6 space-y-4"
         >
             {/* Langkah 1 */}
@@ -207,17 +207,17 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                         Klik tombol berikut untuk memilih file excel yang sudah Anda lengkapi
                     </p>
 
-                    <div className="mt-3">
+                    <div className="mt-3.5 flex items-center">
                         <Button
                             type="button"
                             variant="primary"
-                            size="sm"
+                            size="md"
                             disabled={loading}
                             onClick={() => fileInputRef.current?.click()}
-                            className="inline-flex items-center gap-2 font-normal text-sm"
+                            className="w-auto px-5 whitespace-nowrap [&>span]:inline-flex [&>span]:items-center [&>span]:gap-2.5 [&>span]:whitespace-nowrap"
                         >
                             <ExcelFileIcon className="h-4 w-4 shrink-0" />
-                            <span className="font-normal">{loading ? 'Sedang membaca...' : 'Pilih file Excel'}</span>
+                            <span className="font-normal whitespace-nowrap">{loading ? 'Sedang membaca...' : 'Pilih file Excel'}</span>
                         </Button>
                         <input
                             ref={fileInputRef}
