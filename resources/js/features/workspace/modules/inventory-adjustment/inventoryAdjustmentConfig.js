@@ -12,7 +12,7 @@ const todayDisplayDate = buildTodayDisplayDate();
 
 const inventoryAdjustmentSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
-    { id: 'additional-info', label: 'Info lainnya', icon: 'info' },
+    { id: 'additional-info', label: 'Info Lainnya', icon: 'info' },
 ];
 
 const inventoryAdjustmentListColumns = [
@@ -54,6 +54,8 @@ const draftRecord = {
     copyItems: [{ id: 'copy-lines', label: 'Salin rincian barang' }],
     items: [],
     itemCountLabel: 'Rincian Barang',
+    adjustmentAccount: [],
+    __adjustmentAccountId: null,
     notes: '',
     branches: [],
     totalValue: 'Rp 0',
@@ -62,10 +64,11 @@ const draftRecord = {
 const baseInventoryAdjustmentConfig = {
     title: 'Penyesuaian Persediaan',
     newTitle: 'Penyesuaian Persediaan Baru',
-    additionalInfoTitle: 'Informasi Tambahan',
+    additionalInfoTitle: 'Info Lainnya',
     labels: {
         date: 'Tanggal',
         documentNumber: 'No. Penyesuaian',
+        adjustmentAccount: 'Akun Penyesuaian',
         notes: 'Keterangan',
     },
     numberingOptions: ['Penyesuaian Persediaan', 'Manual'],

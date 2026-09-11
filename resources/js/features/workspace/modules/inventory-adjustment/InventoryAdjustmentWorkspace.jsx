@@ -266,7 +266,7 @@ export function InventoryAdjustmentFormView({
                 }
             >
                 {activeSectionId === 'additional-info' ? (
-                    <InventoryAdjustmentInfoSection pageId={pageId} config={config} values={values} setValues={setValues} handlers={handlers} />
+                    <InventoryAdjustmentInfoSection pageId={pageId} config={config} values={values} setValues={setValues} handlers={handlers} isDetail={isDetail} />
                 ) : (
                     <InventoryAdjustmentDetailsSection
                         pageId={pageId}

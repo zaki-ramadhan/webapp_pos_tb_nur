@@ -1,12 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
     TransactionLineItemsSection,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
-import { SearchIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
+import { ChevronDownIcon, SearchIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import { buildTotals } from './inventoryAdjustmentShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import InventoryAdjustmentImportModal from './components/InventoryAdjustmentImportModal';
 
 export default function InventoryAdjustmentDetailsSection({
     pageId,
@@ -19,6 +22,9 @@ export default function InventoryAdjustmentDetailsSection({
     onSelectItem,
 }) {
     const [isColumnsToggled, setIsColumnsToggled] = useState(false);
+    const [isRincianOpen, setIsRincianOpen] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const rincianAnchorRef = useRef(null);
     const isPriceAdjustment = pageId === 'price-adjustment';
     const isDiscountMode = isPriceAdjustment && values.adjustmentType === 'Diskon (%)';
 
@@ -99,6 +105,36 @@ export default function InventoryAdjustmentDetailsSection({
                 />
             </div>
 
+            {!isPriceAdjustment && !isDetail && (
+                <div className="relative inline-block shrink-0" ref={rincianAnchorRef}>
+                    <button
+                        type="button"
+                        onClick={() => setIsRincianOpen((prev) => !prev)}
+                        aria-label="Menu rincian barang"
+                        className="inline-flex h-[40px] items-center gap-1.5 rounded-[4px] border border-ui-border bg-white px-3 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-xs"
+                    >
+                        <span>Rincian</span>
+                        <ChevronDownIcon className="h-3.5 w-3.5 text-slate-500" />
+                    </button>
+                    <DropdownMenu
+                        open={isRincianOpen}
+                        onClose={() => setIsRincianOpen(false)}
+                        anchorRef={rincianAnchorRef}
+                        align="start"
+                        widthClassName="w-[160px]"
+                    >
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setIsRincianOpen(false);
+                                setIsImportModalOpen(true);
+                            }}
+                        >
+                            Impor Barang
+                        </DropdownMenuItem>
+                    </DropdownMenu>
+                </div>
+            )}
+
             {isPriceAdjustment && (
                 <button
                     type="button"
@@ -116,26 +152,41 @@ export default function InventoryAdjustmentDetailsSection({
         </div>
     );
 
+    function handleImportItems(importedItems) {
+        setValues((current) => {
+            const nextItems = [...(current.items || []), ...importedItems];
+            return buildTotals(current, nextItems);
+        });
+    }
+
     const minWidth = isPriceAdjustment
         ? ((isDiscountMode || isColumnsToggled) ? 'min-w-[1150px]' : 'min-w-[760px]')
         : config.itemTable.minWidthClassName;
 
     return (
-        <TransactionLineItemsSection
-            searchValue={values.itemSearch}
-            onSearchChange={(e) =>
-                setValues((current) => ({ ...current, itemSearch: e.target.value }))
-            }
-            searchPlaceholder={config.detailSearchPlaceholder}
-            title={values.itemCountLabel ?? config.itemSectionTitle}
-            columns={columns}
-            rows={mappedItems}
-            emptyLabel={config.itemTable.emptyLabel}
-            minWidthClassName={minWidth}
-            onRowClick={onOpenItem ? (row) => onOpenItem(row.__rawItem || row) : undefined}
-            getRowClassName={() => (onOpenItem ? 'cursor-pointer hover:bg-workspace-hover-bg' : '')}
-            searchInput={customSearchInput}
-            searchWrapperClassName="w-full sm:max-w-none flex-1"
-        />
+        <>
+            <TransactionLineItemsSection
+                searchValue={values.itemSearch}
+                onSearchChange={(e) =>
+                    setValues((current) => ({ ...current, itemSearch: e.target.value }))
+                }
+                searchPlaceholder={config.detailSearchPlaceholder}
+                title={values.itemCountLabel ?? config.itemSectionTitle}
+                columns={columns}
+                rows={mappedItems}
+                emptyLabel={config.itemTable.emptyLabel}
+                minWidthClassName={minWidth}
+                onRowClick={onOpenItem ? (row) => onOpenItem(row.__rawItem || row) : undefined}
+                getRowClassName={() => (onOpenItem ? 'cursor-pointer hover:bg-workspace-hover-bg' : '')}
+                searchInput={customSearchInput}
+                searchWrapperClassName="w-full sm:max-w-none flex-1"
+            />
+            <InventoryAdjustmentImportModal
+                open={isImportModalOpen}
+                onClose={() => setIsImportModalOpen(false)}
+                onImport={handleImportItems}
+            />
+        </>
     );
 }
+
