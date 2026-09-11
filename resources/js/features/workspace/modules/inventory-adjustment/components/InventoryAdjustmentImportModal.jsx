@@ -44,34 +44,64 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         event.preventDefault();
         try {
             const headers = [
-                'Kode Barang',
                 'Nama Barang',
-                'Tipe Penyesuaian',
+                'Kode',
+                'Unit',
                 'Kuantitas',
-                'Satuan',
                 'Biaya Satuan',
                 'Gudang',
+                'Tipe Penyesuaian',
+                'Nama Dept Barang',
                 'Keterangan',
             ];
             const sampleRows = [
-                ['BRG001', 'Semen Tiga Roda 50kg', 'Penambahan', 10, 'SAK', 65000, 'Gudang Utama', 'Hasil Stock Opname'],
-                ['BRG002', 'Besi Beton 10mm', 'Pengurangan', 2, 'BTG', 75000, 'Gudang Utama', 'Kondisi Rusak'],
+                ['Semen Tiga Roda 50kg', 'SMN-001', 'SAK', 10, 65000, 'Toko Utama', 'Penambahan', '', 'Penyesuaian hasil stok opname fisik'],
+                ['Besi Beton 10mm SNI', 'BSI-010', 'BTG', 5, 78000, 'Toko Utama', 'Pengurangan', '', 'Batang bengkok / cacat pabrik'],
+                ['Cat Tembok Avitex Putih 5kg', 'CAT-AVI-5K', 'PAIL', 2, 125000, 'Toko Utama', 'Penambahan', '', 'Selisih lebih barang masuk'],
             ];
 
             const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet([headers, ...sampleRows]);
-            ws['!cols'] = [
+
+            const wsTemplate = XLSX.utils.aoa_to_sheet([headers, ...sampleRows]);
+            wsTemplate['!cols'] = [
+                { wch: 30 },
                 { wch: 15 },
-                { wch: 28 },
-                { wch: 18 },
-                { wch: 12 },
                 { wch: 10 },
+                { wch: 12 },
                 { wch: 15 },
                 { wch: 18 },
-                { wch: 25 },
+                { wch: 18 },
+                { wch: 18 },
+                { wch: 35 },
             ];
-            XLSX.utils.book_append_sheet(wb, ws, 'Detail Barang');
-            XLSX.writeFile(wb, 'Template_Impor_Detail_Barang.xlsx');
+
+            const guideRows = [
+                ['Keterangan : - Hanya Sheet Pertama yg di impor. Silahkan masuk ke sheet Pertama untuk mendefinisikan data impor'],
+                ['                        - Baris pertama hanya sebagai judul kolom, mulai baris ke-2 data diimpor. Jadi pastikan data di mulai dari baris ke-2'],
+                ['Nama Kolom', 'Status', 'Max. Karakter', 'Keterangan'],
+                ['Nama Barang', 'Tidak Wajib', 240, 'Isi kolom dengan nama barang. Sistem akan menggunakan kolom ini sebagai alternatif pencocokan jika kode tidak ditemukan.'],
+                ['Kode', 'Wajib', 30, 'Isi dengan kode barang/SKU. Kolom ini menjadi acuan utama apakah barang ada atau tidak dalam database.'],
+                ['Unit', 'Tidak Wajib', 20, 'Isi dengan nama unit/satuan barang (misal: SAK, BTG, PCS). Jika kosong, sistem memakai satuan default barang.'],
+                ['Kuantitas', 'Wajib', '999 Milyar', 'Isi dengan kuantitas penyesuaian barang.'],
+                ['Biaya Satuan', 'Tidak Wajib', '999 Milyar', 'Isi dengan biaya satuan barang (HPP). Jika kosong, sistem memakai nilai biaya satuan dari database.'],
+                ['Gudang', 'Wajib', 240, 'Isi kolom dengan nama gudang barang (misal: Toko Utama, Gudang Transit).'],
+                ['Tipe Penyesuaian', 'Wajib', 20, 'Isi dengan "Penambahan" atau "Pengurangan".'],
+                ['Nama Dept Barang', 'Tidak Wajib', 240, 'Nama departemen pada rincian barang (opsional).'],
+                ['Keterangan', 'Tidak Wajib', 255, 'Catatan atau alasan penyesuaian barang.'],
+            ];
+
+            const wsGuide = XLSX.utils.aoa_to_sheet(guideRows);
+            wsGuide['!cols'] = [
+                { wch: 20 },
+                { wch: 15 },
+                { wch: 15 },
+                { wch: 75 },
+            ];
+
+            XLSX.utils.book_append_sheet(wb, wsTemplate, 'Template');
+            XLSX.utils.book_append_sheet(wb, wsGuide, 'Penjelasan Kolom');
+
+            XLSX.writeFile(wb, 'Template_Penyesuaian_Persediaan.xlsx');
         } catch {
             showErrorToast({ message: 'Gagal mengunduh template Excel.' });
         }
@@ -114,6 +144,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 const rawUnit = getVal('satuan', 'unit');
                 const rawCost = getVal('biayasatuan', 'biaya', 'cost', 'unitcost', 'hargabeli', 'harga');
                 const rawWarehouse = getVal('gudang', 'warehouse');
+                const rawDept = getVal('namadeptbarang', 'dept', 'departemen', 'department');
                 const rawNotes = getVal('keterangan', 'catatan', 'notes');
 
                 const matchedProduct = products.find((p) =>
@@ -141,7 +172,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                     unitCost: formatCurrencyValue(resolvedCost),
                     totalCost: formatCurrencyValue(resolvedQty * resolvedCost),
                     warehouse: warehouseName ? [warehouseName] : [],
-                    department: [],
+                    department: rawDept ? [rawDept] : [],
                     notes: rawNotes || '',
                     oldDiscount: '0',
                     minQty: '0',
