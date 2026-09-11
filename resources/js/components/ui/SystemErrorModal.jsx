@@ -6,7 +6,7 @@ import ModalBase from '@/components/ui/ModalBase';
 import ErrorIllustration from '@/components/ui/ErrorIllustration';
 import { AlertTriangleFilledIcon, CloseIcon, InfoFilledIcon } from '@/features/workspace/shared/Icons';
 
-function normalizeMessages(messages = [], message = '') {
+function normalizeMessages(messages = [], message = '', isInfo = false) {
     const raw = (Array.isArray(messages) && messages.length > 0)
         ? messages
         : (message ? (Array.isArray(message) ? message : [message]) : []);
@@ -22,6 +22,7 @@ function normalizeMessages(messages = [], message = '') {
     return flattened.map((item) => {
         const s = String(item ?? '').trim();
         if (!s) return '';
+        if (isInfo) return s;
         if (!s.toLowerCase().includes('harus') && !s.toLowerCase().includes('wajib') && !s.toLowerCase().includes('tidak') && !s.toLowerCase().includes('minimal') && !s.toLowerCase().includes('melebihi') && !s.toLowerCase().includes('sudah') && !s.toLowerCase().includes('gagal') && !s.toLowerCase().includes('sesuai')) {
             return `${s} harus diisi`;
         }
@@ -31,15 +32,16 @@ function normalizeMessages(messages = [], message = '') {
 
 export default function SystemErrorModal({
     open,
-    title = 'Terjadi Permasalahan pada Pemrosesan',
-    description = 'Silakan perbaiki permasalahan berikut ini:',
+    type = 'error',
+    title,
+    description,
     message = '',
     messages = [],
     copyLabel = 'Salin',
     confirmLabel = 'OK',
     cancelLabel = null,
     copiedLabel = 'Tersalin',
-    closeLabel = 'Tutup modal error',
+    closeLabel = 'Tutup modal',
     showCloseButton = true,
     onClose,
     onConfirm,
@@ -48,8 +50,13 @@ export default function SystemErrorModal({
     dismissible = true,
     maxWidthClassName = 'max-w-[520px]',
 }) {
+    const isInfo = type === 'info' || title === 'Informasi';
+    const isConfirmationTitle = type === 'confirmation' || title === 'Konfirmasi';
+    const defaultTitle = isInfo ? 'Informasi' : 'Terjadi Permasalahan pada Pemrosesan';
+    const activeTitle = title ?? defaultTitle;
+
     const [copyState, setCopyState] = useState('idle');
-    const normalizedMessages = useMemo(() => normalizeMessages(messages, message), [message, messages]);
+    const normalizedMessages = useMemo(() => normalizeMessages(messages, message, isInfo), [isInfo, message, messages]);
 
     useEffect(() => {
         if (!open || !dismissible) {
@@ -104,18 +111,20 @@ export default function SystemErrorModal({
         }
     }
 
-    const finalDescription = (description === '' || description === null)
-        ? ''
-        : ((normalizedMessages.length === 0 && description !== 'Silakan perbaiki permasalahan berikut ini:')
-            ? 'Silakan perbaiki permasalahan berikut ini:'
-            : description);
+    const defaultDescription = isInfo ? '' : 'Silakan perbaiki permasalahan berikut ini:';
+    const activeDescription = description !== undefined ? description : defaultDescription;
 
-    const finalMessages = (normalizedMessages.length === 0 && description !== 'Silakan perbaiki permasalahan berikut ini:')
-        ? (description ? [description] : [])
+    const finalDescription = (activeDescription === '' || activeDescription === null)
+        ? ''
+        : ((normalizedMessages.length === 0 && activeDescription !== 'Silakan perbaiki permasalahan berikut ini:')
+            ? (isInfo ? '' : 'Silakan perbaiki permasalahan berikut ini:')
+            : activeDescription);
+
+    const finalMessages = (normalizedMessages.length === 0 && activeDescription !== '' && activeDescription !== 'Silakan perbaiki permasalahan berikut ini:')
+        ? (activeDescription ? [activeDescription] : [])
         : normalizedMessages;
 
     const hasMessages = finalMessages.length > 0;
-    const isConfirmationTitle = title === 'Konfirmasi';
 
     return (
         <ModalBase
@@ -127,12 +136,12 @@ export default function SystemErrorModal({
             <div className="border-b border-[#081f3b] bg-[#0A2A55] px-4 py-2 text-white sm:px-5">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-2">
-                        {isConfirmationTitle ? (
+                        {isInfo || isConfirmationTitle ? (
                             <InfoFilledIcon className="h-5 w-5 text-white shrink-0" />
                         ) : (
                             <AlertTriangleFilledIcon className="h-5 w-5 text-white shrink-0" />
                         )}
-                        <h2 className="truncate text-sm font-normal">{title}</h2>
+                        <h2 className="truncate text-sm font-normal">{activeTitle}</h2>
                     </div>
 
                     {dismissible && showCloseButton ? (
@@ -151,7 +160,11 @@ export default function SystemErrorModal({
             <div className="bg-white px-4 pt-5 pb-2.5 sm:px-5 sm:pt-6 sm:pb-3">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
                     <div className="flex justify-center sm:justify-start shrink-0">
-                        <ErrorIllustration />
+                        {isInfo ? (
+                            <img src="/assets/images/pop-up-info-icon.svg" className="h-14 w-14 shrink-0" alt="Informasi" aria-hidden="true" />
+                        ) : (
+                            <ErrorIllustration />
+                        )}
                     </div>
 
                     <div className={`min-w-0 flex-1 flex flex-col ${hasMessages && finalDescription ? 'justify-between py-0.5' : 'justify-center'}`}>
@@ -161,18 +174,26 @@ export default function SystemErrorModal({
 
                         {hasMessages && (
                             <div className={finalDescription ? 'mt-2.5' : ''}>
-                                {finalMessages.length === 1 ? (
-                                    <p className="text-sm sm:text-[15px] font-normal leading-5 text-[#A20025]">
-                                        {finalMessages[0]}
-                                    </p>
-                                ) : (
-                                    <ul className="list-disc pl-5 space-y-1 marker:text-black">
+                                {isInfo ? (
+                                    <div className="space-y-1 text-sm sm:text-[15px] font-normal leading-6 text-brand-dark">
                                         {finalMessages.map((item, index) => (
-                                            <li key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-6 text-[#A20025]">
-                                                {item}
-                                            </li>
+                                            <p key={`${item}-${index}`}>{item}</p>
                                         ))}
-                                    </ul>
+                                    </div>
+                                ) : (
+                                    finalMessages.length === 1 ? (
+                                        <p className="text-sm sm:text-[15px] font-normal leading-5 text-[#A20025]">
+                                            {finalMessages[0]}
+                                        </p>
+                                    ) : (
+                                        <ul className="list-disc pl-5 space-y-1 marker:text-black">
+                                            {finalMessages.map((item, index) => (
+                                                <li key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-6 text-[#A20025]">
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )
                                 )}
                             </div>
                         )}
@@ -206,11 +227,13 @@ export default function SystemErrorModal({
 }
 
 function SystemErrorModalContainer({
+    type = 'error',
     title,
     description,
     message,
     messages,
     confirmLabel,
+    cancelLabel,
     copyLabel,
     copiedLabel,
     resolve,
@@ -232,19 +255,21 @@ function SystemErrorModalContainer({
     return (
         <SystemErrorModal
             open={open}
+            type={type}
             title={title}
             description={description}
             message={message}
             messages={messages}
             confirmLabel={confirmLabel}
+            cancelLabel={cancelLabel}
             copyLabel={copyLabel}
             copiedLabel={copiedLabel}
             onClose={() => cleanup(false)}
             onConfirm={() => cleanup(true)}
+            onCancel={() => cleanup(false)}
         />
     );
 }
-
 
 export function showSystemErrorModal(options = {}) {
     return new Promise((resolve) => {
@@ -259,17 +284,28 @@ export function showSystemErrorModal(options = {}) {
 
         root.render(
             <SystemErrorModalContainer
+                type={options.type || 'error'}
                 title={options.title}
                 description={options.description}
                 message={options.message}
                 messages={options.messages}
                 confirmLabel={options.confirmLabel}
+                cancelLabel={options.cancelLabel}
                 copyLabel={options.copyLabel}
                 copiedLabel={options.copiedLabel}
                 resolve={resolve}
                 onDestroy={onDestroy}
             />
         );
+    });
+}
+
+export function showSystemInfoModal(options = {}) {
+    return showSystemErrorModal({
+        ...options,
+        type: 'info',
+        title: options.title || 'Informasi',
+        description: options.description ?? '',
     });
 }
 
