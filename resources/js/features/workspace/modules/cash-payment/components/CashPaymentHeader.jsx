@@ -52,7 +52,7 @@ export default function CashPaymentHeader({ config, values, setValues, activeRec
                         value={values.entryDate}
                         onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
                     />
-                    {values.voided && (
+                    {isDetail && values.voided && (
                         <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none">
                             <input
                                 readOnly
