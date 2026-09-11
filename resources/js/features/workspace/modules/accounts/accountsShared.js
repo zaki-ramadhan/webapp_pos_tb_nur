@@ -288,13 +288,12 @@ export function buildComparableFormValues(values) {
 export function buildAccountPayload(values) {
     const rawCode = String(values.code ?? '').trim();
     const hasManualCode = Boolean(rawCode && rawCode !== '(Otomatis)');
-    const autoCode = values.autoCode !== undefined ? Boolean(values.autoCode) : !hasManualCode;
 
     return {
         parent_id: values.isSubAccount ? (values.parentId ?? null) : null,
         currency_id: values.currencyId ?? null,
         code: hasManualCode ? rawCode : null,
-        auto_code: hasManualCode ? false : autoCode,
+        auto_code: true,
         name: String(values.name ?? '').trim(),
         account_type: mapUiToDbType(String(values.type ?? '').trim()),
         notes: String(values.notes ?? '').trim() || null,

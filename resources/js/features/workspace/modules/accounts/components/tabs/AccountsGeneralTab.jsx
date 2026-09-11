@@ -71,9 +71,9 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                         onChange={(event) => {
                             const isChecked = event.target.checked;
                             onChange('isSubAccount', isChecked);
-                            if (isChecked) {
-                                onChange('autoCode', true);
-                            } else {
+                            onChange('autoCode', true);
+                            onChange('code', '');
+                            if (!isChecked) {
                                 onChange('parentId', null);
                                 onChange('parentAccount', []);
                                 onChange('parentAccountLabel', '');
@@ -107,7 +107,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                                 return (
                                     <div className="flex flex-col gap-0.5 w-full py-0.5 select-none">
                                         <span className="truncate text-xs sm:text-sm font-normal text-brand-dark">
-                                            {prefix}{option.name}
+                                             {prefix}{option.name}
                                         </span>
                                         <div className="flex justify-end text-[11px] sm:text-xs font-normal text-brand-dark">
                                             <span>{option.code || option.id}</span>
@@ -121,6 +121,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                                 onChange('parentAccountLabel', `${option.code} - ${option.name}`);
                                 onChange('parentAccountCode', option.code);
                                 onChange('parentAccountName', option.name);
+                                onChange('code', '');
                                 if (option.account_type && !values.type) {
                                     onChange('type', mapDbToUiType(option.account_type));
                                 }
@@ -131,6 +132,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                                 onChange('parentAccountLabel', '');
                                 onChange('parentAccountCode', '');
                                 onChange('parentAccountName', '');
+                                onChange('code', '');
                             }}
                         />
                     )}

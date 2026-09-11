@@ -180,18 +180,11 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             checks.push({ label: config.labels.isSubAccount, value: values.parentId, type: 'lookup' });
         }
 
-        if (isDetail) {
-            checks.push({ label: config.labels.code, value: values.code });
-        }
-
         return validateRequiredChecks(checks);
     }, [
-        config.labels.code,
         config.labels.isSubAccount,
         config.labels.name,
         config.labels.type,
-        isDetail,
-        values.code,
         values.isSubAccount,
         values.name,
         values.parentId,
@@ -250,6 +243,12 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
                 }
                 await onReload?.();
                 markClean();
+                if (savedRecord?.code) {
+                    setValues((current) => ({
+                        ...current,
+                        code: savedRecord.code,
+                    }));
+                }
                 if (isDetail && savedRecord && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {

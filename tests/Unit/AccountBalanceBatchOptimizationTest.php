@@ -106,4 +106,59 @@ class AccountBalanceBatchOptimizationTest extends TestCase
         $this->assertEquals(350000, $suppItem->balance);
         $this->assertArrayHasKey('balance', $suppItem->toArray());
     }
+
+    public function test_account_hierarchy_code_regeneration_and_stability(): void
+    {
+        $writer = app(\App\Support\Backend\BackendResourceWriter::class);
+        $blueprint = BackendResourceRegistry::find('accounts');
+
+        $root1 = $writer->create($blueprint, [
+            'name' => 'Kas Induk',
+            'account_type' => 'Cash/Bank',
+            'auto_code' => true,
+        ]);
+        $this->assertEquals('1101', $root1->code);
+
+        $root2 = $writer->create($blueprint, [
+            'name' => 'Kas Cabang A',
+            'account_type' => 'Cash/Bank',
+            'auto_code' => true,
+        ]);
+        $this->assertEquals('1102', $root2->code);
+
+        $root3 = $writer->create($blueprint, [
+            'name' => 'Bank Mandiri',
+            'account_type' => 'Cash/Bank',
+            'auto_code' => true,
+        ]);
+        $this->assertEquals('1103', $root3->code);
+
+        $updatedRoot2 = $writer->update($blueprint, $root2, [
+            'parent_id' => $root1->id,
+            'name' => 'Kas Cabang A',
+            'account_type' => 'Cash/Bank',
+            'auto_code' => true,
+        ]);
+
+        $this->assertEquals('110101', $updatedRoot2->code);
+        $this->assertEquals('1103', $root3->fresh()->code);
+
+        $childOf2 = $writer->create($blueprint, [
+            'parent_id' => $updatedRoot2->id,
+            'name' => 'Kasir 1',
+            'account_type' => 'Cash/Bank',
+            'auto_code' => true,
+        ]);
+        $this->assertEquals('11010101', $childOf2->code);
+
+        $movedBack = $writer->update($blueprint, $updatedRoot2, [
+            'parent_id' => null,
+            'name' => 'Kas Cabang A',
+            'account_type' => 'Cash/Bank',
+            'auto_code' => true,
+        ]);
+        $this->assertStringStartsWith('11', $movedBack->code);
+        $this->assertNotEquals('110101', $movedBack->code);
+        $this->assertStringStartsWith($movedBack->code, $childOf2->fresh()->code);
+    }
 }
