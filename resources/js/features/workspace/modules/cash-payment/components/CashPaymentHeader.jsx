@@ -19,11 +19,9 @@ export default function CashPaymentHeader({ config, values, setValues, activeRec
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8 relative">
             {isDetail && values.voided && (
                 <div className="absolute left-1/2 -translate-x-1/2 top-[44px] hidden md:flex items-center justify-center pointer-events-none z-10">
-                    <input
-                        readOnly
-                        value="VOID"
-                        className="h-[34px] w-[90px] rounded-[4px] border border-red-400 bg-red-50 text-center text-sm font-bold text-red-600 tracking-widest cursor-default select-none outline-none shadow-xs"
-                    />
+                    <div className="h-[34px] px-7 flex items-center justify-center rounded-[3px] bg-[#dfdfdf] border border-[#c4c4c4] text-[#666666] text-sm font-medium tracking-[0.25em] select-none shadow-2xs">
+                        V O I D
+                    </div>
                 </div>
             )}
             <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
