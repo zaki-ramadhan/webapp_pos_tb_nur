@@ -12,7 +12,8 @@ import {
 } from '@/components/ui/DataTable';
 
 function formatCurrencyValue(amount) {
-    const val = Number(amount ?? 0);
+    if (amount === undefined || amount === null || amount === '') return '0';
+    const val = typeof amount === 'number' ? amount : parseNumericInput(amount);
     if (!Number.isFinite(val) || val === 0) return '0';
     return formatAmountInput(Math.abs(val));
 }
@@ -88,12 +89,30 @@ export default function BankLedgerTable({
         });
     }, [rows]);
 
+    const hasBalanceAdjustmentInRows = useMemo(() => {
+        return Boolean(
+            openingBalanceRow?.has_balance_adjustment ||
+            realRows.some((r) =>
+                Boolean(
+                    r.is_balance_adjustment ||
+                    r.isBalanceAdjustment ||
+                    (String(r.document_type || r.documentType) === 'general_journal' &&
+                        (String(r.description || '').trim().toLowerCase().startsWith('penyesuaian saldo') ||
+                         String(r.description || '').trim().toLowerCase().startsWith('update saldo')))
+                )
+            )
+        );
+    }, [openingBalanceRow, realRows]);
+
     const openingBalValue = useMemo(() => {
+        if (hasBalanceAdjustmentInRows) {
+            return 0;
+        }
         if (openingBalanceRow?.balance !== undefined) {
             return parseNumericInput(openingBalanceRow.balance);
         }
         return Number(initialOpeningBalance ?? 0);
-    }, [openingBalanceRow, initialOpeningBalance]);
+    }, [hasBalanceAdjustmentInRows, openingBalanceRow, initialOpeningBalance]);
 
     const computedRows = useMemo(() => {
         let currentBal = openingBalValue;
@@ -105,18 +124,20 @@ export default function BankLedgerTable({
                 r.type === 'Credit' ||
                 Number(r.credit ?? 0) > 0;
 
-            const debit = Number(r.debit ?? (isCreditMutation ? 0 : r.mutation) ?? 0);
-            const credit = Number(r.credit ?? (isCreditMutation ? r.mutation : 0) ?? 0);
+            const rawMutation = typeof r.mutation === 'number' ? r.mutation : parseNumericInput(r.mutation ?? 0);
+            const debit = typeof r.debit === 'number' ? r.debit : (r.debit ? parseNumericInput(r.debit) : (isCreditMutation ? 0 : rawMutation));
+            const credit = typeof r.credit === 'number' ? r.credit : (r.credit ? parseNumericInput(r.credit) : (isCreditMutation ? rawMutation : 0));
             const net = debit - credit;
 
-            const isOpeningBalanceJournal = Boolean(
-                r.is_opening_balance ||
-                r.isOpeningBalance ||
+            const isBalanceAdjustment = Boolean(
+                r.is_balance_adjustment ||
+                r.isBalanceAdjustment ||
                 (String(r.document_type || r.documentType) === 'general_journal' &&
-                    String(r.description || '').trim().toLowerCase().startsWith('saldo awal'))
+                    (String(r.description || '').trim().toLowerCase().startsWith('penyesuaian saldo') ||
+                     String(r.description || '').trim().toLowerCase().startsWith('update saldo')))
             );
 
-            if (isOpeningBalanceJournal) {
+            if (isBalanceAdjustment) {
                 currentBal = net;
             } else {
                 currentBal += net;
@@ -135,8 +156,9 @@ export default function BankLedgerTable({
         let credits = 0;
         computedRows.forEach((r) => {
             const isCredit = r.isCreditMutation;
-            const debit = Number(r.debit ?? (isCredit ? 0 : r.mutation) ?? 0);
-            const credit = Number(r.credit ?? (isCredit ? r.mutation : 0) ?? 0);
+            const rawMutation = typeof r.mutation === 'number' ? r.mutation : parseNumericInput(r.mutation ?? 0);
+            const debit = typeof r.debit === 'number' ? r.debit : (r.debit ? parseNumericInput(r.debit) : (isCredit ? 0 : rawMutation));
+            const credit = typeof r.credit === 'number' ? r.credit : (r.credit ? parseNumericInput(r.credit) : (isCredit ? rawMutation : 0));
             debits += debit;
             credits += credit;
         });
@@ -201,33 +223,39 @@ export default function BankLedgerTable({
                                     ? formatHistoryDate(openingBalanceRow.date)
                                     : '-'}
                             </DataTableCell>
-                            <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
+                            <DataTableCell className="text-center text-text-workspace-dark">
+                                {openingBalanceRow?.document_number && openingBalanceRow.document_number !== '-'
+                                    ? openingBalanceRow.document_number
+                                    : ''}
+                            </DataTableCell>
                             {hasCheckNumberColumn && (
-                                <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
+                                <DataTableCell className="text-center text-text-workspace-dark">
+                                    {openingBalanceRow?.check_number && openingBalanceRow.check_number !== '-'
+                                        ? openingBalanceRow.check_number
+                                        : ''}
+                                </DataTableCell>
                             )}
                             <DataTableCell className="text-text-workspace-dark">Saldo Awal</DataTableCell>
                             <DataTableCell className="text-text-workspace-dark">
                                 {openingBalanceRow?.description || getOpeningDateLabel(startDate)}
                             </DataTableCell>
                             <DataTableCell className="text-right text-text-workspace-dark">
-                                {openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
+                                {hasBalanceAdjustmentInRows || openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
                                     ? '0'
-                                    : (openingBalanceRow?.mutation !== undefined && openingBalanceRow.mutation !== '0'
-                                        ? openingBalanceRow.mutation
-                                        : formatCurrencyValue(Math.abs(openingBalValue)))}
+                                    : formatCurrencyValue(openingBalValue)}
                             </DataTableCell>
                             <DataTableCell className="text-center text-text-workspace-dark">
-                                {openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
-                                    ? '-'
-                                    : (openingBalanceRow?.type && openingBalanceRow.type !== '-'
-                                        ? openingBalanceRow.type
+                                {hasBalanceAdjustmentInRows
+                                    ? ''
+                                    : (openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
+                                        ? '-'
                                         : (openingBalValue >= 0 ? 'Dr' : 'Cr'))}
                             </DataTableCell>
-                            <DataTableCell className={`text-right ${isOpeningBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
-                                {formattedOpeningBalance}
+                            <DataTableCell className={`text-right ${!hasBalanceAdjustmentInRows && isOpeningBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
+                                {hasBalanceAdjustmentInRows ? '0' : formattedOpeningBalance}
                             </DataTableCell>
                             {hasReconciliationColumn && (
-                                <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
+                                <DataTableCell className="text-center text-text-workspace-dark" />
                             )}
                         </DataTableRow>
 
@@ -235,7 +263,9 @@ export default function BankLedgerTable({
                         {computedRows.map((row, index) => {
                             const isCreditMutation = row.isCreditMutation;
                             const typeLabel = isCreditMutation ? 'Cr' : 'Dr';
-                            const balVal = Number(row.computedBalance ?? row.balance ?? 0);
+                            const balVal = typeof row.computedBalance === 'number'
+                                ? row.computedBalance
+                                : parseNumericInput(row.balance ?? 0);
                             const isNegativeBalance = balVal < 0;
                             const formattedBalance = isNegativeBalance
                                 ? `-${formatCurrencyValue(Math.abs(balVal))}`
