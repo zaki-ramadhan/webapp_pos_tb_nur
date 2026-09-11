@@ -550,15 +550,15 @@ export default function InquiryWorkspaceView({
                                     </div>
 
                                     <div className="mt-2.5">
-                                        <div className="text-sm text-slate-900 font-normal">
+                                        <div className="text-[15px] text-slate-900 font-normal">
                                             No. Rekening Bank
                                         </div>
-                                        <div className="text-sm font-bold text-slate-900 mt-0.5">
+                                        <div className="text-[15px] font-bold text-slate-900 mt-0.5">
                                             {bankStatementAccountInfo.accountNumber || ''}
                                         </div>
                                     </div>
 
-                                    <div className="mt-8 space-y-2.5 text-sm text-slate-900">
+                                    <div className="mt-8 space-y-2.5 text-[15px] text-slate-900">
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-900 font-normal">Saldo Awal</span>
                                             <span className="font-bold text-slate-900">
