@@ -309,8 +309,8 @@ function buildFallbackDetailRecord(row, config) {
         groupItems: (row.group_items ?? row.groupItems ?? []).map((gi) => ({
             id: gi.id,
             child_product_id: gi.child_product_id ?? gi.childProduct?.id ?? gi.id,
-            code: gi.child_product?.code ?? gi.code ?? '-',
-            name: gi.child_product?.name ?? gi.name ?? '-',
+            code: gi.child_product?.code ?? gi.code ?? '',
+            name: gi.child_product?.name ?? gi.name ?? '',
             quantity: gi.quantity ?? 1,
             unit: gi.unit?.name ?? gi.child_product?.base_unit?.name ?? gi.unit ?? '',
             unit_id: gi.unit_id ?? gi.unit?.id ?? null,

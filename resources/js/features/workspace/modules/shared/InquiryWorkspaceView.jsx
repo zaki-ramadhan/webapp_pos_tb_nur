@@ -481,7 +481,7 @@ export default function InquiryWorkspaceView({
                                                         } else if (column.id === 'sourceNumber') {
                                                             cellContent = (
                                                                 <span className="text-slate-900 font-normal">
-                                                                    {val || '-'}
+                                                                    {val || ''}
                                                                 </span>
                                                             );
                                                         } else if (column.id === 'balance' || column.id === 'mutation') {
@@ -554,7 +554,7 @@ export default function InquiryWorkspaceView({
                                             No. Rekening Bank
                                         </div>
                                         <div className="text-sm font-bold text-slate-900 mt-0.5">
-                                            {bankStatementAccountInfo.accountNumber || '-'}
+                                            {bankStatementAccountInfo.accountNumber || ''}
                                         </div>
                                     </div>
 
@@ -671,7 +671,7 @@ export default function InquiryWorkspaceView({
                                                         } else if (column.id === 'sourceNumber') {
                                                             cellContent = (
                                                                 <span className="text-slate-900 font-normal">
-                                                                    {val || '-'}
+                                                                    {val || ''}
                                                                 </span>
                                                             );
                                                         } else if (column.id === 'balance' || column.id === 'mutation') {

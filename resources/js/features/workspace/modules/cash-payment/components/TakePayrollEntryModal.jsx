@@ -332,7 +332,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
                     if (column.id === 'parsedType') {
                         return row.parsedType;
                     }
-                    return row[column.id] || '-';
+                    return row[column.id] || '';
                 }}
             />
         </WorkspaceDialog>

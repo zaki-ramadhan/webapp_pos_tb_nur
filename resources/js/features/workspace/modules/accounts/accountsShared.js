@@ -197,9 +197,9 @@ export function mapAccountRow(record) {
         level: record.parent_id ? 1 : 0,
         parentId: record.parent_id ? String(record.parent_id) : null,
         inactiveValue: record.is_active === false ? 'inactive' : 'active',
-        currencyName: record.currency?.name ?? '-',
-        openingBalanceDate: record.opening_balance_date ? formatDisplayDate(record.opening_balance_date) : '-',
-        isSubAccountText: record.parent ? `${record.parent.code} - ${record.parent.name}` : '-',
+        currencyName: record.currency?.name ?? '',
+        openingBalanceDate: record.opening_balance_date ? formatDisplayDate(record.opening_balance_date) : '',
+        isSubAccountText: record.parent ? `${record.parent.code} - ${record.parent.name}` : '',
         notes: record.notes ?? '',
         isActiveText: record.is_active ? 'Tidak' : 'Ya',
     };

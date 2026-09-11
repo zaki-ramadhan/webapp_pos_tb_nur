@@ -244,7 +244,7 @@ export function PartnerInlineTableSection({
                                 <DataTableCell className="w-[50px] px-3 text-center text-base text-black">{index + 1}</DataTableCell>
                                 {columns.map((col) => (
                                     <DataTableCell key={col.id} className={`px-3 text-base text-black ${col.align === 'right' ? 'text-right font-normal' : 'text-left'}`}>
-                                        {col.format ? col.format(row[col.id]) : (row[col.id] || '-')}
+                                        {col.format ? col.format(row[col.id]) : (row[col.id] || '')}
                                     </DataTableCell>
                                 ))}
                                 <DataTableCell className="px-3 text-center">

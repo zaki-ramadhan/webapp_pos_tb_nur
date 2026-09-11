@@ -240,16 +240,16 @@ export function mapActivityLogRows(records) {
                 dateValue: normalizeDisplayDate(record.occurred_at),
                 transactionDateValue: transactionDate || 'empty',
                 transactionDateLabel: formatIsoDate(transactionDate),
-                referenceName: record.subject_label ?? record.document_number ?? '-',
+                referenceName: record.subject_label ?? record.document_number ?? '',
                 actionTypeValue: normalizedAction,
                 actionLabel: mapActivityActionLabel(normalizedAction),
                 transactionTypeValue: record.resource_key ?? '',
                 transactionTypeLabel: mapResourceLabel(record.resource_key, record.permission_key, record.resource_label),
                 loggedAt: formatDateTimeVerbose(record.occurred_at),
                 userValue: String(record.actor_user_id ?? record.actor_email ?? ''),
-                userName: record.actor_name ?? record.actor_user?.name ?? '-',
-                email: record.actor_email ?? record.actor_user?.email ?? '-',
-                ipAddress: record.ip_address ?? '-',
+                userName: record.actor_name ?? record.actor_user?.name ?? '',
+                email: record.actor_email ?? record.actor_user?.email ?? '',
+                ipAddress: record.ip_address ?? '',
             };
         });
 }
@@ -323,9 +323,9 @@ export function mapJournalActivityRows(records) {
         const seq = String(totalCount - index).padStart(5, '0');
         const jvNumber = meta.jv_number ?? record.metadata?.jv_number ?? `JV.${year}.${month}.${seq}`;
         
-        let transNumber = record.document_number ?? record.subject_label ?? '-';
+        let transNumber = record.document_number ?? record.subject_label ?? '';
         if (transNumber === jvNumber) {
-            transNumber = '-';
+            transNumber = '';
         }
 
         const rawAction = String(record.action ?? '').toLowerCase();
@@ -337,7 +337,7 @@ export function mapJournalActivityRows(records) {
             __backendRecord: record,
             date: formatIsoDate(record.occurred_at),
             number: jvNumber,
-            transactionNumber: transNumber || '-',
+            transactionNumber: transNumber || '',
             typeLabel: mapResourceLabel(record.resource_key, record.permission_key, record.resource_label),
             isDeleted: isDeleted ? 'Ya' : 'Tidak',
             isDeletedValue: isDeleted ? 'yes' : 'no',

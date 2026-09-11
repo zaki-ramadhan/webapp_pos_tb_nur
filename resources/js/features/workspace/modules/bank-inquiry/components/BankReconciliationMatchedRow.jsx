@@ -151,7 +151,7 @@ export default function BankReconciliationMatchedRow({
                     </div>
 
                     <div className="text-sm font-normal text-slate-900 leading-snug text-left my-1">
-                        {excel.description || '-'}
+                        {excel.description || ''}
                     </div>
 
                     <div className="flex items-center justify-between gap-2 mt-2 pt-1.5 border-t border-slate-100 text-xs">

@@ -70,11 +70,11 @@ export function resolveDepositStatus(record) {
 
 export function buildPurchaseDepositRow(record) {
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
-    const dateLabel = formatIsoDate(record?.entry_date ?? record?.date ?? record?.created_at) || '-';
-    const supplierName = record?.supplier?.name ?? record?.supplier_name ?? record?.party_name ?? '-';
-    const documentNumber = record?.document_number ?? record?.number ?? '-';
-    const invoiceNumber = record?.reference_number ?? record?.metadata?.invoice_number ?? record?.invoice_number ?? '-';
-    const notes = record?.notes ?? record?.description ?? '-';
+    const dateLabel = formatIsoDate(record?.entry_date ?? record?.date ?? record?.created_at) || '';
+    const supplierName = record?.supplier?.name ?? record?.supplier_name ?? record?.party_name ?? '';
+    const documentNumber = record?.document_number ?? record?.number ?? '';
+    const invoiceNumber = record?.reference_number ?? record?.metadata?.invoice_number ?? record?.invoice_number ?? '';
+    const notes = record?.notes ?? record?.description ?? '';
     const status = resolveDepositStatus(record);
     let age = 0;
     if (record?.metadata?.age !== undefined && record?.metadata?.age !== null) {

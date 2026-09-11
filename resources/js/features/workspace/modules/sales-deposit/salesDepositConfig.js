@@ -166,7 +166,7 @@ export function buildSalesDepositRecord(row = {}) {
             ['Pembayaran', 'Rp 0'],
             ['Retur', 'Rp 0'],
             ['Piutang', `Rp ${row.total ?? '0'}`],
-            ['Status', row.status ?? '-'],
+            ['Status', row.status ?? ''],
             ['Dicetak/email', 'Belum cetak/email'],
         ],
         approvalStamp: 'DISETUJUI',

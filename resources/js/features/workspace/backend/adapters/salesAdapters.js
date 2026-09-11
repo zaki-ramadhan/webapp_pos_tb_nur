@@ -3,13 +3,13 @@ import { normalizePhoneNumber } from '@/features/workspace/shared/phoneFormattin
 
 export function mapSalesCheckinRows(records) {
     return records.map((record) => {
-        const salesName = record.sales_user?.name ?? '-';
+        const salesName = record.sales_user?.name ?? '';
 
         return {
             id: record.id,
             dateLabel: formatDateTime(record.checked_in_at),
             number: record.checkin_number ?? '',
-            customerName: record.customer?.name ?? '-',
+            customerName: record.customer?.name ?? '',
             salesName,
             transactionName: record.transaction_name ?? '',
             dateFilter: normalizeDisplayDate(record.checked_in_at),
@@ -179,10 +179,10 @@ export function mapProductRow(record) {
     };
 
     const conversions = record.unit_conversions ?? [];
-    const unit2 = conversions[0]?.unit?.name ?? conversions[0]?.unit?.code ?? '-';
-    const unit3 = conversions[1]?.unit?.name ?? conversions[1]?.unit?.code ?? '-';
-    const unit4 = conversions[2]?.unit?.name ?? conversions[2]?.unit?.code ?? '-';
-    const unit5 = conversions[3]?.unit?.name ?? conversions[3]?.unit?.code ?? '-';
+    const unit2 = conversions[0]?.unit?.name ?? conversions[0]?.unit?.code ?? '';
+    const unit3 = conversions[1]?.unit?.name ?? conversions[1]?.unit?.code ?? '';
+    const unit4 = conversions[2]?.unit?.name ?? conversions[2]?.unit?.code ?? '';
+    const unit5 = conversions[3]?.unit?.name ?? conversions[3]?.unit?.code ?? '';
 
     const prices = record.prices ?? [];
     const salePrice2 = formatPrice(prices[0]?.price);
@@ -254,8 +254,8 @@ export function mapProductRow(record) {
         
       // Pemetaan kolom baru untuk Settings Table
 
-        purchaseUnit: record.purchase_unit?.name ?? record.purchase_unit?.code ?? '-',
-        barcode: record.barcode ?? '-',
+        purchaseUnit: record.purchase_unit?.name ?? record.purchase_unit?.code ?? '',
+        barcode: record.barcode ?? '',
         isActiveText: record.is_active ? 'Tidak' : 'Ya',
         bulkPricingEnabledText: rawFlags?.bulk_pricing_enabled ? 'Ya' : 'Tidak',
         substituteProduct: record.substitute_product?.name ?? null,

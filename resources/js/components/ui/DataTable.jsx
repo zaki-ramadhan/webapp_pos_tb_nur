@@ -127,18 +127,13 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
 
 export function DataTableCell({ className = '', children, onResizeStart = null, style: propStyle, ...props }) {
     const textContent = getTextContent(children).trim();
-    let resolvedClassName = className;
+    const isPlaceholderDash = textContent === '-' || textContent === '–' || textContent === '—';
+    const cellContent = isPlaceholderDash ? '' : children;
 
-    if (textContent === '-') {
-        resolvedClassName = className
-            .replace(/\btext-(left|right)\b/g, '')
-            .trim() + ' text-center';
-    }
-
-    const hasFontWeight = /\bfont-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)\b/.test(resolvedClassName);
+    const hasFontWeight = /\bfont-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)\b/.test(className);
     const fontWeightClass = hasFontWeight ? '' : 'font-normal';
-    const isCenter = /\btext-center\b/.test(resolvedClassName);
-    const hasCustomPx = /\b(!?px-\d+|!?px-\[[^\]]+\])\b/.test(resolvedClassName);
+    const isCenter = /\btext-center\b/.test(className);
+    const hasCustomPx = /\b(!?px-\d+|!?px-\[[^\]]+\])\b/.test(className);
     const pxClass = hasCustomPx ? '' : 'px-3 sm:px-4';
 
     const style = { ...propStyle };
@@ -148,11 +143,11 @@ export function DataTableCell({ className = '', children, onResizeStart = null, 
 
     return (
         <td
-            className={`border-r border-table-cell-border ${pxClass} py-2 text-sm ${fontWeightClass} leading-5 last:border-r-0 whitespace-nowrap truncate relative ${onResizeStart ? 'select-none' : ''} ${resolvedClassName}`.trim()}
+            className={`border-r border-table-cell-border ${pxClass} py-2 text-sm ${fontWeightClass} leading-5 last:border-r-0 whitespace-nowrap truncate relative ${onResizeStart ? 'select-none' : ''} ${className}`.trim()}
             style={{ ...style, position: onResizeStart ? 'relative' : style?.position }}
             {...props}
         >
-            <div className={`w-full truncate min-w-0 block ${isCenter ? 'text-center' : ''} [&>button]:w-full [&>button]:max-w-full [&>button]:truncate [&>button]:block [&>a]:w-full [&>a]:max-w-full [&>a]:truncate [&>a]:block`}>{children}</div>
+            <div className={`w-full truncate min-w-0 block ${isCenter ? 'text-center' : ''} [&>button]:w-full [&>button]:max-w-full [&>button]:truncate [&>button]:block [&>a]:w-full [&>a]:max-w-full [&>a]:truncate [&>a]:block`}>{cellContent}</div>
             {onResizeStart && (
                 <div
                     className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/20 active:bg-brand-blue/40 transition-colors z-10 touch-none"
