@@ -94,7 +94,12 @@ class Account extends DomainModel
             $debitSum = (float) \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)->sum('debit_amount');
             $creditSum = (float) \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)->sum('credit_amount');
 
-            $opening = (float) ($this->opening_balance ?? 0);
+            $hasOpeningJournal = \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)
+                ->whereHas('operationDocument', function ($q) {
+                    $q->where('metadata->is_opening_balance', true);
+                })->exists();
+
+            $opening = $hasOpeningJournal ? 0.0 : (float) ($this->opening_balance ?? 0);
             $type = strtolower($this->account_type ?? '');
             $isCreditNormal = str_contains($type, 'liability')
                 || str_contains($type, 'equity')
