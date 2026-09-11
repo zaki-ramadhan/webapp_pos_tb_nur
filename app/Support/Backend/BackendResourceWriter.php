@@ -513,13 +513,15 @@ class BackendResourceWriter
                                 || empty($record->code);
 
                             if ($needsGeneration) {
-                                $existingChildren = \App\Domain\Finance\Models\Account::where('parent_id', $parent->id)->get();
+                                $existingChildren = \App\Domain\Finance\Models\Account::where('parent_id', $parent->id)
+                                    ->when($record->exists, fn ($q) => $q->where('id', '!=', $record->id))
+                                    ->get();
                                 $index = count($existingChildren) + 1;
                                 do {
                                     $suffix = str_pad($index, 2, '0', STR_PAD_LEFT);
                                     $generatedCode = $parentCode . $suffix;
                                     $index++;
-                                } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->exists());
+                                } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->where('id', '!=', $record->id ?? 0)->exists());
 
                                 $payload['code'] = $generatedCode;
                             } else {
@@ -529,11 +531,12 @@ class BackendResourceWriter
                     } else {
                         $needsGeneration = !$record->exists 
                             || empty($record->code)
+                            || !empty($record->parent_id)
                             || (isset($payload['account_type']) && $record->account_type != $payload['account_type']);
 
                         if ($needsGeneration) {
                             $type = $payload['account_type'] ?? 'Cash/Bank';
-                             $typePrefixMap = [
+                            $typePrefixMap = [
                                 'Cash/Bank' => '11',
                                 'Receivable' => '11',
                                 'Inventory' => '11',
@@ -558,7 +561,7 @@ class BackendResourceWriter
                                 $seqNum = str_pad($index, 2, '0', STR_PAD_LEFT);
                                 $generatedCode = "{$prefix}{$seqNum}";
                                 $index++;
-                            } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->exists());
+                            } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->where('id', '!=', $record->id ?? 0)->exists());
 
                             $payload['code'] = $generatedCode;
                         } else {
@@ -602,6 +605,10 @@ class BackendResourceWriter
 
             $record->fill(Arr::only($payload, $record->getFillable()));
             $record->save();
+
+            if ($blueprint->key === 'accounts' && $record instanceof \App\Domain\Finance\Models\Account && $record->wasChanged('code')) {
+                $this->syncChildAccountCodes($record);
+            }
 
             $oldDocs = [];
             if ($record->exists && in_array($blueprint->key, ['sales-receipts', 'purchase-payments']) && method_exists($record, 'lines')) {
@@ -1301,6 +1308,26 @@ class BackendResourceWriter
         } catch (\Throwable $e) {
           // Silently swallow broadcast errors
 
+        }
+    }
+
+    protected function syncChildAccountCodes(\App\Domain\Finance\Models\Account $account): void
+    {
+        $parentCode = (string) preg_replace('/[^0-9]/', '', $account->code);
+        $children = \App\Domain\Finance\Models\Account::where('parent_id', $account->id)->orderBy('id')->get();
+        $index = 1;
+        foreach ($children as $child) {
+            do {
+                $suffix = str_pad($index, 2, '0', STR_PAD_LEFT);
+                $newCode = $parentCode . $suffix;
+                $index++;
+            } while (\App\Domain\Finance\Models\Account::where('code', $newCode)->where('id', '!=', $child->id)->exists());
+
+            if ($child->code !== $newCode) {
+                $child->code = $newCode;
+                $child->saveQuietly();
+                $this->syncChildAccountCodes($child);
+            }
         }
     }
 }
