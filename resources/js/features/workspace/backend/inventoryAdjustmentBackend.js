@@ -21,13 +21,16 @@ export function buildInventoryAdjustmentTableRows(records) {
         dateFilter: formatIsoDate(record.entry_date),
         effectiveDate: formatIsoDate(record.effective_date) || formatIsoDate(record.entry_date),
         salesCategory: record.metadata?.salesCategory?.[0] ?? '',
-        adjustmentType: record.process_type ?? record.metadata?.adjustmentType ?? 'Harga',
+        adjustmentType: record.process_type ?? record.metadata?.adjustmentType ?? 'Pengurangan Stok',
         inactiveFilter: record.is_closed ? 'inactive' : 'active',
     }));
 }
 
 export function buildInventoryAdjustmentRecord(record, config) {
-    const items = (record.lines ?? []).map((line, index) => {
+    const isPriceAdjustment = config?.id === 'price-adjustment';
+    const items = Array.isArray(record.items) && (!Array.isArray(record.lines) || record.lines.length === 0)
+        ? record.items
+        : (record.lines ?? []).map((line, index) => {
         const rawAttrs = typeof line.attributes === 'string' ? JSON.parse(line.attributes || '{}') : (line.attributes || {});
         const unitName = line.unit?.name 
             ?? line.product?.base_unit?.name 
@@ -87,7 +90,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
         dockActions: config?.detailRecords?.[record.document_number]?.dockActions ?? (Array.isArray(config?.dockActions) ? config.dockActions : config?.dockActions?.detail) ?? config?.draft?.dockActions ?? [],
         itemModal: config?.itemModal ?? config?.draft?.itemModal ?? {},
         salesCategory: record.metadata?.salesCategory ?? [],
-        adjustmentType: record.process_type ?? record.metadata?.adjustmentType ?? 'Harga',
+        adjustmentType: record.process_type ?? record.metadata?.adjustmentType ?? (isPriceAdjustment ? 'Harga' : 'Pengurangan Stok'),
         effectiveDate: formatIsoDate(record.effective_date) || formatIsoDate(record.entry_date),
     };
 }
@@ -129,12 +132,12 @@ export function buildInventoryAdjustmentPayload(values) {
         numbering_type: values.numberingType?.trim() || null,
         entry_date: values.date?.split('/').reverse().join('-') || new Date().toISOString().slice(0, 10),
         effective_date: values.effectiveDate ? values.effectiveDate.split('/').reverse().join('-') : (values.date ? values.date.split('/').reverse().join('-') : new Date().toISOString().slice(0, 10)),
-        process_type: values.adjustmentType || 'Harga',
+        process_type: values.adjustmentType || (values.salesCategory !== undefined ? 'Harga' : 'Pengurangan Stok'),
         notes: values.notes?.trim() || null,
         metadata: {
             ...(values.__backendRecord?.metadata ?? {}),
             salesCategory: values.salesCategory ?? [],
-            adjustmentType: values.adjustmentType ?? 'Harga',
+            adjustmentType: values.adjustmentType || (values.salesCategory !== undefined ? 'Harga' : 'Pengurangan Stok'),
         },
         lines,
     };

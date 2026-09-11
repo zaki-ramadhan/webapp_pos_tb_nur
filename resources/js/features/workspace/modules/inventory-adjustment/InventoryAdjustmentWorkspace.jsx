@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
@@ -16,18 +16,13 @@ import {
     TransactionToolbarIconButton,
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { CogIcon, PrintIcon } from '@/features/workspace/shared/Icons';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
-import { mapDockActions } from '@/features/workspace/modules/shared/workspaceDockActions';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import {
-    applyInventoryPromptItemUpdate,
     buildFormValues,
-    buildInventoryComparableSnapshot,
-    buildInventoryDocumentNumber,
     buildLookupLabel,
-    resolveInventoryDirtyState,
     validateInventoryAdjustmentValues,
     buildItemFromProduct,
     buildTotals,
@@ -60,40 +55,30 @@ export function InventoryAdjustmentFormView({
         config,
     });
 
-    const resolvedSourceRecord = useMemo(() => {
-        if (isDetail) {
-            return sourceRecord || { id: activeRecordId };
+    const buildFormState = useCallback((record, cfg) => {
+        if (!record) {
+            return buildFormValues(isDetail ? { id: activeRecordId } : (cfg?.draft ?? cfg?.formDefaults));
         }
-        return config.draft ?? config.formDefaults;
-    }, [activeRecordId, config.draft, config.formDefaults, isDetail, sourceRecord]);
+        return buildFormValues(record);
+    }, [activeRecordId, isDetail]);
+
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
+        sourceRecord,
+        buildFormState,
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+    });
 
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
-    const [values, setValues] = useState(() => buildFormValues(resolvedSourceRecord));
     const [selectedItem, setSelectedItem] = useState(null);
-    const initialSnapshot = useMemo(() => buildInventoryComparableSnapshot(buildFormValues(resolvedSourceRecord)), [resolvedSourceRecord]);
-
-    const validationMessage = useMemo(() => validateInventoryAdjustmentValues(values, config, isDetail, pageId), [config, isDetail, pageId, values]);
-    const isDirty = useMemo(() => resolveInventoryDirtyState(values, initialSnapshot), [initialSnapshot, values]);
-
-    const prevTabIdRef = useRef(activeLevel2Tab?.id);
-    const prevRecordIdRef = useRef(activeRecordId);
-    const isDirtyRef = useRef(false);
-    isDirtyRef.current = isDirty;
 
     useEffect(() => {
-        const tabChanged = activeLevel2Tab?.id !== prevTabIdRef.current;
-        const recordChanged = activeRecordId !== prevRecordIdRef.current;
+        setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
+        setSelectedItem(null);
+    }, [activeLevel2Tab?.id, activeRecordId]);
 
-        if (tabChanged || recordChanged) {
-            prevTabIdRef.current = activeLevel2Tab?.id;
-            prevRecordIdRef.current = activeRecordId;
-            setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
-            setValues(buildFormValues(resolvedSourceRecord));
-            setSelectedItem(null);
-        } else if (!isDirtyRef.current) {
-            setValues(buildFormValues(resolvedSourceRecord));
-        }
-    }, [activeLevel2Tab?.id, activeRecordId, resolvedSourceRecord, config.sectionTabs]);
+    const validationMessage = useMemo(() => validateInventoryAdjustmentValues(values, config, isDetail, pageId), [config, isDetail, pageId, values]);
 
     const {
         status,
@@ -177,9 +162,10 @@ export function InventoryAdjustmentFormView({
                     ...values,
                     documentNumber: resolvedDocumentNumber,
                 });
+                const targetId = values.__backendRecordId || activeRecordId;
                 const response =
-                    isDetail && values.__backendRecordId
-                        ? await updateBackendResource(backendConfig.resource, values.__backendRecordId, payload)
+                    isDetail && targetId
+                        ? await updateBackendResource(backendConfig.resource, targetId, payload)
                         : await createBackendResource(backendConfig.resource, payload);
 
                 return {
@@ -204,22 +190,32 @@ export function InventoryAdjustmentFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
-                    setValues(buildFormValues(config.draft ?? {}));
+                    resetForm(config.draft ?? config.formDefaults ?? {});
                     setSelectedItem(null);
+                } else if (isDetail && record) {
+                    if (typeof buildRecord === 'function') {
+                        const parsedRecord = buildRecord(record, config);
+                        if (typeof window !== 'undefined') {
+                            window.__savedRecordsCache = window.__savedRecordsCache || {};
+                            window.__savedRecordsCache[String(record.id)] = parsedRecord;
+                        }
+                        setLocalRecord(parsedRecord);
+                    }
                 }
             },
         });
     }
 
     async function onDeleteClick() {
-        if (!backendConfig || !values.__backendRecordId) {
+        const targetId = values.__backendRecordId || activeRecordId;
+        if (!backendConfig || !targetId) {
             return;
         }
 
         await handleDelete({
             loadingMessage: 'Sedang menghapus dokumen.',
             successMessage: 'Dokumen berhasil dihapus.',
-            execute: () => deleteBackendResource(backendConfig.resource, values.__backendRecordId),
+            execute: () => deleteBackendResource(backendConfig.resource, targetId),
             onSuccess: async () => {
                 await onRefresh?.();
                 window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
@@ -233,14 +229,14 @@ export function InventoryAdjustmentFormView({
             buildWorkspaceDockActions({
                 dockActions: values.dockActions ?? config.dockActions,
                 isDetail,
-                saveDisabled: saving,
+                saveDisabled: saveDisabled || saving,
                 saving,
                 validationMessage,
-                isDirty: true,
+                isDirty,
                 onSave: onSaveClick,
                 onDelete: requestDelete,
             }),
-        [config.dockActions, isDetail, requestDelete, saving, validationMessage, values.dockActions],
+        [config.dockActions, isDetail, isDirty, requestDelete, saveDisabled, saving, validationMessage, values.dockActions],
     );
 
     const handlers = useMemo(
@@ -336,9 +332,9 @@ export function InventoryAdjustmentTableView({ config, onCreate, onOpenDetail })
             }
             onRowClick={(row) =>
                 onOpenDetail?.({
-                    recordId: row.id,
-                    label: row.number,
-                    tabLabel: row.number,
+                    recordId: String(row.id),
+                    label: row.number || `Penyesuaian #${row.id}`,
+                    tabLabel: row.number || `Penyesuaian #${row.id}`,
                 })
             }
         />
