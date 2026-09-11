@@ -359,6 +359,7 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             <ConfirmationModal
                 open={deleteModalOpen}
                 title="Konfirmasi"
+                maxWidthClassName="max-w-[600px]"
                 message={
                     values.childAccounts && values.childAccounts.length > 0 ? (
                         `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}\n\nAkun ini memiliki ${values.childAccounts.length} sub-akun yang akan terputus hubungannya (menjadi akun utama tanpa induk).`
