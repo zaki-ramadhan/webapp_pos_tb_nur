@@ -24,40 +24,29 @@ class Customer extends DomainModel
 
     protected array $searchable = ['code', 'name', 'mobile_phone', 'email'];
 
-    protected $appends = ['balance'];
+    protected $appends = [];
 
     protected function casts(): array
     {
         return [
             'credit_limit' => 'decimal:2',
-            'extended_details' => 'array',
             'is_active' => 'boolean',
         ];
     }
 
     public function getBalanceAttribute(): float
     {
-        $invoiceBalance = (float) \App\Domain\Support\Models\OperationDocument::where('customer_id', $this->id)
+        if (array_key_exists('balance', $this->attributes)) {
+            return (float) $this->attributes['balance'];
+        }
+
+        return (float) \App\Domain\Support\Models\OperationDocument::where('customer_id', $this->id)
             ->where('document_type', 'sales_invoice')
             ->where(function ($query) {
                 $query->whereNull('status')
                     ->orWhereNotIn('status', ['Void', 'Cancelled']);
             })
             ->sum('outstanding_amount');
-
-        $openingBalance = 0.0;
-        $details = $this->extended_details;
-        if (is_array($details) && isset($details['openingBalanceRows']) && is_array($details['openingBalanceRows'])) {
-            foreach ($details['openingBalanceRows'] as $row) {
-                $amt = $row['amount'] ?? 0;
-                if (is_string($amt)) {
-                    $amt = (float) preg_replace('/[^\d.]/', '', str_replace(',', '.', $amt));
-                }
-                $openingBalance += (float) $amt;
-            }
-        }
-
-        return round($invoiceBalance + $openingBalance, 2);
     }
 
     public function category(): BelongsTo

@@ -85,6 +85,7 @@ class BackendResourceController extends Controller
         if (!empty($blueprint->with)) {
             $record->load($blueprint->with);
         }
+        $this->appendComputedResourceAttributes($resource, $record);
 
         return response()->json([
             'message' => "{$blueprint->label} berhasil ditambahkan.",
@@ -183,9 +184,13 @@ class BackendResourceController extends Controller
         }
 
         $customRecord = $blueprint->runShow($record);
+        $targetEntity = $customRecord ?? $entity;
+        if ($targetEntity instanceof \Illuminate\Database\Eloquent\Model) {
+            $this->appendComputedResourceAttributes($resource, $targetEntity);
+        }
 
         return response()->json([
-            'data' => $customRecord ?? $entity,
+            'data' => $targetEntity,
         ]);
     }
 
@@ -223,6 +228,7 @@ class BackendResourceController extends Controller
         if (!empty($blueprint->with)) {
             $entity->load($blueprint->with);
         }
+        $this->appendComputedResourceAttributes($resource, $entity);
 
         return response()->json([
             'message' => "{$blueprint->label} berhasil diperbarui.",
@@ -489,5 +495,27 @@ class BackendResourceController extends Controller
             'success' => true,
             'message' => "Berhasil memperbarui status rekonsiliasi untuk {$affected} dokumen.",
         ]);
+    }
+
+    protected function appendComputedResourceAttributes(string $resource, ?\Illuminate\Database\Eloquent\Model $model): void
+    {
+        if (! $model) {
+            return;
+        }
+
+        if ($resource === 'accounts' && $model instanceof \App\Domain\Finance\Models\Account) {
+            $model->append('current_balance');
+            if ($model->relationLoaded('children')) {
+                $model->children->each(fn ($child) => $child->append('current_balance'));
+            }
+        }
+
+        if ($resource === 'customers' && $model instanceof \App\Domain\Partner\Models\Customer) {
+            $model->append('balance');
+        }
+
+        if ($resource === 'suppliers' && $model instanceof \App\Domain\Partner\Models\Supplier) {
+            $model->append('balance');
+        }
     }
 }
