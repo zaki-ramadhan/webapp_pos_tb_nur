@@ -246,11 +246,26 @@ class BankInquiryQueryService
         return $this->paginateRows($rows, $filters);
     }
 
+    public function calculateAccountBalance(Account $account): float
+    {
+        $rows = $this->buildLedgerRows(['account_id' => $account->id], includeOpeningBalanceRow: true);
+        if ($rows->isEmpty()) {
+            return (float) ($account->opening_balance ?? 0);
+        }
+
+        $lastRow = $rows->last();
+        if (isset($lastRow['balance'])) {
+            return (float) str_replace(',', '', (string) $lastRow['balance']);
+        }
+
+        return (float) ($account->opening_balance ?? 0);
+    }
+
     /**
      * @param  array<string, mixed>  $filters
      * @return Collection<int, array<string, mixed>>
      */
-    protected function buildLedgerRows(array $filters, bool $includeOpeningBalanceRow = false): Collection
+    public function buildLedgerRows(array $filters, bool $includeOpeningBalanceRow = false): Collection
     {
         $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
         $accountMap = $this->resolveAccountMap($filters);

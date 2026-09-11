@@ -86,33 +86,11 @@ class Account extends DomainModel
         try {
             $children = $this->relationLoaded('children') ? $this->children : $this->children()->get();
 
-            $childrenBalance = 0.0;
             if ($children->isNotEmpty()) {
-                $childrenBalance = (float) $children->sum('current_balance');
+                return (float) $children->sum('current_balance');
             }
 
-            $debitSum = (float) \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)->sum('debit_amount');
-            $creditSum = (float) \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)->sum('credit_amount');
-
-            $hasOpeningJournal = \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)
-                ->whereHas('operationDocument', function ($q) {
-                    $q->where('metadata->is_opening_balance', true);
-                })->exists();
-
-            $opening = $hasOpeningJournal ? 0.0 : (float) ($this->opening_balance ?? 0);
-            $type = strtolower($this->account_type ?? '');
-            $isCreditNormal = str_contains($type, 'liability')
-                || str_contains($type, 'equity')
-                || str_contains($type, 'revenue')
-                || str_contains($type, 'utang')
-                || str_contains($type, 'modal')
-                || str_contains($type, 'pendapatan')
-                || str_contains($type, 'liabilitas');
-
-            $movement = $isCreditNormal ? ($creditSum - $debitSum) : ($debitSum - $creditSum);
-            $ownBalance = $opening + $movement;
-
-            return $childrenBalance + $ownBalance;
+            return app(\App\Support\Backend\Queries\BankInquiryQueryService::class)->calculateAccountBalance($this);
         } catch (\Throwable $e) {
             return (float) ($this->opening_balance ?? 0);
         } finally {

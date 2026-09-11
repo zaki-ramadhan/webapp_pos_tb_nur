@@ -5,6 +5,7 @@ import {
     createBackendResource,
     deleteBackendResource,
     getBackendErrorMessage,
+    getBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceFormDraftState } from '@/features/workspace/shared/hooks/useWorkspaceFormDraftState';
@@ -24,6 +25,8 @@ import {
     buildAccountSourceRecord,
     buildComparableFormValues,
     buildFormState,
+    getRecordEffectiveBalance,
+    openingBalanceLabel,
     shouldShowSaldoTab,
 } from './accountsShared';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
@@ -34,9 +37,26 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     
+    const [freshRecord, setFreshRecord] = useState(null);
+
+    useEffect(() => {
+        if (!recordId) return;
+        let isMounted = true;
+        getBackendResource('accounts', recordId)
+            .then((data) => {
+                if (isMounted && data) {
+                    setFreshRecord(data);
+                }
+            })
+            .catch(() => {});
+        return () => {
+            isMounted = false;
+        };
+    }, [recordId]);
+
     const backendRecord = useMemo(
-        () => backendRows.find((row) => String(row.id) === String(recordId)) ?? null,
-        [backendRows, recordId],
+        () => freshRecord ?? backendRows.find((row) => String(row.id) === String(recordId)) ?? null,
+        [backendRows, freshRecord, recordId],
     );
     const sourceRecord = useMemo(
         () => (isDetail
@@ -61,6 +81,17 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
         pageId: 'accounts',
         tabId: activeLevel2Tab?.id,
     });
+
+    useEffect(() => {
+        if (freshRecord) {
+            const calculated = getRecordEffectiveBalance(freshRecord);
+            setValues((current) => ({
+                ...current,
+                balanceLabel: openingBalanceLabel(calculated),
+                negative: calculated < 0,
+            }));
+        }
+    }, [freshRecord, setValues]);
     
     const { leftTabs, rightTabs } = useMemo(() => {
         if (isDetail) {
