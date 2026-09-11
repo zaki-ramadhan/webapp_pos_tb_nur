@@ -49,11 +49,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         if (!isValidType) {
             if (fileInputRef.current) fileInputRef.current.value = '';
             showSystemErrorModal({
-                title: 'Format File Tidak Didukung',
-                description: 'Silakan pilih file dengan format yang sesuai:',
                 messages: [
-                    `File "${file.name}" tidak dapat diproses.`,
-                    'Format yang diperbolehkan hanya file Microsoft Excel (.xlsx, .xls) atau CSV (.csv).',
+                    `Format file "${file.name}" tidak didukung. Format yang diperbolehkan hanya file Microsoft Excel (.xlsx, .xls) atau CSV (.csv).`,
                 ],
             });
             return;
@@ -62,8 +59,6 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         if (file.size > 10 * 1024 * 1024) {
             if (fileInputRef.current) fileInputRef.current.value = '';
             showSystemErrorModal({
-                title: 'Ukuran File Terlalu Besar',
-                description: 'Batas ukuran file telah terlampaui:',
                 messages: [
                     `Ukuran file "${file.name}" melebihi batas maksimal 10 MB.`,
                 ],
@@ -79,11 +74,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
             if (!rows || rows.length === 0) {
                 showSystemErrorModal({
-                    title: 'File Tidak Memiliki Data',
-                    description: 'Pemeriksaan baris data gagal:',
                     messages: [
-                        'File Excel tidak memiliki baris data untuk diimpor.',
-                        'Pastikan data barang dimulai dari baris ke-2 pada Sheet pertama (Template).',
+                        'File Excel tidak memiliki baris data untuk diimpor. Pastikan data barang dimulai dari baris ke-2 pada Sheet pertama (Template).',
                     ],
                 });
                 setLoading(false);
@@ -174,8 +166,6 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
             if (validationErrors.length > 0) {
                 showSystemErrorModal({
-                    title: 'Kesalahan Validasi Data Excel',
-                    description: 'Silakan perbaiki data berikut pada file Excel sebelum mengimpor:',
                     messages: validationErrors.slice(0, 8).concat(
                         validationErrors.length > 8 ? [`...dan ${validationErrors.length - 8} kesalahan lainnya.`] : []
                     ),
@@ -187,9 +177,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
             if (importedItems.length === 0) {
                 showSystemErrorModal({
-                    title: 'Data Barang Tidak Valid',
-                    description: 'Tidak ada baris barang yang dapat diimpor:',
-                    messages: ['Pastikan kolom Kode Barang atau Nama Barang telah terisi pada file Excel.'],
+                    messages: ['Tidak ada data barang yang valid untuk diimpor. Pastikan kolom Kode Barang atau Nama Barang telah terisi pada file Excel.'],
                 });
                 setLoading(false);
                 if (fileInputRef.current) fileInputRef.current.value = '';
@@ -204,10 +192,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
             onClose();
         } catch (err) {
             showSystemErrorModal({
-                title: 'Gagal Membaca File Excel',
-                description: 'Terjadi permasalahan saat memproses file:',
                 messages: [
-                    err?.message || 'Pastikan format file Excel (.xlsx, .xls) atau CSV (.csv) valid dan tidak rusak.',
+                    err?.message || 'Format file Excel (.xlsx, .xls) atau CSV (.csv) tidak valid atau file mengalami kerusakan.',
                 ],
             });
         } finally {
