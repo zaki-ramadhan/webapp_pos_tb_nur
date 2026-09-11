@@ -478,7 +478,7 @@ export default function InquiryWorkspaceView({
                                                                 row.transaction_type === 'Saldo Awal' ||
                                                                 row.transactionType === 'Saldo Awal'
                                                             );
-                                                            const isReconciled = !isOpening && Boolean(row.is_reconciled || row.status === 'Reconciled');
+                                                            const isReconciled = !isOpening && (isBankStatement || Boolean(row.is_reconciled || row.status === 'Reconciled'));
                                                             cellContent = isReconciled ? (
                                                                 <span className="inline-flex items-center justify-center text-emerald-600 font-bold" aria-label="Sudah direkonsiliasi">
                                                                     <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
