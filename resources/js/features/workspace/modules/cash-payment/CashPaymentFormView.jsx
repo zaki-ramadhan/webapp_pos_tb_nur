@@ -360,7 +360,7 @@ export default function CashPaymentFormView({
                         config={config}
                         values={values}
                         setValues={setValues}
-                        isDetail={Boolean(activeRecordId)}
+                        isDetail={isDetail}
                         handlers={handlers}
                     />
                 ) : (
