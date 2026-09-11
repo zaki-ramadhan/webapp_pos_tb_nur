@@ -40,9 +40,9 @@ export default function DashboardActivePageContent({
                 const isCurrent = activePageId === page.id;
                 const isPreferences = page.id === 'preferences';
                 const isFormMode = mode === 'form';
-                const ptClassName = isPreferences || isFormMode
+                const ptClassName = isPreferences
                     ? 'pt-1.5 sm:pt-2'
-                    : 'pt-3 sm:pt-3';
+                    : (isFormMode ? 'pt-1.5 sm:pt-1.5' : 'pt-3 sm:pt-3');
 
                 return (
                     <div
