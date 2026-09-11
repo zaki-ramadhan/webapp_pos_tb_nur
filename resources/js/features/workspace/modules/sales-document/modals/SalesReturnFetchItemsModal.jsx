@@ -124,7 +124,7 @@ export default function SalesReturnFetchItemsModal({
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-[#5a738e] text-white text-xs font-semibold">
-                            <th className="py-2.5 px-3 w-[44px] text-center">
+                            <th className="py-2.5 px-3 w-[44px] text-center border-r border-table-cell-border">
                                 <input
                                     type="checkbox"
                                     checked={allSelected}
@@ -132,8 +132,8 @@ export default function SalesReturnFetchItemsModal({
                                     className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
                                 />
                             </th>
-                            <th className="py-2.5 px-3 font-semibold">Nama Barang</th>
-                            <th className="py-2.5 px-3 w-[120px] text-center font-semibold">Kuantitas</th>
+                            <th className="py-2.5 px-3 font-semibold border-r border-table-cell-border">Nama Barang</th>
+                            <th className="py-2.5 px-3 w-[120px] text-center font-semibold border-r border-table-cell-border">Kuantitas</th>
                             <th className="py-2.5 px-3 w-[100px] text-center font-semibold">Satuan</th>
                         </tr>
                     </thead>
@@ -159,7 +159,7 @@ export default function SalesReturnFetchItemsModal({
                                         onClick={() => toggleSelectItem(item.id)}
                                         className={`cursor-pointer transition-colors hover:bg-slate-50 ${isChecked ? 'bg-blue-50/40' : ''}`}
                                     >
-                                        <td className="py-3 px-3 text-center" onClick={(e) => e.stopPropagation()}>
+                                        <td className="py-3 px-3 text-center border-r border-table-cell-border" onClick={(e) => e.stopPropagation()}>
                                             <input
                                                 type="checkbox"
                                                 checked={isChecked}
@@ -167,10 +167,10 @@ export default function SalesReturnFetchItemsModal({
                                                 className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
                                             />
                                         </td>
-                                        <td className="py-3 px-3 font-normal text-zinc-800">
+                                        <td className="py-3 px-3 font-normal text-zinc-800 border-r border-table-cell-border">
                                             {item.name}
                                         </td>
-                                        <td className="py-3 px-3 text-center font-normal text-zinc-700">
+                                        <td className="py-3 px-3 text-center font-normal text-zinc-700 border-r border-table-cell-border">
                                             {item.quantity}
                                         </td>
                                         <td className="py-3 px-3 text-center font-normal text-zinc-700">
