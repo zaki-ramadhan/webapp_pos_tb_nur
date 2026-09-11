@@ -83,11 +83,11 @@ export default function BalanceTab({ config, values, onChange }) {
                         rows.map((row, index) => (
                             <DataTableRow key={row.id || index} className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`}>
                                 <DataTableCell className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 text-center text-base text-table-row-number whitespace-nowrap">{index + 1}</DataTableCell>
-                                <DataTableCell className="px-3 text-left text-base text-text-workspace-dark">{row.date || '-'}</DataTableCell>
+                                <DataTableCell className="px-3 text-left text-base text-text-workspace-dark">{row.date || ''}</DataTableCell>
                                 <DataTableCell className="px-3 text-right text-base text-text-workspace-dark font-medium">{formatAmountInput(row.amount)}</DataTableCell>
                                 <DataTableCell className="px-3 text-left text-base text-text-workspace-dark">{row.currency || 'Indonesian Rupiah'}</DataTableCell>
-                                <DataTableCell className="px-3 text-left text-base text-text-workspace-dark font-medium">{row.number || '-'}</DataTableCell>
-                                <DataTableCell className="px-3 text-left text-base text-text-workspace-dark">{row.notes || '-'}</DataTableCell>
+                                <DataTableCell className="px-3 text-left text-base text-text-workspace-dark font-medium">{row.number || ''}</DataTableCell>
+                                <DataTableCell className="px-3 text-left text-base text-text-workspace-dark">{row.notes || ''}</DataTableCell>
                                 <DataTableCell className="px-3 text-center">
                                     <button
                                         type="button"

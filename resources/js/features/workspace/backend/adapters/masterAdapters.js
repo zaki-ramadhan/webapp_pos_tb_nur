@@ -56,7 +56,7 @@ export const SIMPLE_MASTER_BACKEND_CONFIG = {
             return {
                 id: record.id,
                 name: record.name ?? '',
-                description: record.description ?? '-',
+                description: record.description ?? '',
                 tabLabel: record.name ?? '',
                 isActiveText: record.is_active !== false ? 'Tidak' : 'Ya',
             };

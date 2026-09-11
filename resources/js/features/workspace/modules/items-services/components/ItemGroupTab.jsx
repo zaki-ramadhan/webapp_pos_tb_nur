@@ -22,10 +22,10 @@ export default function ItemGroupTab({ values, onChange }) {
         const newItem = {
             id: `group-item-${Date.now()}`,
             child_product_id: option.id,
-            code: option.code ?? '-',
-            name: option.name ?? '-',
+            code: option.code ?? '',
+            name: option.name ?? '',
             quantity: 1,
-            unit: option.base_unit?.name ?? option.baseUnit?.name ?? (typeof option.unit === 'string' ? option.unit : (option.unit?.name ?? '-')),
+            unit: option.base_unit?.name ?? option.baseUnit?.name ?? (typeof option.unit === 'string' ? option.unit : (option.unit?.name ?? '')),
             unit_id: option.base_unit_id ?? option.base_unit?.id ?? option.baseUnit?.id ?? null,
         };
 
@@ -76,10 +76,10 @@ export default function ItemGroupTab({ values, onChange }) {
                         groupItems.map((item, index) => (
                             <DataTableRow key={item.id ?? index} className="border-ui-border-row bg-white">
                                 <DataTableCell className="text-left text-sm font-normal text-blue-600 px-3 py-2">
-                                    {item.code ?? item.child_product?.code ?? '-'}
+                                    {item.code ?? item.child_product?.code ?? ''}
                                 </DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">
-                                    {item.name ?? item.child_product?.name ?? '-'}
+                                    {item.name ?? item.child_product?.name ?? ''}
                                 </DataTableCell>
                                 <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2 w-[140px]">
                                     <SimpleTextField
@@ -91,7 +91,7 @@ export default function ItemGroupTab({ values, onChange }) {
                                     />
                                 </DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">
-                                    {item.unit ?? item.child_product?.base_unit?.name ?? '-'}
+                                    {item.unit ?? item.child_product?.base_unit?.name ?? ''}
                                 </DataTableCell>
                                 <DataTableCell className="text-center px-2 py-2 w-[60px]">
                                     <button

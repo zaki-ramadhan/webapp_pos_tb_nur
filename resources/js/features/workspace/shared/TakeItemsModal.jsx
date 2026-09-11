@@ -204,10 +204,10 @@ export default function TakeItemsModal({ open, onClose, onApply, mode = 'purchas
                                             />
                                         </DataTableCell>
                                         <DataTableCell className="px-3 text-xs sm:text-sm text-brand-dark">
-                                            {p.code || '-'}
+                                            {p.code || ''}
                                         </DataTableCell>
                                         <DataTableCell className="px-3 text-xs sm:text-sm text-brand-dark">
-                                            {p.name || '-'}
+                                            {p.name || ''}
                                         </DataTableCell>
                                     </DataTableRow>
                                 );

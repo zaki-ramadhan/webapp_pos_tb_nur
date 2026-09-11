@@ -179,11 +179,11 @@ export default function ItemMutationTab({ productId }) {
                                         isClickable ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''
                                     }`.trim()}
                                 >
-                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.date || '-'}</DataTableCell>
-                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.document_number || '-'}</DataTableCell>
-                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.document_type || '-'}</DataTableCell>
-                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || '-'}</DataTableCell>
-                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || '-'}</DataTableCell>
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.date || ''}</DataTableCell>
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.document_number || ''}</DataTableCell>
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.document_type || ''}</DataTableCell>
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || ''}</DataTableCell>
+                                    <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || ''}</DataTableCell>
                                     <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.unit_cost) || '0'}</DataTableCell>
                                     <DataTableCell className={`text-center text-sm px-3 py-2 ${hasIn ? 'text-emerald-600' : 'text-text-workspace-dark'}`}>
                                         {formatAmountInput(row.in_qty) || '0'}

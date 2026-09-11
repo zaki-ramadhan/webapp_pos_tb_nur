@@ -2,7 +2,7 @@ import { formatDisplayValue } from '@/features/workspace/shared/amountFormatting
 import { formatPhoneDisplay } from '@/features/workspace/shared/phoneFormatting';
 
 export default function formatTableTextValue(value, column = null) {
-    const isEmpty = value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
+    const isEmpty = value === null || value === undefined || (typeof value === 'string' && (value.trim() === '' || value.trim() === '-'));
     
     if (!isEmpty) {
         if (column) {
@@ -161,5 +161,5 @@ export default function formatTableTextValue(value, column = null) {
         }
     }
 
-    return '-';
+    return '';
 }

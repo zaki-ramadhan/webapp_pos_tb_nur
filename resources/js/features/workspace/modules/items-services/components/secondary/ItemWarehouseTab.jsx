@@ -82,7 +82,7 @@ export default function ItemWarehouseTab({ productId }) {
                     ) : rows.length > 0 ? (
                         rows.map((row, i) => (
                             <DataTableRow key={row.id ?? i} className="border-ui-border-row bg-white">
-                                <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse ?? row.warehouse_name ?? '-'}</DataTableCell>
+                                <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse ?? row.warehouse_name ?? ''}</DataTableCell>
                                 <DataTableCell className="text-right text-sm font-normal text-text-workspace-dark px-3 py-2 w-[180px]">{formatAmountInput(row.saleable_stock ?? row.stock_on_hand) || '0'}</DataTableCell>
                             </DataTableRow>
                         ))

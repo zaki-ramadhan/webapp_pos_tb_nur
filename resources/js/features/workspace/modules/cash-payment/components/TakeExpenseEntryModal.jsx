@@ -256,7 +256,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                         }
                         return formatCurrencyValue(total);
                     }
-                    return row[column.id] || '-';
+                    return row[column.id] || '';
                 }}
             />
         </WorkspaceDialog>

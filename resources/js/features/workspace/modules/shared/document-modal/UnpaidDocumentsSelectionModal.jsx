@@ -348,8 +348,8 @@ export default function UnpaidDocumentsSelectionModal({
                                         <td className="py-2.5 px-3 font-normal text-zinc-700 border-r border-table-cell-border">
                                             {docNum}
                                         </td>
-                                        <td className="py-2.5 px-3 font-normal text-zinc-500 text-center border-r border-table-cell-border">
-                                            -
+                                        <td className="py-2.5 px-3 font-normal text-zinc-600 border-r border-table-cell-border">
+                                            {rec.notes || rec.description || ''}
                                         </td>
                                         <td className="py-2.5 px-3 font-normal text-zinc-600 text-center border-r border-table-cell-border">
                                             {entryDate}
