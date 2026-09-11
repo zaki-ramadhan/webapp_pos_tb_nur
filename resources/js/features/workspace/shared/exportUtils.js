@@ -375,9 +375,9 @@ export function printTable(columns, rows, title = 'Laporan') {
     }
 }
 
-// Private
+// Download helper
 
-function triggerDownload(content, mimeType, filename) {
+export function triggerDownload(content, mimeType, filename) {
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
