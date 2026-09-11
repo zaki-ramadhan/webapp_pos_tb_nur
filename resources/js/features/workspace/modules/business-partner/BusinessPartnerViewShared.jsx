@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ModalBase from '@/components/ui/ModalBase';
+import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import {
     DataTable,
@@ -264,7 +264,30 @@ export function PartnerInlineTableSection({
             )}
 
             {showModal && (
-                <ModalBase isOpen={showModal} onClose={() => setShowModal(false)} title={modalTitle} maxWidth="max-w-md">
+                <WorkspaceDialog
+                    open={showModal}
+                    onClose={() => setShowModal(false)}
+                    title={modalTitle}
+                    maxWidthClassName="max-w-md"
+                    footer={(
+                        <div className="flex justify-end gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setShowModal(false)}
+                                className="rounded-[4px] border px-4 py-1.5 text-xs text-gray-600 hover:bg-gray-50 cursor-pointer"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleSave}
+                                className="rounded-[4px] bg-brand-blue px-4 py-1.5 text-xs text-white hover:bg-blue-700 cursor-pointer"
+                            >
+                                Simpan
+                            </button>
+                        </div>
+                    )}
+                >
                     <div className="space-y-3 py-2">
                         {fields.map((field) => (
                             <FormFieldRow key={field.id} label={field.label} required={field.required}>
@@ -289,23 +312,7 @@ export function PartnerInlineTableSection({
                             </FormFieldRow>
                         ))}
                     </div>
-                    <div className="mt-4 flex justify-end gap-2 border-t pt-3">
-                        <button
-                            type="button"
-                            onClick={() => setShowModal(false)}
-                            className="rounded-[4px] border px-4 py-1.5 text-xs text-gray-600 hover:bg-gray-50"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleSave}
-                            className="rounded-[4px] bg-brand-blue px-4 py-1.5 text-xs text-white hover:bg-blue-700"
-                        >
-                            Simpan
-                        </button>
-                    </div>
-                </ModalBase>
+                </WorkspaceDialog>
             )}
 
         </div>

@@ -66,7 +66,7 @@ export function OpeningBalanceModal({
                 panelClassName="max-w-[460px] p-0 overflow-hidden"
             >
                 {/* Header matching standard modal typography */}
-                <div className="bg-[#0A2A55] px-4 py-2 text-white">
+                <div data-modal-header="true" className="bg-[#0A2A55] px-4 py-2 text-white">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2.5">
                             <InfoFilledIcon className="h-4 w-4 text-white" />

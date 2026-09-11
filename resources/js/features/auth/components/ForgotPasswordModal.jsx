@@ -83,7 +83,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
             className="bg-slate-950/55 px-4 py-5 sm:px-6 sm:py-8"
             panelClassName="w-full max-w-[460px] overflow-visible rounded-[4px] bg-white px-0 py-0 shadow-modal-auth"
         >
-            <div className="relative">
+            <div data-modal-header="true" className="relative cursor-move select-none pt-2">
                 <button
                     type="button"
                     onClick={onClose}
