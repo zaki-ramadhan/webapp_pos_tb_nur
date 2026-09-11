@@ -10,13 +10,20 @@ import { listBackendResource, extractBackendRows } from '@/features/workspace/ba
 function ModalFieldRow({ label, required = false, alignTop = false, children }) {
     return (
         <div className={`grid gap-2 sm:grid-cols-[156px_minmax(0,1fr)] sm:gap-x-4 ${alignTop ? 'sm:items-start' : 'sm:items-center'}`}>
-            <TransactionFieldLabel label={label} required={required} className={`text-xs sm:text-sm font-normal text-slate-700 ${alignTop ? 'pt-1.5 sm:pt-1' : ''}`} />
+            <TransactionFieldLabel label={label} required={required} className={`text-xs sm:text-sm font-normal text-table-row-text ${alignTop ? 'pt-1.5 sm:pt-1' : ''}`} />
             <div>{children}</div>
         </div>
     );
 }
 
-export default function InventoryAdjustmentDetailTab({ values, setValues, onRecalculateTotal, modal, errors = {} }) {
+export default function InventoryAdjustmentDetailTab({
+    values,
+    setValues,
+    onRecalculateTotal,
+    modal,
+    errors = {},
+    isExisting = false,
+}) {
     const [warehouseStocks, setWarehouseStocks] = useState([]);
     const [loadingStock, setLoadingStock] = useState(false);
 
@@ -61,43 +68,54 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
     }, [selectedWarehouseName, values.__warehouseId, warehouseStocks]);
 
     const isAddition = values.adjustmentType === 'Penambahan';
-    const adjustmentOptions = ['Penambahan', 'Pengurangan', 'Atur Stok'];
+    const adjustmentOptions = modal?.adjustmentTypeOptions ?? ['Penambahan', 'Pengurangan', 'Atur Stok'];
 
     return (
-        <div className="space-y-4">
-            <ModalFieldRow label="Kode Barang">
-                <div className="flex h-[40px] items-center text-xs sm:text-sm font-medium text-document-code">{values.code || '—'}</div>
-            </ModalFieldRow>
+        <div className="space-y-2.5">
+            <div className="grid gap-1 sm:grid-cols-[156px_minmax(0,1fr)] sm:gap-x-4 sm:items-center">
+                <TransactionFieldLabel label="Kode #" className="text-xs sm:text-sm font-normal text-table-row-text" />
+                <div className="flex h-[26px] items-center text-xs sm:text-sm font-medium text-table-row-text">{values.code || '—'}</div>
+            </div>
 
             <ModalFieldRow label="Nama Barang" required>
                 <TextInput
                     value={values.name}
                     readOnly
                     error={errors.name}
-                    className="h-[40px] rounded-[4px] border-ui-border bg-slate-50"
-                    inputClassName="text-xs sm:text-sm text-brand-dark cursor-not-allowed"
+                    className="h-[36px] sm:h-[40px] rounded-[4px] border-ui-border bg-slate-50"
+                    inputClassName="text-xs sm:text-sm !text-table-row-text cursor-default font-normal"
                 />
             </ModalFieldRow>
 
-            <ModalFieldRow label="Tipe Penyesuaian" alignTop>
-                <div className="flex flex-col gap-2 pt-0.5">
-                    {adjustmentOptions.map((option) => (
-                        <RadioField
-                            key={option}
-                            id={`adjustment-type-${option.toLowerCase().replace(/\s+/g, '-')}`}
-                            name="adjustmentType"
-                            label={option}
-                            containerClassName="w-auto"
-                            checked={values.adjustmentType === option}
-                            onChange={() =>
-                                setValues((current) => ({
-                                    ...current,
-                                    adjustmentType: option,
-                                }))
-                            }
-                        />
-                    ))}
-                </div>
+            <ModalFieldRow label="Tipe Penyesuaian" alignTop={!isExisting}>
+                {isExisting ? (
+                    <TextInput
+                        value={values.adjustmentType}
+                        readOnly
+                        className="h-[36px] sm:h-[40px] rounded-[4px] border-ui-border bg-slate-50"
+                        inputClassName="text-xs sm:text-sm !text-table-row-text cursor-default font-normal"
+                    />
+                ) : (
+                    <div className="flex flex-col gap-2 pt-0.5">
+                        {adjustmentOptions.map((option) => (
+                            <RadioField
+                                key={option}
+                                id={`adjustment-type-${option.toLowerCase().replace(/\s+/g, '-')}`}
+                                name="adjustmentType"
+                                label={option}
+                                containerClassName="w-auto"
+                                labelClassName="!text-table-row-text font-normal"
+                                checked={values.adjustmentType === option}
+                                onChange={() =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        adjustmentType: option,
+                                    }))
+                                }
+                            />
+                        ))}
+                    </div>
+                )}
             </ModalFieldRow>
 
             <ModalFieldRow label="Kuantitas" required>
@@ -117,8 +135,8 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
                             }
                             onBlur={onRecalculateTotal}
                             maxLength={8}
-                            className="h-[40px] w-full rounded-[4px] border-ui-border"
-                            inputClassName="text-right text-xs sm:text-sm text-brand-dark px-2.5"
+                            className="h-[36px] sm:h-[40px] w-full rounded-[4px] border-ui-border"
+                            inputClassName="text-right text-xs sm:text-sm text-table-row-text px-2.5"
                         />
                     </div>
                     <div className="col-span-3 min-w-0">
@@ -149,7 +167,7 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
                 </div>
             </ModalFieldRow>
 
-            {isAddition ? (
+            {isExisting && (isAddition || Number(values.unitCost) > 0) ? (
                 <>
                     <ModalFieldRow label="Biaya Satuan">
                         <FormattedAmountInput
@@ -163,9 +181,9 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
                             onBlur={onRecalculateTotal}
                             prefix="Rp"
                             maxLength={18}
-                            className="h-[40px] rounded-[4px] border-ui-border"
-                            prefixClassName="min-w-[40px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive text-xs"
-                            inputClassName="text-right text-xs sm:text-sm text-brand-dark"
+                            className="h-[36px] sm:h-[40px] rounded-[4px] border-ui-border"
+                            prefixClassName="min-w-[40px] justify-center bg-input-prefix-bg-compact px-0 !text-table-row-text text-xs"
+                            inputClassName="text-right text-xs sm:text-sm text-table-row-text"
                             containerClassName="max-w-[220px]"
                         />
                     </ModalFieldRow>
@@ -174,8 +192,8 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
                         <TextInput
                             value={values.totalCost}
                             readOnly
-                            className="h-[40px] rounded-[4px] border-ui-border bg-bg-workspace-input-panel"
-                            inputClassName="text-right text-xs sm:text-sm font-medium text-tab-view-active-text"
+                            className="h-[36px] sm:h-[40px] rounded-[4px] border-ui-border bg-bg-workspace-input-panel"
+                            inputClassName="text-right text-xs sm:text-sm font-medium !text-table-row-text"
                             containerClassName="max-w-[220px]"
                         />
                     </ModalFieldRow>
@@ -208,9 +226,9 @@ export default function InventoryAdjustmentDetailTab({ values, setValues, onReca
                             error={errors.warehouse}
                         />
                     </div>
-                    <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-700 min-w-[75px] shrink-0 whitespace-nowrap">
-                        <span className="text-slate-500">Stok:</span>
-                        <span className="font-semibold text-brand-dark tabular-nums">
+                    <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-table-row-text min-w-[75px] shrink-0 whitespace-nowrap">
+                        <span className="text-table-row-text font-normal">Stok:</span>
+                        <span className="font-semibold text-table-row-text tabular-nums">
                             {formatAmountInput(currentWarehouseStock ?? 0)}
                         </span>
                     </div>

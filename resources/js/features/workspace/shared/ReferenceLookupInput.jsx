@@ -258,7 +258,7 @@ export default function ReferenceLookupInput({
                                     }}
                                     onChange={handleChange}
                                     aria-label={searchLabel}
-                                    className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm ${disabled ? 'cursor-default disabled:text-slate-400' : resolvedError ? 'text-red-700' : 'text-brand-dark'} outline-none placeholder:${resolvedError ? 'text-red-400' : 'text-disabled-border-t'} cursor-text ${inputClassName}`.trim()}
+                                    className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm ${disabled ? 'cursor-default disabled:text-slate-400' : resolvedError ? 'text-red-700' : 'text-brand-dark'} outline-none placeholder:${resolvedError ? 'text-red-400' : 'text-slate-600'} cursor-text ${inputClassName}`.trim()}
                                 />
                             )}
                         </div>

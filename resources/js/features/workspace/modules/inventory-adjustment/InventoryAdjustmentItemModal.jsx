@@ -57,7 +57,7 @@ export function recalculateItemTotalCost(current) {
     };
 }
 
-export default function InventoryAdjustmentItemModal({ open, onClose, modal, item, onSave, onDelete }) {
+export default function InventoryAdjustmentItemModal({ open, onClose, modal, item, isExisting = false, onSave, onDelete }) {
     const tabs = modal?.tabs ?? [];
     const [activeTabId, setActiveTabId] = useState(tabs[0]?.id ?? 'details');
     const [values, setValues] = useState(() => recalculateItemTotalCost(buildInitialValues(item)));
@@ -134,7 +134,7 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
             panelClassName="max-w-[540px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-import"
-            bodyClassName="min-h-[360px] py-4"
+            bodyClassName="min-h-[440px] py-3.5 px-4"
             footer={
                 <DocumentModalFooter
                     deleteLabel={modal.deleteLabel ?? 'Hapus'}
@@ -153,6 +153,7 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
                     onRecalculateTotal={handleRecalculateTotal}
                     modal={modal}
                     errors={errors}
+                    isExisting={isExisting}
                 />
             )}
         </DocumentModalLayout>
