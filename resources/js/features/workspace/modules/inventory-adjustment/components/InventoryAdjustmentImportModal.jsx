@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
-import { importFromFile } from '@/features/workspace/shared/exportUtils';
+import { importFromFile, triggerDownload } from '@/features/workspace/shared/exportUtils';
 import { formatCurrencyValue, parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
 import { showSystemErrorModal, showSystemInfoModal } from '@/components/ui/SystemErrorModal';
@@ -111,9 +111,11 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
             let notFoundCount = 0;
             let invalidDataCount = 0;
+            const errorReportLines = [];
             const importedItems = [];
 
             dataRows.forEach((row, idx) => {
+                const rowNumber = idx + 1;
                 const getVal = (...keys) => {
                     for (const k of keys) {
                         const foundKey = Object.keys(row).find(
@@ -135,6 +137,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 const rawWarehouse = getVal('gudang', 'warehouse');
                 const rawNotes = getVal('keterangan', 'catatan', 'notes');
 
+                const itemIdentifier = rawCode || rawName || `Baris ${rowNumber}`;
+
                 // Cocokkan barang dengan database katalog
                 let matchedProduct = null;
                 if (rawCode) {
@@ -151,12 +155,14 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
                 if (!matchedProduct) {
                     notFoundCount++;
+                    errorReportLines.push(`"${itemIdentifier}", tidak ditemukan di Barang dan Jasa pada data impor baris ke-${rowNumber}, Nama Barang: ${rawName || '-'}, Kode Barang: ${rawCode || '-'}`);
                     return;
                 }
 
                 const parsedQty = parseNumericInput(rawQty);
                 if (isNaN(parsedQty) || parsedQty <= 0) {
                     invalidDataCount++;
+                    errorReportLines.push(`"${itemIdentifier}", kuantitas atau format data tidak valid pada data impor baris ke-${rowNumber}, Nama Barang: ${rawName || '-'}, Kode Barang: ${rawCode || '-'}`);
                     return;
                 }
 
@@ -211,6 +217,15 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                     title: 'Berhasil',
                     message: `${successCount} barang berhasil diimpor ke rincian penyesuaian.`,
                 });
+            }
+
+            // Auto-download file teks daftar error jika ada baris yang gagal
+            if (errorReportLines.length > 0) {
+                triggerDownload(
+                    errorReportLines.join('\r\n'),
+                    'text/plain;charset=utf-8',
+                    'error-list-item-adjustment.txt'
+                );
             }
 
             onClose();
