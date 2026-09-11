@@ -111,6 +111,7 @@ export function mapBankRows(pageId, records) {
             };
         }
 
+        const isStatement = pageId === 'bank-statement';
         return {
             ...base,
             date: formatIsoDate(record.date),
@@ -120,8 +121,8 @@ export function mapBankRows(pageId, records) {
             type: record.type ?? '',
             balance: record.balance ?? '',
             raw_balance: record.raw_balance,
-            status: record.status ?? 'Unreconciled',
-            is_reconciled: Boolean(record.is_reconciled || record.status === 'Reconciled'),
+            status: isStatement ? 'Reconciled' : (record.status ?? 'Unreconciled'),
+            is_reconciled: isStatement ? true : Boolean(record.is_reconciled || record.status === 'Reconciled'),
             account_name: record.account_name ?? '',
             bank_name: record.bank_name ?? record.account_name ?? '',
             bank_account_number: record.bank_account_number ?? '',
