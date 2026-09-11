@@ -148,7 +148,7 @@ export default function WorkspaceSearchModal({
             className="bg-modal-overlay-light"
             panelClassName="max-w-[770px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-search"
         >
-            <div className="bg-white px-5 py-5 sm:px-6 sm:py-6">
+            <div data-modal-header="true" className="bg-white px-5 py-5 sm:px-6 sm:py-6 cursor-move select-none">
                 <div className="flex items-start justify-between gap-4">
                     <div className="w-full max-w-[360px]">
                         <TextInput
