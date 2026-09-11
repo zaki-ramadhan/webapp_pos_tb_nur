@@ -337,13 +337,14 @@ class BankInquiryQueryService
         }
 
         $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
+        $accountHasPriorDocs = [];
+        $accountHasOpeningJournalInPriorDocs = [];
 
         if ($startDate) {
             $priorFilters = $filters;
             $priorFilters['start_date'] = null;
             $priorFilters['end_date'] = $startDate->copy()->subDay()->toDateString();
             $priorDocuments = $this->queryDocuments($priorFilters, $accountIds);
-            $accountHasPriorDocs = [];
             foreach ($priorDocuments as $pDoc) {
                 foreach ($this->rowsFromDocumentLines($pDoc, $accountMap) as $pRow) {
                     $accId = (int) $pRow['account_id'];
@@ -351,6 +352,7 @@ class BankInquiryQueryService
                         || ($pRow['document_type'] === 'general_journal' && str_starts_with(strtolower(trim((string)$pRow['description'])), 'saldo awal'));
                     if ($isOpBalJournal) {
                         $balances[$accId] = (float) $pRow['net_amount'];
+                        $accountHasOpeningJournalInPriorDocs[$accId] = true;
                     } else {
                         $balances[$accId] = ($balances[$accId] ?? 0) + (float) $pRow['net_amount'];
                     }
@@ -360,15 +362,6 @@ class BankInquiryQueryService
                     $accId = (int) $pRow['account_id'];
                     $balances[$accId] = ($balances[$accId] ?? 0) + (float) $pRow['net_amount'];
                     $accountHasPriorDocs[$accId] = true;
-                }
-            }
-
-            foreach ($accountMap as $accId => $account) {
-                if (! ($accountHasPriorDocs[$accId] ?? false)) {
-                    $opDate = $account->opening_balance_date ? \Carbon\Carbon::parse($account->opening_balance_date) : null;
-                    if ($opDate && $opDate->lt($startDate)) {
-                        $balances[(int) $accId] += (float) ($account->opening_balance ?? 0);
-                    }
                 }
             }
         }
@@ -383,8 +376,13 @@ class BankInquiryQueryService
         }
 
         foreach ($accountMap as $accId => $account) {
-            if ($accountHasOpeningJournalInRealRows[(int) $accId] ?? false) {
+            $hasJournalInReal = $accountHasOpeningJournalInRealRows[(int) $accId] ?? false;
+            $hasJournalInPrior = $accountHasOpeningJournalInPriorDocs[(int) $accId] ?? false;
+
+            if ($hasJournalInReal) {
                 $balances[(int) $accId] = 0.0;
+            } elseif (! $hasJournalInPrior) {
+                $balances[(int) $accId] += (float) ($account->opening_balance ?? 0);
             }
         }
 
@@ -399,24 +397,49 @@ class BankInquiryQueryService
 
         if ($includeOpeningBalanceRow && count($accountIds) === 1) {
             $accId = $accountIds[0];
-            $accName = $accountMap->get($accId)?->name ?? '';
-            $initialBal = ($accountHasOpeningJournalInRealRows[$accId] ?? false) ? 0.0 : ($balances[$accId] ?? 0);
+            $acc = $accountMap->get($accId);
+            $accName = $acc?->name ?? '';
+            $hasOpeningJournal = $accountHasOpeningJournalInRealRows[$accId] ?? false;
+            $hasPriorDocs = $accountHasPriorDocs[$accId] ?? false;
+            $initialBal = $hasOpeningJournal ? 0.0 : ($balances[$accId] ?? 0);
+            $initialOpBal = (float) ($acc?->opening_balance ?? 0);
+
+            $mutation = 0.0;
+            $type = '-';
+            $dateLabel = '-';
+            $description = 'Saldo Awal';
+
+            if (! $hasOpeningJournal) {
+                if ($startDate && $hasPriorDocs) {
+                    $description = sprintf('Saldo per %s', $startDate->copy()->subDay()->format('d/m/Y'));
+                    $mutation = 0.0;
+                    $type = '-';
+                    $dateLabel = '-';
+                } else {
+                    $description = 'Saldo Awal';
+                    $mutation = abs($initialOpBal);
+                    $type = $initialOpBal >= 0 ? 'Dr' : 'Cr';
+                    if ($acc?->opening_balance_date) {
+                        $dateLabel = \Carbon\Carbon::parse($acc->opening_balance_date)->format('d/m/Y');
+                    }
+                }
+            }
 
             $outputRows->push([
                 'id' => 'opening-balance',
                 'document_id' => null,
                 'document_type' => null,
-                'date' => '-',
-                'date_label' => '-',
+                'date' => $dateLabel,
+                'date_label' => $dateLabel,
                 'sortable_date' => '0000-00-00',
                 'document_number' => '-',
                 'check_number' => '',
                 'transaction_type' => 'Saldo Awal',
-                'description' => $startDate ? sprintf('Saldo per %s', $startDate->copy()->subDay()->format('d/m/Y')) : 'Saldo Awal',
+                'description' => $description,
                 'debit' => $this->formatNumber(0),
                 'credit' => $this->formatNumber(0),
-                'mutation' => $this->formatNumber(0),
-                'type' => '-',
+                'mutation' => $this->formatNumber($mutation),
+                'type' => $type,
                 'status' => '',
                 'is_reconciled' => false,
                 'balance' => $this->formatNumber($initialBal),

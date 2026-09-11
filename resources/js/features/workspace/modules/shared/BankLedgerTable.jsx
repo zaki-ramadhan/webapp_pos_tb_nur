@@ -216,17 +216,35 @@ export default function BankLedgerTable({
                     <>
                         {/* Baris Saldo Awal */}
                         <DataTableRow className="hover:bg-slate-50 transition-colors select-none bg-white">
-                            <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
+                            <DataTableCell className="text-center text-text-workspace-dark">
+                                {!hasOpeningBalanceJournalInRows && openingBalanceRow?.date && openingBalanceRow.date !== '-'
+                                    ? formatHistoryDate(openingBalanceRow.date)
+                                    : '-'}
+                            </DataTableCell>
                             <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
                             {hasCheckNumberColumn && (
                                 <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
                             )}
                             <DataTableCell className="text-text-workspace-dark">Saldo Awal</DataTableCell>
-                            <DataTableCell className="text-text-workspace-dark">{getOpeningDateLabel(startDate)}</DataTableCell>
-                            <DataTableCell className="text-right text-text-workspace-dark">0</DataTableCell>
-                            <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
+                            <DataTableCell className="text-text-workspace-dark">
+                                {openingBalanceRow?.description || getOpeningDateLabel(startDate)}
+                            </DataTableCell>
+                            <DataTableCell className="text-right text-text-workspace-dark">
+                                {hasOpeningBalanceJournalInRows || openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
+                                    ? '0'
+                                    : (openingBalanceRow?.mutation !== undefined && openingBalanceRow.mutation !== '0'
+                                        ? openingBalanceRow.mutation
+                                        : formatCurrencyValue(Math.abs(openingBalValue)))}
+                            </DataTableCell>
+                            <DataTableCell className="text-center text-text-workspace-dark">
+                                {hasOpeningBalanceJournalInRows || openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
+                                    ? '-'
+                                    : (openingBalanceRow?.type && openingBalanceRow.type !== '-'
+                                        ? openingBalanceRow.type
+                                        : (openingBalValue >= 0 ? 'Dr' : 'Cr'))}
+                            </DataTableCell>
                             <DataTableCell className={`text-right ${isOpeningBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
-                                {formattedOpeningBalance}
+                                {hasOpeningBalanceJournalInRows ? '0' : formattedOpeningBalance}
                             </DataTableCell>
                             {hasReconciliationColumn && (
                                 <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>

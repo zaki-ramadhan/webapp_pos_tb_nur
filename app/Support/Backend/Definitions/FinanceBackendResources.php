@@ -159,7 +159,13 @@ class FinanceBackendResources
                     }
 
                     if ($record instanceof Account) {
-                        self::syncAccountOpeningBalanceJournal($record);
+                        if (! $record->wasRecentlyCreated && (
+                            $record->wasChanged('opening_balance') ||
+                            $record->wasChanged('opening_balance_date') ||
+                            ($record->wasChanged('name') && self::findOpeningBalanceJournal($record) !== null)
+                        )) {
+                            self::syncAccountOpeningBalanceJournal($record);
+                        }
                     }
                 },
             ),
