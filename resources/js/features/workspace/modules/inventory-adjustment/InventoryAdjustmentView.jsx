@@ -122,6 +122,10 @@ export default function InventoryAdjustmentView({
 
             return {
                 ...baseConfig,
+                rowMap: rowsWithMonthKey.reduce((result, row) => {
+                    result[row.id] = row;
+                    return result;
+                }, {}),
                 table: {
                     ...baseConfig.table,
                     rows: rowsWithMonthKey,
@@ -141,7 +145,7 @@ export default function InventoryAdjustmentView({
     const resolvedBuildRecord = useMemo(
         () => (row = {}) => {
             const raw = row?.__backendRecord ?? row;
-            if (raw && (raw.lines !== undefined || raw.document_number !== undefined || raw.entry_date !== undefined || raw.id)) {
+            if (raw && (raw.lines !== undefined || raw.document_number !== undefined || raw.entry_date !== undefined || raw.id !== undefined || raw.__backendRecordId !== undefined)) {
                 return buildBackendInventoryAdjustmentRecord(raw, config);
             }
 
@@ -150,15 +154,15 @@ export default function InventoryAdjustmentView({
         [config],
     );
 
-        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+    const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 
     useEffect(() => {
         if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
-            setLastActiveFormTab((prev) => (prev?.id === activeLevel2Tab.id ? prev : activeLevel2Tab));
+            setLastActiveFormTab(activeLevel2Tab);
         } else if (!activeLevel2Tab) {
             setLastActiveFormTab(null);
         }
-    }, [activeLevel2Tab?.id, activeLevel2Tab?.kind]);
+    }, [activeLevel2Tab]);
 
     return (
         <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">

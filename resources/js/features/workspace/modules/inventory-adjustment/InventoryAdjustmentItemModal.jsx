@@ -95,7 +95,8 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
         }
 
         if (Object.keys(newErrors).length > 0) {
-            onClose();
+            setErrors(newErrors);
+            showErrorToast({ message: Object.values(newErrors)[0] });
             return;
         }
 
