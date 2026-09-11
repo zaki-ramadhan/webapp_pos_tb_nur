@@ -89,8 +89,8 @@ export default function InventoryAdjustmentDetailTab({
 
             <ModalFieldRow label="Tipe Penyesuaian" alignTop={!isExisting}>
                 {isExisting ? (
-                    <div className="grid grid-cols-3 gap-2.5">
-                        <div className="col-span-2 min-w-0">
+                    <div className="grid grid-cols-5 gap-2.5">
+                        <div className="col-span-3 min-w-0">
                             <TextInput
                                 value={values.adjustmentType}
                                 readOnly
@@ -100,8 +100,8 @@ export default function InventoryAdjustmentDetailTab({
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-3 gap-2.5">
-                        <div className="col-span-2 flex flex-col gap-2 pt-0.5">
+                    <div className="grid grid-cols-5 gap-2.5">
+                        <div className="col-span-3 flex flex-col gap-2 pt-0.5">
                             {adjustmentOptions.map((option) => (
                                 <RadioField
                                     key={option}
@@ -125,8 +125,8 @@ export default function InventoryAdjustmentDetailTab({
             </ModalFieldRow>
 
             <ModalFieldRow label="Kuantitas" required>
-                <div className="grid grid-cols-3 gap-2.5 items-center">
-                    <div className="col-span-2 min-w-0">
+                <div className="grid grid-cols-5 gap-2.5 items-center">
+                    <div className="col-span-3 min-w-0">
                         <FormattedAmountInput
                             id="quantity"
                             name="quantity"
@@ -145,7 +145,7 @@ export default function InventoryAdjustmentDetailTab({
                             inputClassName="text-right text-xs sm:text-sm text-table-row-text px-2.5"
                         />
                     </div>
-                    <div className="col-span-1 min-w-0">
+                    <div className="col-span-2 min-w-0">
                         <BackendLookupField
                             resource="units"
                             value={Array.isArray(values.unitLookup) ? (values.unitLookup[0] || '') : (values.unitLookup || '')}
@@ -176,8 +176,8 @@ export default function InventoryAdjustmentDetailTab({
             {isExisting && (isAddition || Number(values.unitCost) > 0) ? (
                 <>
                     <ModalFieldRow label="Biaya Satuan">
-                        <div className="grid grid-cols-3 gap-2.5">
-                            <div className="col-span-2 min-w-0">
+                        <div className="grid grid-cols-5 gap-2.5">
+                            <div className="col-span-3 min-w-0">
                                 <FormattedAmountInput
                                     value={values.unitCost}
                                     onChange={(event) =>
@@ -198,8 +198,8 @@ export default function InventoryAdjustmentDetailTab({
                     </ModalFieldRow>
 
                     <ModalFieldRow label="Total Biaya">
-                        <div className="grid grid-cols-3 gap-2.5">
-                            <div className="col-span-2 min-w-0">
+                        <div className="grid grid-cols-5 gap-2.5">
+                            <div className="col-span-3 min-w-0">
                                 <TextInput
                                     value={values.totalCost}
                                     readOnly
@@ -213,8 +213,8 @@ export default function InventoryAdjustmentDetailTab({
             ) : null}
 
             <ModalFieldRow label="Gudang" required>
-                <div className="grid grid-cols-3 gap-2.5 items-center">
-                    <div className="col-span-2 min-w-0">
+                <div className="grid grid-cols-5 gap-2.5 items-center">
+                    <div className="col-span-3 min-w-0">
                         <BackendLookupField
                             resource="warehouses"
                             value={Array.isArray(values.warehouse) ? (values.warehouse[0] || '') : (values.warehouse || '')}
@@ -238,7 +238,7 @@ export default function InventoryAdjustmentDetailTab({
                             error={errors.warehouse}
                         />
                     </div>
-                    <div className="col-span-1 flex items-center gap-1.5 text-xs sm:text-sm font-medium text-table-row-text min-w-0 truncate pl-0.5">
+                    <div className="col-span-2 flex items-center gap-1.5 text-xs sm:text-sm font-medium text-table-row-text min-w-0 truncate pl-0.5">
                         <span className="text-table-row-text font-normal shrink-0">Stok:</span>
                         <span className="font-semibold text-table-row-text tabular-nums truncate">
                             {formatAmountInput(currentWarehouseStock ?? 0)}
