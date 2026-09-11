@@ -214,12 +214,13 @@ export default function SystemErrorModal({
                     </div>
                 </div>
 
-                <div className="mt-3.5 flex justify-end gap-2">
+                <div className="mt-3.5 flex justify-end gap-2.5">
                     <Button
                         type="button"
+                        variant="brand-blue"
                         size="md"
                         onClick={handleConfirm}
-                        className="min-w-[64px] rounded-[4px] bg-brand-blue text-white shadow-none hover:bg-brand-blue-hover px-4 py-1.5 text-sm font-normal cursor-pointer"
+                        className="min-w-[80px] rounded-[4px]"
                     >
                         {confirmLabel}
                     </Button>
@@ -229,7 +230,7 @@ export default function SystemErrorModal({
                             size="md"
                             variant="secondary"
                             onClick={handleCancel}
-                            className="min-w-[64px] rounded-[4px] border border-brand-blue text-brand-blue bg-white shadow-none hover:bg-blue-50 px-4 py-1.5 text-sm font-normal cursor-pointer"
+                            className="min-w-[80px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5"
                         >
                             {cancelLabel}
                         </Button>

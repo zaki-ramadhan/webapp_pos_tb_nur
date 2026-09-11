@@ -118,11 +118,11 @@ export default function TakeItemsModal({ open, onClose, onApply, mode = 'purchas
             footer={
                 <div className="flex justify-end items-center w-full">
                     <Button
-                        variant="primary"
+                        variant="brand-blue"
                         size="md"
                         onClick={handleLanjut}
                         disabled={selectedIds.size === 0}
-                        className="rounded-[4px] px-8 font-normal bg-[#15529A] hover:bg-[#0E3E77] text-white disabled:opacity-50"
+                        className="rounded-[4px] min-w-[80px]"
                     >
                         Lanjut
                     </Button>

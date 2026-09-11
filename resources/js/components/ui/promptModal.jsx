@@ -69,7 +69,7 @@ function PromptModalContainer({ title, fields, resolve, onDestroy, showDelete })
                                 onClick={() => setDeleteConfirmOpen(true)}
                                 variant="secondary"
                                 size="md"
-                                className="border-red-150 hover:bg-danger-border text-error-border font-semibold rounded-[4px]"
+                                className="border-red-150 hover:bg-danger-border text-error-border font-normal rounded-[4px]"
                             >
                                 Hapus
                             </Button>
@@ -78,7 +78,7 @@ function PromptModalContainer({ title, fields, resolve, onDestroy, showDelete })
                         )}
                     </div>
                     <div className="flex gap-2.5">
-                        <Button onClick={handleSave} variant="brand-blue" size="md">Simpan</Button>
+                        <Button onClick={handleSave} variant="brand-blue" size="md" className="rounded-[4px] min-w-[80px]">Simpan</Button>
                     </div>
                 </div>
             }

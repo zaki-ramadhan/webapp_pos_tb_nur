@@ -417,10 +417,10 @@ export default function SalesDocumentCopyModal({
             footer={
                 <div className="flex justify-end">
                     <Button
-                        variant="primary"
+                        variant="brand-blue"
                         size="md"
                         onClick={handleLanjut}
-                        className="px-6 font-medium"
+                        className="rounded-[4px] min-w-[80px]"
                     >
                         Lanjut
                     </Button>

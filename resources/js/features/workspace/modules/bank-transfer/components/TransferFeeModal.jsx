@@ -81,7 +81,7 @@ export default function TransferFeeModal({
                             variant="secondary"
                             size="md"
                             onClick={() => onDelete(currentItem.id)}
-                            className="border-red-150 hover:bg-danger-border text-error-border font-medium"
+                            className="border-red-150 hover:bg-danger-border text-error-border font-normal rounded-[4px]"
                         >
                             Hapus
                         </Button>
@@ -89,10 +89,10 @@ export default function TransferFeeModal({
                         <div />
                     )}
                     <Button
-                        variant="primary"
+                        variant="brand-blue"
                         size="md"
                         onClick={handlePrimaryAction}
-                        className="bg-brand-blue-dark hover:bg-brand-blue-darker font-medium shadow-btn-blue-hover"
+                        className="rounded-[4px] min-w-[80px]"
                     >
                         {activeTab === 'detail' ? 'Lanjut' : 'Simpan'}
                     </Button>

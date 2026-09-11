@@ -270,18 +270,18 @@ export function PartnerInlineTableSection({
                     title={modalTitle}
                     maxWidthClassName="max-w-md"
                     footer={(
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2.5">
                             <button
                                 type="button"
                                 onClick={() => setShowModal(false)}
-                                className="rounded-[4px] border px-4 py-1.5 text-xs text-gray-600 hover:bg-gray-50 cursor-pointer"
+                                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-white px-5 text-sm sm:text-base font-normal text-brand-blue hover:bg-brand-blue/5 active:scale-[0.98] transition cursor-pointer"
                             >
                                 Batal
                             </button>
                             <button
                                 type="button"
                                 onClick={handleSave}
-                                className="rounded-[4px] bg-brand-blue px-4 py-1.5 text-xs text-white hover:bg-blue-700 cursor-pointer"
+                                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-brand-blue px-6 text-sm sm:text-base font-normal text-white hover:bg-brand-blue-hover active:scale-[0.98] transition cursor-pointer shadow-button-primary"
                             >
                                 Simpan
                             </button>

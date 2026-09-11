@@ -113,7 +113,7 @@ export default function SalesReturnFetchItemsModal({
                         variant="brand-blue"
                         size="md"
                         onClick={handleConfirm}
-                        className="!bg-[#2353a0] hover:!bg-[#1f4f96] !border-transparent !text-white font-medium px-6 shadow-btn-blue-hover"
+                        className="rounded-[4px] min-w-[80px]"
                     >
                         Lanjut
                     </Button>

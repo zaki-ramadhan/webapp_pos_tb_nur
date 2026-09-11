@@ -117,7 +117,7 @@ export default function MoneyMovementLineItemModal({
                             onClick={() => {
                                 onSave({ action: 'delete' });
                             }}
-                            className="border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
+                            className="border-brand-blue text-brand-blue hover:bg-brand-blue/5 rounded-[4px]"
                         >
                             Hapus
                         </Button>
@@ -125,9 +125,10 @@ export default function MoneyMovementLineItemModal({
                         <div />
                     )}
                     <Button
-                        variant="primary"
+                        variant="brand-blue"
                         size="md"
                         onClick={handleSave}
+                        className="rounded-[4px] min-w-[80px]"
                     >
                         Lanjut
                     </Button>

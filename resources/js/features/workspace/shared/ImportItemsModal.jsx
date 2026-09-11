@@ -283,7 +283,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-9 items-center justify-center rounded-[4px] border border-brand-blue bg-white px-4 text-sm font-medium text-brand-blue hover:bg-brand-blue/5 transition cursor-pointer"
+                        className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-white px-5 text-sm sm:text-base font-normal text-brand-blue hover:bg-brand-blue/5 active:scale-[0.98] transition cursor-pointer"
                     >
                         Batal
                     </button>
@@ -291,7 +291,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                         <button
                             type="button"
                             onClick={handleConfirmImport}
-                            className="inline-flex h-9 items-center justify-center rounded-[4px] px-4 text-sm font-normal text-white bg-import-action-blue hover:bg-blue-900 cursor-pointer transition"
+                            className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-brand-blue px-5 text-sm sm:text-base font-normal text-white hover:bg-brand-blue-hover active:scale-[0.98] transition cursor-pointer shadow-button-primary"
                         >
                             Impor {validCount} Item
                         </button>
