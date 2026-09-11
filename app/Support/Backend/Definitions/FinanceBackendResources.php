@@ -107,8 +107,40 @@ class FinanceBackendResources
                     'name' => ['required', 'string', 'max:160'],
                     'account_type' => ['required', 'string', 'max:60'],
                     'notes' => ['nullable', 'string'],
-                    'opening_balance' => ['nullable', 'numeric'],
-                    'opening_balance_date' => ['nullable', 'date'],
+                    'opening_balance' => [
+                        'nullable',
+                        'numeric',
+                        function (string $attribute, mixed $value, \Closure $fail) use ($record) {
+                            if ($record instanceof Account) {
+                                $origBal = (float) ($record->opening_balance ?? 0);
+                                $newBal = (float) ($value ?? 0);
+                                if (abs($origBal - $newBal) > 0.001) {
+                                    $journal = self::findOpeningBalanceJournal($record);
+                                    if ($journal && $journal->is_closed) {
+                                        $docNumber = $journal->document_number ?: 'Saldo Awal';
+                                        $fail("Jurnal Umum {$docNumber} Tidak dapat diubah/dihapus, karena sudah dicocokkan dengan rekening koran!");
+                                    }
+                                }
+                            }
+                        },
+                    ],
+                    'opening_balance_date' => [
+                        'nullable',
+                        'date',
+                        function (string $attribute, mixed $value, \Closure $fail) use ($record) {
+                            if ($record instanceof Account) {
+                                $origDate = $record->opening_balance_date ? \Carbon\Carbon::parse($record->opening_balance_date)->format('Y-m-d') : null;
+                                $newDate = !empty($value) ? \Carbon\Carbon::parse($value)->format('Y-m-d') : null;
+                                if ($origDate !== $newDate) {
+                                    $journal = self::findOpeningBalanceJournal($record);
+                                    if ($journal && $journal->is_closed) {
+                                        $docNumber = $journal->document_number ?: 'Saldo Awal';
+                                        $fail("Jurnal Umum {$docNumber} Tidak dapat diubah/dihapus, karena sudah dicocokkan dengan rekening koran!");
+                                    }
+                                }
+                            }
+                        },
+                    ],
                     'cash_bank_reference' => ['nullable', 'string', 'max:120'],
                     'is_active' => ['sometimes', 'boolean'],
                     'auto_code' => ['sometimes', 'boolean'],
@@ -182,6 +214,25 @@ class FinanceBackendResources
         ];
     }
 
+    public static function findOpeningBalanceJournal(Account $account): ?\App\Domain\Support\Models\OperationDocument
+    {
+        return \App\Domain\Support\Models\OperationDocument::where('document_type', 'general_journal')
+            ->where(function ($query) use ($account) {
+                $query->where(function ($sub) use ($account) {
+                    $sub->where('metadata->is_opening_balance', true)
+                        ->where('metadata->account_id', $account->id);
+                })
+                ->orWhere('notes', 'Saldo Awal akun ' . $account->name)
+                ->orWhere('notes', 'Saldo Awal ' . $account->name)
+                ->orWhereHas('lines', function ($lineQuery) use ($account) {
+                    $lineQuery->where('account_id', $account->id)
+                        ->where('description', 'like', 'Saldo Awal%');
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->first();
+    }
+
     public static function syncAccountOpeningBalanceJournal(Account $account): void
     {
         $balance = (float) ($account->opening_balance ?? 0);
@@ -204,6 +255,9 @@ class FinanceBackendResources
 
         if (abs($balance) < 0.001) {
             foreach ($journals as $j) {
+                if ($j->is_closed) {
+                    continue;
+                }
                 $j->lines()->delete();
                 $j->delete();
             }
@@ -213,11 +267,19 @@ class FinanceBackendResources
         if ($journals->count() > 1) {
             $journal = $journals->first();
             foreach ($journals->slice(1) as $dup) {
-                $dup->lines()->delete();
-                $dup->delete();
+                if (! $dup->is_closed) {
+                    $dup->lines()->delete();
+                    $dup->delete();
+                }
             }
         } else {
             $journal = $journals->first();
+        }
+
+        if ($journal && $journal->is_closed) {
+            if (abs((float)$journal->total_amount - abs($balance)) < 0.001 && $journal->entry_date === $date) {
+                return;
+            }
         }
 
         $type = strtolower($account->account_type ?? '');
@@ -241,6 +303,14 @@ class FinanceBackendResources
             $journal = new \App\Domain\Support\Models\OperationDocument();
         }
 
+        $mergedMetadata = array_merge($journal->metadata ?? [], [
+            'transaction_number' => $docNumber,
+            'transaction_type_label' => 'Jurnal Umum',
+            'transaction_type_value' => 'general-journal',
+            'is_opening_balance' => true,
+            'account_id' => $account->id,
+        ]);
+
         $journal->fill([
             'branch_id' => 1,
             'document_number' => $docNumber,
@@ -251,13 +321,7 @@ class FinanceBackendResources
             'status' => 'Disetujui',
             'notes' => $description,
             'total_amount' => abs($balance),
-            'metadata' => [
-                'transaction_number' => $docNumber,
-                'transaction_type_label' => 'Jurnal Umum',
-                'transaction_type_value' => 'general-journal',
-                'is_opening_balance' => true,
-                'account_id' => $account->id,
-            ],
+            'metadata' => $mergedMetadata,
         ]);
         $journal->save();
 

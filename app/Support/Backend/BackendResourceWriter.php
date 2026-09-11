@@ -45,7 +45,25 @@ class BackendResourceWriter
     public function delete(BackendResourceBlueprint $blueprint, Model $record): void
     {
         DB::transaction(function () use ($blueprint, $record): void {
+            if ($record instanceof \App\Domain\Finance\Models\Account) {
+                $journal = \App\Support\Backend\Definitions\FinanceBackendResources::findOpeningBalanceJournal($record);
+                if ($journal && $journal->is_closed) {
+                    $docNumber = $journal->document_number ?: 'Saldo Awal';
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'opening_balance' => ["Jurnal Umum {$docNumber} Tidak dapat diubah/dihapus, karena sudah dicocokkan dengan rekening koran!"]
+                    ]);
+                }
+            }
+
             if ($blueprint->key !== 'period-ends' && $record instanceof \App\Domain\Support\Models\OperationDocument) {
+                if ($record->is_closed) {
+                    $docNumber = $record->document_number ?: '-';
+                    $label = $record->document_type === 'general_journal' ? 'Jurnal Umum' : 'Transaksi';
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'document_number' => ["{$label} {$docNumber} Tidak dapat diubah/dihapus, karena sudah dicocokkan dengan rekening koran!"]
+                    ]);
+                }
+
                 if ($record->entry_date && $this->isPeriodClosed($record->entry_date)) {
                     $formattedDate = \Carbon\Carbon::parse($record->entry_date)->format('d/m/Y');
                     throw \Illuminate\Validation\ValidationException::withMessages([
@@ -167,6 +185,15 @@ class BackendResourceWriter
                         'entry_date' => ["Transaksi tidak dapat disimpan karena periode untuk tanggal tersebut ({$formattedDate}) sudah ditutup oleh Proses Akhir Bulan."]
                     ]);
                 }
+            }
+
+            // 1b. Validasi Dokumen Terekonsiliasi (Reconciliation Lock)
+            if ($record->exists && $blueprint->key !== 'period-ends' && $record instanceof \App\Domain\Support\Models\OperationDocument && $record->is_closed) {
+                $docNumber = $record->document_number ?: '-';
+                $label = $record->document_type === 'general_journal' ? 'Jurnal Umum' : 'Transaksi';
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'document_number' => ["{$label} {$docNumber} Tidak dapat diubah/dihapus, karena sudah dicocokkan dengan rekening koran!"]
+                ]);
             }
 
           // 2. Rekalkulasi & Validasi Total di Sisi Backend (Price/Total Manipulation Protection)
