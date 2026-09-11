@@ -5,6 +5,7 @@ import Button from '@/components/ui/Button';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 import { formatCurrencyValue, parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
+import { downloadInventoryAdjustmentTemplate } from '../constants/inventoryAdjustmentTemplateBase64';
 
 function ExcelFileIcon({ className = 'h-4 w-4' }) {
     return (
@@ -150,13 +151,13 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                     <h4 className="text-sm font-normal italic text-brand-dark">Template File Excel</h4>
                     <p className="mt-1 text-sm font-normal text-brand-dark leading-relaxed">
                         Pastikan format excel data Anda sesuai dengan contoh yang diberikan. Silakan unduh template nya{' '}
-                        <a
-                            href="/templates/Template_Penyesuaian_Persediaan.xlsx"
-                            download="Template_Penyesuaian_Persediaan.xlsx"
-                            className="text-brand-blue font-normal hover:underline cursor-pointer inline"
+                        <button
+                            type="button"
+                            onClick={downloadInventoryAdjustmentTemplate}
+                            className="text-brand-blue font-normal hover:underline cursor-pointer inline p-0 bg-transparent border-none"
                         >
                             disini
-                        </a>
+                        </button>
                     </p>
                 </div>
             </div>
