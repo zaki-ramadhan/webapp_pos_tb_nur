@@ -77,30 +77,23 @@ export default function BankLedgerTable({
             if (r.is_opening_balance && r.document_type !== 'general_journal' && r.documentType !== 'general_journal' && r.transaction_type !== 'Jurnal Umum' && r.transactionType !== 'Jurnal Umum') {
                 return false;
             }
-            return true;
-        });
-    }, [rows]);
-
-    const hasOpeningBalanceJournalInRows = useMemo(() => {
-        return realRows.some((r) =>
-            Boolean(
+            const isLegacyOpeningJournal = Boolean(
                 r.is_opening_balance ||
                 r.isOpeningBalance ||
                 (String(r.document_type || r.documentType) === 'general_journal' &&
                     String(r.description || '').trim().toLowerCase().startsWith('saldo awal'))
-            )
-        );
-    }, [realRows]);
+            );
+            if (isLegacyOpeningJournal) return false;
+            return true;
+        });
+    }, [rows]);
 
     const openingBalValue = useMemo(() => {
-        if (hasOpeningBalanceJournalInRows) {
-            return 0;
-        }
         if (openingBalanceRow?.balance !== undefined) {
             return parseNumericInput(openingBalanceRow.balance);
         }
         return Number(initialOpeningBalance ?? 0);
-    }, [hasOpeningBalanceJournalInRows, openingBalanceRow, initialOpeningBalance]);
+    }, [openingBalanceRow, initialOpeningBalance]);
 
     const computedRows = useMemo(() => {
         let currentBal = openingBalValue;
@@ -204,7 +197,7 @@ export default function BankLedgerTable({
                         {/* Baris Saldo Awal */}
                         <DataTableRow className="hover:bg-slate-50 transition-colors select-none bg-white">
                             <DataTableCell className="text-center text-text-workspace-dark">
-                                {!hasOpeningBalanceJournalInRows && openingBalanceRow?.date && openingBalanceRow.date !== '-'
+                                {openingBalanceRow?.date && openingBalanceRow.date !== '-'
                                     ? formatHistoryDate(openingBalanceRow.date)
                                     : '-'}
                             </DataTableCell>
@@ -217,21 +210,21 @@ export default function BankLedgerTable({
                                 {openingBalanceRow?.description || getOpeningDateLabel(startDate)}
                             </DataTableCell>
                             <DataTableCell className="text-right text-text-workspace-dark">
-                                {hasOpeningBalanceJournalInRows || openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
+                                {openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
                                     ? '0'
                                     : (openingBalanceRow?.mutation !== undefined && openingBalanceRow.mutation !== '0'
                                         ? openingBalanceRow.mutation
                                         : formatCurrencyValue(Math.abs(openingBalValue)))}
                             </DataTableCell>
                             <DataTableCell className="text-center text-text-workspace-dark">
-                                {hasOpeningBalanceJournalInRows || openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
+                                {openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
                                     ? '-'
                                     : (openingBalanceRow?.type && openingBalanceRow.type !== '-'
                                         ? openingBalanceRow.type
                                         : (openingBalValue >= 0 ? 'Dr' : 'Cr'))}
                             </DataTableCell>
                             <DataTableCell className={`text-right ${isOpeningBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
-                                {hasOpeningBalanceJournalInRows ? '0' : formattedOpeningBalance}
+                                {formattedOpeningBalance}
                             </DataTableCell>
                             {hasReconciliationColumn && (
                                 <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
