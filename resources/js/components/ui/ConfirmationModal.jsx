@@ -50,9 +50,9 @@ export default function ConfirmationModal({
     confirmLoading = false,
     cancelDisabled = false,
     cancelVariant = 'secondary',
-    actionsOrder = 'cancel-first',
+    actionsOrder = 'confirm-first',
     iconVariant = 'warning',
-    actionsAlign = 'between',
+    actionsAlign = 'end',
     actionsGap = 'gap-2',
     hideCloseButton = false,
 }) {
