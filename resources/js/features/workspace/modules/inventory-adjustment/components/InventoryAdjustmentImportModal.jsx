@@ -6,7 +6,7 @@ import Button from '@/components/ui/Button';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 import { formatCurrencyValue, parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
-import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
+import { showSystemErrorModal, showSystemInfoModal } from '@/components/ui/SystemErrorModal';
 import { downloadInventoryAdjustmentTemplate } from '../constants/inventoryAdjustmentTemplateBase64';
 
 function ExcelFileIcon({ className = 'h-4 w-4' }) {
@@ -34,7 +34,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 setProducts(Array.isArray(data) ? data : []);
             })
             .catch(() => {
-                // Ignore failure to fetch product catalog, fallback to raw excel values
+                // Abaikan error pengambilan katalog, tetap izinkan proses impor
             });
     }, [open]);
 
@@ -50,7 +50,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
             if (fileInputRef.current) fileInputRef.current.value = '';
             showSystemErrorModal({
                 messages: [
-                    `Format file "${file.name}" tidak didukung. Format yang diperbolehkan hanya file Microsoft Excel (.xlsx, .xls) atau CSV (.csv).`,
+                    'Template tidak sesuai. Pastikan format excel data Anda sesuai dengan contoh yang diberikan.',
                 ],
             });
             return;
@@ -70,12 +70,23 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         await new Promise((resolve) => setTimeout(resolve, 80));
 
         try {
-            const { rows } = await importFromFile(file);
+            const { headers, rows } = await importFromFile(file);
 
-            if (!rows || rows.length === 0) {
+            const normalizedHeaders = (headers || []).map((h) =>
+                String(h || '').toLowerCase().replace(/[\s_#*-]/g, '')
+            );
+
+            const hasItemCol = normalizedHeaders.some((h) =>
+                ['kode', 'kodebarang', 'itemcode', 'barcode', 'nama', 'namabarang', 'itemname'].includes(h)
+            );
+            const hasQtyCol = normalizedHeaders.some((h) =>
+                ['kuantitas', 'qty', 'quantity', 'jumlah'].includes(h)
+            );
+
+            if (!hasItemCol || !hasQtyCol) {
                 showSystemErrorModal({
                     messages: [
-                        'File Excel tidak memiliki baris data untuk diimpor. Pastikan data barang dimulai dari baris ke-2 pada Sheet pertama (Template).',
+                        'Template tidak sesuai. Pastikan format excel data Anda sesuai dengan contoh yang diberikan.',
                     ],
                 });
                 setLoading(false);
@@ -83,25 +94,40 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 return;
             }
 
-            const validationErrors = [];
+            const dataRows = (rows || []).filter((row) =>
+                Object.values(row).some((val) => val !== undefined && val !== null && String(val).trim() !== '')
+            );
+
+            if (dataRows.length === 0) {
+                showSystemErrorModal({
+                    messages: [
+                        'Template tidak sesuai. Pastikan format excel data Anda sesuai dengan contoh yang diberikan.',
+                    ],
+                });
+                setLoading(false);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+                return;
+            }
+
+            let notFoundCount = 0;
+            let invalidDataCount = 0;
             const importedItems = [];
 
-            rows.forEach((row, idx) => {
-                const rowNumber = idx + 2;
+            dataRows.forEach((row, idx) => {
                 const getVal = (...keys) => {
                     for (const k of keys) {
                         const foundKey = Object.keys(row).find(
-                            (rk) => rk.toLowerCase().replace(/[\s_#-]/g, '') === k.toLowerCase().replace(/[\s_#-]/g, '')
+                            (rk) => rk.toLowerCase().replace(/[\s_#*-]/g, '') === k.toLowerCase().replace(/[\s_#*-]/g, '')
                         );
-                        if (foundKey && row[foundKey] !== undefined && row[foundKey] !== '') {
+                        if (foundKey && row[foundKey] !== undefined && row[foundKey] !== null && String(row[foundKey]).trim() !== '') {
                             return String(row[foundKey]).trim();
                         }
                     }
                     return '';
                 };
 
-                const rawCode = getVal('kodebarang', 'kode', 'code', 'barcode');
-                const rawName = getVal('namabarang', 'nama', 'name', 'description');
+                const rawCode = getVal('kodebarang', 'kode', 'code', 'barcode', 'itemcode');
+                const rawName = getVal('namabarang', 'nama', 'name', 'description', 'itemname');
                 const rawType = getVal('tipepenyesuaian', 'tipe', 'type', 'adjustmenttype');
                 const rawQty = getVal('kuantitas', 'qty', 'quantity', 'jumlah');
                 const rawUnit = getVal('satuan', 'unit');
@@ -109,52 +135,51 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 const rawWarehouse = getVal('gudang', 'warehouse');
                 const rawNotes = getVal('keterangan', 'catatan', 'notes');
 
-                // Lewati baris kosong tanpa kode, nama, kuantitas, ataupun biaya
-                if (!rawCode && !rawName && !rawQty && !rawCost) {
-                    return;
+                // Cocokkan barang dengan database katalog
+                let matchedProduct = null;
+                if (rawCode) {
+                    matchedProduct = products.find(
+                        (p) => String(p.code || '').trim().toLowerCase() === rawCode.toLowerCase() ||
+                               String(p.barcode || '').trim().toLowerCase() === rawCode.toLowerCase()
+                    );
+                }
+                if (!matchedProduct && rawName) {
+                    matchedProduct = products.find(
+                        (p) => String(p.name || '').trim().toLowerCase() === rawName.toLowerCase()
+                    );
                 }
 
-                const itemLabel = rawName || rawCode || `Baris ${rowNumber}`;
-
-                if (!rawCode && !rawName) {
-                    validationErrors.push(`Baris ${rowNumber}: Kode Barang atau Nama Barang wajib diisi.`);
+                if (!matchedProduct) {
+                    notFoundCount++;
                     return;
                 }
 
                 const parsedQty = parseNumericInput(rawQty);
                 if (isNaN(parsedQty) || parsedQty <= 0) {
-                    validationErrors.push(`Baris ${rowNumber} (${itemLabel}): Kuantitas harus berupa angka positif lebih dari 0.`);
+                    invalidDataCount++;
+                    return;
                 }
 
                 const parsedCost = rawCost ? parseNumericInput(rawCost) : null;
-                if (parsedCost !== null && (isNaN(parsedCost) || parsedCost < 0)) {
-                    validationErrors.push(`Baris ${rowNumber} (${itemLabel}): Biaya satuan tidak boleh bernilai negatif.`);
-                }
-
-                const matchedProduct = products.find((p) =>
-                    (rawCode && String(p.code).toLowerCase() === rawCode.toLowerCase()) ||
-                    (rawName && String(p.name).toLowerCase() === rawName.toLowerCase())
-                );
+                const defaultCost = Number(matchedProduct.buy_price ?? matchedProduct.cost_price ?? matchedProduct.unit_cost ?? 0);
+                const resolvedCost = (parsedCost !== null && !isNaN(parsedCost) && parsedCost >= 0) ? parsedCost : defaultCost;
 
                 const resolvedType = (rawType && rawType.toLowerCase().includes('kurang')) ? 'Pengurangan' : 'Penambahan';
-                const resolvedQty = parsedQty > 0 ? parsedQty : 1;
-                const defaultCost = matchedProduct?.buy_price ?? matchedProduct?.cost_price ?? matchedProduct?.unit_cost ?? 0;
-                const resolvedCost = parsedCost !== null ? parsedCost : defaultCost;
-                const unitName = rawUnit || matchedProduct?.base_unit?.name || matchedProduct?.unit?.name || '';
-                const warehouseName = rawWarehouse || matchedProduct?.default_warehouse?.name || 'Gudang Utama';
+                const unitName = rawUnit || matchedProduct.base_unit?.name || matchedProduct.unit?.name || '';
+                const warehouseName = rawWarehouse || matchedProduct.default_warehouse?.name || 'Gudang Utama';
 
                 importedItems.push({
-                    id: `imported-${Date.now()}-${idx}`,
-                    __productId: matchedProduct?.id ?? null,
-                    __unitId: matchedProduct?.base_unit_id ?? matchedProduct?.unit_id ?? null,
-                    name: matchedProduct?.name ?? rawName ?? `Barang ${idx + 1}`,
-                    code: matchedProduct?.code ?? rawCode ?? '',
+                    id: `imported-${Date.now()}-${idx}-${Math.random().toString(36).substring(2, 7)}`,
+                    __productId: matchedProduct.id,
+                    __unitId: matchedProduct.base_unit_id ?? matchedProduct.unit_id ?? null,
+                    name: matchedProduct.name,
+                    code: matchedProduct.code || rawCode || '',
                     adjustmentType: resolvedType,
-                    quantity: String(resolvedQty),
+                    quantity: String(parsedQty),
                     unit: unitName,
                     unitLookup: unitName ? [unitName] : [],
                     unitCost: formatCurrencyValue(resolvedCost),
-                    totalCost: formatCurrencyValue(resolvedQty * resolvedCost),
+                    totalCost: formatCurrencyValue(parsedQty * resolvedCost),
                     warehouse: warehouseName ? [warehouseName] : [],
                     department: [],
                     notes: rawNotes || '',
@@ -164,36 +189,38 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 });
             });
 
-            if (validationErrors.length > 0) {
-                showSystemErrorModal({
-                    messages: validationErrors.slice(0, 8).concat(
-                        validationErrors.length > 8 ? [`...dan ${validationErrors.length - 8} kesalahan lainnya.`] : []
-                    ),
-                });
-                setLoading(false);
-                if (fileInputRef.current) fileInputRef.current.value = '';
-                return;
+            const totalRows = dataRows.length;
+            const successCount = importedItems.length;
+            const failedCount = totalRows - successCount;
+
+            const summaryMessages = [
+                `${totalRows} baris barang: ${successCount} berhasil terimpor, ${failedCount} gagal impor.`,
+            ];
+
+            if (notFoundCount > 0) {
+                summaryMessages.push(`${notFoundCount} baris barang: tidak ditemukan di Barang dan Jasa`);
             }
 
-            if (importedItems.length === 0) {
-                showSystemErrorModal({
-                    messages: ['Tidak ada data barang yang valid untuk diimpor. Pastikan kolom Kode Barang atau Nama Barang telah terisi pada file Excel.'],
-                });
-                setLoading(false);
-                if (fileInputRef.current) fileInputRef.current.value = '';
-                return;
+            if (invalidDataCount > 0) {
+                summaryMessages.push(`${invalidDataCount} baris barang: kuantitas atau format data tidak valid`);
             }
 
-            onImport?.(importedItems);
-            showSuccessToast({
-                title: 'Berhasil',
-                message: `Berhasil mengimpor ${importedItems.length} barang ke rincian penyesuaian.`,
-            });
+            if (successCount > 0) {
+                onImport?.(importedItems);
+                showSuccessToast({
+                    title: 'Berhasil',
+                    message: `${successCount} barang berhasil diimpor ke rincian penyesuaian.`,
+                });
+            }
+
             onClose();
+            showSystemInfoModal({
+                messages: summaryMessages,
+            });
         } catch (err) {
             showSystemErrorModal({
                 messages: [
-                    err?.message || 'Format file Excel (.xlsx, .xls) atau CSV (.csv) tidak valid atau file mengalami kerusakan.',
+                    'Template tidak sesuai. Pastikan format excel data Anda sesuai dengan contoh yang diberikan.',
                 ],
             });
         } finally {
