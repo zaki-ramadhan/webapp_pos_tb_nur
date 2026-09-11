@@ -212,6 +212,8 @@ class BankInquiryQueryService
                     'status' => (string) ($row['status'] ?? 'Open'),
                     'is_reconciled' => (bool) ($row['is_reconciled'] ?? (($row['status'] ?? '') === 'Reconciled')),
                     'is_opening_balance' => (bool) ($row['is_opening_balance'] ?? false),
+                    'is_balance_adjustment' => (bool) ($row['is_balance_adjustment'] ?? false),
+                    'has_balance_adjustment' => (bool) ($row['has_balance_adjustment'] ?? false),
                     'index' => $index + 1,
                     'account_id' => $row['account_id'],
                     'account_name' => $row['account_name'],
@@ -358,12 +360,11 @@ class BankInquiryQueryService
         }
 
         $balances = [];
-        foreach ($accountMap as $accId => $account) {
-            $balances[(int) $accId] = (float) ($account->opening_balance ?? 0.0);
-        }
+        $accountHasPriorDocs = [];
+        $accountHasBalanceAdjustmentInReal = [];
+        $accountHasBalanceAdjustmentInPrior = [];
 
         $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
-        $accountHasPriorDocs = [];
 
         if ($startDate) {
             $priorFilters = $filters;
@@ -378,7 +379,17 @@ class BankInquiryQueryService
                     if ($isOpBalJournal) {
                         continue;
                     }
-                    $balances[$accId] = ($balances[$accId] ?? 0) + (float) $pRow['net_amount'];
+                    $isAdj = !empty($pRow['is_balance_adjustment'])
+                        || ($pRow['document_type'] === 'general_journal' && (
+                            str_starts_with(strtolower(trim((string)$pRow['description'])), 'penyesuaian saldo')
+                            || str_starts_with(strtolower(trim((string)$pRow['description'])), 'update saldo')
+                        ));
+                    if ($isAdj) {
+                        $balances[$accId] = (float) $pRow['net_amount'];
+                        $accountHasBalanceAdjustmentInPrior[$accId] = true;
+                    } else {
+                        $balances[$accId] = ($balances[$accId] ?? 0) + (float) $pRow['net_amount'];
+                    }
                     $accountHasPriorDocs[$accId] = true;
                 }
                 foreach ($this->rowsFromSyntheticAccounts($pDoc, $accountMap) as $pRow) {
@@ -386,6 +397,28 @@ class BankInquiryQueryService
                     $balances[$accId] = ($balances[$accId] ?? 0) + (float) $pRow['net_amount'];
                     $accountHasPriorDocs[$accId] = true;
                 }
+            }
+        }
+
+        foreach ($realRows as $r) {
+            $isAdj = !empty($r['is_balance_adjustment'])
+                || ($r['document_type'] === 'general_journal' && (
+                    str_starts_with(strtolower(trim((string)$r['description'])), 'penyesuaian saldo')
+                    || str_starts_with(strtolower(trim((string)$r['description'])), 'update saldo')
+                ));
+            if ($isAdj) {
+                $accountHasBalanceAdjustmentInReal[(int) $r['account_id']] = true;
+            }
+        }
+
+        foreach ($accountMap as $accId => $account) {
+            $hasAdjInReal = $accountHasBalanceAdjustmentInReal[(int) $accId] ?? false;
+            $hasAdjInPrior = $accountHasBalanceAdjustmentInPrior[(int) $accId] ?? false;
+
+            if ($hasAdjInReal) {
+                $balances[(int) $accId] = 0.0;
+            } elseif (! $hasAdjInPrior) {
+                $balances[(int) $accId] = (float) ($account->opening_balance ?? 0.0);
             }
         }
 
@@ -402,27 +435,29 @@ class BankInquiryQueryService
             $accId = $accountIds[0];
             $acc = $accountMap->get($accId);
             $accName = $acc?->name ?? '';
+            $hasAdjInReal = $accountHasBalanceAdjustmentInReal[$accId] ?? false;
             $hasPriorDocs = $accountHasPriorDocs[$accId] ?? false;
-            $initialBal = $balances[$accId] ?? 0;
             $initialOpBal = (float) ($acc?->opening_balance ?? 0);
+            $initialBal = $hasAdjInReal ? 0.0 : ($balances[$accId] ?? 0);
 
-            $mutation = 0.0;
-            $type = '-';
-            $dateLabel = '-';
-            $description = 'Saldo Awal';
+            $dateLabel = '';
+            if ($acc?->opening_balance_date) {
+                $dateLabel = \Carbon\Carbon::parse($acc->opening_balance_date)->format('d/m/Y');
+            }
 
-            if ($startDate && $hasPriorDocs) {
+            if ($hasAdjInReal) {
+                $description = 'Saldo Awal';
+                $mutation = 0.0;
+                $type = '';
+            } elseif ($startDate && $hasPriorDocs) {
                 $description = sprintf('Saldo per %s', $startDate->copy()->subDay()->format('d/m/Y'));
                 $mutation = 0.0;
                 $type = '-';
-                $dateLabel = '-';
+                $dateLabel = '';
             } else {
                 $description = 'Saldo Awal';
                 $mutation = abs($initialOpBal);
                 $type = $initialOpBal >= 0 ? 'Dr' : 'Cr';
-                if ($acc?->opening_balance_date) {
-                    $dateLabel = \Carbon\Carbon::parse($acc->opening_balance_date)->format('d/m/Y');
-                }
             }
 
             $outputRows->push([
@@ -432,7 +467,7 @@ class BankInquiryQueryService
                 'date' => $dateLabel,
                 'date_label' => $dateLabel,
                 'sortable_date' => '0000-00-00',
-                'document_number' => '-',
+                'document_number' => '',
                 'check_number' => '',
                 'transaction_type' => 'Saldo Awal',
                 'description' => $description,
@@ -445,6 +480,7 @@ class BankInquiryQueryService
                 'balance' => $this->formatNumber($initialBal),
                 'net_amount' => 0,
                 'is_opening_balance' => true,
+                'has_balance_adjustment' => $hasAdjInReal,
                 'account_id' => $accId,
                 'account_name' => $accName,
             ]);
@@ -453,7 +489,19 @@ class BankInquiryQueryService
         $computedRealRows = $sortedRealRows->map(function (array $row) use (&$balances): array {
             $accountId = (int) $row['account_id'];
             $currentBalance = $balances[$accountId] ?? 0;
-            $currentBalance += (float) $row['net_amount'];
+
+            $isAdj = !empty($row['is_balance_adjustment'])
+                || ($row['document_type'] === 'general_journal' && (
+                    str_starts_with(strtolower(trim((string)$row['description'])), 'penyesuaian saldo')
+                    || str_starts_with(strtolower(trim((string)$row['description'])), 'update saldo')
+                ));
+
+            if ($isAdj) {
+                $currentBalance = (float) $row['net_amount'];
+            } else {
+                $currentBalance += (float) $row['net_amount'];
+            }
+
             $balances[$accountId] = $currentBalance;
             $row['balance'] = $this->formatNumber($currentBalance);
 
@@ -801,6 +849,7 @@ class BankInquiryQueryService
             'sortable_date' => $date->toDateString(),
             'net_amount' => $netAmount,
             'is_opening_balance' => (bool) ($meta['is_opening_balance'] ?? false),
+            'is_balance_adjustment' => (bool) ($meta['is_balance_adjustment'] ?? false),
         ];
     }
 

@@ -229,14 +229,22 @@ class FinanceBackendResources
         return \App\Domain\Support\Models\OperationDocument::where('document_type', 'general_journal')
             ->where(function ($query) use ($account) {
                 $query->where(function ($sub) use ($account) {
-                    $sub->where('metadata->is_opening_balance', true)
-                        ->where('metadata->account_id', $account->id);
+                    $sub->where(function ($s) {
+                        $s->where('metadata->is_opening_balance', true)
+                          ->orWhere('metadata->is_balance_adjustment', true);
+                    })->where('metadata->account_id', $account->id);
                 })
                 ->orWhere('notes', 'Saldo Awal akun ' . $account->name)
                 ->orWhere('notes', 'Saldo Awal ' . $account->name)
+                ->orWhere('notes', 'Penyesuaian Saldo akun ' . $account->name)
+                ->orWhere('notes', 'Update Saldo akun ' . $account->name)
                 ->orWhereHas('lines', function ($lineQuery) use ($account) {
                     $lineQuery->where('account_id', $account->id)
-                        ->where('description', 'like', 'Saldo Awal%');
+                        ->where(function ($q) {
+                            $q->where('description', 'like', 'Saldo Awal%')
+                              ->orWhere('description', 'like', 'Penyesuaian Saldo%')
+                              ->orWhere('description', 'like', 'Update Saldo%');
+                        });
                 });
             })
             ->orderBy('id', 'desc')
@@ -270,11 +278,7 @@ class FinanceBackendResources
 
     public static function syncAccountBalanceAdjustmentJournal(Account $account, float $origBal, float $newBal): void
     {
-        $diff = $newBal - $origBal;
-        if (abs($diff) < 0.001) {
-            return;
-        }
-
+        $balance = (float) $newBal;
         $date = $account->opening_balance_date ? \Carbon\Carbon::parse($account->opening_balance_date)->format('Y-m-d') : date('Y-m-d');
         $type = strtolower($account->account_type ?? '');
         $isAssetOrExpense = ! (str_contains($type, 'liability')
@@ -285,15 +289,24 @@ class FinanceBackendResources
             || str_contains($type, 'pendapatan')
             || str_contains($type, 'liabilitas'));
 
-        $debitAmount = $isAssetOrExpense ? ($diff > 0 ? $diff : 0.0) : ($diff < 0 ? abs($diff) : 0.0);
-        $creditAmount = $isAssetOrExpense ? ($diff < 0 ? abs($diff) : 0.0) : ($diff > 0 ? $diff : 0.0);
+        $debitAmount = $isAssetOrExpense ? ($balance > 0 ? $balance : 0.0) : ($balance < 0 ? abs($balance) : 0.0);
+        $creditAmount = $isAssetOrExpense ? ($balance < 0 ? abs($balance) : 0.0) : ($balance > 0 ? $balance : 0.0);
 
         /** @var \App\Support\Backend\BackendResourceWriter $writer */
         $writer = app(\App\Support\Backend\BackendResourceWriter::class);
-        $docNumber = $writer->generateNextSequentialNumber('general-journals', $date);
+
+        $journal = self::findOpeningBalanceJournal($account);
+        if ($journal && $journal->is_closed) {
+            return;
+        }
+
+        $docNumber = $journal?->document_number ?? $writer->generateNextSequentialNumber('general-journals', $date);
         $description = 'Penyesuaian Saldo akun ' . $account->name;
 
-        $journal = new \App\Domain\Support\Models\OperationDocument();
+        if (! $journal) {
+            $journal = new \App\Domain\Support\Models\OperationDocument();
+        }
+
         $journal->fill([
             'branch_id' => 1,
             'document_number' => $docNumber,
@@ -303,16 +316,18 @@ class FinanceBackendResources
             'effective_date' => $date,
             'status' => 'Disetujui',
             'notes' => $description,
-            'total_amount' => abs($diff),
-            'metadata' => [
+            'total_amount' => abs($balance),
+            'metadata' => array_merge($journal->metadata ?? [], [
                 'transaction_number' => $docNumber,
                 'transaction_type_label' => 'Jurnal Umum',
                 'transaction_type_value' => 'general-journal',
                 'is_balance_adjustment' => true,
                 'account_id' => $account->id,
-            ],
+            ]),
         ]);
         $journal->save();
+
+        $journal->lines()->delete();
 
         $journal->lines()->create([
             'account_id' => $account->id,
@@ -320,7 +335,7 @@ class FinanceBackendResources
             'description' => $description,
             'debit_amount' => $debitAmount,
             'credit_amount' => $creditAmount,
-            'total_amount' => abs($diff),
+            'total_amount' => abs($balance),
             'sort_order' => 0,
         ]);
 
@@ -331,12 +346,9 @@ class FinanceBackendResources
             'description' => 'Penyesuaian Modal / Saldo',
             'debit_amount' => $creditAmount,
             'credit_amount' => $debitAmount,
-            'total_amount' => abs($diff),
+            'total_amount' => abs($balance),
             'sort_order' => 1,
         ]);
-
-        $account->opening_balance = $origBal;
-        $account->saveQuietly();
     }
 
     public static function getOrCreateEquitasSaldoAwalAccount(): Account

@@ -36,6 +36,23 @@ class BackendResourceWriter
      */
     public function update(BackendResourceBlueprint $blueprint, Model $record, array $payload): Model
     {
+        if ($record instanceof \App\Domain\Finance\Models\Account) {
+            $origBal = (float) ($record->opening_balance ?? 0);
+            $newBal = array_key_exists('opening_balance', $payload) ? (float) ($payload['opening_balance'] ?? 0) : $origBal;
+            $origDate = $record->opening_balance_date ? \Carbon\Carbon::parse($record->opening_balance_date)->format('Y-m-d') : null;
+            $newDate = array_key_exists('opening_balance_date', $payload) && !empty($payload['opening_balance_date']) ? \Carbon\Carbon::parse($payload['opening_balance_date'])->format('Y-m-d') : $origDate;
+
+            if (abs($origBal - $newBal) > 0.001 || $origDate !== $newDate) {
+                $journal = \App\Support\Backend\Definitions\FinanceBackendResources::findOpeningBalanceJournal($record);
+                if ($journal && $journal->is_closed) {
+                    $docNumber = $journal->document_number ?: 'Saldo Awal';
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'opening_balance' => ["Jurnal Umum {$docNumber} Tidak dapat diubah/dihapus, karena sudah dicocokkan dengan rekening koran!"]
+                    ]);
+                }
+            }
+        }
+
         $saved = $this->persist($blueprint, $record, $payload);
         $this->notifyResourceChanged($blueprint->key, 'updated', $saved->id ?? null);
 
