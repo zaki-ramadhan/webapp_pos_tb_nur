@@ -19,7 +19,7 @@ function formatCurrencyValue(amount) {
 }
 
 function formatHistoryDate(dateVal) {
-    if (!dateVal) return '-';
+    if (!dateVal || dateVal === '-') return '';
     if (typeof dateVal === 'string') {
         const parts = dateVal.trim().split(/[/.-]/);
         if (parts.length === 3) {
@@ -221,7 +221,7 @@ export default function BankLedgerTable({
                             <DataTableCell className="text-center text-text-workspace-dark">
                                 {openingBalanceRow?.date && openingBalanceRow.date !== '-'
                                     ? formatHistoryDate(openingBalanceRow.date)
-                                    : '-'}
+                                    : ''}
                             </DataTableCell>
                             <DataTableCell className="text-center text-text-workspace-dark">
                                 {openingBalanceRow?.document_number && openingBalanceRow.document_number !== '-'
@@ -248,7 +248,7 @@ export default function BankLedgerTable({
                                 {hasBalanceAdjustmentInRows
                                     ? ''
                                     : (openingBalanceRow?.description?.startsWith('Saldo per') || openingBalValue === 0
-                                        ? '-'
+                                        ? ''
                                         : (openingBalValue >= 0 ? 'Dr' : 'Cr'))}
                             </DataTableCell>
                             <DataTableCell className={`text-right ${!hasBalanceAdjustmentInRows && isOpeningBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
@@ -291,18 +291,18 @@ export default function BankLedgerTable({
                                         {formatHistoryDate(row.date)}
                                     </DataTableCell>
                                     <DataTableCell className="text-slate-900 font-normal">
-                                        {row.source_number || row.sourceNumber || row.document_number || '-'}
+                                        {row.source_number || row.sourceNumber || row.document_number || ''}
                                     </DataTableCell>
                                     {hasCheckNumberColumn && (
                                         <DataTableCell className="text-text-workspace-dark">
-                                            {row.check_number || row.checkNumber || '-'}
+                                            {row.check_number || row.checkNumber || ''}
                                         </DataTableCell>
                                     )}
                                     <DataTableCell className="text-text-workspace-dark">
-                                        {row.transaction_type || row.transactionType || '-'}
+                                        {row.transaction_type || row.transactionType || ''}
                                     </DataTableCell>
                                     <DataTableCell className="text-text-workspace-dark">
-                                        {row.description || '-'}
+                                        {row.description || ''}
                                     </DataTableCell>
                                     <DataTableCell className={`text-right ${isCreditMutation ? 'text-red-600' : 'text-slate-700'}`}>
                                         {formatCurrencyValue(row.mutation)}
