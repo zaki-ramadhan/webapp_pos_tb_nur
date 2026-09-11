@@ -4,7 +4,7 @@ import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import BankLedgerTable from '@/features/workspace/modules/shared/BankLedgerTable';
 import { TransactionToolbarIconButton, TransactionExportExcelButton, TransactionSwitchViewButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
+import { parseAmountInput, parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import {
     DownloadIcon,
     ExportIcon,
@@ -42,6 +42,14 @@ function buildInitialControlValues(controls) {
 
         return result;
     }, {});
+}
+
+function isNegativeAmount(val) {
+    if (typeof val === 'number') return val < 0;
+    if (val === null || val === undefined || val === '') return false;
+    const str = String(val).trim();
+    if (str.startsWith('-') || str.startsWith('(')) return true;
+    return (parseAmountInput(val, { allowNegative: true, emptyValue: 0 }) ?? 0) < 0;
 }
 
 export default function InquiryWorkspaceView({
@@ -259,11 +267,11 @@ export default function InquiryWorkspaceView({
         let totalKeluar = 0;
         let saldoAkhir = 0;
 
-        if (sortedRows.length > 0) {
-            sortedRows.forEach((r) => {
+        if (filteredRows.length > 0) {
+            filteredRows.forEach((r) => {
                 const rawAmt = r.raw_amount !== undefined && r.raw_amount !== null
                     ? Number(r.raw_amount)
-                    : parseNumericInput(r.mutation);
+                    : (parseAmountInput(r.mutation, { allowNegative: true, emptyValue: 0 }) ?? 0);
                 const type = String(r.type || '').toUpperCase();
                 if (type === 'DB' || type === 'DEBIT' || type === 'MASUK') {
                     totalMasuk += Math.abs(rawAmt);
@@ -272,10 +280,10 @@ export default function InquiryWorkspaceView({
                 }
             });
 
-            const lastRow = sortedRows[sortedRows.length - 1];
+            const lastRow = filteredRows[filteredRows.length - 1];
             saldoAkhir = lastRow.raw_balance !== undefined && lastRow.raw_balance !== null
                 ? Number(lastRow.raw_balance)
-                : parseNumericInput(lastRow.balance);
+                : (parseAmountInput(lastRow.balance, { allowNegative: true, emptyValue: 0 }) ?? 0);
         }
 
         const saldoAwal = saldoAkhir - totalMasuk + totalKeluar;
@@ -286,7 +294,7 @@ export default function InquiryWorkspaceView({
             totalKeluar,
             saldoAkhir,
         };
-    }, [sortedRows]);
+    }, [filteredRows]);
     const { handleResizeStart, getCellStyle } = useColumnResize(config.id || 'bank-inquiry');
 
     const isAccessRestricted = Boolean(
@@ -561,19 +569,19 @@ export default function InquiryWorkspaceView({
                                     <div className="mt-8 space-y-2.5 text-[15px] text-slate-900">
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-900 font-normal">Saldo Awal</span>
-                                            <span className="font-bold text-slate-900">
+                                            <span className={`font-bold ${isNegativeAmount(statementSummary.saldoAwal) ? 'text-red-600' : 'text-slate-900'}`}>
                                                 {formatTableTextValue(statementSummary.saldoAwal, { align: 'right' })}
                                             </span>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-900 font-normal">Masuk</span>
-                                            <span className="font-bold text-slate-900">
+                                            <span className={`font-bold ${isNegativeAmount(statementSummary.totalMasuk) ? 'text-red-600' : 'text-slate-900'}`}>
                                                 {formatTableTextValue(statementSummary.totalMasuk, { align: 'right' })}
                                             </span>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-900 font-normal">Keluar</span>
-                                            <span className="font-bold text-slate-900">
+                                            <span className={`font-bold ${isNegativeAmount(statementSummary.totalKeluar) ? 'text-red-600' : 'text-slate-900'}`}>
                                                 {formatTableTextValue(statementSummary.totalKeluar, { align: 'right' })}
                                             </span>
                                         </div>
@@ -581,7 +589,7 @@ export default function InquiryWorkspaceView({
                                             <span className="text-slate-900 font-normal leading-tight">
                                                 Saldo<br />Akhir
                                             </span>
-                                            <span className="font-bold text-slate-900 self-center">
+                                            <span className={`font-bold self-center ${isNegativeAmount(statementSummary.saldoAkhir) ? 'text-red-600' : 'text-slate-900'}`}>
                                                 {formatTableTextValue(statementSummary.saldoAkhir, { align: 'right' })}
                                             </span>
                                         </div>
