@@ -95,6 +95,11 @@ export default function ItemCategoryFormView({
             return;
         }
 
+        if (values.isSubCategory && !values.parentId) {
+            rejectCrudFormAction('Kategori Induk wajib dipilih saat Sub Kategori aktif.', { setStatus });
+            return;
+        }
+
         await executeCrudFormAction({
             loadingMessage: isDetail ? 'Sedang memperbarui kategori.' : 'Sedang menyimpan kategori.',
             successMessage: isDetail ? 'Kategori berhasil diperbarui.' : 'Kategori berhasil dibuat.',
@@ -188,7 +193,7 @@ export default function ItemCategoryFormView({
             setActiveTabId={setActiveTabId}
             status={status}
             saving={saving}
-            saveDisabled={saving || !values.name?.trim()}
+            saveDisabled={saving || !values.name?.trim() || (values.isSubCategory && !values.parentId)}
             onSave={handleSave}
             actionsSlot={
                 isDetail ? (
