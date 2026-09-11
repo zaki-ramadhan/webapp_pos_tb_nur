@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import {
+    TransactionHeaderButton,
     TransactionLineItemsSection,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import SelectField from '@/components/ui/SelectField';
@@ -106,16 +107,16 @@ export default function InventoryAdjustmentDetailsSection({
             </div>
 
             {!isPriceAdjustment && !isDetail && (
-                <div className="relative inline-block shrink-0" ref={rincianAnchorRef}>
-                    <button
-                        type="button"
+                <div className="relative inline-block shrink-0">
+                    <TransactionHeaderButton
+                        ref={rincianAnchorRef}
                         onClick={() => setIsRincianOpen((prev) => !prev)}
-                        aria-label="Menu rincian barang"
-                        className="inline-flex h-[40px] items-center gap-1.5 rounded-[4px] border border-ui-border bg-white px-3 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-xs"
+                        trailingChevron
+                        open={isRincianOpen}
+                        className="h-[40px]"
                     >
-                        <span>Rincian</span>
-                        <ChevronDownIcon className="h-3.5 w-3.5 text-slate-500" />
-                    </button>
+                        Rincian
+                    </TransactionHeaderButton>
                     <DropdownMenu
                         open={isRincianOpen}
                         onClose={() => setIsRincianOpen(false)}

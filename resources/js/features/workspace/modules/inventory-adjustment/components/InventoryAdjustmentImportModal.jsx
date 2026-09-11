@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
-import ModalBase from '@/components/ui/ModalBase';
-import { CloseIcon } from '@/features/workspace/shared/Icons';
+import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import Button from '@/components/ui/Button';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 import { formatCurrencyValue, parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
@@ -170,79 +170,71 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         }
     }
 
-    if (!open) return null;
-
     return (
-        <ModalBase open={open} onBackdropClick={onClose} panelClassName="max-w-[480px] w-full rounded-[4px] overflow-hidden p-0">
-            {/* Header Biru Khas Accurate */}
-            <div className="flex items-center justify-between bg-[#104e8b] px-4 py-2.5 text-white">
-                <h3 className="text-sm sm:text-base font-medium">Impor Excel Ke Detail Barang</h3>
-                <button
-                    type="button"
-                    onClick={onClose}
-                    aria-label="Tutup dialog"
-                    className="inline-flex h-6 w-6 items-center justify-center rounded text-white/80 hover:text-white transition cursor-pointer"
-                >
-                    <CloseIcon className="h-4 w-4" />
-                </button>
-            </div>
-
-            {/* Body */}
-            <div className="bg-white p-5 sm:p-6 space-y-4">
-                {/* Langkah 1 */}
-                <div className="flex items-start gap-2.5">
-                    <span className="text-xs sm:text-sm font-semibold text-slate-800 shrink-0">1.</span>
-                    <div>
-                        <h4 className="text-xs sm:text-sm font-semibold italic text-slate-800">Template File Excel</h4>
-                        <p className="mt-0.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                            Pastikan format excel data Anda sesuai dengan contoh yang diberikan. Silakan unduh template nya{' '}
-                            <a
-                                href="#download-template"
-                                onClick={handleDownloadTemplate}
-                                className="text-[#104e8b] font-medium hover:underline cursor-pointer"
-                            >
-                                disini
-                            </a>
-                        </p>
-                    </div>
-                </div>
-
-                {/* Langkah 2 */}
-                <div className="flex items-start gap-2.5">
-                    <span className="text-xs sm:text-sm font-semibold text-slate-800 shrink-0">2.</span>
-                    <div>
-                        <h4 className="text-xs sm:text-sm font-semibold italic text-slate-800">Unggah File Excel</h4>
-                        <p className="mt-0.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                            Klik tombol berikut untuk memilih file excel yang sudah Anda lengkapi
-                        </p>
-
-                        <div className="mt-3">
-                            <button
-                                type="button"
-                                disabled={loading}
-                                onClick={() => fileInputRef.current?.click()}
-                                className="inline-flex items-center gap-2 rounded-[3px] bg-[#165a91] hover:bg-[#124470] px-3.5 py-1.5 text-xs sm:text-sm font-medium text-white transition cursor-pointer shadow-xs disabled:opacity-50"
-                            >
-                                <ExcelFileIcon className="h-4 w-4" />
-                                <span>{loading ? 'Sedang membaca...' : 'Pilih file Excel'}</span>
-                            </button>
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept=".xlsx,.xls,.csv"
-                                className="hidden"
-                                onChange={handleFileSelect}
-                            />
-                        </div>
-
-                        {errorMessage ? (
-                            <p className="mt-2 text-xs text-red-600 font-medium leading-normal">
-                                {errorMessage}
-                            </p>
-                        ) : null}
-                    </div>
+        <WorkspaceDialog
+            open={open}
+            onClose={onClose}
+            title="Impor Excel Ke Detail Barang"
+            headerIcon={null}
+            closeLabel="Tutup dialog"
+            maxWidthClassName="max-w-[480px]"
+            contentClassName="bg-white p-5 sm:p-6 space-y-4"
+        >
+            {/* Langkah 1 */}
+            <div className="flex items-start gap-2.5">
+                <span className="text-sm font-normal text-brand-dark shrink-0">1.</span>
+                <div>
+                    <h4 className="text-sm font-normal italic text-brand-dark">Template File Excel</h4>
+                    <p className="mt-1 text-sm font-normal text-brand-dark leading-relaxed">
+                        Pastikan format excel data Anda sesuai dengan contoh yang diberikan. Silakan unduh template nya{' '}
+                        <button
+                            type="button"
+                            onClick={handleDownloadTemplate}
+                            className="text-brand-blue font-normal hover:underline cursor-pointer inline p-0 bg-transparent border-none"
+                        >
+                            disini
+                        </button>
+                    </p>
                 </div>
             </div>
-        </ModalBase>
+
+            {/* Langkah 2 */}
+            <div className="flex items-start gap-2.5">
+                <span className="text-sm font-normal text-brand-dark shrink-0">2.</span>
+                <div>
+                    <h4 className="text-sm font-normal italic text-brand-dark">Unggah File Excel</h4>
+                    <p className="mt-1 text-sm font-normal text-brand-dark leading-relaxed">
+                        Klik tombol berikut untuk memilih file excel yang sudah Anda lengkapi
+                    </p>
+
+                    <div className="mt-3">
+                        <Button
+                            type="button"
+                            variant="primary"
+                            size="sm"
+                            disabled={loading}
+                            onClick={() => fileInputRef.current?.click()}
+                            className="inline-flex items-center gap-2 font-normal text-sm"
+                        >
+                            <ExcelFileIcon className="h-4 w-4 shrink-0" />
+                            <span className="font-normal">{loading ? 'Sedang membaca...' : 'Pilih file Excel'}</span>
+                        </Button>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".xlsx,.xls,.csv"
+                            className="hidden"
+                            onChange={handleFileSelect}
+                        />
+                    </div>
+
+                    {errorMessage ? (
+                        <p className="mt-2 text-sm text-red-600 font-normal leading-normal">
+                            {errorMessage}
+                        </p>
+                    ) : null}
+                </div>
+            </div>
+        </WorkspaceDialog>
     );
 }
