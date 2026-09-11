@@ -146,7 +146,13 @@ export default function useTextInputState({
         }
         const name = props.name ?? '';
         const prefixVal = typeof prefix === 'string' ? prefix : '';
-        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly, { isCurrency, isPhone, isPostal, isNpwp, isBankAccount, allowDecimal, allowNegative });
+        const allowLeadingSpace = props.allowLeadingSpace ?? (
+            type === 'search' ||
+            searchStr.includes('cari') ||
+            searchStr.includes('search') ||
+            searchStr.includes('lookup')
+        );
+        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly, { isCurrency, isPhone, isPostal, isNpwp, isBankAccount, allowDecimal, allowNegative, allowLeadingSpace });
 
         setLocalValue(sanitizedValue);
         clearError(contextKey);

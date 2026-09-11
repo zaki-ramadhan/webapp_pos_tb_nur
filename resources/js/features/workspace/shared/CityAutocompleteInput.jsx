@@ -136,20 +136,26 @@ export default function CityAutocompleteInput({
                             type="text"
                             value={searchVal}
                             onChange={(e) => {
-                                const cleanedVal = e.target.value.replace(/[^a-zA-Z\s'.-]/g, '');
+                                let cleanedVal = e.target.value.replace(/[^a-zA-Z\s'.-]/g, '');
+                                cleanedVal = cleanedVal.replace(/^[ \t]{2,}/, ' ').replace(/[ \t]{2,}/g, ' ');
                                 setSearchVal(cleanedVal);
                                 setOpen(true);
-                                onChange?.(cleanedVal);
+                                onChange?.(cleanedVal.trimStart());
                             }}
                             onFocus={() => {
                                 isFocusedRef.current = true;
                                 setOpen(true);
                             }}
+                            onKeyDown={(e) => {
+                                if (e.key === ' ' && !disabled && !open) {
+                                    setOpen(true);
+                                }
+                            }}
                             onBlur={(e) => {
                                 isFocusedRef.current = false;
                                 setTimeout(() => {
                                     if (!isSelectingRef.current) {
-                                        onChange?.(searchVal);
+                                        onChange?.(searchVal.trim());
                                     }
                                 }, 150);
                             }}

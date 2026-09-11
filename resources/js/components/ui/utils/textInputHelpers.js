@@ -15,13 +15,22 @@ export function sanitizeInput(val, type, id = '', name = '', placeholder = '', p
 
     val = sanitizeTextValue(val);
 
-    if (val.startsWith(' ')) {
+    const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
+    const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
+
+    const allowLeadingSpace = options.allowLeadingSpace ?? (
+        type === 'search' ||
+        searchStr.includes('cari') ||
+        searchStr.includes('search') ||
+        searchStr.includes('lookup')
+    );
+
+    if (allowLeadingSpace) {
+        val = val.replace(/^[ \t]{2,}/, ' ');
+    } else if (val.startsWith(' ')) {
         val = val.trimStart();
     }
     val = val.replace(/[ \t]{2,}/g, ' ');
-
-    const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
-    const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
 
     const isMultiOrEmail = searchStr.includes('identifier') ||
                            searchStr.includes('email') ||

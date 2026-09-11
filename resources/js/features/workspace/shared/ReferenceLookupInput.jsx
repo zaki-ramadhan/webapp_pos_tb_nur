@@ -133,7 +133,10 @@ export default function ReferenceLookupInput({
     }
 
     function handleChange(event) {
-        const nextValue = sanitizeTextValue(event.target.value);
+        let nextValue = sanitizeTextValue(event.target.value);
+        if (typeof nextValue === 'string') {
+            nextValue = nextValue.replace(/^[ \t]{2,}/, ' ').replace(/[ \t]{2,}/g, ' ');
+        }
         setQuery(nextValue);
         setOpen(true);
     }
@@ -200,6 +203,11 @@ export default function ReferenceLookupInput({
                                 onFocus={() => {
                                     setOpen(true);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (event.key === ' ' && !disabled && !open) {
+                                        setOpen(true);
+                                    }
+                                }}
                                 onChange={handleChange}
                                 aria-label={searchLabel}
                                 className={`h-[24px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm ${disabled ? 'cursor-default disabled:text-slate-400' : resolvedError ? 'text-red-700' : 'text-brand-dark'} outline-none placeholder:${resolvedError ? 'text-red-400' : 'text-disabled-border-t'} cursor-text ${inputClassName}`.trim()}
@@ -242,6 +250,11 @@ export default function ReferenceLookupInput({
                                     placeholder={selectedLabel ? '' : placeholder}
                                     onFocus={() => {
                                         setOpen(true);
+                                    }}
+                                    onKeyDown={(event) => {
+                                        if (event.key === ' ' && !disabled && !open) {
+                                            setOpen(true);
+                                        }
                                     }}
                                     onChange={handleChange}
                                     aria-label={searchLabel}

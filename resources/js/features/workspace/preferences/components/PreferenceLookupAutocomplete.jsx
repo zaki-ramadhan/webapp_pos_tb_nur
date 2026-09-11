@@ -16,7 +16,8 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
     }, [query, options]);
 
     const handleSelect = (option) => {
-        onChange?.(field.id, option);
+        const cleanOption = typeof option === 'string' ? option.trim() : option;
+        onChange?.(field.id, cleanOption);
         setQuery('');
         setOpen(false);
     };
@@ -50,11 +51,17 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
             <TextInput
                 id={field.id}
                 value={query}
+                allowLeadingSpace={true}
                 onChange={(e) => {
                     setQuery(e.target.value);
                     setOpen(true);
                 }}
                 onFocus={() => setOpen(true)}
+                onKeyDown={(e) => {
+                    if (e.key === ' ' && !field.disabled && !open) {
+                        setOpen(true);
+                    }
+                }}
                 placeholder={field.placeholder ?? `Cari/Pilih ${field.label}...`}
                 disabled={field.disabled}
                 error={field.error}

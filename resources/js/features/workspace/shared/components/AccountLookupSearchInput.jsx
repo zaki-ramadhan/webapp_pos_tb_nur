@@ -26,6 +26,7 @@ export default function AccountLookupSearchInput({
     id,
     onFocus,
     onChange,
+    onKeyDown = null,
     onClear,
     onBeforeOpen = null,
     containerRef = null,
@@ -101,12 +102,19 @@ export default function AccountLookupSearchInput({
                             }
                             onFocus?.(event);
                         }}
+                        onKeyDown={(event) => {
+                            if (event.key === ' ' && !disabled) {
+                                if (onBeforeOpen && onBeforeOpen() === false) {
+                                    return;
+                                }
+                                onFocus?.(event);
+                            }
+                            onKeyDown?.(event);
+                        }}
                         onChange={(event) => {
                             let val = event.target.value;
                             if (typeof val === 'string') {
-                                if (val.startsWith(' ')) {
-                                    val = val.trimStart();
-                                }
+                                val = val.replace(/^[ \t]{2,}/, ' ');
                                 val = val.replace(/[ \t]{2,}/g, ' ');
                             }
                             onChange(val);

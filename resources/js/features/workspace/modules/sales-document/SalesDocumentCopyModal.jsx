@@ -432,16 +432,22 @@ export default function SalesDocumentCopyModal({
                 <div className="relative mb-2 max-w-[50%]" ref={suggestionsRef}>
                     <TextInput
                         value={query}
+                        allowLeadingSpace={true}
                         onChange={(e) => {
                             const val = e.target.value;
                             setQuery(val);
-                            if (!val.trim()) {
-                                handleClearSelection();
-                            } else {
+                            if (val.length > 0) {
                                 setShowSuggestions(true);
+                            } else {
+                                handleClearSelection();
                             }
                         }}
                         onFocus={() => setShowSuggestions(true)}
+                        onKeyDown={(e) => {
+                            if (e.key === ' ' && !showSuggestions) {
+                                setShowSuggestions(true);
+                            }
+                        }}
                         placeholder={config.placeholder}
                         trailing={
                             loadingSuggestions ? (

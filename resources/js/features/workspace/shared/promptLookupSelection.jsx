@@ -94,6 +94,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                 <TextInput
                     ref={inputRef}
                     value={query}
+                    allowLeadingSpace={true}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder={`Ketik untuk mencari ${title.toLowerCase()}...`}
                     trailing={
