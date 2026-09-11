@@ -183,13 +183,13 @@ export default function SystemErrorModal({
 
                     <div className={`min-w-0 flex-1 flex flex-col ${hasMessages && finalDescription ? 'justify-between py-0.5' : 'justify-center'}`}>
                         {finalDescription ? (
-                            <p className="text-sm sm:text-[15px] font-normal leading-5 text-brand-dark">{finalDescription}</p>
+                            <p className="text-sm sm:text-[15px] font-normal leading-5 text-black">{finalDescription}</p>
                         ) : null}
 
                         {hasMessages && (
                             <div className={finalDescription ? 'mt-2.5' : ''}>
                                 {isInfo ? (
-                                    <div className="space-y-1 text-sm sm:text-[15px] font-normal leading-6 text-brand-dark">
+                                    <div className="space-y-1 text-sm sm:text-[15px] font-normal leading-relaxed text-black">
                                         {finalMessages.map((item, index) => (
                                             <p key={`${item}-${index}`}>{item}</p>
                                         ))}

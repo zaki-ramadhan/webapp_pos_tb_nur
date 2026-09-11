@@ -199,17 +199,18 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
             const successCount = importedItems.length;
             const failedCount = totalRows - successCount;
 
-            const summaryMessages = [
-                `${totalRows} baris barang: ${successCount} berhasil terimpor, ${failedCount} gagal impor.`,
-            ];
-
+            const failureReasons = [];
             if (notFoundCount > 0) {
-                summaryMessages.push(`${notFoundCount} baris barang: tidak ditemukan di Barang dan Jasa`);
+                failureReasons.push(`${notFoundCount} baris barang: tidak ditemukan di Barang dan Jasa`);
+            }
+            if (invalidDataCount > 0) {
+                failureReasons.push(`${invalidDataCount} baris barang: kuantitas atau format data tidak valid`);
             }
 
-            if (invalidDataCount > 0) {
-                summaryMessages.push(`${invalidDataCount} baris barang: kuantitas atau format data tidak valid`);
-            }
+            const summaryMessage = [
+                `${totalRows} baris barang: ${successCount} berhasil terimpor, ${failedCount} gagal impor.`,
+                ...failureReasons,
+            ].join(' ');
 
             if (successCount > 0) {
                 onImport?.(importedItems);
@@ -230,7 +231,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
             onClose();
             showSystemInfoModal({
-                messages: summaryMessages,
+                message: summaryMessage,
             });
         } catch (err) {
             showSystemErrorModal({
