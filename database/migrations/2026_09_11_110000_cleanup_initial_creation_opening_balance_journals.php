@@ -11,7 +11,10 @@ return new class extends Migration
             ->where('document_type', 'general_journal')
             ->where('is_closed', false)
             ->where(function ($query) {
-                $query->where('notes', 'like', '%Livin%')
+                $query->where('metadata->is_opening_balance', true)
+                    ->orWhere('notes', 'like', 'Saldo Awal akun%')
+                    ->orWhere('notes', 'like', 'Saldo Awal %')
+                    ->orWhere('notes', 'like', '%Livin%')
                     ->orWhere('document_number', 'JU.2026.09.0052');
             })
             ->pluck('id');

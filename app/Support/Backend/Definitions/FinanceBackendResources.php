@@ -159,12 +159,16 @@ class FinanceBackendResources
                     }
 
                     if ($record instanceof Account) {
-                        if (! $record->wasRecentlyCreated && (
-                            $record->wasChanged('opening_balance') ||
-                            $record->wasChanged('opening_balance_date') ||
-                            ($record->wasChanged('name') && self::findOpeningBalanceJournal($record) !== null)
-                        )) {
-                            self::syncAccountOpeningBalanceJournal($record);
+                        if ($record->wasRecentlyCreated) {
+                            self::cleanupLegacyOpeningBalanceJournals($record);
+                        } else {
+                            $origBal = $record->previousOpeningBalance;
+                            $newBal = (float) ($record->opening_balance ?? 0);
+                            if ($origBal === null || abs($origBal) < 0.001) {
+                                self::cleanupLegacyOpeningBalanceJournals($record);
+                            } elseif ($record->wasChanged('opening_balance') && abs($newBal - $origBal) > 0.001) {
+                                self::syncAccountBalanceAdjustmentJournal($record, $origBal, $newBal);
+                            }
                         }
                     }
                 },
@@ -239,11 +243,8 @@ class FinanceBackendResources
             ->first();
     }
 
-    public static function syncAccountOpeningBalanceJournal(Account $account): void
+    public static function cleanupLegacyOpeningBalanceJournals(Account $account): void
     {
-        $balance = (float) ($account->opening_balance ?? 0);
-        $date = $account->opening_balance_date ? \Carbon\Carbon::parse($account->opening_balance_date)->format('Y-m-d') : date('Y-m-d');
-
         $journals = \App\Domain\Support\Models\OperationDocument::where('document_type', 'general_journal')
             ->where(function ($query) use ($account) {
                 $query->where(function ($sub) use ($account) {
@@ -259,35 +260,22 @@ class FinanceBackendResources
             })
             ->get();
 
-        if (abs($balance) < 0.001) {
-            foreach ($journals as $j) {
-                if ($j->is_closed) {
-                    continue;
-                }
+        foreach ($journals as $j) {
+            if (! $j->is_closed) {
                 $j->lines()->delete();
                 $j->delete();
             }
+        }
+    }
+
+    public static function syncAccountBalanceAdjustmentJournal(Account $account, float $origBal, float $newBal): void
+    {
+        $diff = $newBal - $origBal;
+        if (abs($diff) < 0.001) {
             return;
         }
 
-        if ($journals->count() > 1) {
-            $journal = $journals->first();
-            foreach ($journals->slice(1) as $dup) {
-                if (! $dup->is_closed) {
-                    $dup->lines()->delete();
-                    $dup->delete();
-                }
-            }
-        } else {
-            $journal = $journals->first();
-        }
-
-        if ($journal && $journal->is_closed) {
-            if (abs((float)$journal->total_amount - abs($balance)) < 0.001 && $journal->entry_date === $date) {
-                return;
-            }
-        }
-
+        $date = $account->opening_balance_date ? \Carbon\Carbon::parse($account->opening_balance_date)->format('Y-m-d') : date('Y-m-d');
         $type = strtolower($account->account_type ?? '');
         $isAssetOrExpense = ! (str_contains($type, 'liability')
             || str_contains($type, 'equity')
@@ -297,26 +285,15 @@ class FinanceBackendResources
             || str_contains($type, 'pendapatan')
             || str_contains($type, 'liabilitas'));
 
-        $debitAmount = $isAssetOrExpense ? ($balance > 0 ? $balance : 0.0) : ($balance < 0 ? abs($balance) : 0.0);
-        $creditAmount = $isAssetOrExpense ? ($balance < 0 ? abs($balance) : 0.0) : ($balance > 0 ? $balance : 0.0);
+        $debitAmount = $isAssetOrExpense ? ($diff > 0 ? $diff : 0.0) : ($diff < 0 ? abs($diff) : 0.0);
+        $creditAmount = $isAssetOrExpense ? ($diff < 0 ? abs($diff) : 0.0) : ($diff > 0 ? $diff : 0.0);
 
         /** @var \App\Support\Backend\BackendResourceWriter $writer */
         $writer = app(\App\Support\Backend\BackendResourceWriter::class);
-        $docNumber = $journal?->document_number ?? $writer->generateNextSequentialNumber('general-journals', $date);
-        $description = 'Saldo Awal akun ' . $account->name;
+        $docNumber = $writer->generateNextSequentialNumber('general-journals', $date);
+        $description = 'Penyesuaian Saldo akun ' . $account->name;
 
-        if (! $journal) {
-            $journal = new \App\Domain\Support\Models\OperationDocument();
-        }
-
-        $mergedMetadata = array_merge($journal->metadata ?? [], [
-            'transaction_number' => $docNumber,
-            'transaction_type_label' => 'Jurnal Umum',
-            'transaction_type_value' => 'general-journal',
-            'is_opening_balance' => true,
-            'account_id' => $account->id,
-        ]);
-
+        $journal = new \App\Domain\Support\Models\OperationDocument();
         $journal->fill([
             'branch_id' => 1,
             'document_number' => $docNumber,
@@ -326,12 +303,16 @@ class FinanceBackendResources
             'effective_date' => $date,
             'status' => 'Disetujui',
             'notes' => $description,
-            'total_amount' => abs($balance),
-            'metadata' => $mergedMetadata,
+            'total_amount' => abs($diff),
+            'metadata' => [
+                'transaction_number' => $docNumber,
+                'transaction_type_label' => 'Jurnal Umum',
+                'transaction_type_value' => 'general-journal',
+                'is_balance_adjustment' => true,
+                'account_id' => $account->id,
+            ],
         ]);
         $journal->save();
-
-        $journal->lines()->delete();
 
         $journal->lines()->create([
             'account_id' => $account->id,
@@ -339,21 +320,23 @@ class FinanceBackendResources
             'description' => $description,
             'debit_amount' => $debitAmount,
             'credit_amount' => $creditAmount,
-            'total_amount' => abs($balance),
+            'total_amount' => abs($diff),
             'sort_order' => 0,
         ]);
 
         $equityAccount = self::getOrCreateEquitasSaldoAwalAccount();
-
         $journal->lines()->create([
             'account_id' => $equityAccount->id,
             'reference_code' => $equityAccount->code,
-            'description' => 'Equitas Saldo Awal',
+            'description' => 'Penyesuaian Modal / Saldo',
             'debit_amount' => $creditAmount,
             'credit_amount' => $debitAmount,
-            'total_amount' => abs($balance),
+            'total_amount' => abs($diff),
             'sort_order' => 1,
         ]);
+
+        $account->opening_balance = $origBal;
+        $account->saveQuietly();
     }
 
     public static function getOrCreateEquitasSaldoAwalAccount(): Account

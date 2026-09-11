@@ -27,6 +27,17 @@ class Account extends DomainModel
 
     protected array $searchable = ['code', 'name', 'account_type', 'notes'];
 
+    public ?float $previousOpeningBalance = null;
+
+    protected static function booted(): void
+    {
+        static::updating(function (Account $account): void {
+            if ($account->isDirty('opening_balance')) {
+                $account->previousOpeningBalance = (float) ($account->getOriginal('opening_balance') ?? 0);
+            }
+        });
+    }
+
     protected function casts(): array
     {
         return [
