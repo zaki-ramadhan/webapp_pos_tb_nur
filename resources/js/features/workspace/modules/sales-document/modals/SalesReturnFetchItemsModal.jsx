@@ -137,7 +137,7 @@ export default function SalesReturnFetchItemsModal({
                             <th className="py-2.5 px-3 w-[100px] text-center font-semibold">Satuan</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200 text-xs sm:text-sm text-zinc-700">
+                    <tbody className="divide-y divide-table-row-border text-xs sm:text-sm text-zinc-700">
                         {loading ? (
                             <tr className="table-row-empty" data-empty-row="true">
                                 <td colSpan={4} className="py-2 text-center text-black italic">

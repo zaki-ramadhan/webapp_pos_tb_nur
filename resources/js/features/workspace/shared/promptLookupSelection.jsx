@@ -109,7 +109,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                 />
             </div>
 
-            <div className="flex-1 overflow-y-auto max-h-[280px] border border-table-row-border rounded-[4px] divide-y divide-table-row-border">
+            <div className="flex-1 overflow-y-auto max-h-[280px] border border-slate-200 rounded-[4px] divide-y divide-slate-200">
                 {loading && visibleRows.length === 0 ? (
                     <LookupLoadingState className="p-4" />
                 ) : error ? (

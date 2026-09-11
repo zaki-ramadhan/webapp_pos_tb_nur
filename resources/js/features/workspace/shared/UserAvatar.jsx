@@ -83,7 +83,7 @@ const UserAvatar = memo(function UserAvatar({
 
     return (
         <div
-            className={`relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-table-row-border text-sm font-semibold text-text-muted ${className}`.trim()}
+            className={`relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-slate-200 text-sm font-semibold text-text-muted ${className}`.trim()}
         >
             {shouldShowImage ? (
                 <img

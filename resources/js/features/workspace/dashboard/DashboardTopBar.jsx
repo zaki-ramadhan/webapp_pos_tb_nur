@@ -163,7 +163,7 @@ export default function DashboardTopBar({
                             widthClassName="w-[min(200px,calc(100vw-1rem))]"
                             className="z-[70]"
                         >
-                            <div className="border-b border-table-row-border px-3 py-2 text-left lg:hidden">
+                            <div className="border-b border-slate-200 px-3 py-2 text-left lg:hidden">
                                 <p className="truncate text-xs font-semibold text-brand-darker">{user.name}</p>
                                 <p className="truncate text-[10px] text-text-light">
                                     {user.role === 'Super Admin' || user.role === 'super_admin' ? 'Administrator Sistem' : (user.role || 'Kasir')}
@@ -181,7 +181,7 @@ export default function DashboardTopBar({
                                     >
                                         Pemeliharaan Data
                                     </DropdownMenuItem>
-                                    <div className="my-1 border-t border-table-row-border" />
+                                    <div className="my-1 border-t border-slate-200" />
                                 </>
                             )}
                             <DropdownMenuItem

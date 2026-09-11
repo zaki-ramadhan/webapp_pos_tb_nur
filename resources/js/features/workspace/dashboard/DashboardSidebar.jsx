@@ -94,7 +94,7 @@ function MobileModuleButton({ item, active, onSelect }) {
             <span
                 className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] ${
                     item.disabled
-                        ? 'bg-table-row-border text-tab-inactive-border-l'
+                        ? 'bg-slate-200 text-tab-inactive-border-l'
                         : active
                           ? 'bg-ui-border-light text-brand-blue-dark'
                           : 'bg-info-bg text-tab-view-active-text'
@@ -134,7 +134,7 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
         ? 'bg-disabled-bg'
         : isImplemented
           ? tone.iconBg
-          : 'bg-table-row-border';
+          : 'bg-slate-200';
     const iconTextClass = isInactive
         ? 'text-text-light'
         : isImplemented
@@ -246,7 +246,7 @@ export default function DashboardSidebar({
                     <div
                         className="fixed inset-0 z-[60] bg-white px-5 pb-6 pt-5 lg:hidden flex flex-col animate-slide-up"
                     >
-                        <div className="flex items-center justify-between gap-3 border-b border-table-row-border pb-4 mb-4 shrink-0">
+                        <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-4 mb-4 shrink-0">
                             <h3 className="text-base font-bold text-brand-darker">
                                 Pilih Menu
                             </h3>
@@ -263,7 +263,7 @@ export default function DashboardSidebar({
                         </div>
 
                         {user && (
-                            <div className="flex items-center gap-3 bg-ui-bg-hover rounded-[10px] p-3 mb-4 shrink-0 border border-table-row-border">
+                            <div className="flex items-center gap-3 bg-ui-bg-hover rounded-[10px] p-3 mb-4 shrink-0 border border-slate-200">
                                 <UserAvatar
                                     name={user.name}
                                     imageUrl={user.avatarUrl}
