@@ -70,13 +70,6 @@ export default function BankLedgerTable({
         );
     }, [rows]);
 
-    const openingBalValue = useMemo(() => {
-        if (openingBalanceRow?.balance !== undefined) {
-            return parseNumericInput(openingBalanceRow.balance);
-        }
-        return Number(initialOpeningBalance ?? 0);
-    }, [openingBalanceRow, initialOpeningBalance]);
-
     const realRows = useMemo(() => {
         return rows.filter((r) => {
             if (r.id === 'opening-balance') return false;
@@ -87,6 +80,27 @@ export default function BankLedgerTable({
             return true;
         });
     }, [rows]);
+
+    const hasOpeningBalanceJournalInRows = useMemo(() => {
+        return realRows.some((r) =>
+            Boolean(
+                r.is_opening_balance ||
+                r.isOpeningBalance ||
+                (String(r.document_type || r.documentType) === 'general_journal' &&
+                    String(r.description || '').trim().toLowerCase().startsWith('saldo awal'))
+            )
+        );
+    }, [realRows]);
+
+    const openingBalValue = useMemo(() => {
+        if (hasOpeningBalanceJournalInRows) {
+            return 0;
+        }
+        if (openingBalanceRow?.balance !== undefined) {
+            return parseNumericInput(openingBalanceRow.balance);
+        }
+        return Number(initialOpeningBalance ?? 0);
+    }, [hasOpeningBalanceJournalInRows, openingBalanceRow, initialOpeningBalance]);
 
     const computedRows = useMemo(() => {
         let currentBal = openingBalValue;
@@ -101,7 +115,19 @@ export default function BankLedgerTable({
             const debit = Number(r.debit ?? (isCreditMutation ? 0 : r.mutation) ?? 0);
             const credit = Number(r.credit ?? (isCreditMutation ? r.mutation : 0) ?? 0);
             const net = debit - credit;
-            currentBal += net;
+
+            const isOpeningBalanceJournal = Boolean(
+                r.is_opening_balance ||
+                r.isOpeningBalance ||
+                (String(r.document_type || r.documentType) === 'general_journal' &&
+                    String(r.description || '').trim().toLowerCase().startsWith('saldo awal'))
+            );
+
+            if (isOpeningBalanceJournal) {
+                currentBal = net;
+            } else {
+                currentBal += net;
+            }
 
             return {
                 ...r,
