@@ -101,19 +101,7 @@ export default function BankLedgerTable({
             const debit = Number(r.debit ?? (isCreditMutation ? 0 : r.mutation) ?? 0);
             const credit = Number(r.credit ?? (isCreditMutation ? r.mutation : 0) ?? 0);
             const net = debit - credit;
-
-            const isOpeningBalanceJournal = Boolean(
-                r.is_opening_balance ||
-                r.isOpeningBalance ||
-                (String(r.document_type || r.documentType) === 'general_journal' &&
-                    String(r.description || '').trim().toLowerCase().startsWith('saldo awal'))
-            );
-
-            if (isOpeningBalanceJournal) {
-                currentBal = net;
-            } else {
-                currentBal += net;
-            }
+            currentBal += net;
 
             return {
                 ...r,

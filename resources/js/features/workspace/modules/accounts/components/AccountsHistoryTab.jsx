@@ -92,6 +92,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0 }) {
                 loading={loading}
                 startDate={startDate}
                 initialOpeningBalance={initialOpeningBalance}
+                hasReconciliationColumn={true}
             />
         </div>
     );

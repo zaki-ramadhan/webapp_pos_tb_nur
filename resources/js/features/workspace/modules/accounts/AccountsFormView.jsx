@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import SystemErrorModal from '@/components/ui/SystemErrorModal';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -9,7 +10,7 @@ import {
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceFormDraftState } from '@/features/workspace/shared/hooks/useWorkspaceFormDraftState';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import { clearValidationErrors, executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import { buildAccountDetailRecord } from './accountsConfig';
 import {
@@ -69,6 +70,10 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [reconciledErrorModal, setReconciledErrorModal] = useState({
+        open: false,
+        message: '',
+    });
     const initialValues = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
     const {
         values,
@@ -200,14 +205,35 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             setStatus,
             execute: async () => {
                 const payload = buildAccountPayload(values);
-                const response = isDetail
-                    ? await updateBackendResource('accounts', recordId, payload)
-                    : await createBackendResource('accounts', payload);
+                try {
+                    const response = isDetail
+                        ? await updateBackendResource('accounts', recordId, payload)
+                        : await createBackendResource('accounts', payload);
 
-                return {
-                    payload,
-                    savedRecord: response?.data ?? null,
-                };
+                    return {
+                        payload,
+                        savedRecord: response?.data ?? null,
+                    };
+                } catch (err) {
+                    const serverErrors = err?.response?.data?.errors;
+                    const msg = err?.response?.data?.message || '';
+                    const allMsgs = [msg, ...Object.values(serverErrors || {}).flat()];
+                    const reconMsg = allMsgs.find(
+                        (m) => typeof m === 'string' && m.includes('sudah dicocokkan dengan rekening koran')
+                    );
+
+                    if (reconMsg) {
+                        clearValidationErrors();
+                        setReconciledErrorModal({
+                            open: true,
+                            message: reconMsg,
+                        });
+                        const customErr = new Error('RECONCILED_LOCKED');
+                        customErr.__isReconciliationLock = true;
+                        throw customErr;
+                    }
+                    throw err;
+                }
             },
             getErrorMessage: (error) => getBackendErrorMessage(error, 'Akun perkiraan gagal disimpan.'),
             onSuccess: async ({ payload, savedRecord }) => {
@@ -254,7 +280,30 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             setSaving,
             setStatus,
             onStart: () => setDeleteModalOpen(false),
-            execute: () => deleteBackendResource('accounts', recordId),
+            execute: async () => {
+                try {
+                    return await deleteBackendResource('accounts', recordId);
+                } catch (err) {
+                    const serverErrors = err?.response?.data?.errors;
+                    const msg = err?.response?.data?.message || '';
+                    const allMsgs = [msg, ...Object.values(serverErrors || {}).flat()];
+                    const reconMsg = allMsgs.find(
+                        (m) => typeof m === 'string' && m.includes('sudah dicocokkan dengan rekening koran')
+                    );
+
+                    if (reconMsg) {
+                        clearValidationErrors();
+                        setReconciledErrorModal({
+                            open: true,
+                            message: reconMsg,
+                        });
+                        const customErr = new Error('RECONCILED_LOCKED');
+                        customErr.__isReconciliationLock = true;
+                        throw customErr;
+                    }
+                    throw err;
+                }
+            },
             getErrorMessage: (error) => getBackendErrorMessage(error, 'Akun perkiraan gagal dihapus.'),
             onSuccess: async () => {
                 await onReload?.();
@@ -322,6 +371,22 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
                 confirmLoading={saving}
                 onClose={() => setDeleteModalOpen(false)}
                 onConfirm={handleDelete}
+            />
+
+            <SystemErrorModal
+                open={reconciledErrorModal.open}
+                title="Peringatan"
+                description=""
+                message={reconciledErrorModal.message}
+                confirmLabel="OK"
+                onClose={() => {
+                    clearValidationErrors();
+                    setReconciledErrorModal({ open: false, message: '' });
+                }}
+                onConfirm={() => {
+                    clearValidationErrors();
+                    setReconciledErrorModal({ open: false, message: '' });
+                }}
             />
         </ModuleFormTemplate>
     );
