@@ -133,7 +133,7 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
             activeTabId={activeTabIdSafe}
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
-            panelClassName="max-w-[540px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-import"
+            panelClassName="max-w-[560px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[440px] py-3.5"
             footer={
                 <DocumentModalFooter

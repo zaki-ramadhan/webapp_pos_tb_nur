@@ -19,8 +19,8 @@ export default function InventoryAdjustmentInfoTab({ values, setValues }) {
         <div className="space-y-2.5">
             {!hideDepartment ? (
                 <ModalFieldRow label="Departemen">
-                    <div className="grid grid-cols-3 gap-2.5">
-                        <div className="col-span-2 min-w-0">
+                    <div className="grid grid-cols-5 gap-2.5">
+                        <div className="col-span-3 min-w-0">
                             <BackendLookupField
                                 resource="departments"
                                 value={Array.isArray(values.department) ? (values.department[0] || '') : (values.department || '')}
