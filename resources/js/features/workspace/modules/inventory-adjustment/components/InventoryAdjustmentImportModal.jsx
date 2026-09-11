@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import { Loader2 } from 'lucide-react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
@@ -41,13 +42,12 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         const file = event.target.files?.[0];
         if (!file) return;
 
-        setErrorMessage('');
-
         const validExtensions = ['.xlsx', '.xls', '.csv'];
         const fileName = (file.name || '').toLowerCase();
         const isValidType = validExtensions.some((ext) => fileName.endsWith(ext));
 
         if (!isValidType) {
+            if (fileInputRef.current) fileInputRef.current.value = '';
             showSystemErrorModal({
                 title: 'Format File Tidak Didukung',
                 description: 'Silakan pilih file dengan format yang sesuai:',
@@ -56,11 +56,11 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                     'Format yang diperbolehkan hanya file Microsoft Excel (.xlsx, .xls) atau CSV (.csv).',
                 ],
             });
-            if (fileInputRef.current) fileInputRef.current.value = '';
             return;
         }
 
         if (file.size > 10 * 1024 * 1024) {
+            if (fileInputRef.current) fileInputRef.current.value = '';
             showSystemErrorModal({
                 title: 'Ukuran File Terlalu Besar',
                 description: 'Batas ukuran file telah terlampaui:',
@@ -68,11 +68,11 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                     `Ukuran file "${file.name}" melebihi batas maksimal 10 MB.`,
                 ],
             });
-            if (fileInputRef.current) fileInputRef.current.value = '';
             return;
         }
 
         setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 80));
 
         try {
             const { rows } = await importFromFile(file);
@@ -262,7 +262,11 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                             onClick={() => fileInputRef.current?.click()}
                             className="w-auto px-5 whitespace-nowrap [&>span]:inline-flex [&>span]:items-center [&>span]:gap-2.5 [&>span]:whitespace-nowrap"
                         >
-                            <ExcelFileIcon className="h-4 w-4 shrink-0" />
+                            {loading ? (
+                                <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
+                            ) : (
+                                <ExcelFileIcon className="h-4 w-4 shrink-0" />
+                            )}
                             <span className="font-normal whitespace-nowrap">{loading ? 'Sedang membaca...' : 'Pilih file Excel'}</span>
                         </Button>
                         <input
