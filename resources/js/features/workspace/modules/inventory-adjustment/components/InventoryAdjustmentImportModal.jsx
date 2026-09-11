@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import * as XLSX from 'xlsx';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
@@ -39,73 +38,6 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 // Ignore failure to fetch product catalog, fallback to raw excel values
             });
     }, [open]);
-
-    function handleDownloadTemplate(event) {
-        event.preventDefault();
-        try {
-            const headers = [
-                'Nama Barang',
-                'Kode',
-                'Unit',
-                'Kuantitas',
-                'Biaya Satuan',
-                'Gudang',
-                'Tipe Penyesuaian',
-                'Nama Dept Barang',
-                'Keterangan',
-            ];
-            const sampleRows = [
-                ['Semen Tiga Roda 50kg', 'SMN-001', 'SAK', 10, 65000, 'Toko Utama', 'Penambahan', '', 'Penyesuaian hasil stok opname fisik'],
-                ['Besi Beton 10mm SNI', 'BSI-010', 'BTG', 5, 78000, 'Toko Utama', 'Pengurangan', '', 'Batang bengkok / cacat pabrik'],
-                ['Cat Tembok Avitex Putih 5kg', 'CAT-AVI-5K', 'PAIL', 2, 125000, 'Toko Utama', 'Penambahan', '', 'Selisih lebih barang masuk'],
-            ];
-
-            const wb = XLSX.utils.book_new();
-
-            const wsTemplate = XLSX.utils.aoa_to_sheet([headers, ...sampleRows]);
-            wsTemplate['!cols'] = [
-                { wch: 30 },
-                { wch: 15 },
-                { wch: 10 },
-                { wch: 12 },
-                { wch: 15 },
-                { wch: 18 },
-                { wch: 18 },
-                { wch: 18 },
-                { wch: 35 },
-            ];
-
-            const guideRows = [
-                ['Keterangan : - Hanya Sheet Pertama yg di impor. Silahkan masuk ke sheet Pertama untuk mendefinisikan data impor'],
-                ['                        - Baris pertama hanya sebagai judul kolom, mulai baris ke-2 data diimpor. Jadi pastikan data di mulai dari baris ke-2'],
-                ['Nama Kolom', 'Status', 'Max. Karakter', 'Keterangan'],
-                ['Nama Barang', 'Tidak Wajib', 240, 'Isi kolom dengan nama barang. Sistem akan menggunakan kolom ini sebagai alternatif pencocokan jika kode tidak ditemukan.'],
-                ['Kode', 'Wajib', 30, 'Isi dengan kode barang/SKU. Kolom ini menjadi acuan utama apakah barang ada atau tidak dalam database.'],
-                ['Unit', 'Tidak Wajib', 20, 'Isi dengan nama unit/satuan barang (misal: SAK, BTG, PCS). Jika kosong, sistem memakai satuan default barang.'],
-                ['Kuantitas', 'Wajib', '999 Milyar', 'Isi dengan kuantitas penyesuaian barang.'],
-                ['Biaya Satuan', 'Tidak Wajib', '999 Milyar', 'Isi dengan biaya satuan barang (HPP). Jika kosong, sistem memakai nilai biaya satuan dari database.'],
-                ['Gudang', 'Wajib', 240, 'Isi kolom dengan nama gudang barang (misal: Toko Utama, Gudang Transit).'],
-                ['Tipe Penyesuaian', 'Wajib', 20, 'Isi dengan "Penambahan" atau "Pengurangan".'],
-                ['Nama Dept Barang', 'Tidak Wajib', 240, 'Nama departemen pada rincian barang (opsional).'],
-                ['Keterangan', 'Tidak Wajib', 255, 'Catatan atau alasan penyesuaian barang.'],
-            ];
-
-            const wsGuide = XLSX.utils.aoa_to_sheet(guideRows);
-            wsGuide['!cols'] = [
-                { wch: 20 },
-                { wch: 15 },
-                { wch: 15 },
-                { wch: 75 },
-            ];
-
-            XLSX.utils.book_append_sheet(wb, wsTemplate, 'Template');
-            XLSX.utils.book_append_sheet(wb, wsGuide, 'Penjelasan Kolom');
-
-            XLSX.writeFile(wb, 'Template_Penyesuaian_Persediaan.xlsx');
-        } catch {
-            showErrorToast({ message: 'Gagal mengunduh template Excel.' });
-        }
-    }
 
     async function handleFileSelect(event) {
         const file = event.target.files?.[0];
@@ -218,13 +150,13 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                     <h4 className="text-sm font-normal italic text-brand-dark">Template File Excel</h4>
                     <p className="mt-1 text-sm font-normal text-brand-dark leading-relaxed">
                         Pastikan format excel data Anda sesuai dengan contoh yang diberikan. Silakan unduh template nya{' '}
-                        <button
-                            type="button"
-                            onClick={handleDownloadTemplate}
-                            className="text-brand-blue font-normal hover:underline cursor-pointer inline p-0 bg-transparent border-none"
+                        <a
+                            href="/templates/Template_Penyesuaian_Persediaan.xlsx"
+                            download="Template_Penyesuaian_Persediaan.xlsx"
+                            className="text-brand-blue font-normal hover:underline cursor-pointer inline"
                         >
                             disini
-                        </button>
+                        </a>
                     </p>
                 </div>
             </div>

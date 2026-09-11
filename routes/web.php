@@ -32,6 +32,16 @@ Route::get('/favicon.ico', function () {
     return redirect('/assets/images/logo%20tb%20nur%20new.svg', 301);
 });
 
+Route::get('/templates/Template_Penyesuaian_Persediaan.xlsx', function () {
+    $path = public_path('templates/Template_Penyesuaian_Persediaan.xlsx');
+    if (! file_exists($path)) {
+        abort(404);
+    }
+    return response()->download($path, 'Template_Penyesuaian_Persediaan.xlsx', [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ]);
+})->name('template.inventory-adjustment');
+
 Route::get('/auth/google', [GoogleLoginController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback'])->name('auth.google.callback');
 
