@@ -305,30 +305,32 @@ export default function BankLedgerTable({
                             );
                         })}
 
-                        {/* Baris Total */}
-                        <DataTableRow className="hover:bg-slate-50 transition-colors select-none font-medium border-t-2 border-slate-300 bg-white">
-                            <DataTableCell className="text-center text-text-workspace-dark" />
-                            <DataTableCell className="text-text-workspace-dark" />
-                            {hasCheckNumberColumn && (
+                        {/* Baris Total (Hanya tampil jika ada lebih dari 1 riwayat transaksi untuk diakumulasikan) */}
+                        {computedRows.length > 1 && (
+                            <DataTableRow className="hover:bg-slate-50 transition-colors select-none font-medium border-t-2 border-slate-300 bg-white">
+                                <DataTableCell className="text-center text-text-workspace-dark" />
                                 <DataTableCell className="text-text-workspace-dark" />
-                            )}
-                            <DataTableCell className="text-text-workspace-dark font-normal">
-                                Total
-                            </DataTableCell>
-                            <DataTableCell className="text-text-workspace-dark font-normal">
-                                Total
-                            </DataTableCell>
-                            <DataTableCell className={`text-right ${totalMutation.isCredit ? 'text-red-600' : 'text-slate-700'}`}>
-                                {formatCurrencyValue(totalMutation.amount)}
-                            </DataTableCell>
-                            <DataTableCell className="text-center text-text-workspace-dark">
-                                {totalMutation.type}
-                            </DataTableCell>
-                            <DataTableCell className="text-right text-slate-700" />
-                            {hasReconciliationColumn && (
-                                <DataTableCell className="text-center" />
-                            )}
-                        </DataTableRow>
+                                {hasCheckNumberColumn && (
+                                    <DataTableCell className="text-text-workspace-dark" />
+                                )}
+                                <DataTableCell className="text-text-workspace-dark font-normal">
+                                    Total
+                                </DataTableCell>
+                                <DataTableCell className="text-text-workspace-dark font-normal">
+                                    Total
+                                </DataTableCell>
+                                <DataTableCell className={`text-right ${totalMutation.isCredit ? 'text-red-600' : 'text-slate-700'}`}>
+                                    {formatCurrencyValue(totalMutation.amount)}
+                                </DataTableCell>
+                                <DataTableCell className="text-center text-text-workspace-dark">
+                                    {totalMutation.type}
+                                </DataTableCell>
+                                <DataTableCell className="text-right text-slate-700" />
+                                {hasReconciliationColumn && (
+                                    <DataTableCell className="text-center" />
+                                )}
+                            </DataTableRow>
+                        )}
                     </>
                 )}
             </DataTableBody>
