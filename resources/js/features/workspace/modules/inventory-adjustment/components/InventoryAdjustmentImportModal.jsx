@@ -5,6 +5,7 @@ import Button from '@/components/ui/Button';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 import { formatCurrencyValue, parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { downloadInventoryAdjustmentTemplate } from '../constants/inventoryAdjustmentTemplateBase64';
 
 function ExcelFileIcon({ className = 'h-4 w-4' }) {
@@ -22,13 +23,9 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
     const fileInputRef = useRef(null);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        if (!open) {
-            setErrorMessage('');
-            return;
-        }
+        if (!open) return;
 
         axios.get('/api/backend/products', { params: { per_page: 1000 } })
             .then((response) => {
@@ -45,19 +42,60 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         if (!file) return;
 
         setErrorMessage('');
+
+        const validExtensions = ['.xlsx', '.xls', '.csv'];
+        const fileName = (file.name || '').toLowerCase();
+        const isValidType = validExtensions.some((ext) => fileName.endsWith(ext));
+
+        if (!isValidType) {
+            showSystemErrorModal({
+                title: 'Format File Tidak Didukung',
+                description: 'Silakan pilih file dengan format yang sesuai:',
+                messages: [
+                    `File "${file.name}" tidak dapat diproses.`,
+                    'Format yang diperbolehkan hanya file Microsoft Excel (.xlsx, .xls) atau CSV (.csv).',
+                ],
+            });
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+            showSystemErrorModal({
+                title: 'Ukuran File Terlalu Besar',
+                description: 'Batas ukuran file telah terlampaui:',
+                messages: [
+                    `Ukuran file "${file.name}" melebihi batas maksimal 10 MB.`,
+                ],
+            });
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
+        }
+
         setLoading(true);
 
         try {
             const { rows } = await importFromFile(file);
 
             if (!rows || rows.length === 0) {
-                setErrorMessage('File tidak memiliki data baris untuk diimpor.');
+                showSystemErrorModal({
+                    title: 'File Tidak Memiliki Data',
+                    description: 'Pemeriksaan baris data gagal:',
+                    messages: [
+                        'File Excel tidak memiliki baris data untuk diimpor.',
+                        'Pastikan data barang dimulai dari baris ke-2 pada Sheet pertama (Template).',
+                    ],
+                });
                 setLoading(false);
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 return;
             }
 
-            const importedItems = rows.map((row, idx) => {
+            const validationErrors = [];
+            const importedItems = [];
+
+            rows.forEach((row, idx) => {
+                const rowNumber = idx + 2;
                 const getVal = (...keys) => {
                     for (const k of keys) {
                         const foundKey = Object.keys(row).find(
@@ -77,8 +115,29 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 const rawUnit = getVal('satuan', 'unit');
                 const rawCost = getVal('biayasatuan', 'biaya', 'cost', 'unitcost', 'hargabeli', 'harga');
                 const rawWarehouse = getVal('gudang', 'warehouse');
-                const rawDept = getVal('namadeptbarang', 'dept', 'departemen', 'department');
                 const rawNotes = getVal('keterangan', 'catatan', 'notes');
+
+                // Lewati baris kosong tanpa kode, nama, kuantitas, ataupun biaya
+                if (!rawCode && !rawName && !rawQty && !rawCost) {
+                    return;
+                }
+
+                const itemLabel = rawName || rawCode || `Baris ${rowNumber}`;
+
+                if (!rawCode && !rawName) {
+                    validationErrors.push(`Baris ${rowNumber}: Kode Barang atau Nama Barang wajib diisi.`);
+                    return;
+                }
+
+                const parsedQty = parseNumericInput(rawQty);
+                if (isNaN(parsedQty) || parsedQty <= 0) {
+                    validationErrors.push(`Baris ${rowNumber} (${itemLabel}): Kuantitas harus berupa angka positif lebih dari 0.`);
+                }
+
+                const parsedCost = rawCost ? parseNumericInput(rawCost) : null;
+                if (parsedCost !== null && (isNaN(parsedCost) || parsedCost < 0)) {
+                    validationErrors.push(`Baris ${rowNumber} (${itemLabel}): Biaya satuan tidak boleh bernilai negatif.`);
+                }
 
                 const matchedProduct = products.find((p) =>
                     (rawCode && String(p.code).toLowerCase() === rawCode.toLowerCase()) ||
@@ -86,13 +145,13 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 );
 
                 const resolvedType = (rawType && rawType.toLowerCase().includes('kurang')) ? 'Pengurangan' : 'Penambahan';
-                const resolvedQty = parseNumericInput(rawQty) || 1;
+                const resolvedQty = parsedQty > 0 ? parsedQty : 1;
                 const defaultCost = matchedProduct?.buy_price ?? matchedProduct?.cost_price ?? matchedProduct?.unit_cost ?? 0;
-                const resolvedCost = rawCost ? parseNumericInput(rawCost) : defaultCost;
+                const resolvedCost = parsedCost !== null ? parsedCost : defaultCost;
                 const unitName = rawUnit || matchedProduct?.base_unit?.name || matchedProduct?.unit?.name || '';
                 const warehouseName = rawWarehouse || matchedProduct?.default_warehouse?.name || 'Gudang Utama';
 
-                return {
+                importedItems.push({
                     id: `imported-${Date.now()}-${idx}`,
                     __productId: matchedProduct?.id ?? null,
                     __unitId: matchedProduct?.base_unit_id ?? matchedProduct?.unit_id ?? null,
@@ -105,16 +164,33 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                     unitCost: formatCurrencyValue(resolvedCost),
                     totalCost: formatCurrencyValue(resolvedQty * resolvedCost),
                     warehouse: warehouseName ? [warehouseName] : [],
-                    department: rawDept ? [rawDept] : [],
+                    department: [],
                     notes: rawNotes || '',
                     oldDiscount: '0',
                     minQty: '0',
                     newDiscount: '0',
-                };
-            }).filter((item) => item.name || item.code);
+                });
+            });
+
+            if (validationErrors.length > 0) {
+                showSystemErrorModal({
+                    title: 'Kesalahan Validasi Data Excel',
+                    description: 'Silakan perbaiki data berikut pada file Excel sebelum mengimpor:',
+                    messages: validationErrors.slice(0, 8).concat(
+                        validationErrors.length > 8 ? [`...dan ${validationErrors.length - 8} kesalahan lainnya.`] : []
+                    ),
+                });
+                setLoading(false);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+                return;
+            }
 
             if (importedItems.length === 0) {
-                setErrorMessage('Tidak ada data barang yang valid untuk diimpor.');
+                showSystemErrorModal({
+                    title: 'Data Barang Tidak Valid',
+                    description: 'Tidak ada baris barang yang dapat diimpor:',
+                    messages: ['Pastikan kolom Kode Barang atau Nama Barang telah terisi pada file Excel.'],
+                });
                 setLoading(false);
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 return;
@@ -123,11 +199,17 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
             onImport?.(importedItems);
             showSuccessToast({
                 title: 'Berhasil',
-                message: `Berhasil mengimpor ${importedItems.length} barang ke rincian.`,
+                message: `Berhasil mengimpor ${importedItems.length} barang ke rincian penyesuaian.`,
             });
             onClose();
-        } catch {
-            setErrorMessage('Gagal membaca file. Pastikan format file .xlsx, .xls, atau .csv valid.');
+        } catch (err) {
+            showSystemErrorModal({
+                title: 'Gagal Membaca File Excel',
+                description: 'Terjadi permasalahan saat memproses file:',
+                messages: [
+                    err?.message || 'Pastikan format file Excel (.xlsx, .xls) atau CSV (.csv) valid dan tidak rusak.',
+                ],
+            });
         } finally {
             setLoading(false);
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -191,12 +273,6 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                             onChange={handleFileSelect}
                         />
                     </div>
-
-                    {errorMessage ? (
-                        <p className="mt-2 text-sm text-red-600 font-normal leading-normal">
-                            {errorMessage}
-                        </p>
-                    ) : null}
                 </div>
             </div>
         </WorkspaceDialog>
