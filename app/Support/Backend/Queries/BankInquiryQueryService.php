@@ -347,7 +347,13 @@ class BankInquiryQueryService
             foreach ($priorDocuments as $pDoc) {
                 foreach ($this->rowsFromDocumentLines($pDoc, $accountMap) as $pRow) {
                     $accId = (int) $pRow['account_id'];
-                    $balances[$accId] = ($balances[$accId] ?? 0) + (float) $pRow['net_amount'];
+                    $isOpBalJournal = !empty($pRow['is_opening_balance'])
+                        || ($pRow['document_type'] === 'general_journal' && str_starts_with(strtolower(trim((string)$pRow['description'])), 'saldo awal'));
+                    if ($isOpBalJournal) {
+                        $balances[$accId] = (float) $pRow['net_amount'];
+                    } else {
+                        $balances[$accId] = ($balances[$accId] ?? 0) + (float) $pRow['net_amount'];
+                    }
                     $accountHasPriorDocs[$accId] = true;
                 }
                 foreach ($this->rowsFromSyntheticAccounts($pDoc, $accountMap) as $pRow) {
@@ -367,6 +373,21 @@ class BankInquiryQueryService
             }
         }
 
+        $accountHasOpeningJournalInRealRows = [];
+        foreach ($realRows as $r) {
+            $isOpBalJournal = !empty($r['is_opening_balance'])
+                || ($r['document_type'] === 'general_journal' && str_starts_with(strtolower(trim((string)$r['description'])), 'saldo awal'));
+            if ($isOpBalJournal) {
+                $accountHasOpeningJournalInRealRows[(int) $r['account_id']] = true;
+            }
+        }
+
+        foreach ($accountMap as $accId => $account) {
+            if ($accountHasOpeningJournalInRealRows[(int) $accId] ?? false) {
+                $balances[(int) $accId] = 0.0;
+            }
+        }
+
         $sortedRealRows = $realRows->sortBy([
             ['sortable_date', 'asc'],
             ['account_name', 'asc'],
@@ -379,7 +400,7 @@ class BankInquiryQueryService
         if ($includeOpeningBalanceRow && count($accountIds) === 1) {
             $accId = $accountIds[0];
             $accName = $accountMap->get($accId)?->name ?? '';
-            $initialBal = $balances[$accId] ?? 0;
+            $initialBal = ($accountHasOpeningJournalInRealRows[$accId] ?? false) ? 0.0 : ($balances[$accId] ?? 0);
 
             $outputRows->push([
                 'id' => 'opening-balance',
@@ -409,7 +430,16 @@ class BankInquiryQueryService
         $computedRealRows = $sortedRealRows->map(function (array $row) use (&$balances): array {
             $accountId = (int) $row['account_id'];
             $currentBalance = $balances[$accountId] ?? 0;
-            $currentBalance += (float) $row['net_amount'];
+
+            $isOpeningBalanceJournal = !empty($row['is_opening_balance'])
+                || ($row['document_type'] === 'general_journal' && str_starts_with(strtolower(trim((string)$row['description'])), 'saldo awal'));
+
+            if ($isOpeningBalanceJournal) {
+                $currentBalance = (float) $row['net_amount'];
+            } else {
+                $currentBalance += (float) $row['net_amount'];
+            }
+
             $balances[$accountId] = $currentBalance;
             $row['balance'] = $this->formatNumber($currentBalance);
 
