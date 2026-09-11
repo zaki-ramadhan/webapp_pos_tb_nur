@@ -265,7 +265,7 @@ export default function UnpaidDocumentsSelectionModal({
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-[#5a738e] text-white text-xs sm:text-sm font-normal sticky top-0 z-10">
-                            <th className="py-2.5 px-3 w-[44px] text-center border-r border-slate-400/40">
+                            <th className="py-2.5 px-3 w-[44px] text-center border-r border-table-cell-border">
                                 <input
                                     type="checkbox"
                                     checked={isAllSelected}
@@ -279,9 +279,9 @@ export default function UnpaidDocumentsSelectionModal({
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-normal text-white cursor-pointer hover:bg-slate-600/50 border-r border-slate-400/40"
+                                className="py-2.5 px-3 font-normal text-white cursor-pointer hover:bg-slate-600/50 border-r border-table-cell-border"
                             />
-                            <th className="py-2.5 px-3 font-normal text-white text-center border-r border-slate-400/40 w-[110px]">
+                            <th className="py-2.5 px-3 font-normal text-white text-center border-r border-table-cell-border w-[110px]">
                                 Keterangan
                             </th>
                             <SortableTableHeaderCell
@@ -290,7 +290,7 @@ export default function UnpaidDocumentsSelectionModal({
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-slate-400/40"
+                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-table-cell-border"
                             />
                             <SortableTableHeaderCell
                                 label="Jatuh Tempo"
@@ -298,7 +298,7 @@ export default function UnpaidDocumentsSelectionModal({
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-slate-400/40"
+                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-table-cell-border"
                             />
                             <SortableTableHeaderCell
                                 label="Terhutang"
@@ -337,7 +337,7 @@ export default function UnpaidDocumentsSelectionModal({
                                         onClick={() => handleToggleRow(rec.id)}
                                         className={`cursor-pointer transition-colors hover:bg-slate-50 ${isChecked ? 'bg-blue-50/40' : ''}`}
                                     >
-                                        <td className="py-2.5 px-3 text-center border-r border-gray-100" onClick={(e) => e.stopPropagation()}>
+                                        <td className="py-2.5 px-3 text-center border-r border-table-cell-border" onClick={(e) => e.stopPropagation()}>
                                             <input
                                                 type="checkbox"
                                                 checked={isChecked}
@@ -345,16 +345,16 @@ export default function UnpaidDocumentsSelectionModal({
                                                 className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
                                             />
                                         </td>
-                                        <td className="py-2.5 px-3 font-normal text-zinc-700 border-r border-gray-100">
+                                        <td className="py-2.5 px-3 font-normal text-zinc-700 border-r border-table-cell-border">
                                             {docNum}
                                         </td>
-                                        <td className="py-2.5 px-3 font-normal text-zinc-500 text-center border-r border-gray-100">
+                                        <td className="py-2.5 px-3 font-normal text-zinc-500 text-center border-r border-table-cell-border">
                                             -
                                         </td>
-                                        <td className="py-2.5 px-3 font-normal text-zinc-600 text-center border-r border-gray-100">
+                                        <td className="py-2.5 px-3 font-normal text-zinc-600 text-center border-r border-table-cell-border">
                                             {entryDate}
                                         </td>
-                                        <td className="py-2.5 px-3 font-normal text-zinc-600 text-center border-r border-gray-100">
+                                        <td className="py-2.5 px-3 font-normal text-zinc-600 text-center border-r border-table-cell-border">
                                             {dueDate}
                                         </td>
                                         <td className="py-2.5 px-3 text-right font-normal text-zinc-700">
