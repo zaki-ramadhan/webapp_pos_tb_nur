@@ -155,24 +155,11 @@ export default function BankLedgerTable({
         };
     }, [computedRows]);
 
-    const finalEndingBalance = useMemo(() => {
-        if (computedRows.length > 0) {
-            return computedRows[computedRows.length - 1].computedBalance;
-        }
-        return openingBalValue;
-    }, [computedRows, openingBalValue]);
-
     const isOpeningBalanceNegative = openingBalValue < 0;
     const formattedOpeningBalance = isOpeningBalanceNegative
         ? `-${formatCurrencyValue(Math.abs(openingBalValue))}`
         : formatCurrencyValue(openingBalValue);
 
-    const isFinalBalanceNegative = finalEndingBalance < 0;
-    const formattedFinalBalance = isFinalBalanceNegative
-        ? `-${formatCurrencyValue(Math.abs(finalEndingBalance))}`
-        : formatCurrencyValue(finalEndingBalance);
-
-    const totalColSpan = hasCheckNumberColumn ? 5 : 4;
     let totalHeadColSpan = hasCheckNumberColumn ? 8 : 7;
     if (hasReconciliationColumn) {
         totalHeadColSpan += 1;
@@ -318,9 +305,17 @@ export default function BankLedgerTable({
                             );
                         })}
 
-                        {/* Baris Total (Dengan merge colSpan & Saldo Akhir) */}
+                        {/* Baris Total */}
                         <DataTableRow className="hover:bg-slate-50 transition-colors select-none font-medium border-t-2 border-slate-300 bg-white">
-                            <DataTableCell colSpan={totalColSpan} className="text-black font-normal">
+                            <DataTableCell className="text-center text-text-workspace-dark" />
+                            <DataTableCell className="text-text-workspace-dark" />
+                            {hasCheckNumberColumn && (
+                                <DataTableCell className="text-text-workspace-dark" />
+                            )}
+                            <DataTableCell className="text-text-workspace-dark font-normal">
+                                Total
+                            </DataTableCell>
+                            <DataTableCell className="text-text-workspace-dark font-normal">
                                 Total
                             </DataTableCell>
                             <DataTableCell className={`text-right ${totalMutation.isCredit ? 'text-red-600' : 'text-slate-700'}`}>
@@ -329,9 +324,7 @@ export default function BankLedgerTable({
                             <DataTableCell className="text-center text-text-workspace-dark">
                                 {totalMutation.type}
                             </DataTableCell>
-                            <DataTableCell className={`text-right ${isFinalBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
-                                {formattedFinalBalance}
-                            </DataTableCell>
+                            <DataTableCell className="text-right text-slate-700" />
                             {hasReconciliationColumn && (
                                 <DataTableCell className="text-center" />
                             )}
