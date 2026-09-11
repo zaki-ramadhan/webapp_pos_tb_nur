@@ -253,6 +253,12 @@ export function InventoryAdjustmentFormView({
         [selectLookup],
     );
 
+    const isItemExisting = Boolean(
+        isDetail &&
+        selectedItem &&
+        !String(selectedItem.id).startsWith('draft-')
+    );
+
     return (
         <>
             <TransactionFormLayout
@@ -288,12 +294,13 @@ export function InventoryAdjustmentFormView({
                     deleteLabel: 'Hapus',
                     submitLabel: 'Lanjut',
                     tabs: [
-                        { id: 'details', label: 'Rincian' },
+                        { id: 'details', label: 'Rincian Barang' },
                         { id: 'info', label: 'Info Lainnya' },
                     ],
-                    adjustmentTypeOptions: config.adjustmentTypeOptions ?? ['Penambahan', 'Pengurangan'],
+                    adjustmentTypeOptions: config.adjustmentTypeOptions ?? ['Penambahan', 'Pengurangan', 'Atur Stok'],
                 }}
                 item={selectedItem}
+                isExisting={isItemExisting}
                 onSave={handleItemModalSave}
                 onDelete={handleItemModalDelete}
             />

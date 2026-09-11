@@ -6,7 +6,7 @@ import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAv
 function ModalFieldRow({ label, required = false, children, isTextarea = false }) {
     return (
         <div className={`grid gap-2 sm:grid-cols-[156px_minmax(0,1fr)] sm:gap-x-4 ${isTextarea ? 'sm:items-start' : 'sm:items-center'}`}>
-            <TransactionFieldLabel label={label} required={required} className={`text-xs sm:text-sm font-normal text-slate-700 ${isTextarea ? 'pt-2' : ''}`} />
+            <TransactionFieldLabel label={label} required={required} className={`text-xs sm:text-sm font-normal text-table-row-text ${isTextarea ? 'pt-2' : ''}`} />
             <div>{children}</div>
         </div>
     );
@@ -16,7 +16,7 @@ export default function InventoryAdjustmentInfoTab({ values, setValues }) {
     const hideDepartment = isWorkspacePageInactive('department');
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-2.5">
             {!hideDepartment ? (
                 <ModalFieldRow label="Departemen">
                     <div className="max-w-[280px]">
