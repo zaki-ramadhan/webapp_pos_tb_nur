@@ -32,7 +32,7 @@ export function RecentActivityWidget({ widget }) {
         <div className="flex h-full flex-col gap-3 min-h-0">
             <div className="flex-1 min-h-0 overflow-y-auto pr-1.5 [scrollbar-width:thin]">
                 {dateGroups.map((group) => (
-                    <div key={group.key} className="flex gap-6 py-4 border-b border-table-row-border last:border-b-0 first:pt-0 items-start">
+                    <div key={group.key} className="flex gap-6 py-4 border-b border-slate-200 last:border-b-0 first:pt-0 items-start">
                         {/* Left Column: Date Block */}
                         <div className="flex flex-col items-center text-center min-w-[56px] shrink-0 pt-0.5 select-none">
                             <span className="text-xs font-normal text-black">{group.dayName}</span>

@@ -99,7 +99,7 @@ export default function TransferFeeModal({
                 </div>
             }
         >
-            <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 mt-0">
+            <div className="flex border-b border-slate-200 -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 mt-0">
                 <button
                     type="button"
                     onClick={() => setActiveTab('detail')}

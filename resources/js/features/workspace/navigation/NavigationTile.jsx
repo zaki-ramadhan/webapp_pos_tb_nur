@@ -45,7 +45,7 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
         ? 'border-tab-primary-inactive-hover-bg bg-ui-bg-panel text-tab-view-active-text opacity-80 saturate-0'
         : isImplemented
           ? tone.button
-          : 'border-tab-overflow-border bg-table-row-border text-text-inactive opacity-80 saturate-0';
+          : 'border-tab-overflow-border bg-slate-200 text-text-inactive opacity-80 saturate-0';
     const iconClassName = isInactive ? 'text-disabled-text' : isImplemented ? tone.icon : 'text-text-inactive';
     const labelClassName = isInactive ? 'text-text-sidebar-muted' : isImplemented ? 'text-tab-active-text' : 'text-text-light';
     const tileClassName = dense

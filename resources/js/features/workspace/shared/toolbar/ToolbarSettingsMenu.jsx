@@ -34,7 +34,7 @@ function ColumnSettingsPanel({ anchorRef, columns, visibleIds, onToggle, onClose
             ref={panelRef}
             className="absolute right-0 top-[calc(100%+8px)] z-50 w-[240px] rounded-[4px] border border-chart-border bg-white shadow-menu-dropdown overflow-hidden"
         >
-            <div className={`px-2 pt-2 ${filtered.length > 0 ? 'pb-1.5 border-b border-table-row-border' : 'pb-2'}`}>
+            <div className={`px-2 pt-2 ${filtered.length > 0 ? 'pb-1.5 border-b border-slate-200' : 'pb-2'}`}>
                 <div className="flex items-center gap-1.5 rounded-[4px] border border-border-info-card bg-bg-info-card px-2.5 py-1.5">
                     <SearchIcon className="h-3.5 w-3.5 shrink-0 text-text-light" />
                     <input

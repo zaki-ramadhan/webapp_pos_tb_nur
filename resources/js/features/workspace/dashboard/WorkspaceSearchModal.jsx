@@ -54,7 +54,7 @@ function SearchMenuCard({ item, onSelect }) {
         ? 'border-tab-primary-inactive-hover-bg bg-ui-bg-panel text-tab-view-active-text opacity-80 saturate-0'
         : isImplemented
           ? `${toneClassName.border} ${toneClassName.hover}`
-          : 'border-tab-overflow-border bg-table-row-border text-text-inactive opacity-80 saturate-0';
+          : 'border-tab-overflow-border bg-slate-200 text-text-inactive opacity-80 saturate-0';
     const iconClassName = isInactive ? 'text-disabled-text' : isImplemented ? toneClassName.icon : 'text-text-inactive';
     const labelClassName = isInactive ? 'text-text-sidebar-muted' : isImplemented ? 'text-blue-550' : 'text-text-light';
     const statusLabel = isInactive ? WORKSPACE_INACTIVE_HINT : isImplemented ? '' : 'Belum diimplementasikan penuh';
