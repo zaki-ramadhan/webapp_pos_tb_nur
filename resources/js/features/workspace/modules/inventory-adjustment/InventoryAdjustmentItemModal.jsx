@@ -134,7 +134,7 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
             panelClassName="max-w-[540px] overflow-hidden rounded-[4px] px-0 py-0 shadow-modal-import"
-            bodyClassName="min-h-[440px] py-3.5 px-4"
+            bodyClassName="min-h-[440px] py-3.5"
             footer={
                 <DocumentModalFooter
                     deleteLabel={modal.deleteLabel ?? 'Hapus'}
