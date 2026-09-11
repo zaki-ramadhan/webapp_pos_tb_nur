@@ -48,7 +48,7 @@ export default function SystemErrorModal({
     onCancel,
     onCopy,
     dismissible = true,
-    maxWidthClassName = 'max-w-[520px]',
+    maxWidthClassName = 'max-w-[640px]',
 }) {
     const isInfo = type === 'info' || title === 'Informasi';
     const isConfirmationTitle = type === 'confirmation' || title === 'Konfirmasi';
@@ -236,6 +236,7 @@ function SystemErrorModalContainer({
     cancelLabel,
     copyLabel,
     copiedLabel,
+    maxWidthClassName,
     resolve,
     onDestroy,
 }) {
@@ -264,6 +265,7 @@ function SystemErrorModalContainer({
             cancelLabel={cancelLabel}
             copyLabel={copyLabel}
             copiedLabel={copiedLabel}
+            maxWidthClassName={maxWidthClassName}
             onClose={() => cleanup(false)}
             onConfirm={() => cleanup(true)}
             onCancel={() => cleanup(false)}
@@ -293,6 +295,7 @@ export function showSystemErrorModal(options = {}) {
                 cancelLabel={options.cancelLabel}
                 copyLabel={options.copyLabel}
                 copiedLabel={options.copiedLabel}
+                maxWidthClassName={options.maxWidthClassName || 'max-w-[640px]'}
                 resolve={resolve}
                 onDestroy={onDestroy}
             />
