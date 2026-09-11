@@ -99,7 +99,7 @@ function useBackendLookupController({ value = '', disabled = false, resource, qu
 
     function handleInputChange(nextValue) {
         setDraftValue(nextValue);
-        if (nextValue.trim()) {
+        if (typeof nextValue === 'string' ? nextValue.length > 0 : Boolean(nextValue)) {
             setQuery(nextValue);
             setOpen(true);
         } else {

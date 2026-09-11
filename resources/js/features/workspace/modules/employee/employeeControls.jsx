@@ -28,7 +28,7 @@ export function SuggestionTextInput({
         const keyword = normalizedValue.trim().toLowerCase();
 
         if (!keyword) {
-            return [];
+            return options;
         }
 
         return options.filter((option) => String(option).toLowerCase().includes(keyword));
@@ -65,18 +65,16 @@ export function SuggestionTextInput({
     }, [open]);
 
     function handleInputFocus() {
-        if (normalizedValue.trim()) {
-            setOpen(true);
-        }
+        setOpen(true);
     }
 
     function handleInputChange(nextValue) {
         onChange?.(nextValue);
-        setOpen(Boolean(nextValue.trim()));
+        setOpen(true);
     }
 
     function handleSelect(option) {
-        onChange?.(option);
+        onChange?.(typeof option === 'string' ? option.trim() : option);
         setOpen(false);
     }
 
@@ -89,7 +87,13 @@ export function SuggestionTextInput({
         <div ref={rootRef} className="relative">
             <TextInput
                 value={normalizedValue}
+                allowLeadingSpace={true}
                 onFocus={handleInputFocus}
+                onKeyDown={(event) => {
+                    if (event.key === ' ' && !open) {
+                        setOpen(true);
+                    }
+                }}
                 onChange={(event) => handleInputChange(event.target.value)}
                 placeholder={placeholder}
                 autoComplete="off"

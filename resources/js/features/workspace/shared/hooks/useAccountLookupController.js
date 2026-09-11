@@ -210,7 +210,7 @@ export default function useAccountLookupController({ value, values, disabled = f
     function handleInputChange(nextValue) {
         setDraftValue(nextValue);
 
-        if (nextValue.trim()) {
+        if (typeof nextValue === 'string' ? nextValue.length > 0 : Boolean(nextValue)) {
             openLookup(nextValue);
             return;
         }
@@ -222,11 +222,12 @@ export default function useAccountLookupController({ value, values, disabled = f
     }
 
     function handleSelect(record, label, onSelectAccount) {
-        setDraftValue(label);
+        const cleanLabel = typeof label === 'string' ? label.trim() : label;
+        setDraftValue(cleanLabel);
         setOpen(false);
         setQuery('');
         setError('');
-        onSelectAccount?.(record, label);
+        onSelectAccount?.(record, cleanLabel);
     }
 
     function handleRemove(onRemove) {
