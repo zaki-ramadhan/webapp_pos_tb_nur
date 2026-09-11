@@ -87,16 +87,6 @@ export default function PaymentInfoSection({ config, values, setValues, isDetail
                             <div className="py-1 text-xs sm:text-sm text-brand-dark">
                                 {values.reconcileStatus || 'Belum'}
                             </div>
-
-                            <TransactionFieldLabel label="Dicetak/email" />
-                            <div className="max-w-[276px]">
-                                <TextInput
-                                    value={values.printStatus || 'Belum cetak/email'}
-                                    readOnly
-                                    className="h-[34px] rounded-[4px] border-ui-border bg-slate-50/70"
-                                    inputClassName="text-xs sm:text-sm text-slate-600 cursor-default"
-                                />
-                            </div>
                         </>
                     )}
                 </div>
