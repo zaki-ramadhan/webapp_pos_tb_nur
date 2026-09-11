@@ -169,7 +169,7 @@ export default function PayrollEntryEmployeeModal({
                         variant="secondary"
                         size="md"
                         onClick={handleEmployeeModalDelete}
-                        className="!border-[#2353a0] !text-[#2353a0] hover:!bg-[#2353a0]/5 font-normal"
+                        className="border-brand-blue text-brand-blue hover:bg-brand-blue/5 rounded-[4px]"
                     >
                         {selectedEmployeeRow?.isNewRow ? 'Batal' : 'Hapus'}
                     </Button>
@@ -177,7 +177,7 @@ export default function PayrollEntryEmployeeModal({
                         variant="brand-blue"
                         size="md"
                         onClick={handleEmployeeModalSubmit}
-                        className="!bg-[#2353a0] hover:!bg-[#1f4f96] !border-transparent !text-white font-normal shadow-btn-blue-hover"
+                        className="rounded-[4px] min-w-[80px]"
                     >
                         Lanjut
                     </Button>

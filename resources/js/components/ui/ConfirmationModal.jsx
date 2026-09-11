@@ -79,7 +79,7 @@ export default function ConfirmationModal({
                                     disabled={confirmDisabled}
                                     loading={confirmLoading}
                                     loadingLabel={confirmLabel}
-                                    className="min-w-[60px] rounded-[4px] shadow-none"
+                                    className="min-w-[70px] rounded-[4px]"
                                 >
                                     {confirmLabel}
                                 </Button>
@@ -91,8 +91,8 @@ export default function ConfirmationModal({
                                         disabled={cancelDisabled || confirmLoading}
                                         className={
                                             cancelVariant === 'ghost'
-                                                ? 'min-w-[60px] rounded-[4px] text-brand-blue hover:underline shadow-none'
-                                                : 'min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none'
+                                                ? 'min-w-[70px] rounded-[4px] text-brand-blue hover:underline shadow-none'
+                                                : 'min-w-[70px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5'
                                         }
                                     >
                                         {cancelLabel}
@@ -109,8 +109,8 @@ export default function ConfirmationModal({
                                         disabled={cancelDisabled || confirmLoading}
                                         className={
                                             cancelVariant === 'ghost'
-                                                ? 'min-w-[60px] rounded-[4px] text-brand-blue hover:underline shadow-none'
-                                                : 'min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none'
+                                                ? 'min-w-[70px] rounded-[4px] text-brand-blue hover:underline shadow-none'
+                                                : 'min-w-[70px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5'
                                         }
                                     >
                                         {cancelLabel}
@@ -123,7 +123,7 @@ export default function ConfirmationModal({
                                     disabled={confirmDisabled}
                                     loading={confirmLoading}
                                     loadingLabel={confirmLabel}
-                                    className="min-w-[60px] rounded-[4px] shadow-none"
+                                    className="min-w-[70px] rounded-[4px]"
                                 >
                                     {confirmLabel}
                                 </Button>
@@ -137,7 +137,7 @@ export default function ConfirmationModal({
                                     size="md"
                                     onClick={onClose}
                                     disabled={cancelDisabled || confirmLoading}
-                                    className="min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
+                                    className="min-w-[70px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5"
                                 >
                                     {cancelLabel}
                                 </Button>
@@ -152,7 +152,7 @@ export default function ConfirmationModal({
                                 disabled={confirmDisabled}
                                 loading={confirmLoading}
                                 loadingLabel={confirmLabel}
-                                className="min-w-[60px] rounded-[4px] shadow-none"
+                                className="min-w-[70px] rounded-[4px]"
                             >
                                 {confirmLabel}
                             </Button>

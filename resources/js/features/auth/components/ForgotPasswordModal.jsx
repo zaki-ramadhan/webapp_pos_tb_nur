@@ -147,7 +147,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="py-2.5 min-w-[70px] px-5 rounded-[4px] bg-brand-blue hover:bg-brand-blue-hover text-xs sm:text-sm font-medium text-white shadow-sm transition-colors cursor-pointer"
+                                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-brand-blue px-6 text-sm sm:text-base font-normal text-white hover:bg-brand-blue-hover active:scale-[0.98] transition cursor-pointer shadow-button-primary min-w-[80px]"
                             >
                                 OK
                             </button>

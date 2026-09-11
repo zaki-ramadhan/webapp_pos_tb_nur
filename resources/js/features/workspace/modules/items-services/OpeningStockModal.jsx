@@ -95,8 +95,9 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                 <div className="flex justify-end">
                     <Button
                         onClick={handleSave}
-                        size="sm"
-                        variant="primary"
+                        size="md"
+                        variant="brand-blue"
+                        className="rounded-[4px] min-w-[80px]"
                     >
                         Lanjut
                     </Button>

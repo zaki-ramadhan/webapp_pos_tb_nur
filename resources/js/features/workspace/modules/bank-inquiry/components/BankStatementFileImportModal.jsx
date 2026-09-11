@@ -134,7 +134,7 @@ export default function BankStatementFileImportModal({
                             disabled={!file}
                             loading={loading}
                             loadingLabel="Memproses..."
-                            className="min-w-[90px] px-5 rounded-[4px] text-sm font-medium shadow-none"
+                            className="min-w-[80px] rounded-[4px]"
                         >
                             Lanjut
                         </Button>
@@ -157,7 +157,7 @@ export default function BankStatementFileImportModal({
                             variant="brand-blue"
                             size="md"
                             onClick={() => setIsErrorModalOpen(false)}
-                            className="min-w-[70px] px-5 rounded-[4px] text-sm shadow-none"
+                            className="min-w-[80px] rounded-[4px]"
                         >
                             OK
                         </Button>

@@ -60,6 +60,9 @@ export default function Button({
     const hasFontWeight = className.split(' ').some((c) => c.startsWith('font-'));
     const fontWeightClass = hasFontWeight ? '' : 'font-normal';
 
+    const hasRounded = className.split(' ').some((c) => c.startsWith('rounded'));
+    const roundedClass = hasRounded ? '' : 'rounded-md';
+
     const hasHeight = className.split(' ').some((c) => c.startsWith('h-') || c.startsWith('py-'));
     const sizeClass = sizeClasses[size] || sizeClasses.lg;
     let resolvedSizeClass = hasHeight ? sizeClass.replace(/\bh-\d+\b/g, '') : sizeClass;
@@ -77,7 +80,7 @@ export default function Button({
             disabled={Component === 'button' ? isDisabled : undefined}
             aria-disabled={isDisabled}
             aria-busy={loading}
-            className={`inline-flex items-center justify-center gap-3 rounded-md ${fontWeightClass} transition ${variantClass} ${activeClass} ${resolvedSizeClass} ${widthClass} ${className}`.trim()}
+            className={`inline-flex items-center justify-center gap-3 ${roundedClass} ${fontWeightClass} transition ${variantClass} ${activeClass} ${resolvedSizeClass} ${widthClass} ${className}`.trim()}
             {...props}
         >
             {loading ? (

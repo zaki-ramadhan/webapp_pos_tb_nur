@@ -282,7 +282,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                             variant="secondary"
                             disabled={actionLoading}
                             onClick={() => setIsPurgeModalOpen(false)}
-                            className="h-9 px-4 text-sm rounded-[4px] border-slate-400 text-slate-800 shadow-none"
+                            className="min-w-[80px] rounded-[4px] border-slate-400 text-slate-800 hover:bg-slate-50"
                         >
                             Batal
                         </Button>
@@ -292,7 +292,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                             loading={actionLoading}
                             loadingLabel="Membersihkan..."
                             onClick={handlePurge}
-                            className="h-9 px-4 text-sm rounded-[4px] shadow-none"
+                            className="min-w-[80px] rounded-[4px]"
                         >
                             Ya, Bersihkan Data
                         </Button>
@@ -328,7 +328,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                             variant="secondary"
                             disabled={actionLoading}
                             onClick={() => setIsResetTxModalOpen(false)}
-                            className="h-9 px-4 text-sm rounded-[4px] border-slate-400 text-slate-800 shadow-none"
+                            className="min-w-[80px] rounded-[4px] border-slate-400 text-slate-800 hover:bg-slate-50"
                         >
                             Batal
                         </Button>
@@ -338,7 +338,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                             loading={actionLoading}
                             loadingLabel="Mereset..."
                             onClick={handleResetTransactions}
-                            className="h-9 px-4 text-sm rounded-[4px] shadow-none"
+                            className="min-w-[80px] rounded-[4px]"
                         >
                             Ya, Reset Transaksi
                         </Button>
@@ -371,7 +371,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                             variant="secondary"
                             disabled={actionLoading}
                             onClick={() => setIsReseedModalOpen(false)}
-                            className="h-9 px-4 text-sm rounded-[4px] border-slate-400 text-slate-800 shadow-none"
+                            className="min-w-[80px] rounded-[4px] border-slate-400 text-slate-800 hover:bg-slate-50"
                         >
                             Batal
                         </Button>
@@ -381,7 +381,7 @@ export default function DataMaintenanceModal({ open, onClose }) {
                             loading={actionLoading}
                             loadingLabel="Memuat seeder..."
                             onClick={handleReseed}
-                            className="h-9 px-4 text-sm rounded-[4px] shadow-none"
+                            className="min-w-[80px] rounded-[4px]"
                         >
                             Ya, Muat Ulang Sekarang
                         </Button>
