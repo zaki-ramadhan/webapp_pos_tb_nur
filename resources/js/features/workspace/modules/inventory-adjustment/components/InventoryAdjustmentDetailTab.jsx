@@ -115,6 +115,8 @@ export default function InventoryAdjustmentDetailTab({
                                         setValues((current) => ({
                                             ...current,
                                             adjustmentType: option,
+                                            unitCost: option === 'Penambahan' ? current.unitCost : '0',
+                                            totalCost: option === 'Penambahan' ? current.totalCost : '0',
                                         }))
                                     }
                                 />
@@ -173,7 +175,7 @@ export default function InventoryAdjustmentDetailTab({
                 </div>
             </ModalFieldRow>
 
-            {isExisting && (isAddition || Number(values.unitCost) > 0) ? (
+            {isAddition ? (
                 <>
                     <ModalFieldRow label="Biaya Satuan">
                         <div className="grid grid-cols-5 gap-2.5">
