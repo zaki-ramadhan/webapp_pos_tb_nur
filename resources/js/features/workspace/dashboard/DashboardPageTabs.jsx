@@ -323,7 +323,7 @@ export default function DashboardPageTabs({
             </div>
 
             {activePage?.id !== 'dashboard' && level2Tabs.length ? (
-                <div className="border-b border-ui-border-medium bg-ui-bg-panel-lighter px-1 pb-0 pt-0.5 sm:px-1.5 relative z-10">
+                <div className="border-b border-ui-border-medium bg-ui-bg-panel-lighter px-1 pb-0 pt-1.5 sm:px-1.5 relative z-10">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
                         <SecondaryTabs
                             tabs={level2Tabs}
