@@ -418,9 +418,9 @@ export default function InquiryWorkspaceView({
 
             {hasSidePanel ? (
                 <div
-                    className="grid min-h-0 flex-1 gap-3.5 mt-3 grid-cols-1 xl:grid-cols-[minmax(0,3fr)_minmax(250px,1fr)] items-start xl:min-h-[calc(100vh-210px)]"
+                    className="flex flex-col lg:flex-row items-start gap-3.5 mt-3 min-h-0 flex-1 w-full"
                 >
-                    <div className="min-w-0 overflow-hidden">
+                    <div className="min-w-0 flex-1 w-full overflow-hidden">
                         <div className="min-h-0 overflow-hidden">
                             <DataTable bordered="table" className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="border-0 overflow-auto">
                                 <DataTableHeader className="bg-table-header-bg">
@@ -549,7 +549,7 @@ export default function InquiryWorkspaceView({
 
                     {isBankStatement ? (
                         <div
-                            className="overflow-hidden rounded-[4px] border border-ui-border-medium bg-white p-5 shadow-card-light self-stretch min-h-[calc(100vh-210px)] flex flex-col"
+                            className="w-full lg:w-[280px] xl:w-[300px] shrink-0 overflow-hidden rounded-[4px] border border-ui-border-medium bg-white p-5 shadow-card-light flex flex-col min-h-[260px] lg:min-h-[calc(100vh-210px)]"
                         >
                             {Boolean(bankStatementAccountInfo.bankName || bankStatementAccountInfo.accountNumber) ? (
                                 <>
@@ -599,7 +599,7 @@ export default function InquiryWorkspaceView({
                         </div>
                     ) : (
                         <div
-                            className={`overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light ${config.sidePanel?.className ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()}
+                            className={`w-full lg:w-[280px] xl:w-[300px] shrink-0 overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light ${config.sidePanel?.className ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()}
                         >
                             {config.sidePanel?.content ? (
                                 <div className="h-full">{config.sidePanel.content}</div>
