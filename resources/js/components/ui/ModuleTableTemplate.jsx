@@ -33,6 +33,7 @@ export default function ModuleTableTemplate({
     disablePrint = false,
     disableColumnSettings = false,
     disableRefresh = false,
+    renderCell = null,
 }) {
     const isServerSearch = Boolean(table.onSearch || table.pagination?.onSearch);
     const isServerSort = Boolean(table.onSort || table.pagination?.onSort);
@@ -307,9 +308,21 @@ export default function ModuleTableTemplate({
                                                      ) : (
                                                          <span className="text-slate-400 font-medium select-none">-</span>
                                                      )
-                                                 ) : (
-                                                     <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
-                                                 )}
+                                                 ) : (() => {
+                                                     const customContent = renderCell?.({ row, column, value: row[column.id] });
+                                                     if (customContent !== undefined && customContent !== null) {
+                                                         return customContent;
+                                                     }
+                                                     const hasIndent = column.id === 'name' && (row.level ?? 0) > 0;
+                                                     return (
+                                                         <span
+                                                             className="block truncate"
+                                                             style={hasIndent ? { paddingLeft: `${row.level * 18}px` } : undefined}
+                                                         >
+                                                             {formatTableTextValue(row[column.id], column)}
+                                                         </span>
+                                                     );
+                                                 })()}
                                              </DataTableCell>
                                              );
                                          })}
