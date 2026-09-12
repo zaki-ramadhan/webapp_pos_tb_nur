@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import { buildHierarchicalCategories } from '@/features/workspace/modules/item-category/itemCategoryShared';
 import ReferenceLookupInput from './ReferenceLookupInput';
 
 export default function BackendLookupField({
@@ -11,7 +12,7 @@ export default function BackendLookupField({
     placeholder = 'Cari/Pilih...',
     searchLabel = 'Cari data',
     getOptionLabel = (option) => (typeof option === 'string' ? option : (option?.label ?? option?.name ?? '')),
-    getOptionSearchText = (option) => (typeof option === 'string' ? option : (option?.label ?? option?.name ?? '')),
+    getOptionSearchText = (option) => (typeof option === 'string' ? option : `${option?.name ?? option?.label ?? ''} ${option?.code ?? ''}`),
     filterOption = null,
     renderOption = null,
     queryParams = {},
@@ -38,7 +39,8 @@ export default function BackendLookupField({
         async function fetchRecords() {
             setSearching(true);
             try {
-                const payload = await listBackendResource(resource, { per_page: 150, ...queryParams });
+                const effectivePerPage = resource === 'product-categories' ? 250 : 150;
+                const payload = await listBackendResource(resource, { per_page: effectivePerPage, ...queryParams });
                 if (!ignore) {
                     setItems(extractBackendRows(payload));
                 }
@@ -58,8 +60,10 @@ export default function BackendLookupField({
         }
     };
 
+    const isCategory = resource === 'product-categories';
+    const effectiveTransform = transformItems ?? (isCategory ? buildHierarchicalCategories : null);
     const filteredItems = filterOption ? items.filter(filterOption) : items;
-    const resolvedItems = transformItems ? transformItems(filteredItems) : filteredItems;
+    const resolvedItems = effectiveTransform ? effectiveTransform(filteredItems) : filteredItems;
 
     const isMulti = Boolean(multi);
     const singleLabel = value !== null && value !== undefined

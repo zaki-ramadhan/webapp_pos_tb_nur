@@ -85,13 +85,8 @@ export default function ItemCategoryGeneralTab({
                         placeholder="Cari/Pilih Kategori Induk..."
                         searchLabel="Cari kategori"
                         className="w-full max-w-[420px]"
-                        getOptionLabel={(option) => option.name}
-                        getOptionSearchText={(option) => option.name}
-                        renderOption={(option) => (
-                            <div className="text-xs sm:text-sm font-normal text-text-workspace-dark">
-                                {option.name}
-                            </div>
-                        )}
+                        getOptionLabel={(option) => option?.name ?? ''}
+                        getOptionSearchText={(option) => `${option?.name ?? ''} ${option?.code ?? ''}`}
                     />
                 ) : null}
             </ItemCategoryFieldRow>

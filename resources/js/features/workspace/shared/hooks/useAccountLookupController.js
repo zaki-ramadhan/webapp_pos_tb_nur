@@ -12,7 +12,7 @@ export function buildAccountLookupLabel(record, resource = null) {
     const code = String(record?.code ?? record?.employee_code ?? '').trim();
     const name = String(record?.name ?? record?.full_name ?? '').trim();
 
-    if (resource === 'units') {
+    if (resource === 'units' || resource === 'product-categories') {
         return name || code;
     }
 
@@ -150,7 +150,7 @@ export default function useAccountLookupController({ value, values, disabled = f
             try {
                 const payload = await listBackendResource(resource, {
                     search: fetchKey,
-                    per_page: 15,
+                    per_page: resource === 'product-categories' ? 250 : 15,
                     ...queryParams,
                 });
 

@@ -5,9 +5,11 @@ import { buildAccountLookupLabel, buildAccountLookupMeta, translateAccountType }
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 import { formatPhoneDisplay } from '@/features/workspace/shared/phoneFormatting';
+import { buildHierarchicalCategories } from '@/features/workspace/modules/item-category/itemCategoryShared';
 
 function resolveDocumentTypeLabel(record, resource) {
     if (record.numbering_type) return record.numbering_type;
+    if (record.document_type) return record.document_type;
     const docType = record.document_type || record.type;
     const typeMap = {
         sales_invoice: 'Faktur Penjualan',
@@ -27,11 +29,11 @@ function resolveDocumentTypeLabel(record, resource) {
 
     const resourceMap = {
         'sales-invoices': 'Faktur Penjualan',
-        'purchase-invoices': 'Faktur Pembelian',
-        'sales-deliveries': 'Pengiriman Penjualan',
-        'goods-receipts': 'Penerimaan Barang',
         'sales-orders': 'Pesanan Penjualan',
+        'sales-deliveries': 'Pengiriman Penjualan',
         'purchase-orders': 'Pesanan Pembelian',
+        'purchase-invoices': 'Faktur Pembelian',
+        'purchase-receipts': 'Penerimaan Barang',
         'sales-quotes': 'Penawaran Penjualan',
         'sales-returns': 'Retur Penjualan',
         'purchase-returns': 'Retur Pembelian',
@@ -59,6 +61,7 @@ export default function AccountLookupSuggestions({
     const entityLabels = {
         accounts: 'akun perkiraan',
         products: 'barang',
+        'product-categories': 'kategori barang',
         'shipping-methods': 'metode pengiriman',
         'fob-terms': 'syarat FOB',
         employees: 'kontak/karyawan',
@@ -78,16 +81,19 @@ export default function AccountLookupSuggestions({
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
 
     const visibleRows = useMemo(() => {
-        if (resource !== 'accounts') {
-            return rows;
+        if (resource === 'accounts') {
+            return rows.filter((record) => {
+                const isParent = Boolean(
+                    record.has_children ||
+                    (Array.isArray(record.children) && record.children.length > 0)
+                );
+                return !isParent;
+            });
         }
-        return rows.filter((record) => {
-            const isParent = Boolean(
-                record.has_children ||
-                (Array.isArray(record.children) && record.children.length > 0)
-            );
-            return !isParent;
-        });
+        if (resource === 'product-categories') {
+            return buildHierarchicalCategories(rows);
+        }
+        return rows;
     }, [rows, resource]);
 
     const emptyMessage = query.trim()
@@ -111,7 +117,11 @@ export default function AccountLookupSuggestions({
                         const selected = selectedLabelSet.has(label);
 
                         const isDoc = Boolean(record.document_number);
-                        const title = isDoc ? record.document_number : (record.name ?? record.full_name ?? record.label ?? '-');
+                        const isCategory = resource === 'product-categories';
+                        const catLevel = isCategory ? (record.level ?? 0) : 0;
+                        const catPrefix = isCategory ? (record.hierarchicalPrefix ?? (catLevel > 0 ? `${'-'.repeat(catLevel)} ` : '')) : '';
+                        const baseTitle = isDoc ? record.document_number : (record.name ?? record.full_name ?? record.label ?? '-');
+                        const title = isCategory ? `${catPrefix}${baseTitle}` : baseTitle;
                         const code = isDoc ? '' : (record.code ?? record.employee_code ?? '');
 
                         const rawDate = record.entry_date || record.document_date || record.date || record.created_at || record.transaction_date;
@@ -155,6 +165,9 @@ export default function AccountLookupSuggestions({
                         } else if (resource === 'accounts') {
                             subtitleLeft = code;
                             subtitleRight = translateAccountType(record.account_type);
+                        } else if (resource === 'product-categories') {
+                            subtitleLeft = code;
+                            subtitleRight = null;
                         }
 
                         return (
@@ -163,8 +176,9 @@ export default function AccountLookupSuggestions({
                                 type="button"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    onSelectAccount(record, label);
+                                    onSelectAccount(record, isCategory ? (record.name ?? label) : label);
                                 }}
+                                style={{ paddingLeft: catLevel > 0 ? `${16 + catLevel * 16}px` : undefined }}
                                 className={`flex w-full flex-col gap-1 border-t border-slate-200 px-4 py-2 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#F8F8F8] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
                             >
                                 <span className="flex w-full items-center justify-between gap-4">

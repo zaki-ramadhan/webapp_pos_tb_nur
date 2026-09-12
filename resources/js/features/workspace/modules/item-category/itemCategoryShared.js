@@ -38,3 +38,83 @@ export function buildFormValues(config, detailRow = null) {
 export function resolveRowAlignClassName(align) {
     return align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left';
 }
+
+export function buildHierarchicalCategories(categories = []) {
+    if (!categories || categories.length === 0) return [];
+
+    const map = new Map();
+    const roots = [];
+
+    categories.forEach((cat) => {
+        const key = String(cat.id);
+        map.set(key, { ...cat, children: [] });
+    });
+
+    categories.forEach((cat) => {
+        const key = String(cat.id);
+        const node = map.get(key);
+        const parentId = cat.parentId
+            ? String(cat.parentId)
+            : (cat.parent_id ? String(cat.parent_id) : (cat.parent?.id ? String(cat.parent.id) : null));
+        if (parentId && map.has(parentId) && parentId !== key) {
+            map.get(parentId).children.push(node);
+        } else {
+            roots.push(node);
+        }
+    });
+
+    const sortByName = (a, b) => {
+        const nameA = String(a.name ?? a.label ?? '');
+        const nameB = String(b.name ?? b.label ?? '');
+        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+    };
+
+    roots.sort(sortByName);
+
+    const result = [];
+    const visited = new Set();
+
+    function traverse(nodes, depth = 0) {
+        nodes.sort(sortByName);
+        nodes.forEach((node) => {
+            const key = String(node.id);
+            if (visited.has(key)) return;
+            visited.add(key);
+
+            const cleanName = node.rawName ?? node.originalName ?? String(node.name ?? node.label ?? '').replace(/^[-\s]+/, '');
+            const level = depth;
+            const prefix = level > 0 ? `${'-'.repeat(level)} ` : '';
+            result.push({
+                ...node,
+                level,
+                rawName: cleanName,
+                hierarchicalPrefix: prefix,
+                hierarchicalName: `${prefix}${cleanName}`,
+            });
+            if (node.children && node.children.length > 0) {
+                traverse(node.children, depth + 1);
+            }
+        });
+    }
+
+    traverse(roots, 0);
+
+    if (result.length < categories.length) {
+        categories.forEach((cat) => {
+            const key = String(cat.id);
+            if (!visited.has(key)) {
+                visited.add(key);
+                const cleanName = cat.rawName ?? cat.originalName ?? String(cat.name ?? cat.label ?? '').replace(/^[-\s]+/, '');
+                result.push({
+                    ...cat,
+                    level: 0,
+                    rawName: cleanName,
+                    hierarchicalPrefix: '',
+                    hierarchicalName: cleanName,
+                });
+            }
+        });
+    }
+
+    return result;
+}

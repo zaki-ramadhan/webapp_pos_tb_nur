@@ -117,7 +117,7 @@ class BackendResourceIndexQuery
         }
 
         if ($blueprint->key === 'product-categories') {
-            $query->withCount('products');
+            $query->withCount(['products', 'children']);
         }
 
         if ($blueprint->key === 'sales-deposits' && filter_var($filters['only_available'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
