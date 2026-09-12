@@ -75,6 +75,15 @@ export default function ItemCategoryFormView({
         setInvalidParentModal({ open: false, categoryName: '' });
     }, [activeTabInstanceId, detailRow?.id]);
 
+    useEffect(() => {
+        if (detailRow) {
+            setValues((currentValues) => ({
+                ...currentValues,
+                isDefault: Boolean(detailRow.isDefault),
+            }));
+        }
+    }, [detailRow?.isDefault]);
+
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
             ...currentValues,
