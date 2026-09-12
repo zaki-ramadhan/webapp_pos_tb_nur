@@ -39,6 +39,29 @@ export function resolveRowAlignClassName(align) {
     return align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left';
 }
 
+export function getCategoryDescendantIds(categoryId, categories = []) {
+    if (!categoryId) return new Set();
+    const targetId = String(categoryId);
+    const descendants = new Set();
+    const queue = [targetId];
+
+    while (queue.length > 0) {
+        const currentId = queue.shift();
+        categories.forEach((cat) => {
+            const pId = cat.parentId
+                ? String(cat.parentId)
+                : (cat.parent_id ? String(cat.parent_id) : (cat.parent?.id ? String(cat.parent.id) : null));
+            const catId = String(cat.id);
+            if (pId === currentId && catId !== targetId && !descendants.has(catId)) {
+                descendants.add(catId);
+                queue.push(catId);
+            }
+        });
+    }
+
+    return descendants;
+}
+
 export function buildHierarchicalCategories(categories = []) {
     if (!categories || categories.length === 0) return [];
 

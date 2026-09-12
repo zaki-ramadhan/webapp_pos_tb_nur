@@ -15,7 +15,7 @@ import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspac
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { ItemCategoryAccountsTab, ItemCategoryGeneralTab } from './ItemCategorySections';
-import { buildFormValues, buildHierarchicalCategories } from './itemCategoryShared';
+import { buildFormValues, buildHierarchicalCategories, getCategoryDescendantIds } from './itemCategoryShared';
 
 export default function ItemCategoryFormView({
     page,
@@ -61,7 +61,11 @@ export default function ItemCategoryFormView({
         const currentId = detailRow?.id ?? values?.id;
         let eligible = rows;
         if (currentId) {
-            eligible = rows.filter((row) => String(row.id) !== String(currentId));
+            const descendantIds = getCategoryDescendantIds(currentId, rows);
+            eligible = rows.filter((row) => {
+                const rowId = String(row.id);
+                return rowId !== String(currentId) && !descendantIds.has(rowId);
+            });
         }
         return buildHierarchicalCategories(eligible);
     }, [config.table?.rows, detailRow?.id, values?.id]);
@@ -110,6 +114,19 @@ export default function ItemCategoryFormView({
 
     function handleParentCategorySelect(item) {
         if (!item) return;
+
+        const currentRecordId = detailRow?.id ?? values?.id;
+        if (currentRecordId && String(item.id) === String(currentRecordId)) {
+            setParentCategoryError('Kategori tidak dapat memilih dirinya sendiri sebagai kategori induk.');
+            return;
+        }
+
+        const descendantIds = getCategoryDescendantIds(currentRecordId, config.table?.rows ?? []);
+        if (descendantIds.has(String(item.id))) {
+            setParentCategoryError('Kategori tidak dapat memilih sub-kategori/anaknya sendiri sebagai kategori induk.');
+            return;
+        }
+
         const productsCount = Number(item.products_count ?? 0);
         if (productsCount > 0) {
             setParentCategoryError('Kategori ini sudah digunakan pada barang, pilih kategori lain.');
@@ -151,6 +168,18 @@ export default function ItemCategoryFormView({
         if (values.isSubCategory) {
             if (!values.parentId) {
                 rejectCrudFormAction('Kategori Induk wajib dipilih saat Sub Kategori aktif.', { setStatus });
+                return;
+            }
+
+            const currentRecordId = detailRow?.id ?? values?.id;
+            if (currentRecordId && String(values.parentId) === String(currentRecordId)) {
+                rejectCrudFormAction('Kategori tidak dapat memilih dirinya sendiri sebagai kategori induk.', { setStatus });
+                return;
+            }
+
+            const descendantIds = getCategoryDescendantIds(currentRecordId, config.table?.rows ?? []);
+            if (descendantIds.has(String(values.parentId))) {
+                rejectCrudFormAction('Kategori tidak dapat memilih sub-kategori/anaknya sendiri sebagai kategori induk.', { setStatus });
                 return;
             }
 

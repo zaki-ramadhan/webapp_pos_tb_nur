@@ -77,6 +77,22 @@ class CatalogBackendResources
                                 $fail('Kategori tidak dapat memilih dirinya sendiri sebagai kategori induk.');
                                 return;
                             }
+                            if ($value) {
+                                $descendantIds = [];
+                                $checkQueue = [(int) $record->id];
+                                while (!empty($checkQueue)) {
+                                    $currentParentId = array_shift($checkQueue);
+                                    $childIds = ProductCategory::where('parent_id', $currentParentId)->pluck('id')->all();
+                                    foreach ($childIds as $childId) {
+                                        $descendantIds[] = (int) $childId;
+                                        $checkQueue[] = (int) $childId;
+                                    }
+                                }
+                                if (in_array((int) $value, $descendantIds, true)) {
+                                    $fail('Kategori tidak dapat memilih sub-kategori/anaknya sendiri sebagai kategori induk.');
+                                    return;
+                                }
+                            }
                             if ($value && ProductCategory::where('id', $value)->whereHas('products')->exists()) {
                                 $parent = ProductCategory::find($value);
                                 $name = $parent ? $parent->name : "ID {$value}";
