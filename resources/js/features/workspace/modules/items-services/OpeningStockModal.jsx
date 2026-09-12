@@ -62,7 +62,7 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
         const qtyVal = parseFloat(String(quantity).replace(/\./g, '').replace(/,/g, '.')) || 0;
         const costVal = parseFloat(String(unitCost).replace(/\./g, '').replace(/,/g, '.')) || 0;
 
-        if (!warehouse.length || !date || qtyVal <= 0 || costVal <= 0) {
+        if (!warehouse.length || !date || qtyVal <= 0 || costVal < 0) {
             onClose();
             return;
         }

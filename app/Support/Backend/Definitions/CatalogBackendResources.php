@@ -190,7 +190,7 @@ class CatalogBackendResources
                     }
 
 
-                    if (($record->wasRecentlyCreated || !\App\Domain\Support\Models\OperationDocumentLine::where('product_id', $record->id)->exists()) && array_key_exists('opening_stock_rows', $payload) && is_array($payload['opening_stock_rows'])) {
+                    if (array_key_exists('opening_stock_rows', $payload) && is_array($payload['opening_stock_rows'])) {
                         foreach ($payload['opening_stock_rows'] as $stockRow) {
                             $qty = (float) ($stockRow['quantity'] ?? 0);
                             $cost = (float) ($stockRow['unit_cost'] ?? $stockRow['unitCost'] ?? $record->default_purchase_price ?? 0);
@@ -233,6 +233,14 @@ class CatalogBackendResources
                                     $docNum = 'PS.' . date('Y.m.') . sprintf('%04d', rand(1, 9999));
                                 }
 
+                                $unitId = !empty($stockRow['unit_id']) ? (int) $stockRow['unit_id'] : null;
+                                if (!$unitId && !empty($stockRow['unit_name'])) {
+                                    $unitId = \App\Domain\Catalog\Models\Unit::where('name', trim((string) $stockRow['unit_name']))->value('id');
+                                }
+                                if (!$unitId) {
+                                    $unitId = $record->base_unit_id;
+                                }
+
                                 $opDoc = \App\Domain\Inventory\Models\InventoryAdjustment::create([
                                     'document_type' => 'inventory_adjustment',
                                     'document_number' => $docNum,
@@ -245,10 +253,10 @@ class CatalogBackendResources
                                     'is_closed' => true,
                                 ]);
 
-                                $opDoc->lines()->create([
+                                $opLine = $opDoc->lines()->create([
                                     'line_type' => 'item',
                                     'product_id' => $record->id,
-                                    'unit_id' => $record->base_unit_id,
+                                    'unit_id' => $unitId,
                                     'warehouse_id' => $warehouseId,
                                     'quantity' => $qty,
                                     'unit_price' => $cost,
@@ -260,6 +268,17 @@ class CatalogBackendResources
                                         'adjustment_type' => 'Penambahan',
                                     ],
                                 ]);
+
+                                app(\App\Domain\Inventory\Services\InventoryCostingService::class)->recordStockEntry(
+                                    get_class($opDoc),
+                                    $opDoc->id,
+                                    $opLine->id,
+                                    $record->id,
+                                    $warehouseId,
+                                    $qty,
+                                    $cost,
+                                    \Carbon\Carbon::parse($docDate)
+                                );
                             }
                         }
                     }
