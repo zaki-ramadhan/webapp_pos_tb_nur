@@ -53,7 +53,7 @@ function ThresholdField({ valueLabel, value, onChange }) {
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
                 prefix={valueLabel}
-                prefixClassName="min-w-[110px] border-ui-border bg-input-prefix-bg px-3 text-xs sm:text-sm text-text-prefix-label-alt"
+                prefixClassName="min-w-[110px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text"
                 className="h-[40px] rounded-[4px] border-ui-border"
                 inputClassName="text-xs sm:text-sm text-brand-dark"
             />

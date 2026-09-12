@@ -156,7 +156,7 @@ export function ItemDetailEditTab({ form, onChange, errors = {} }) {
                     allowNegative={false}
                     prefix="%"
                     className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
-                    prefixClassName="min-w-0 px-2 justify-center bg-input-prefix-bg-compact text-xs text-text-inactive"
+                    prefixClassName="min-w-0 px-2 justify-center bg-input-prefix-bg-compact text-xs text-table-row-text"
                     inputClassName={FIELD_INPUT_RIGHT_CLS}
                     containerClassName="w-full max-w-full"
                 />

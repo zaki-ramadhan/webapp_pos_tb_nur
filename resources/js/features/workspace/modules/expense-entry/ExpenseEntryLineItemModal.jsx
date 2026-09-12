@@ -179,7 +179,7 @@ export default function ExpenseEntryLineItemModal({
                                 maxLength={11}
                                 placeholder="0"
                                 className="h-[36px] rounded-[4px] border-ui-border"
-                                prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"
+                                prefixClassName="min-w-0 px-3 justify-center text-table-row-text font-normal bg-ui-bg-hover text-sm"
                                 inputClassName="text-slate-700 text-right text-sm"
                             />
                         </div>

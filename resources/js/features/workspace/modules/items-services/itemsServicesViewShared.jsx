@@ -161,7 +161,7 @@ export function SimpleTextField({
             trailing={trailing}
             maxLength={maxLength}
             className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
-            prefixClassName={prefix ? 'min-w-[32px] border-r-ui-border-medium bg-input-prefix-bg px-3 text-xs sm:text-sm text-text-inactive' : ''}
+            prefixClassName={prefix ? 'min-w-[32px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text' : ''}
             inputClassName={`text-xs sm:text-sm text-brand-dark ${inputClassName}`.trim()}
             trailingClassName={trailing ? 'px-3' : ''}
             {...props}

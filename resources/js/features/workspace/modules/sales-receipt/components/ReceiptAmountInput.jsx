@@ -4,7 +4,7 @@ export default function ReceiptAmountInput({ value, isDetail }) {
     return (
         <div className="flex h-[34px] overflow-hidden rounded-[4px] border border-ui-border bg-white">
             {isDetail ? (
-                <span className="inline-flex items-center border-r border-ui-border-medium bg-input-prefix-bg-compact px-3 text-base text-text-inactive">
+                <span className="inline-flex items-center bg-input-prefix-bg-compact px-3 text-base text-table-row-text">
                     Rp
                 </span>
             ) : null}

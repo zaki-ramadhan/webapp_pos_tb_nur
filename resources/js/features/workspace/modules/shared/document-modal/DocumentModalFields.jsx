@@ -19,7 +19,7 @@ export function DocumentModalCurrencyField({
             prefix={prefix}
             maxLength={11}
             className={`h-[38px] rounded-[4px] border-ui-border ${className}`.trim()}
-            prefixClassName="min-w-0 px-2 justify-center bg-input-prefix-bg-compact text-xs text-text-inactive"
+            prefixClassName="min-w-0 px-2 justify-center bg-input-prefix-bg-compact text-xs text-table-row-text"
             inputClassName={`text-right text-xs sm:text-sm text-text-darkest ${inputClassName}`.trim()}
             {...props}
         />
@@ -50,7 +50,7 @@ export function DocumentModalCurrencyReadonlyField({
                 prefix={prefix}
                 trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
                 className="h-[34px] rounded-[4px] border-ui-border"
-                prefixClassName="min-w-[48px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
+                prefixClassName="min-w-[48px] justify-center bg-input-prefix-bg-compact px-0 text-table-row-text"
                 inputClassName="text-right text-xs sm:text-sm font-normal text-text-darkest"
                 trailingClassName="px-3"
             />

@@ -98,7 +98,8 @@ export default function TextInput({
     const hasPrefixPx = prefixClassName.includes('px-') || prefixClassName.includes('pl-') || prefixClassName.includes('pr-');
     const prefixPxClass = hasPrefixPx ? '' : 'px-2';
     const hasPrefixColor = prefixClassName.includes('text-');
-    const prefixColorClass = hasPrefixColor ? '' : 'text-black';
+    const prefixColorClass = hasPrefixColor ? '' : 'text-table-row-text';
+    const cleanPrefixClassName = prefixClassName.replace(/(?:^|\s)(?:[^\s]*:)?border\S*/g, ' ').trim();
 
     const hasTrailingPx = trailingClassName.includes('px-') || trailingClassName.includes('pl-') || trailingClassName.includes('pr-');
 
@@ -125,7 +126,7 @@ export default function TextInput({
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm ${prefixColorClass} transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-ui-bg-panel text-gray-500' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} items-center ${prefixPxClass} text-xs sm:text-sm ${prefixColorClass} transition-colors duration-150 ${disabled ? 'bg-ui-bg-panel text-gray-500' : ''} ${cleanPrefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>

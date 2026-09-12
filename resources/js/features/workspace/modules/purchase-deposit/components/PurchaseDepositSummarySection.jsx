@@ -36,7 +36,7 @@ export default function PurchaseDepositSummarySection({
                                 }
                                 onBlur={() => onDepositAmountBlur?.(values.depositAmount)}
                                 prefix="Rp"
-                                prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"
+                                prefixClassName="min-w-0 px-3 justify-center text-table-row-text font-normal bg-ui-bg-hover text-sm"
                                 containerClassName="!max-w-[320px] w-full"
                                 className="h-[40px] rounded-[4px] border-ui-border"
                                 inputClassName="text-xs sm:text-sm text-brand-dark"
