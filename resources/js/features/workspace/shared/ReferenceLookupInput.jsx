@@ -30,6 +30,7 @@ export default function ReferenceLookupInput({
     onSelect = null,
     onClear = null,
     onRemove = null,
+    onCreateNew = null,
     emptyTitle = 'Data tidak ditemukan',
     emptyDescription = 'Coba kata kunci lain.',
 }) {
@@ -40,6 +41,7 @@ export default function ReferenceLookupInput({
     const inputRef = useRef(null);
     const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
     const multiValueMode = Array.isArray(values);
     const selectedLabels = useMemo(() => {
         if (multiValueMode) {
@@ -254,6 +256,23 @@ export default function ReferenceLookupInput({
                                     onKeyDown={(event) => {
                                         if (event.key === ' ' && !disabled && !open) {
                                             setOpen(true);
+                                        } else if (event.key === 'Enter') {
+                                            if (!open) {
+                                                setOpen(true);
+                                            } else if (onCreateNew && query.trim() && filteredItems.length === 0 && !isCreating) {
+                                                event.preventDefault();
+                                                event.stopPropagation();
+                                                setIsCreating(true);
+                                                onCreateNew(query.trim())
+                                                    .then(() => {
+                                                        setOpen(false);
+                                                        setQuery('');
+                                                    })
+                                                    .catch(() => {})
+                                                    .finally(() => {
+                                                        setIsCreating(false);
+                                                    });
+                                            }
                                         }
                                     }}
                                     onChange={handleChange}
@@ -327,7 +346,40 @@ export default function ReferenceLookupInput({
                             ))}
                         </div>
                     ) : (
-                        <LookupEmptyState title={emptyTitle} />
+                        <LookupEmptyState title={emptyTitle}>
+                            {onCreateNew && query.trim() ? (
+                                <div className="mt-2.5 flex justify-center px-2">
+                                    <button
+                                        type="button"
+                                        disabled={isCreating}
+                                        onClick={async (e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setIsCreating(true);
+                                            try {
+                                                await onCreateNew(query.trim());
+                                                setOpen(false);
+                                                setQuery('');
+                                            } catch {
+                                                // Handled in parent
+                                            } finally {
+                                                setIsCreating(false);
+                                            }
+                                        }}
+                                        className="inline-flex items-center justify-center px-3.5 py-1.5 min-h-[32px] text-xs font-medium text-white bg-brand-blue hover:bg-brand-blue-hover active:scale-[0.98] rounded-[4px] shadow-button-primary transition-all cursor-pointer text-center leading-snug max-w-full break-words disabled:opacity-50"
+                                    >
+                                        {isCreating ? (
+                                            <span className="inline-flex items-center gap-1.5">
+                                                <LoadingIcon className="h-3.5 w-3.5 animate-spin" />
+                                                Menyimpan...
+                                            </span>
+                                        ) : (
+                                            `Simpan "${query.trim()}" sebagai data baru?`
+                                        )}
+                                    </button>
+                                </div>
+                            ) : null}
+                        </LookupEmptyState>
                     )}
                 </LookupDropdownSurface>
             ) : null}

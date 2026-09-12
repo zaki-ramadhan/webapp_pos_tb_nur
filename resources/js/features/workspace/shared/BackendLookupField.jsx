@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import {
+    createBackendResource,
+    extractBackendRows,
+    listBackendResource,
+} from '@/features/workspace/backend/workspaceBackendApi';
 import { buildHierarchicalCategories } from '@/features/workspace/modules/item-category/itemCategoryShared';
+import { showCrudErrorToast, showCrudSuccessToast } from '@/features/workspace/shared/crudFeedback';
 import ReferenceLookupInput from './ReferenceLookupInput';
 
 export default function BackendLookupField({
@@ -22,6 +27,7 @@ export default function BackendLookupField({
     onClear,
     emptyTitle,
     emptyDescription,
+    allowQuickCreate = resource === 'units',
     className = '',
     disabled = false,
     error = '',
@@ -72,6 +78,37 @@ export default function BackendLookupField({
             ? (typeof values[0] === 'string' ? values[0] : getOptionLabel(values[0]))
             : '');
 
+    const handleQuickCreate = async (keyword) => {
+        if (!keyword || !keyword.trim()) return null;
+        const trimmed = keyword.trim();
+        try {
+            const payload = {
+                name: trimmed,
+                is_active: true,
+            };
+            const result = await createBackendResource(resource, payload);
+            const newRecord = result?.data ?? result;
+            if (newRecord && newRecord.id) {
+                const label = getOptionLabel(newRecord) || newRecord.name || trimmed;
+                const formattedRecord = {
+                    ...newRecord,
+                    id: newRecord.id,
+                    name: newRecord.name ?? label,
+                    label: label,
+                };
+                setItems((prev) => [...prev, formattedRecord]);
+                onSelect?.(formattedRecord);
+                showCrudSuccessToast(`Satuan "${trimmed}" berhasil ditambahkan.`);
+                return formattedRecord;
+            }
+        } catch (err) {
+            const msg = err?.response?.data?.message || err?.message || 'Gagal menambahkan satuan baru.';
+            showCrudErrorToast(msg);
+            throw err;
+        }
+        return null;
+    };
+
     return (
         <div
             onFocusCapture={handleActivate}
@@ -107,6 +144,7 @@ export default function BackendLookupField({
                 getOptionSearchText={getOptionSearchText}
                 renderOption={renderOption}
                 onSelect={onSelect}
+                onCreateNew={allowQuickCreate ? handleQuickCreate : null}
                 emptyTitle={emptyTitle}
                 emptyDescription={emptyDescription}
                 className={className}
