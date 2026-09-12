@@ -24,7 +24,7 @@ function formatQuantityInput(rawVal) {
         str = str.slice(0, -1) + ',';
     }
     const [intPart = '', decPart] = str.split(',');
-    const cleanInt = intPart.replace(/\D/g, '').slice(0, 9);
+    const cleanInt = intPart.replace(/\D/g, '').slice(0, 8);
     const cleanDec = decPart !== undefined ? decPart.replace(/\D/g, '').slice(0, 4) : undefined;
     const normalized = cleanDec !== undefined ? `${cleanInt},${cleanDec}` : cleanInt;
     return formatAmountInput(normalized, { allowDecimal: true, allowNegative: false, isInput: true });
@@ -208,7 +208,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                                 <input
                                     type="text"
                                     inputMode="decimal"
-                                    maxLength={11}
+                                    maxLength={10}
                                     value={conv.quantity ?? ''}
                                     onChange={(e) => handleConversionChange(index, 'quantity', formatQuantityInput(e.target.value))}
                                     className="min-w-[76px] w-20 sm:w-24 h-[38px] text-right px-2.5 text-xs sm:text-sm border border-slate-400 rounded-md bg-white text-brand-dark transition-[border-color,box-shadow] duration-150 outline-none focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] shrink-0"
@@ -239,7 +239,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                             <input
                                 type="text"
                                 inputMode="decimal"
-                                maxLength={11}
+                                maxLength={10}
                                 value={trailingQty}
                                 onChange={(e) => setTrailingQty(formatQuantityInput(e.target.value))}
                                 className="min-w-[76px] w-20 sm:w-24 h-[38px] text-right px-2.5 text-xs sm:text-sm border border-slate-400 rounded-md bg-white text-brand-dark transition-[border-color,box-shadow] duration-150 outline-none focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] shrink-0"
