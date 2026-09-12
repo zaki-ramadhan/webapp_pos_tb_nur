@@ -197,28 +197,32 @@ export function CodeFieldRow({ values, onChange, isDetail, isLoading }) {
     if (!isDetail) {
         return (
             <FormRow label="Kode Barang" required>
-                <SelectField
-                    value="auto"
-                    onChange={() => {}}
-                    className="h-[40px] rounded-[4px] border-ui-border bg-white"
-                    selectClassName="text-xs sm:text-sm text-brand-dark"
-                >
-                    <option value="auto">Barang</option>
-                </SelectField>
+                <div className="w-3/4">
+                    <SelectField
+                        value="auto"
+                        onChange={() => {}}
+                        className="h-[40px] rounded-[4px] border-ui-border bg-white"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
+                    >
+                        <option value="auto">Barang</option>
+                    </SelectField>
+                </div>
             </FormRow>
         );
     }
 
     return (
         <FormRow label="Kode Barang" required>
-            <ClearableTextInput
-                value={values.code}
-                onChange={(event) => onChange('code', event.target.value)}
-                maxLength={50}
-                minLength={1}
-                isLoading={isLoading}
-                readOnly={isDetail}
-            />
+            <div className="w-3/4">
+                <ClearableTextInput
+                    value={values.code}
+                    onChange={(event) => onChange('code', event.target.value)}
+                    maxLength={50}
+                    minLength={1}
+                    isLoading={isLoading}
+                    readOnly={isDetail}
+                />
+            </div>
         </FormRow>
     );
 }

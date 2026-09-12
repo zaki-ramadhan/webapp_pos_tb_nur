@@ -108,18 +108,20 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                 label="Jenis Barang"
                 info="Pilih jenis barang sesuai fungsinya. Untuk barang yang menghitung stok dan nilai persediaan, pilih Persediaan. Tipe tidak dapat diubah setelah disimpan."
             >
-                <SelectField
-                    value={values.kind}
-                    onChange={(event) => onChange('kind', event.target.value)}
-                    className="h-[40px] rounded-[4px] border-ui-border"
-                    selectClassName="text-xs sm:text-sm text-brand-dark"
-                >
-                    {config.kindOptions.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </SelectField>
+                <div className="w-3/4">
+                    <SelectField
+                        value={values.kind}
+                        onChange={(event) => onChange('kind', event.target.value)}
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
+                    >
+                        {config.kindOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </SelectField>
+                </div>
             </FormRow>
 
             <CodeFieldRow values={values} onChange={onChange} isDetail={isDetail} isLoading={isLoading} />
@@ -129,12 +131,14 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                     label="UPC/Barcode"
                     info="Kode barcode standar yang dapat dibaca oleh alat Scanner/Barcode Reader."
                 >
-                    <ClearableTextInput
-                        value={values.barcode}
-                        onChange={(event) => onChange('barcode', event.target.value)}
-                        maxLength={64}
-                        isLoading={isLoading}
-                    />
+                    <div className="w-3/4">
+                        <ClearableTextInput
+                            value={values.barcode}
+                            onChange={(event) => onChange('barcode', event.target.value)}
+                            maxLength={64}
+                            isLoading={isLoading}
+                        />
+                    </div>
                 </FormRow>
             )}
 
@@ -178,16 +182,16 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                                         onClear={() => handleConversionRemove(index)}
                                     />
                                 </div>
-                                <span className="text-gray-500 font-medium text-sm select-none shrink-0">=</span>
+                                <span className="text-gray-500 font-normal text-sm select-none shrink-0">=</span>
                                 <input
                                     type="text"
                                     inputMode="decimal"
                                     value={conv.quantity ?? ''}
                                     onChange={(e) => handleConversionChange(index, 'quantity', e.target.value.replace(/,/g, '.').replace(/[^0-9.]/g, ''))}
-                                    className="w-16 h-[34px] sm:h-[38px] text-center px-1 text-xs sm:text-sm border border-ui-border rounded bg-white text-brand-dark focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 shrink-0"
+                                    className="w-16 h-[38px] text-center px-1 text-xs sm:text-sm border border-slate-400 rounded-md bg-white text-brand-dark transition-[border-color,box-shadow] duration-150 outline-none focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] shrink-0"
                                     aria-label={`Rasio satuan ${currentUnitName || index + 2} terhadap ${baseUnitName}`}
                                 />
-                                <span className="text-xs sm:text-sm font-medium text-gray-700 select-none shrink-0 max-w-[120px] truncate">
+                                <span className="text-xs sm:text-sm font-normal text-brand-dark select-none shrink-0 max-w-[120px] truncate">
                                     {baseUnitName}
                                 </span>
                             </div>
@@ -208,16 +212,16 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                                     onClear={() => {}}
                                 />
                             </div>
-                            <span className="text-gray-500 font-medium text-sm select-none shrink-0">=</span>
+                            <span className="text-gray-500 font-normal text-sm select-none shrink-0">=</span>
                             <input
                                 type="text"
                                 inputMode="decimal"
                                 value={trailingQty}
                                 onChange={(e) => setTrailingQty(e.target.value.replace(/,/g, '.').replace(/[^0-9.]/g, ''))}
-                                className="w-16 h-[34px] sm:h-[38px] text-center px-1 text-xs sm:text-sm border border-ui-border rounded bg-white text-brand-dark focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 shrink-0"
+                                className="w-16 h-[38px] text-center px-1 text-xs sm:text-sm border border-slate-400 rounded-md bg-white text-brand-dark transition-[border-color,box-shadow] duration-150 outline-none focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] shrink-0"
                                 aria-label={`Rasio satuan baru terhadap ${baseUnitName}`}
                             />
-                            <span className="text-xs sm:text-sm font-medium text-gray-700 select-none shrink-0 max-w-[120px] truncate">
+                            <span className="text-xs sm:text-sm font-normal text-brand-dark select-none shrink-0 max-w-[120px] truncate">
                                 {baseUnitName}
                             </span>
                         </div>
