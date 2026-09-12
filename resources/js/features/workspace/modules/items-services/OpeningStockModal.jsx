@@ -19,7 +19,6 @@ export default function OpeningStockModal({
     initialUnitCost = '',
 }) {
     const [activeTab, setActiveTab] = useState('details');
-    const [branch, setBranch] = useState([{ id: 1, name: 'JAKARTA' }]);
     const [warehouse, setWarehouse] = useState([{ id: 1, name: 'Gudang Utama' }]);
     const [date, setDate] = useState(buildTodayDisplayDate());
     const [quantity, setQuantity] = useState('1');
@@ -36,10 +35,6 @@ export default function OpeningStockModal({
         setActiveTab('details');
 
         if (initialData) {
-            const bName = initialData.branch_name || initialData.branch || 'JAKARTA';
-            const bId = initialData.branch_id || 1;
-            setBranch([{ id: bId, name: bName }]);
-
             const wName = initialData.warehouse || 'Gudang Utama';
             const wId = initialData.warehouse_id || 1;
             setWarehouse([{ id: wId, name: wName }]);
@@ -61,7 +56,6 @@ export default function OpeningStockModal({
             const c = parseFloat(String(costStr).replace(/\./g, '').replace(/,/g, '.')) || 0;
             setTotalCost(q * c);
         } else {
-            setBranch([{ id: 1, name: 'JAKARTA' }]);
             setDate(buildTodayDisplayDate());
             setQuantity('1');
             setUnit(initialUnit);
@@ -94,14 +88,14 @@ export default function OpeningStockModal({
     };
 
     const handleOpenAdjustment = () => {
-        if (!documentNumber) return;
+        if (!documentId && !documentNumber) return;
         window.dispatchEvent(
             new CustomEvent('workspace:open-page', {
                 detail: {
                     pageId: 'inventory-adjustment',
                     recordId: documentId ? String(documentId) : null,
-                    label: documentNumber,
-                    tabLabel: documentNumber,
+                    label: documentNumber || `IA#${documentId}`,
+                    tabLabel: documentNumber || `IA#${documentId}`,
                 },
             }),
         );
@@ -116,14 +110,11 @@ export default function OpeningStockModal({
             return;
         }
 
-        const selectedBranch = branch[0];
         const selectedWarehouse = warehouse[0];
         const selectedUnit = unit[0];
 
         const data = {
             ...(initialData || {}),
-            branch: selectedBranch?.name || selectedBranch?.label || 'JAKARTA',
-            branch_id: selectedBranch?.id ? Number(selectedBranch.id) : 1,
             warehouse: selectedWarehouse?.name || selectedWarehouse?.label || '',
             warehouse_id: selectedWarehouse?.id ? Number(selectedWarehouse.id) : null,
             date,
@@ -142,7 +133,7 @@ export default function OpeningStockModal({
         <WorkspaceDialog
             open={open}
             onClose={onClose}
-            title="Saldo Awal"
+            title="Stok Awal"
             maxWidthClassName="max-w-[500px]"
             contentClassName="bg-white px-5 pt-4 pb-5 sm:px-6 sm:pt-5 sm:pb-6 min-h-[460px] flex flex-col justify-start"
             footer={
@@ -155,8 +146,8 @@ export default function OpeningStockModal({
                                 onClose();
                             }}
                             size="md"
-                            variant="outline"
-                            className="rounded-[4px] min-w-[80px] border-brand-blue text-brand-blue hover:bg-brand-blue-lightest cursor-pointer"
+                            variant="danger"
+                            className="rounded-[4px] min-w-[80px] cursor-pointer"
                         >
                             Hapus
                         </Button>
@@ -179,7 +170,7 @@ export default function OpeningStockModal({
                     onClick={() => setActiveTab('details')}
                     className={`px-4 py-2.5 text-xs sm:text-sm border-b-2 transition-colors -mb-px outline-none ${
                         activeTab === 'details'
-                            ? 'border-red-600 text-red-600 font-medium'
+                            ? 'border-tab-active-border-t text-tab-active-border-t font-normal'
                             : 'border-transparent text-slate-500 hover:text-slate-800'
                     }`}
                 >
@@ -189,50 +180,26 @@ export default function OpeningStockModal({
 
             {activeTab === 'details' && (
                 <div className="space-y-2">
-                    <FormRow label="Cabang" required>
-                        <div className="w-3/4">
-                            <BackendLookupField
-                                resource="branches"
-                                value={branch?.[0]?.name ?? (typeof branch?.[0] === 'string' ? branch[0] : (branch?.name ?? ''))}
-                                placeholder="Cari/Pilih..."
-                                searchLabel="Cari cabang"
-                                onSelect={(option) => setBranch([option])}
-                                onClear={() => setBranch([])}
-                            />
-                        </div>
-                    </FormRow>
-
                     <FormRow label="Gudang" required>
-                        <div className="w-3/4">
-                            {initialData?.__fromDb ? (
-                                <SimpleTextField
-                                    value={warehouse?.[0]?.name ?? (typeof warehouse?.[0] === 'string' ? warehouse[0] : (warehouse?.name ?? ''))}
-                                    disabled
-                                />
-                            ) : (
-                                <BackendLookupField
-                                    resource="warehouses"
-                                    value={warehouse?.[0]?.name ?? (typeof warehouse?.[0] === 'string' ? warehouse[0] : (warehouse?.name ?? ''))}
-                                    placeholder="Cari/Pilih..."
-                                    searchLabel="Cari gudang"
-                                    onSelect={(option) => setWarehouse([option])}
-                                    onClear={() => setWarehouse([])}
-                                />
-                            )}
-                        </div>
+                        <BackendLookupField
+                            resource="warehouses"
+                            value={warehouse?.[0]?.name ?? (typeof warehouse?.[0] === 'string' ? warehouse[0] : (warehouse?.name ?? ''))}
+                            placeholder="Cari/Pilih..."
+                            searchLabel="Cari gudang"
+                            onSelect={(option) => setWarehouse([option])}
+                            onClear={() => setWarehouse([])}
+                        />
                     </FormRow>
 
-                    {Boolean(documentNumber) && (
+                    {Boolean(documentNumber || documentId) && (
                         <FormRow label="No Penyesuaian #">
-                            <div className="w-3/4">
-                                <button
-                                    type="button"
-                                    onClick={handleOpenAdjustment}
-                                    className="flex items-center px-3 py-2 border border-emerald-300 rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-semibold h-[38px] bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400 cursor-pointer"
-                                >
-                                    {documentNumber}
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                onClick={handleOpenAdjustment}
+                                className="flex items-center px-3 py-2 border border-emerald-400 rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-semibold h-[38px] bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-500 cursor-pointer"
+                            >
+                                {documentNumber || `IA#${documentId}`}
+                            </button>
                         </FormRow>
                     )}
 
