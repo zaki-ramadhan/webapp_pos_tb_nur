@@ -13,15 +13,13 @@ import Pagination from '@/components/ui/Pagination';
 import { RefreshIcon } from '@/features/workspace/shared/Icons';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { extractBackendRows, listBackendResource, clearBackendCache } from '@/features/workspace/backend/workspaceBackendApi';
-import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { formatAmountInput, parseAmountInput, formatMultiUnitQuantity } from '@/features/workspace/shared/amountFormatting';
 
 function getDefaultDateFrom() {
     const d = new Date();
-    d.setFullYear(d.getFullYear() - 1);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return `${year}-${month}-01`;
 }
 
 function getTodayDate() {
@@ -55,29 +53,24 @@ export default function ItemMutationTab({ productId, product = null, values = nu
         : (Array.isArray(product?.conversions) ? product.conversions : []);
 
     const unitOptions = useMemo(() => {
-        const opts = [{ value: baseUnitName, label: baseUnitName, ratio: 1 }];
-        conversions.forEach((c) => {
-            const name = c.unitName ?? c.unit?.[0]?.name ?? c.name;
-            const ratio = Number(c.quantity || 1);
-            if (name && !opts.some((o) => o.value === name)) {
-                opts.push({ value: name, label: name, ratio: ratio > 0 ? ratio : 1 });
-            }
-        });
+        const opts = [{ value: 'base', label: baseUnitName }];
+        if (conversions.length > 0) {
+            opts.push({ value: 'multi', label: 'Multi Satuan' });
+        }
         return opts;
     }, [baseUnitName, conversions]);
 
-    const [selectedUnit, setSelectedUnit] = useState(baseUnitName);
+    const [selectedMode, setSelectedMode] = useState(() => (conversions.length > 0 ? 'multi' : 'base'));
 
     useEffect(() => {
-        if (!unitOptions.some((o) => o.value === selectedUnit)) {
-            setSelectedUnit(baseUnitName);
+        if (conversions.length > 0) {
+            if (selectedMode !== 'multi' && selectedMode !== 'base') {
+                setSelectedMode('multi');
+            }
+        } else {
+            setSelectedMode('base');
         }
-    }, [unitOptions, baseUnitName, selectedUnit]);
-
-    const selectedRatio = useMemo(() => {
-        const opt = unitOptions.find((o) => o.value === selectedUnit);
-        return opt?.ratio || 1;
-    }, [unitOptions, selectedUnit]);
+    }, [conversions.length]);
 
     useEffect(() => {
         setDateFrom(getDefaultDateFrom());
@@ -138,7 +131,7 @@ export default function ItemMutationTab({ productId, product = null, values = nu
 
     return (
         <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-3 py-1">
                 <TransactionDateInput
                     value={dateFrom}
                     onChange={(e) => {
@@ -153,7 +146,7 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                     }}
                     className="w-[130px] sm:w-[140px]"
                 />
-                <span className="text-sm text-slate-500 font-normal">s/d</span>
+                <span className="text-xs sm:text-sm text-slate-500 font-normal px-0.5">s/d</span>
                 <TransactionDateInput
                     value={dateTo}
                     minDate={dateFrom}
@@ -174,16 +167,16 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                     }}
                     disabled={loading}
                     aria-label="Muat ulang"
-                    className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer disabled:opacity-60"
+                    className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer disabled:opacity-60 shrink-0"
                 >
                     <RefreshIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                 </button>
 
                 {/* Unit Dropdown */}
-                <div className="w-[100px] sm:w-[120px]">
+                <div className="w-[130px] sm:w-[150px] shrink-0">
                     <SelectField
-                        value={selectedUnit}
-                        onChange={(e) => setSelectedUnit(e.target.value)}
+                        value={selectedMode}
+                        onChange={(e) => setSelectedMode(e.target.value)}
                         className="h-[34px] rounded-[4px] border-ui-border"
                         selectClassName="text-xs sm:text-sm text-brand-dark"
                         options={unitOptions}
@@ -191,7 +184,7 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                 </div>
 
                 {/* Search Input */}
-                <div className="relative w-[180px] sm:w-[220px]">
+                <div className="relative w-[180px] sm:w-[210px] shrink-0">
                     <input
                         type="text"
                         value={search}
@@ -228,8 +221,8 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                         <DataTableHead className="text-left text-white font-normal px-3 py-2 text-xs sm:text-sm">Keterangan</DataTableHead>
                         <DataTableHead className="text-left text-white font-normal px-3 py-2 text-xs sm:text-sm">Gudang</DataTableHead>
                         <DataTableHead className="text-right text-white font-normal px-3 py-2 text-xs sm:text-sm">Nilai Satuan</DataTableHead>
-                        <DataTableHead className="text-center text-white font-normal px-3 py-2 text-xs sm:text-sm">Masuk</DataTableHead>
-                        <DataTableHead className="text-center text-white font-normal px-3 py-2 text-xs sm:text-sm">Keluar</DataTableHead>
+                        <DataTableHead className="text-right text-white font-normal px-3 py-2 text-xs sm:text-sm">Masuk</DataTableHead>
+                        <DataTableHead className="text-right text-white font-normal px-3 py-2 text-xs sm:text-sm">Keluar</DataTableHead>
                         <DataTableHead className="text-right text-white font-normal px-3 py-2 text-xs sm:text-sm">Saldo</DataTableHead>
                     </DataTableRow>
                 </DataTableHeader>
@@ -248,13 +241,19 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                             const rawOut = parseAmountInput(row.out_qty) || 0;
                             const rawBalance = parseAmountInput(row.balance) || 0;
 
-                            const displayCost = selectedRatio > 0 ? (rawCost * selectedRatio) : rawCost;
-                            const displayIn = selectedRatio > 0 ? (rawIn / selectedRatio) : rawIn;
-                            const displayOut = selectedRatio > 0 ? (rawOut / selectedRatio) : rawOut;
-                            const displayBalance = selectedRatio > 0 ? (rawBalance / selectedRatio) : rawBalance;
+                            let displayIn = '';
+                            let displayOut = '';
+                            let displayBalance = '';
 
-                            const hasIn = displayIn > 0;
-                            const hasOut = displayOut > 0;
+                            if (selectedMode === 'multi') {
+                                displayIn = rawIn > 0 ? formatMultiUnitQuantity(rawIn, baseUnitName, conversions) : '';
+                                displayOut = rawOut > 0 ? formatMultiUnitQuantity(rawOut, baseUnitName, conversions) : '';
+                                displayBalance = formatMultiUnitQuantity(rawBalance, baseUnitName, conversions);
+                            } else {
+                                displayIn = rawIn > 0 ? (formatAmountInput(rawIn) || '0') : (row.raw_document_type === 'opening_stock' ? (formatAmountInput(rawIn) || '0') : '0');
+                                displayOut = rawOut > 0 ? (formatAmountInput(rawOut) || '0') : '0';
+                                displayBalance = formatAmountInput(rawBalance) || '0';
+                            }
 
                             return (
                                 <DataTableRow
@@ -269,14 +268,16 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                                     <DataTableCell className="text-left text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">{row.document_type || ''}</DataTableCell>
                                     <DataTableCell className="text-left text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">{row.description || ''}</DataTableCell>
                                     <DataTableCell className="text-left text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">{row.warehouse || ''}</DataTableCell>
-                                    <DataTableCell className="text-right text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">{formatAmountInput(displayCost) || '0'}</DataTableCell>
-                                    <DataTableCell className={`text-center text-xs sm:text-sm px-3 py-2 font-normal ${hasIn ? 'text-emerald-600' : 'text-text-workspace-dark'}`}>
-                                        {hasIn ? formatAmountInput(displayIn) : '0'}
+                                    <DataTableCell className="text-right text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">{formatAmountInput(rawCost) || '0'}</DataTableCell>
+                                    <DataTableCell className="text-right text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">
+                                        {displayIn}
                                     </DataTableCell>
-                                    <DataTableCell className={`text-center text-xs sm:text-sm px-3 py-2 font-normal ${hasOut ? 'text-rose-600' : 'text-text-workspace-dark'}`}>
-                                        {hasOut ? formatAmountInput(displayOut) : '0'}
+                                    <DataTableCell className="text-right text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">
+                                        {displayOut}
                                     </DataTableCell>
-                                    <DataTableCell className="text-right text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">{formatAmountInput(displayBalance) || '0'}</DataTableCell>
+                                    <DataTableCell className="text-right text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">
+                                        {displayBalance}
+                                    </DataTableCell>
                                 </DataTableRow>
                             );
                         })

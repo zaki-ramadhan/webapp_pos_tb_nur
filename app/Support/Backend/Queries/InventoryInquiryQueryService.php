@@ -716,14 +716,81 @@ class InventoryInquiryQueryService
             }
         }
 
+        // Current batches within date range
+        $currentBatches = \Illuminate\Support\Facades\DB::table('inventory_batches')
+            ->where('product_id', $productId)
+            ->when($dateFrom, fn ($q) => $q->where(function ($sub) use ($dateFrom) {
+                $sub->whereDate('entry_date', '>=', $dateFrom->toDateString())
+                    ->orWhere(fn ($s) => $s->whereNull('entry_date')->whereDate('created_at', '>=', $dateFrom->toDateString()));
+            }))
+            ->when($dateTo, fn ($q) => $q->where(function ($sub) use ($dateTo) {
+                $sub->whereDate('entry_date', '<=', $dateTo->toDateString())
+                    ->orWhere(fn ($s) => $s->whereNull('entry_date')->whereDate('created_at', '<=', $dateTo->toDateString()));
+            }))
+            ->get();
+
+        foreach ($currentBatches as $b) {
+            if ($b->source_id && \Illuminate\Support\Facades\DB::table('operation_documents')->where('id', $b->source_id)->where('document_type', 'inventory_adjustment')->exists()) {
+                continue;
+            }
+            $wh = $warehouses->get($b->warehouse_id);
+            $qty = (float) $b->qty_received;
+            if ($qty == 0) continue;
+            $batchDate = $b->entry_date ? Carbon::parse($b->entry_date) : ($b->created_at ? Carbon::parse($b->created_at) : null);
+            $rows->push([
+                'id' => 'batch-'.$b->id,
+                'document_id' => null,
+                'raw_document_type' => 'opening_stock',
+                'page_id' => null,
+                'raw_date' => $batchDate ? $batchDate->timestamp : 0,
+                'date' => $batchDate ? $batchDate->format('d/m/Y') : '',
+                'document_number' => 'SA-'.($product?->code ?? ''),
+                'document_type' => 'Saldo Awal',
+                'description' => 'Saldo Awal Stok',
+                'warehouse' => $wh?->name ?? '-',
+                'unit_cost' => $this->formatNumber((float) $b->unit_cost),
+                'in_qty' => $qty > 0 ? $this->formatNumber($qty) : '',
+                'out_qty' => $qty < 0 ? $this->formatNumber(abs($qty)) : '',
+                'qty_change' => $qty,
+            ]);
+        }
+
+        $formattedDateFrom = $dateFrom ? $dateFrom->format('d/m/Y') : now()->startOfMonth()->format('d/m/Y');
+        $openingRow = null;
+        if ($initialStock > 0) {
+            $openingRow = [
+                'id' => 'opening-stock',
+                'document_id' => null,
+                'raw_document_type' => 'opening_stock',
+                'page_id' => null,
+                'raw_date' => $dateFrom ? $dateFrom->copy()->startOfDay()->timestamp : 0,
+                'date' => '',
+                'document_number' => '',
+                'document_type' => 'Stok per '.$formattedDateFrom,
+                'description' => 'Stok per '.$formattedDateFrom,
+                'warehouse' => '',
+                'unit_cost' => '0',
+                'in_qty' => $this->formatNumber($initialStock),
+                'out_qty' => '',
+                'qty_change' => $initialStock,
+                'balance' => $this->formatNumber($initialStock),
+            ];
+        }
+
         $sorted = $rows->sortBy('raw_date')->values();
         $runningBalance = $initialStock;
-        $finalRows = $sorted->map(function ($row) use (&$runningBalance) {
+        $movementRows = $sorted->map(function ($row) use (&$runningBalance) {
             $runningBalance += $row['qty_change'];
             $row['balance'] = $this->formatNumber($runningBalance);
 
             return $row;
-        })->sortByDesc('raw_date')->values();
+        });
+
+        $finalRows = $movementRows;
+        if ($openingRow !== null) {
+            $finalRows = $finalRows->push($openingRow);
+        }
+        $finalRows = $finalRows->sortByDesc('raw_date')->values();
 
         $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
         if ($search !== '') {
@@ -988,7 +1055,7 @@ class InventoryInquiryQueryService
             $parts[] = sprintf('%s %s', $this->formatNumber($remaining), $baseUnitName);
         }
 
-        return implode(', ', $parts);
+        return implode(' ', $parts);
     }
 
     /**

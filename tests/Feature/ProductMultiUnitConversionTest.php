@@ -122,9 +122,9 @@ class ProductMultiUnitConversionTest extends TestCase
         $method = $reflection->getMethod('formatMultiUnitQuantity');
         $method->setAccessible(true);
 
-        // 50 PCS with 1 Box = 24 PCS => 2 Box, 2 PCS
+        // 50 PCS with 1 Box = 24 PCS => 2 Box 2 PCS
         $formatted50 = $method->invoke($service, 50.0, $product);
-        $this->assertEquals('2 Box, 2 PCS', $formatted50);
+        $this->assertEquals('2 Box 2 PCS', $formatted50);
 
         // 48 PCS with 1 Box = 24 PCS => 2 Box
         $formatted48 = $method->invoke($service, 48.0, $product);

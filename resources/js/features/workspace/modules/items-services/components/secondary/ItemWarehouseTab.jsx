@@ -69,8 +69,8 @@ export default function ItemWarehouseTab({ productId }) {
                 <DataTableHeader className="bg-[#466986] text-white font-normal">
                     <DataTableRow>
                         <DataTableHead className="text-left text-white font-normal px-3 py-2 text-xs sm:text-sm">Gudang</DataTableHead>
-                        <DataTableHead className="text-center text-white font-normal px-3 py-2 text-xs sm:text-sm w-[140px] sm:w-[180px]">Saldo</DataTableHead>
-                        <DataTableHead className="text-center text-white font-normal px-3 py-2 text-xs sm:text-sm w-[160px] sm:w-[220px]">Saldo (Unit)</DataTableHead>
+                        <DataTableHead className="text-right text-white font-normal px-3 py-2 text-xs sm:text-sm w-[140px] sm:w-[180px]">Saldo</DataTableHead>
+                        <DataTableHead className="text-right text-white font-normal px-3 py-2 text-xs sm:text-sm w-[160px] sm:w-[220px]">Saldo (Unit)</DataTableHead>
                     </DataTableRow>
                 </DataTableHeader>
                 <DataTableBody>
@@ -84,8 +84,8 @@ export default function ItemWarehouseTab({ productId }) {
                         rows.map((row, i) => (
                             <DataTableRow key={row.id ?? i} className={`border-ui-border-row ${i % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`}>
                                 <DataTableCell className="text-left text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">{row.warehouse ?? row.warehouse_name ?? ''}</DataTableCell>
-                                <DataTableCell className="text-center text-xs sm:text-sm font-normal text-text-workspace-dark px-3 py-2 w-[140px] sm:w-[180px]">{formatAmountInput(row.saleable_stock ?? row.stock_on_hand) || '0'}</DataTableCell>
-                                <DataTableCell className="text-center text-xs sm:text-sm font-normal text-text-workspace-dark px-3 py-2 w-[160px] sm:w-[220px]">
+                                <DataTableCell className="text-right text-xs sm:text-sm font-normal text-text-workspace-dark px-3 py-2 w-[140px] sm:w-[180px]">{formatAmountInput(row.saleable_stock ?? row.stock_on_hand) || '0'}</DataTableCell>
+                                <DataTableCell className="text-right text-xs sm:text-sm font-normal text-text-workspace-dark px-3 py-2 w-[160px] sm:w-[220px]">
                                     {row.multi_unit_quantity || (row.unit ? `${formatAmountInput(row.saleable_stock ?? row.stock_on_hand)} ${row.unit}` : '0')}
                                 </DataTableCell>
                             </DataTableRow>

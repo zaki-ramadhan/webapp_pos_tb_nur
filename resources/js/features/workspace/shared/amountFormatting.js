@@ -241,4 +241,43 @@ export function formatCardNominal(val) {
     return `Rp ${formattedStr}`;
 }
 
+export function formatMultiUnitQuantity(qty, baseUnitName = 'PCS', conversions = []) {
+    const quantity = Number(qty) || 0;
+    if (quantity === 0) {
+        return `0 ${baseUnitName}`;
+    }
 
+    const validConversions = (Array.isArray(conversions) ? conversions : [])
+        .map((conv) => {
+            const unitName = conv.unitName ?? conv.unit?.[0]?.name ?? conv.name;
+            const ratio = Number(conv.quantity || 0);
+            return { unitName, ratio };
+        })
+        .filter((c) => c.unitName && c.ratio > 1)
+        .sort((a, b) => b.ratio - a.ratio);
+
+    if (validConversions.length === 0) {
+        return `${formatAmountInput(quantity)} ${baseUnitName}`;
+    }
+
+    let remainder = Math.abs(quantity);
+    const parts = [];
+
+    for (const conv of validConversions) {
+        if (remainder >= conv.ratio) {
+            const count = Math.floor(remainder / conv.ratio);
+            remainder = Math.round((remainder % conv.ratio) * 10000) / 10000;
+            parts.push(`${formatAmountInput(count)} ${conv.unitName}`);
+        }
+    }
+
+    if (remainder > 0.0001 || parts.length === 0) {
+        const remainderStr = Number.isInteger(remainder)
+            ? formatAmountInput(remainder)
+            : formatAmountInput(Number(remainder.toFixed(2)));
+        parts.push(`${remainderStr} ${baseUnitName}`);
+    }
+
+    const result = parts.join(' ');
+    return quantity < 0 ? `-${result}` : result;
+}
