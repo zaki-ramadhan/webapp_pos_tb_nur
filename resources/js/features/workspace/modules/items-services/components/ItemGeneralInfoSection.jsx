@@ -122,19 +122,27 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                 info="Pilih jenis barang sesuai fungsinya. Untuk barang yang menghitung stok dan nilai persediaan, pilih Persediaan. Tipe tidak dapat diubah setelah disimpan."
             >
                 <div className="w-3/4">
-                    <SelectField
-                        value={values.kind}
-                        disabled={isDetail}
-                        onChange={(event) => onChange('kind', event.target.value)}
-                        className="h-[40px] rounded-[4px] border-ui-border"
-                        selectClassName="text-xs sm:text-sm text-brand-dark"
-                    >
-                        {config.kindOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </SelectField>
+                    {isDetail ? (
+                        <SimpleTextField
+                            value={values.kind}
+                            disabled
+                            readOnly
+                            clearable={false}
+                        />
+                    ) : (
+                        <SelectField
+                            value={values.kind}
+                            onChange={(event) => onChange('kind', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
+                        >
+                            {config.kindOptions.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </SelectField>
+                    )}
                 </div>
             </FormRow>
 
