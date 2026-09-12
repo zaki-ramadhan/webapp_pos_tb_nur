@@ -133,4 +133,9 @@ class Product extends DomainModel
     {
         return $this->belongsTo(Unit::class, 'sales_unit_id');
     }
+
+    public function unitConversions(): HasMany
+    {
+        return $this->hasMany(ProductUnitConversion::class);
+    }
 }

@@ -44,6 +44,8 @@ export function mapInventoryRows(pageId, records) {
     if (pageId === 'item-location') {
         return records.map((record) => ({
             id: record.id,
+            productId: record.product_id ?? '',
+            warehouseId: record.warehouse_id ?? '',
             warehouse: record.warehouse ?? '',
             productName: record.product_name ?? '',
             productCode: record.product_code ?? '',

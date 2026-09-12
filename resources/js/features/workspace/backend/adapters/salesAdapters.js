@@ -233,6 +233,8 @@ export function mapProductRow(record) {
         baseUnitId: record.base_unit_id ?? record.base_unit?.id ?? null,
         purchaseUnitId: record.purchase_unit_id ?? record.purchase_unit?.id ?? null,
         salesUnitId: record.sales_unit_id ?? record.sales_unit?.id ?? null,
+        unit_conversions: conversions,
+        unitConversions: conversions,
         attachments: record.attachments ?? [],
         activeStatus: record.is_active !== false ? 'active' : 'inactive',
         mainSupplier: record.main_supplier ?? record.mainSupplier ?? record.supplier_prices?.[0]?.supplier ?? record.supplierPrices?.[0]?.supplier ?? null,

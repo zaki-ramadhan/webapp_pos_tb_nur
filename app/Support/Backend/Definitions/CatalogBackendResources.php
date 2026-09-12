@@ -152,6 +152,7 @@ class CatalogBackendResources
                 with: [
                     'category', 'brand', 'mainSupplier', 'preferredSupplier', 'baseUnit', 'purchaseUnit', 'salesUnit', 'attachments',
                     'groupItems', 'groupItems.childProduct', 'groupItems.unit',
+                    'unitConversions', 'unitConversions.unit',
                 ],
                 storeRules: self::productRules(),
                 updateRules: fn (Model $record) => self::productRules($record),
