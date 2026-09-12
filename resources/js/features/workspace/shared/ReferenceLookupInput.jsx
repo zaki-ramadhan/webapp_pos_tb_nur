@@ -348,7 +348,7 @@ export default function ReferenceLookupInput({
                     ) : (
                         <LookupEmptyState title={emptyTitle}>
                             {onCreateNew && query.trim() ? (
-                                <div className="mt-1.5 flex justify-center w-full">
+                                <div className="mt-2.5 flex justify-center w-full">
                                     <button
                                         type="button"
                                         disabled={isCreating}

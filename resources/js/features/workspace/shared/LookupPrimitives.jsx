@@ -70,7 +70,7 @@ export function LookupEmptyState({
     const defaultPadding = hasCustomPadding
         ? ''
         : children
-            ? 'px-2.5 py-2.5'
+            ? 'px-1.5 pt-2 pb-1.5'
             : 'px-4 py-5';
 
     return (
