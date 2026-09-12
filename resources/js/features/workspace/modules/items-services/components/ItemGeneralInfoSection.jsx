@@ -111,6 +111,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                 <div className="w-3/4">
                     <SelectField
                         value={values.kind}
+                        disabled={isDetail}
                         onChange={(event) => onChange('kind', event.target.value)}
                         className="h-[40px] rounded-[4px] border-ui-border"
                         selectClassName="text-xs sm:text-sm text-brand-dark"

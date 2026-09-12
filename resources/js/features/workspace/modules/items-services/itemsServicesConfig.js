@@ -10,6 +10,7 @@ const itemTabs = [
     { id: 'general', label: 'Umum' },
     { id: 'sales-purchase', label: 'Penjualan / Pembelian' },
     { id: 'stock', label: 'Stok' },
+    { id: 'accounts', label: 'Akun' },
     { id: 'group', label: 'Rincian Grup' },
     { id: 'images', label: 'Gambar' },
     { id: 'other', label: 'Lain-lain' },
