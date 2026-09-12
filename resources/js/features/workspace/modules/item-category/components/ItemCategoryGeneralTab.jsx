@@ -39,30 +39,22 @@ export default function ItemCategoryGeneralTab({
             </ItemCategoryFieldRow>
 
             <ItemCategoryFieldRow label={config.labels.isDefault}>
-                {isDetail && detailRow?.isDefault ? (
-                    <span className="text-xs sm:text-sm text-brand-dark font-normal leading-6 select-none">
-                        {config.labels.yes || 'Ya'}
-                    </span>
-                ) : (
-                    <CheckboxField
-                        id="item-category-default"
-                        label={config.labels.yes}
-                        checked={values.isDefault}
-                        onChange={(event) => onChange('isDefault', event.target.checked)}
-                        align="center"
-                        labelClassName="text-base"
-                        inputClassName="mt-0 h-[18px] w-[18px]"
-                        containerClassName="w-auto"
-                    />
-                )}
+                <CheckboxField
+                    label={config.labels.yes}
+                    checked={Boolean(values.isDefault)}
+                    onChange={(event) => onChange('isDefault', event.target.checked)}
+                    align="center"
+                    labelClassName="text-base cursor-pointer"
+                    inputClassName="mt-0 h-[18px] w-[18px]"
+                    containerClassName="w-auto"
+                />
             </ItemCategoryFieldRow>
 
             <ItemCategoryFieldRow
                 label={
                     <CheckboxField
-                        id="item-category-subcategory"
                         label={config.labels.isSubCategory}
-                        checked={values.isSubCategory}
+                        checked={Boolean(values.isSubCategory)}
                         onChange={(event) => {
                             onChange('isSubCategory', event.target.checked);
                             if (!event.target.checked) {

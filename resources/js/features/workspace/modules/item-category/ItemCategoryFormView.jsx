@@ -155,6 +155,19 @@ export default function ItemCategoryFormView({
             }
         }
 
+        if (isDetail && detailRow?.isDefault && !values.isDefault) {
+            const hasOtherDefault = config.table?.rows?.some(
+                (row) => String(row.id) !== String(detailRow.id) && Boolean(row.isDefault)
+            );
+            if (!hasOtherDefault) {
+                rejectCrudFormAction(
+                    'Minimal harus ada satu kategori default. Untuk mengubah kategori default, silakan pilih dan simpan kategori lain sebagai default.',
+                    { setStatus }
+                );
+                return;
+            }
+        }
+
         await executeCrudFormAction({
             loadingMessage: isDetail ? 'Sedang memperbarui kategori.' : 'Sedang menyimpan kategori.',
             successMessage: isDetail ? 'Kategori berhasil diperbarui.' : 'Kategori berhasil dibuat.',
