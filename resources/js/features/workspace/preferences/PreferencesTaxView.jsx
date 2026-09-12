@@ -71,7 +71,7 @@ function TaxInputControl({ control, onChange }) {
                 prefix={control.prefix}
                 rows={control.rows ?? 3}
                 className={`rounded-[6px] border-ui-border ${control.fieldClassName ?? ''}`.trim()}
-                prefixClassName={`min-w-[60px] border-ui-border-medium px-3 py-2 text-xs sm:text-sm text-text-light ${control.prefixClassName ?? ''}`.trim()}
+                prefixClassName={`min-w-[60px] px-3 py-2 text-xs sm:text-sm text-table-row-text ${control.prefixClassName ?? ''}`.trim()}
                 textareaClassName={`min-h-[80px] px-3 py-2 text-xs sm:text-sm leading-6 text-text-darkest ${control.inputClassName ?? ''}`.trim()}
                 onChange={(event) => onChange(event.target.value)}
             />
@@ -113,7 +113,7 @@ function TaxInputControl({ control, onChange }) {
                 ) : null
             }
             className={`h-[38px] rounded-[6px] border-ui-border ${control.fieldClassName ?? ''}`.trim()}
-            prefixClassName={`min-w-[62px] border-ui-border-medium px-3 text-xs sm:text-sm text-text-light ${control.prefixClassName ?? ''}`.trim()}
+            prefixClassName={`min-w-[62px] px-3 text-xs sm:text-sm text-table-row-text ${control.prefixClassName ?? ''}`.trim()}
             inputClassName={`text-xs sm:text-sm text-text-darkest ${control.inputClassName ?? ''}`.trim()}
             trailingClassName={control.clearable && hasValue ? 'px-2.5 text-text-dark' : ''}
             onChange={(event) => onChange(event.target.value)}

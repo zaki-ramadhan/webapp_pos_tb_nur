@@ -151,7 +151,7 @@ export default function TransferFeeModal({
                                     prefix="Rp"
                                     maxLength={11}
                                     className="h-[34px] rounded-[4px] border-ui-border"
-                                    prefixClassName="min-w-[42px] justify-center border-r-ui-border-medium bg-ui-bg-hover px-2 text-xs sm:text-sm text-text-light"
+                                    prefixClassName="min-w-[42px] justify-center bg-ui-bg-hover px-2 text-xs sm:text-sm text-table-row-text"
                                     inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                                 />
                             </div>

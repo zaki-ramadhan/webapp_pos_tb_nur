@@ -15,7 +15,7 @@ export default function CityAutocompleteInput({
     error,
     message,
     className = 'h-[40px] rounded-[4px] border-ui-border',
-    prefixClassName = 'min-w-[62px] border-ui-border bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text',
+    prefixClassName = 'min-w-[62px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text',
     inputClassName = 'text-xs sm:text-sm text-brand-dark',
     dropdownLeftOffsetClassName = 'left-[62px]',
     ...props
@@ -106,6 +106,7 @@ export default function CityAutocompleteInput({
     const prefixMinWClass = hasPrefixMinW ? '' : 'min-w-[86px]';
     const hasPrefixPx = prefixClassName.includes('px-') || prefixClassName.includes('pl-') || prefixClassName.includes('pr-');
     const prefixPxClass = hasPrefixPx ? '' : 'px-5';
+    const cleanPrefixClassName = prefixClassName.replace(/(?:^|\s)(?:[^\s]*:)?border\S*/g, ' ').trim();
 
     return (
         <div ref={rootRef} className="relative w-full min-w-0">
@@ -115,7 +116,7 @@ export default function CityAutocompleteInput({
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full ${prefixMinWClass} shrink-0 items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-input-focus transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-ui-bg-panel text-gray-500' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} shrink-0 items-center ${prefixPxClass} text-xs sm:text-sm text-table-row-text transition-colors duration-150 ${disabled ? 'bg-ui-bg-panel text-gray-500' : ''} ${cleanPrefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>

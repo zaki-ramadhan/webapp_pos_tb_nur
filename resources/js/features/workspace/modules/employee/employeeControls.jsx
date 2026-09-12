@@ -194,7 +194,7 @@ export function PrefixedTextArea({ value, onChange, prefix, ...props }) {
             prefix={prefix}
             rows={4}
             className="rounded-[4px] border-ui-border"
-            prefixClassName="min-w-[58px] border-ui-border bg-input-prefix-bg px-3 py-3 text-xs sm:text-sm text-input-prefix-text"
+            prefixClassName="min-w-[58px] bg-input-prefix-bg px-3 py-3 text-xs sm:text-sm text-table-row-text"
             textareaClassName="min-h-[76px] px-3 py-3 text-xs sm:text-sm text-brand-dark"
             {...props}
         />
@@ -208,7 +208,7 @@ export function PrefixedInput({ value, onChange, prefix, className = '', ...prop
             onChange={onChange}
             prefix={prefix}
             className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
-            prefixClassName="min-w-[62px] border-ui-border bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text"
+            prefixClassName="min-w-[62px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text"
             inputClassName="text-xs sm:text-sm text-brand-dark"
             {...props}
         />

@@ -39,7 +39,7 @@ export function DepositStatusPill({ value }) {
 export function DepositAmountField({ prefix = 'Rp', value, className = '' }) {
     return (
         <div className={`flex h-[34px] overflow-hidden rounded-[4px] border border-ui-border ${className}`.trim()}>
-            <span className="inline-flex items-center border-r border-ui-border-medium bg-input-prefix-bg-compact px-3 text-base text-text-inactive">
+            <span className="inline-flex items-center bg-input-prefix-bg-compact px-3 text-base text-table-row-text">
                 {prefix}
             </span>
             <span className="inline-flex flex-1 items-center justify-end px-3 text-lg font-semibold text-text-darkest">

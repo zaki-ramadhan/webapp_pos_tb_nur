@@ -23,7 +23,7 @@ export default function SalesTab({ config, values, onChange }) {
                     }}
                     prefix="Rp"
                     className="h-[40px] rounded-[4px] border-ui-border"
-                    prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
+                    prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-table-row-text"
                     inputClassName="text-xs sm:text-sm text-brand-dark"
                 />
             </FormFieldRow>

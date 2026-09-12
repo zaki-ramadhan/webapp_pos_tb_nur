@@ -53,7 +53,7 @@ export default function ItemDetailTab({ detail }) {
                     readOnly
                     prefix="%"
                     className="h-[34px] rounded-[4px] border-ui-border"
-                    prefixClassName="min-w-[42px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
+                    prefixClassName="min-w-[42px] justify-center bg-input-prefix-bg-compact px-0 text-table-row-text"
                     inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                 />
                 <DocumentModalCurrencyReadonlyField value={detail.discountValue} />

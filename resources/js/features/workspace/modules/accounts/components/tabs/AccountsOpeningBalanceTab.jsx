@@ -17,7 +17,7 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
                         prefix="Rp"
                         maxLength={15}
                         className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[200px]"
-                        prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
+                        prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-table-row-text"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 </AccountsFormFieldRow>

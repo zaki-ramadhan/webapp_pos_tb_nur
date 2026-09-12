@@ -5,7 +5,7 @@ export default function PreferenceAddressTokenField({ field, tokens = [], onClea
     return (
         <div className="group flex h-[38px] w-full items-center overflow-hidden rounded-[4px] border border-ui-border bg-white">
             {field?.label ? (
-                <span className="flex h-full min-w-[62px] items-center border-r border-ui-border bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text select-none">
+                <span className="flex h-full min-w-[62px] items-center bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text select-none">
                     {field.label}
                 </span>
             ) : null}

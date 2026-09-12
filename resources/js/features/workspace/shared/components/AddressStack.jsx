@@ -20,7 +20,7 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                 rows={4}
                 prefix={prefixValue}
                 className="rounded-[4px] border-slate-400"
-                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-slate-600"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-table-row-text"
                 textareaClassName="min-h-[112px] text-xs sm:text-sm text-brand-dark"
             />
 
@@ -30,7 +30,7 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                 onSelectCity={handleSelectCity}
                 prefix="Kota"
                 disabled={readOnly}
-                prefixClassName="min-w-[92px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-slate-600"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text"
                 dropdownLeftOffsetClassName="left-[92px]"
             />
 
@@ -41,7 +41,7 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                 readOnly={readOnly}
                 prefix="Kode Pos"
                 className="h-[40px] rounded-[4px] border-slate-400 w-full"
-                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-slate-600"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-table-row-text"
                 inputClassName="text-xs sm:text-sm text-brand-dark"
             />
 
@@ -51,7 +51,7 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                 readOnly={readOnly}
                 prefix="Provinsi"
                 className="h-[40px] rounded-[4px] border-slate-400"
-                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-slate-600"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-table-row-text"
                 inputClassName="text-xs sm:text-sm text-brand-dark"
             />
 
@@ -61,7 +61,7 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                 readOnly={readOnly}
                 prefix="Negara"
                 className="h-[40px] rounded-[4px] border-slate-400"
-                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-slate-600"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-table-row-text"
                 inputClassName="text-xs sm:text-sm text-brand-dark"
             />
         </div>

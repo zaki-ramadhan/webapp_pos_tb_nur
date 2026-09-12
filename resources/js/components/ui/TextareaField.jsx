@@ -88,6 +88,8 @@ export default function TextareaField({
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
+    const cleanPrefixClassName = prefixClassName.replace(/(?:^|\s)(?:[^\s]*:)?border\S*/g, ' ').trim();
+
     return (
         <div className={`w-full ${containerClassName}`.trim()}>
             <span
@@ -96,7 +98,7 @@ export default function TextareaField({
             >
                 {prefix ? (
                     <span
-                        className={`flex min-w-[86px] shrink-0 items-start border-r border-slate-400 px-4 py-3 text-xs sm:text-sm transition-colors duration-150 group-focus-within:border-current ${isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : 'text-input-focus'} ${prefixClassName}`.trim()}
+                        className={`flex min-w-[86px] shrink-0 items-start px-4 py-3 text-xs sm:text-sm transition-colors duration-150 ${isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : 'text-table-row-text'} ${cleanPrefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>

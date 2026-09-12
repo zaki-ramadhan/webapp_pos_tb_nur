@@ -297,7 +297,7 @@ export default function PayrollEntryEmployeeModal({
                                     value={paidSalary > 0 ? paidSalary.toLocaleString('id-ID') : '0'}
                                     disabled
                                     className="h-[36px] rounded-[4px] border-ui-border bg-zinc-50 font-normal text-black"
-                                    prefixClassName="min-w-0 px-2 justify-center text-black font-normal border-r border-[#d4d4d8] bg-[#f4f4f5] text-sm"
+                                    prefixClassName="min-w-0 px-2 justify-center text-table-row-text font-normal bg-[#f4f4f5] text-sm"
                                     inputClassName="text-black text-right text-sm font-normal"
                                 />
                             </div>
@@ -345,7 +345,7 @@ function InputRow({ label, value, onChange, id, indent = false, disabled = false
                         placeholder="0"
                         disabled={disabled}
                         className={`h-[36px] rounded-[4px] border-ui-border font-normal text-black ${disabled ? 'bg-zinc-50' : ''}`}
-                        prefixClassName="min-w-0 px-2 justify-center text-black font-normal border-r border-[#d4d4d8] bg-[#f4f4f5] text-sm"
+                        prefixClassName="min-w-0 px-2 justify-center text-table-row-text font-normal bg-[#f4f4f5] text-sm"
                         inputClassName="text-black text-right text-sm font-normal"
                     />
                 </div>
