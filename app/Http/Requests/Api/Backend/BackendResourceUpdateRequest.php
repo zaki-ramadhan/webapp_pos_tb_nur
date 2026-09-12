@@ -16,6 +16,7 @@ class BackendResourceUpdateRequest extends BackendResourceRequest
         $rules = $this->blueprint()->updateRules($this->record());
         $rules['attachment_ids'] = ['sometimes', 'array'];
         $rules['attachment_ids.*'] = ['integer', 'exists:attachments,id'];
+        $rules['expected_updated_at'] = ['sometimes', 'nullable', 'string'];
         return $rules;
     }
 

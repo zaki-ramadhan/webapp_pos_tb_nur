@@ -165,11 +165,18 @@ export default function SimpleMasterFormView({
         setSaving(true);
 
         try {
-            const payload = backendConfig.toPayload(values);
+            const payload = {
+                ...backendConfig.toPayload(values),
+                expected_updated_at: detailRow?.updated_at ?? null,
+            };
             const response = isDetailMode && detailRow?.id
                 ? await updateBackendResource(backendConfig.resource, detailRow.id, payload)
                 : await createBackendResource(backendConfig.resource, payload);
             const record = response?.data ?? null;
+
+            if (isDetailMode && record && detailRow) {
+                detailRow.updated_at = record.updated_at;
+            }
 
             setHasSaved(true);
             if (typeof window !== 'undefined' && window.__clearBackendCache) {

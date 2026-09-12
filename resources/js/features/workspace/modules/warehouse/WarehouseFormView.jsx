@@ -171,6 +171,7 @@ export default function WarehouseFormView({
                     province: values.province ?? '',
                     country: values.country ?? '',
                     all_users: values.allUsers,
+                    expected_updated_at: entry?.updated_at ?? null,
                 };
 
                 const response = isDetailMode && entry.id

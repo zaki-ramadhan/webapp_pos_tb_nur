@@ -158,4 +158,95 @@ class InventoryBackendResourceApiTest extends TestCase
             'related_document_id' => $orderId,
         ]);
     }
+
+    public function test_optimistic_locking_prevents_lost_update(): void
+    {
+        $user = User::factory()->create();
+        $branch = Branch::query()->create([
+            'code' => 'BR-OPT',
+            'name' => 'Cabang Optimistic',
+            'is_active' => true,
+        ]);
+        $warehouse = Warehouse::query()->create([
+            'branch_id' => $branch->id,
+            'code' => 'WH-OPT',
+            'name' => 'Gudang Optimistic',
+            'warehouse_type' => 'main',
+            'is_active' => true,
+        ]);
+
+        // Simpan data gudang dengan update pertama
+        $originalUpdatedAt = $warehouse->updated_at->toIso8601String();
+
+        // User A memperbarui data terlebih dahulu di database (updated_at berubah)
+        sleep(1);
+        $warehouse->name = 'Gudang Optimistic Updated by User A';
+        $warehouse->save();
+
+        // User B yang masih memegang timestamp awal mencoba menyimpan perubahan
+        $response = $this->actingAs($user)->putJson("/api/backend/warehouses/{$warehouse->id}", [
+            'branch_id' => $branch->id,
+            'code' => 'WH-OPT',
+            'name' => 'Gudang Optimistic Overwritten by User B',
+            'warehouse_type' => 'main',
+            'is_active' => true,
+            'expected_updated_at' => $originalUpdatedAt,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['concurrency']);
+    }
+
+    public function test_inventory_adjustment_prevents_excessive_deduction(): void
+    {
+        $user = User::factory()->create();
+        $branch = Branch::query()->create([
+            'code' => 'BR-ADJ',
+            'name' => 'Cabang Penyesuaian',
+            'is_active' => true,
+        ]);
+        $warehouse = Warehouse::query()->create([
+            'branch_id' => $branch->id,
+            'code' => 'WH-ADJ',
+            'name' => 'Gudang Penyesuaian',
+            'warehouse_type' => 'main',
+            'is_active' => true,
+        ]);
+
+        $unit = \App\Domain\Catalog\Models\Unit::query()->create([
+            'code' => 'PCS',
+            'name' => 'Pcs',
+            'is_active' => true,
+        ]);
+
+        $product = \App\Domain\Catalog\Models\Product::query()->create([
+            'code' => 'PRD-ADJ-01',
+            'name' => 'Paku Beton 5cm',
+            'base_unit_id' => $unit->id,
+            'is_active' => true,
+        ]);
+
+        // Coba kurangi stok saat stok masih 0
+        $response = $this->actingAs($user)->postJson('/api/backend/inventory-adjustments', [
+            'branch_id' => $branch->id,
+            'warehouse_id' => $warehouse->id,
+            'document_number' => 'IA.2026.05.00001',
+            'entry_date' => '2026-05-15',
+            'status' => 'Selesai',
+            'lines' => [
+                [
+                    'product_id' => $product->id,
+                    'warehouse_id' => $warehouse->id,
+                    'quantity' => 10,
+                    'attributes' => [
+                        'adjustment_type' => 'Pengurangan',
+                    ],
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['lines']);
+    }
 }
+

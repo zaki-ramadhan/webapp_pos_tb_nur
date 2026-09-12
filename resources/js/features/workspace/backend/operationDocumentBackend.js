@@ -187,6 +187,7 @@ export function buildOperationDocumentRecord(record, config, pageId) {
 
     return {
         __backendRecordId: record.id,
+        __updatedAt: record.updated_at ?? null,
         __partnerId: record.customer_id ?? record.supplier_id ?? null,
         __relatedDocumentId: record.related_document_id ?? null,
         returnSource: metadata.return_source ?? 'Faktur',
@@ -370,6 +371,7 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
     const totalAmount = Math.max(0, subtotalAmount - discountAmount + taxAmount + subtotalCosts);
 
     return {
+        expected_updated_at: values.__updatedAt ?? values.updated_at ?? null,
         [backendConfig.partnerField]: values.__partnerId,
         branch_id: null,
         document_number: values.documentNumber?.trim() || buildGeneratedDocumentNumber(pageId),

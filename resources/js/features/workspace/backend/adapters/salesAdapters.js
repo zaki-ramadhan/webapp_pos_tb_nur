@@ -225,6 +225,8 @@ export function mapProductRow(record) {
         notes: record.notes ?? '',
         isActive: record.is_active !== false,
         is_active: record.is_active !== false,
+        __updatedAt: record.updated_at ?? null,
+        updated_at: record.updated_at ?? null,
         tabLabel: record.name ?? '',
         categoryId: record.category_id ?? record.category?.id ?? null,
         brandId: record.brand_id ?? record.brand?.id ?? null,

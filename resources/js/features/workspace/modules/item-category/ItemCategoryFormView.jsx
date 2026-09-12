@@ -219,6 +219,7 @@ export default function ItemCategoryFormView({
                     parent_id: values.isSubCategory ? (values.parentId || null) : null,
                     is_default: values.isDefault,
                     is_active: true,
+                    expected_updated_at: detailRow?.updated_at ?? null,
                 };
 
                 const response = isDetail && detailRow?.id
@@ -229,6 +230,9 @@ export default function ItemCategoryFormView({
             },
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
+                if (isDetail && record && detailRow) {
+                    detailRow.updated_at = record.updated_at;
+                }
                 await onRefresh?.();
                 markClean();
                 if (isDetail && record && activeLevel2Tab?.id) {
