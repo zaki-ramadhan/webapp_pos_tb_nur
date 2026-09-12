@@ -219,7 +219,7 @@ class InventoryInquiryQueryService
             return $this->paginateRows(collect(), $filters);
         }
 
-        $warehouses = Warehouse::query()->get()->keyBy('id');
+        $warehouses = Warehouse::query()->with('branch')->get()->keyBy('id');
         $rows = collect();
 
         // 1. Initial batches
@@ -245,25 +245,31 @@ class InventoryInquiryQueryService
                 'id' => 'batch-' . $batch->id,
                 'warehouse_id' => (int) $batch->warehouse_id,
                 'warehouse' => $wh?->name ?? ('Gudang #' . $batch->warehouse_id),
+                'branch_id' => $wh?->branch_id ?? 1,
+                'branch_name' => $wh?->branch?->name ?? 'JAKARTA',
                 'date' => $batch->entry_date ? Carbon::parse($batch->entry_date)->format('d/m/Y') : Carbon::now()->format('d/m/Y'),
                 'quantity' => (float) $batch->qty_received,
                 'raw_quantity' => (float) $batch->qty_received,
                 'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
+                'unit_id' => $product->base_unit_id ?? $product->purchase_unit_id,
                 'unit_cost' => $cost,
                 'raw_unit_cost' => $cost,
-                'document_number' => 'SA-' . $product->code,
+                'document_id' => null,
+                'document_number' => null,
                 'created_at' => $batch->created_at ?? $batch->entry_date,
             ]);
         }
 
         // 2. Operation Document Adjustments (Opening stock entries created as OperationDocument)
         $opDocs = OperationDocument::query()
-            ->with(['lines.unit', 'warehouse'])
+            ->with(['lines.unit'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
             ->where('document_type', 'inventory_adjustment')
             ->where(function ($q) {
                 $q->where('notes', 'like', '%Stok awal%')
-                  ->orWhere('document_number', 'like', 'SA-%');
+                  ->orWhere('document_number', 'like', 'SA-%')
+                  ->orWhere('document_number', 'like', 'IA.%')
+                  ->orWhere('document_number', 'like', 'PS.%');
             })
             ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
             ->orderBy('id', 'asc')
@@ -274,7 +280,7 @@ class InventoryInquiryQueryService
                 if ((int) $line->product_id !== $productId) {
                     continue;
                 }
-                $wh = $doc->warehouse ?? $warehouses->get($line->warehouse_id ?? $doc->warehouse_id);
+                $wh = $warehouses->get($line->warehouse_id ?? $doc->warehouse_id);
                 $attrs = is_string($line->attributes) ? json_decode($line->attributes, true) : (array) ($line->attributes ?? []);
                 $cost = (float) ($line->unit_price ?? $attrs['unit_price'] ?? $attrs['unit_cost'] ?? $product->default_purchase_price ?? 0);
                 $qty = (float) ($line->quantity ?? 0);
@@ -288,12 +294,16 @@ class InventoryInquiryQueryService
                     'id' => 'op-line-' . $line->id,
                     'warehouse_id' => $whId,
                     'warehouse' => $wh?->name ?? ('Gudang #' . $whId),
+                    'branch_id' => $wh?->branch_id ?? 1,
+                    'branch_name' => $wh?->branch?->name ?? 'JAKARTA',
                     'date' => $doc->entry_date ? Carbon::parse($doc->entry_date)->format('d/m/Y') : ($doc->created_at ? Carbon::parse($doc->created_at)->format('d/m/Y') : Carbon::now()->format('d/m/Y')),
                     'quantity' => $qty,
                     'raw_quantity' => $qty,
                     'unit' => $line->unit?->name ?? $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
+                    'unit_id' => $line->unit_id ?? $product->base_unit_id,
                     'unit_cost' => $cost,
                     'raw_unit_cost' => $cost,
+                    'document_id' => $doc->id,
                     'document_number' => $doc->document_number,
                     'created_at' => $doc->created_at,
                 ]);
@@ -302,7 +312,7 @@ class InventoryInquiryQueryService
 
         // 3. Inventory Adjustment Documents (Manual Opening Stock entries legacy)
         $documents = InventoryDocument::query()
-            ->with(['lines.unit', 'warehouse'])
+            ->with(['lines.unit'])
             ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
             ->where('document_type', 'inventory_adjustment')
             ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
@@ -314,7 +324,7 @@ class InventoryInquiryQueryService
                 if ((int) $line->product_id !== $productId) {
                     continue;
                 }
-                $wh = $doc->warehouse ?? $warehouses->get($line->warehouse_id ?? $doc->warehouse_id);
+                $wh = $warehouses->get($line->warehouse_id ?? $doc->warehouse_id);
                 $attrs = is_string($line->attributes) ? json_decode($line->attributes, true) : (array) ($line->attributes ?? []);
                 $cost = (float) ($attrs['unit_price'] ?? $attrs['unit_cost'] ?? $product->default_purchase_price ?? 0);
                 $qty = (float) ($line->quantity ?? 0);
@@ -328,12 +338,16 @@ class InventoryInquiryQueryService
                     'id' => 'doc-line-' . $line->id,
                     'warehouse_id' => $whId,
                     'warehouse' => $wh?->name ?? ('Gudang #' . $whId),
+                    'branch_id' => $wh?->branch_id ?? 1,
+                    'branch_name' => $wh?->branch?->name ?? 'JAKARTA',
                     'date' => $doc->document_date ? Carbon::parse($doc->document_date)->format('d/m/Y') : ($doc->created_at ? Carbon::parse($doc->created_at)->format('d/m/Y') : Carbon::now()->format('d/m/Y')),
                     'quantity' => $qty,
                     'raw_quantity' => $qty,
                     'unit' => $line->unit?->name ?? $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
+                    'unit_id' => $line->unit_id ?? $product->base_unit_id,
                     'unit_cost' => $cost,
                     'raw_unit_cost' => $cost,
+                    'document_id' => $doc->id,
                     'document_number' => $doc->document_number,
                     'created_at' => $doc->created_at,
                 ]);
@@ -346,17 +360,22 @@ class InventoryInquiryQueryService
             foreach ($itemLocations->items() as $item) {
                 $qty = (float) ($item['raw_quantity'] ?? $item['quantity'] ?? 0);
                 if ($qty > 0) {
+                    $wh = $warehouses->get((int) ($item['warehouse_id'] ?? 1));
                     $rows->push([
                         'id' => 'loc-' . ($item['id'] ?? $item['warehouse_id']),
                         'warehouse_id' => (int) ($item['warehouse_id'] ?? 1),
                         'warehouse' => $item['warehouse'] ?? ('Gudang #' . ($item['warehouse_id'] ?? 1)),
+                        'branch_id' => $wh?->branch_id ?? 1,
+                        'branch_name' => $wh?->branch?->name ?? 'JAKARTA',
                         'date' => Carbon::now()->format('d/m/Y'),
                         'quantity' => $qty,
                         'raw_quantity' => $qty,
                         'unit' => $item['unit'] ?? ($product->baseUnit?->name ?? ''),
+                        'unit_id' => $product->base_unit_id,
                         'unit_cost' => (float) ($item['raw_unit_cost'] ?? $item['unit_cost'] ?? 0),
                         'raw_unit_cost' => (float) ($item['raw_unit_cost'] ?? $item['unit_cost'] ?? 0),
-                        'document_number' => 'SA-' . $product->code,
+                        'document_id' => null,
+                        'document_number' => null,
                         'created_at' => Carbon::now(),
                     ]);
                 }

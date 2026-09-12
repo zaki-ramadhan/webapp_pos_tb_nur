@@ -61,6 +61,7 @@ function getMultiUnitBreakdown(qtyVal, baseUnitName, conversions) {
 
 export default function ItemStockTab({ config, values, onChange }) {
     const [modalOpen, setModalOpen] = useState(false);
+    const [editingRow, setEditingRow] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const perPage = 5;
     const openingStockList = values.openingStockRows || [];
@@ -93,20 +94,48 @@ export default function ItemStockTab({ config, values, onChange }) {
         return getMultiUnitBreakdown(values.stockQuantity, baseUnitName, conversions);
     }, [values.stockQuantity, baseUnitName, conversions]);
 
-    function handleAddOpeningStock(data) {
-        const newRow = {
-            id: `opening-stock-${Date.now()}`,
-            date: data.date,
-            quantity: Number(data.quantity),
-            unit: data.unit,
-            unit_id: data.unit_id ?? null,
-            unitCost: Number(data.unitCost),
-            warehouse: data.warehouse,
-            warehouse_id: data.warehouse_id ?? null,
-            serials: data.serials || [],
-        };
+    function handleConfirmOpeningStock(data) {
         const currentRows = values.openingStockRows || [];
-        onChange?.('openingStockRows', [...currentRows, newRow]);
+        if (editingRow) {
+            const updatedRows = currentRows.map((r) => {
+                if (r.id === editingRow.id) {
+                    return {
+                        ...r,
+                        ...data,
+                        id: r.id,
+                        quantity: Number(data.quantity),
+                        unitCost: Number(data.unitCost),
+                    };
+                }
+                return r;
+            });
+            onChange?.('openingStockRows', updatedRows);
+        } else {
+            const newRow = {
+                id: `opening-stock-${Date.now()}`,
+                date: data.date,
+                quantity: Number(data.quantity),
+                unit: data.unit,
+                unit_id: data.unit_id ?? null,
+                unitCost: Number(data.unitCost),
+                warehouse: data.warehouse,
+                warehouse_id: data.warehouse_id ?? null,
+                branch: data.branch,
+                branch_id: data.branch_id ?? 1,
+                serials: data.serials || [],
+                __fromDb: false,
+            };
+            onChange?.('openingStockRows', [...currentRows, newRow]);
+        }
+        setEditingRow(null);
+    }
+
+    function handleDeleteOpeningStock(rowToDelete) {
+        if (!rowToDelete) return;
+        const currentRows = values.openingStockRows || [];
+        const updatedRows = currentRows.filter((r) => r.id !== rowToDelete.id);
+        onChange?.('openingStockRows', updatedRows);
+        setEditingRow(null);
     }
 
     return (
@@ -124,6 +153,7 @@ export default function ItemStockTab({ config, values, onChange }) {
                                     await showCrudValidationToast('Nama Barang harus diisi.');
                                     return;
                                 }
+                                setEditingRow(null);
                                 setModalOpen(true);
                             }}
                             className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer"
@@ -157,7 +187,14 @@ export default function ItemStockTab({ config, values, onChange }) {
                         {paginatedRows.length ? (
                             paginatedRows.map((row) => {
                                 return (
-                                    <DataTableRow key={row.id} className="border-ui-border-row bg-white">
+                                    <DataTableRow
+                                        key={row.id}
+                                        className="border-ui-border-row bg-white hover:bg-slate-50 cursor-pointer transition-colors"
+                                        onClick={() => {
+                                            setEditingRow(row);
+                                            setModalOpen(true);
+                                        }}
+                                    >
                                         {config.openingStockTable.columns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
@@ -282,8 +319,13 @@ export default function ItemStockTab({ config, values, onChange }) {
 
             <OpeningStockModal
                 open={modalOpen}
-                onClose={() => setModalOpen(false)}
-                onConfirm={handleAddOpeningStock}
+                onClose={() => {
+                    setModalOpen(false);
+                    setEditingRow(null);
+                }}
+                onConfirm={handleConfirmOpeningStock}
+                onDelete={handleDeleteOpeningStock}
+                initialData={editingRow}
                 initialUnit={values.primaryUnit}
                 initialUnitCost={values.purchasePrice || values.default_purchase_price || (values.stockUnitValue !== '0' ? values.stockUnitValue : '')}
             />

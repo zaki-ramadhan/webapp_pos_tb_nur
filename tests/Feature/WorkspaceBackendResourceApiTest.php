@@ -361,6 +361,11 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $opStockResponse->assertOk();
         $opStockRows = collect($opStockResponse->json('data'));
         $this->assertCount(3, $opStockRows);
+        $opDocRow = $opStockRows->firstWhere('warehouse', 'Gudang Material');
+        $this->assertNotNull($opDocRow);
+        $this->assertEquals('Cabang Utama', $opDocRow['branch_name']);
+        $this->assertNotEmpty($opDocRow['document_id']);
+        $this->assertNotEmpty($opDocRow['document_number']);
     }
 
     public function test_inventory_adjustment_creation_updates_item_locations_and_mutations(): void

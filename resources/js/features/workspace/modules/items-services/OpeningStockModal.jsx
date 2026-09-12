@@ -9,21 +9,68 @@ import { TransactionDateInput } from '@/features/workspace/modules/shared/Transa
 
 import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 
-export default function OpeningStockModal({ open, onClose, onConfirm, initialUnit = [], initialUnitCost = '' }) {
+export default function OpeningStockModal({
+    open,
+    onClose,
+    onConfirm,
+    onDelete,
+    initialData = null,
+    initialUnit = [],
+    initialUnitCost = '',
+}) {
     const [activeTab, setActiveTab] = useState('details');
+    const [branch, setBranch] = useState([{ id: 1, name: 'JAKARTA' }]);
     const [warehouse, setWarehouse] = useState([{ id: 1, name: 'Gudang Utama' }]);
     const [date, setDate] = useState(buildTodayDisplayDate());
     const [quantity, setQuantity] = useState('1');
     const [unit, setUnit] = useState(initialUnit);
     const [unitCost, setUnitCost] = useState(() => (initialUnitCost ? formatAmountInput(initialUnitCost) : '0'));
-    const [totalCost, setTotalCost] = useState(() => {
-        const q = parseFloat(String('1').replace(/\./g, '').replace(/,/g, '.')) || 0;
-        const c = parseFloat(String(initialUnitCost || '0').replace(/\./g, '').replace(/,/g, '.')) || 0;
-        return q * c;
-    });
+    const [totalCost, setTotalCost] = useState(0);
+
+    const documentNumber = initialData?.document_number || null;
+    const documentId = initialData?.document_id || null;
 
     useEffect(() => {
-        if (open) {
+        if (!open) return;
+
+        setActiveTab('details');
+
+        if (initialData) {
+            const bName = initialData.branch_name || initialData.branch || 'JAKARTA';
+            const bId = initialData.branch_id || 1;
+            setBranch([{ id: bId, name: bName }]);
+
+            const wName = initialData.warehouse || 'Gudang Utama';
+            const wId = initialData.warehouse_id || 1;
+            setWarehouse([{ id: wId, name: wName }]);
+
+            setDate(initialData.date || buildTodayDisplayDate());
+            const qtyStr = formatAmountInput(initialData.quantity, { allowDecimal: false }) || '1';
+            setQuantity(qtyStr);
+
+            if (initialData.unit) {
+                setUnit([{ id: initialData.unit_id || null, name: initialData.unit }]);
+            } else {
+                setUnit(initialUnit);
+            }
+
+            const costStr = formatAmountInput(initialData.unitCost ?? initialData.unit_cost ?? initialUnitCost ?? '0');
+            setUnitCost(costStr);
+
+            const q = parseFloat(String(qtyStr).replace(/\./g, '').replace(/,/g, '.')) || 0;
+            const c = parseFloat(String(costStr).replace(/\./g, '').replace(/,/g, '.')) || 0;
+            setTotalCost(q * c);
+        } else {
+            setBranch([{ id: 1, name: 'JAKARTA' }]);
+            setDate(buildTodayDisplayDate());
+            setQuantity('1');
+            setUnit(initialUnit);
+            const initialCost = initialUnitCost ? formatAmountInput(initialUnitCost) : '0';
+            setUnitCost(initialCost);
+            const q = 1;
+            const c = parseFloat(String(initialCost).replace(/\./g, '').replace(/,/g, '.')) || 0;
+            setTotalCost(q * c);
+
             listBackendResource('warehouses', { per_page: 10 })
                 .then((res) => {
                     const rows = extractBackendRows(res);
@@ -37,18 +84,8 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                 .catch(() => {
                     setWarehouse([{ id: 1, name: 'Gudang Utama' }]);
                 });
-
-            setDate(buildTodayDisplayDate());
-            setQuantity('1');
-            setUnit(initialUnit);
-            const initialCost = initialUnitCost ? formatAmountInput(initialUnitCost) : '0';
-            setUnitCost(initialCost);
-            const q = 1;
-            const c = parseFloat(String(initialCost).replace(/\./g, '').replace(/,/g, '.')) || 0;
-            setTotalCost(q * c);
-            setActiveTab('details');
         }
-    }, [open, initialUnit, initialUnitCost]);
+    }, [open, initialData, initialUnit, initialUnitCost]);
 
     const calculateTotalCost = (qStr = quantity, cStr = unitCost) => {
         const q = parseFloat(String(qStr).replace(/\./g, '').replace(/,/g, '.')) || 0;
@@ -56,7 +93,19 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
         setTotalCost(q * c);
     };
 
-    const formattedTotalCost = `Rp ${Number(totalCost).toLocaleString('id-ID')}`;
+    const handleOpenAdjustment = () => {
+        if (!documentNumber) return;
+        window.dispatchEvent(
+            new CustomEvent('workspace:open-page', {
+                detail: {
+                    pageId: 'inventory-adjustment',
+                    recordId: documentId ? String(documentId) : null,
+                    label: documentNumber,
+                    tabLabel: documentNumber,
+                },
+            }),
+        );
+    };
 
     function handleSave() {
         const qtyVal = parseFloat(String(quantity).replace(/\./g, '').replace(/,/g, '.')) || 0;
@@ -67,10 +116,14 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
             return;
         }
 
+        const selectedBranch = branch[0];
         const selectedWarehouse = warehouse[0];
         const selectedUnit = unit[0];
 
         const data = {
+            ...(initialData || {}),
+            branch: selectedBranch?.name || selectedBranch?.label || 'JAKARTA',
+            branch_id: selectedBranch?.id ? Number(selectedBranch.id) : 1,
             warehouse: selectedWarehouse?.name || selectedWarehouse?.label || '',
             warehouse_id: selectedWarehouse?.id ? Number(selectedWarehouse.id) : null,
             date,
@@ -78,7 +131,7 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
             unit: selectedUnit?.name || selectedUnit?.label || '',
             unit_id: selectedUnit?.id ? Number(selectedUnit.id) : null,
             unitCost: String(costVal),
-            serials: [],
+            serials: initialData?.serials || [],
         };
 
         onConfirm(data);
@@ -89,16 +142,31 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
         <WorkspaceDialog
             open={open}
             onClose={onClose}
-            title="Stok Awal"
+            title="Saldo Awal"
             maxWidthClassName="max-w-[500px]"
             contentClassName="bg-white px-5 pt-4 pb-5 sm:px-6 sm:pt-5 sm:pb-6 min-h-[460px] flex flex-col justify-start"
             footer={
-                <div className="flex justify-end">
+                <div className={`flex items-center ${initialData ? 'justify-between' : 'justify-end'} w-full`}>
+                    {initialData && (
+                        <Button
+                            type="button"
+                            onClick={() => {
+                                onDelete?.(initialData);
+                                onClose();
+                            }}
+                            size="md"
+                            variant="outline"
+                            className="rounded-[4px] min-w-[80px] border-brand-blue text-brand-blue hover:bg-brand-blue-lightest cursor-pointer"
+                        >
+                            Hapus
+                        </Button>
+                    )}
                     <Button
+                        type="button"
                         onClick={handleSave}
                         size="md"
                         variant="brand-blue"
-                        className="rounded-[4px] min-w-[80px]"
+                        className="rounded-[4px] min-w-[80px] cursor-pointer"
                     >
                         Lanjut
                     </Button>
@@ -111,7 +179,7 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                     onClick={() => setActiveTab('details')}
                     className={`px-4 py-2.5 text-xs sm:text-sm border-b-2 transition-colors -mb-px outline-none ${
                         activeTab === 'details'
-                            ? 'border-tab-active-border-t text-tab-active-border-t font-normal'
+                            ? 'border-red-600 text-red-600 font-medium'
                             : 'border-transparent text-slate-500 hover:text-slate-800'
                     }`}
                 >
@@ -121,16 +189,52 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
 
             {activeTab === 'details' && (
                 <div className="space-y-2">
-                    <FormRow label="Gudang" required>
-                        <BackendLookupField
-                            resource="warehouses"
-                            value={warehouse?.[0]?.name ?? (typeof warehouse?.[0] === 'string' ? warehouse[0] : (warehouse?.name ?? ''))}
-                            placeholder="Cari/Pilih..."
-                            searchLabel="Cari gudang"
-                            onSelect={(option) => setWarehouse([option])}
-                            onClear={() => setWarehouse([])}
-                        />
+                    <FormRow label="Cabang" required>
+                        <div className="w-3/4">
+                            <BackendLookupField
+                                resource="branches"
+                                value={branch?.[0]?.name ?? (typeof branch?.[0] === 'string' ? branch[0] : (branch?.name ?? ''))}
+                                placeholder="Cari/Pilih..."
+                                searchLabel="Cari cabang"
+                                onSelect={(option) => setBranch([option])}
+                                onClear={() => setBranch([])}
+                            />
+                        </div>
                     </FormRow>
+
+                    <FormRow label="Gudang" required>
+                        <div className="w-3/4">
+                            {initialData?.__fromDb ? (
+                                <SimpleTextField
+                                    value={warehouse?.[0]?.name ?? (typeof warehouse?.[0] === 'string' ? warehouse[0] : (warehouse?.name ?? ''))}
+                                    disabled
+                                />
+                            ) : (
+                                <BackendLookupField
+                                    resource="warehouses"
+                                    value={warehouse?.[0]?.name ?? (typeof warehouse?.[0] === 'string' ? warehouse[0] : (warehouse?.name ?? ''))}
+                                    placeholder="Cari/Pilih..."
+                                    searchLabel="Cari gudang"
+                                    onSelect={(option) => setWarehouse([option])}
+                                    onClear={() => setWarehouse([])}
+                                />
+                            )}
+                        </div>
+                    </FormRow>
+
+                    {Boolean(documentNumber) && (
+                        <FormRow label="No Penyesuaian #">
+                            <div className="w-3/4">
+                                <button
+                                    type="button"
+                                    onClick={handleOpenAdjustment}
+                                    className="flex items-center px-3 py-2 border border-emerald-300 rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-semibold h-[38px] bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400 cursor-pointer"
+                                >
+                                    {documentNumber}
+                                </button>
+                            </div>
+                        </FormRow>
+                    )}
 
                     <FormRow label="Tanggal" required>
                         <div className="w-3/4">
@@ -146,8 +250,11 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                         <div className="w-3/4">
                             <SimpleTextField
                                 value={quantity}
-                                onChange={(e) => setQuantity(formatAmountInput(e.target.value, { allowDecimal: false }))}
-                                onBlur={(e) => calculateTotalCost(e.target.value, unitCost)}
+                                onChange={(e) => {
+                                    const next = formatAmountInput(e.target.value, { allowDecimal: false });
+                                    setQuantity(next);
+                                    calculateTotalCost(next, unitCost);
+                                }}
                                 allowDecimal={false}
                                 inputClassName="text-right"
                             />
@@ -171,8 +278,11 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                         <div className="w-3/4">
                             <SimpleTextField
                                 value={unitCost}
-                                onChange={(e) => setUnitCost(formatAmountInput(e.target.value))}
-                                onBlur={(e) => calculateTotalCost(quantity, e.target.value)}
+                                onChange={(e) => {
+                                    const next = formatAmountInput(e.target.value);
+                                    setUnitCost(next);
+                                    calculateTotalCost(quantity, next);
+                                }}
                                 prefix="Rp"
                                 inputClassName="text-right"
                             />
