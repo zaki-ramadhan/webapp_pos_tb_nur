@@ -3,9 +3,10 @@ import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
 import { FormRow, SimpleTextField } from './itemsServicesViewShared';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
-import { CalendarIcon, CalculatorIcon } from '@/features/workspace/shared/Icons';
+import { CalculatorIcon } from '@/features/workspace/shared/Icons';
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 
@@ -91,6 +92,7 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
             onClose={onClose}
             title="Stok Awal"
             maxWidthClassName="max-w-[500px]"
+            contentClassName="bg-white px-5 pt-4 pb-5 sm:px-6 sm:pt-5 sm:pb-6 min-h-[460px] flex flex-col justify-start"
             footer={
                 <div className="flex justify-end">
                     <Button
@@ -132,49 +134,63 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                     </FormRow>
 
                     <FormRow label="Tanggal" required>
-                        <SimpleTextField
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            trailing={<CalendarIcon className="h-4.5 w-4.5 text-slate-500" />}
-                        />
+                        <div className="w-3/4">
+                            <TransactionDateInput
+                                value={date}
+                                onChange={(val) => setDate(val)}
+                                className="h-[40px] rounded-[4px] border-ui-border w-full"
+                            />
+                        </div>
                     </FormRow>
 
                     <FormRow label="Kuantitas" required>
-                        <SimpleTextField
-                            value={quantity}
-                            onChange={(e) => setQuantity(formatAmountInput(e.target.value, { allowDecimal: false }))}
-                            onBlur={(e) => calculateTotalCost(e.target.value, unitCost)}
-                            allowDecimal={false}
-                            trailing={<CalculatorIcon className="h-4.5 w-4.5 text-slate-500" />}
-                        />
+                        <div className="w-3/4">
+                            <SimpleTextField
+                                value={quantity}
+                                onChange={(e) => setQuantity(formatAmountInput(e.target.value, { allowDecimal: false }))}
+                                onBlur={(e) => calculateTotalCost(e.target.value, unitCost)}
+                                allowDecimal={false}
+                                inputClassName="text-right"
+                                trailing={<CalculatorIcon className="h-4.5 w-4.5 text-slate-500" />}
+                            />
+                        </div>
                     </FormRow>
 
                     <FormRow label="Satuan">
-                        <BackendLookupField
-                            resource="units"
-                            value={unit?.[0]?.name ?? (typeof unit?.[0] === 'string' ? unit[0] : (unit?.name ?? ''))}
-                            placeholder="Cari/Pilih..."
-                            searchLabel="Cari satuan"
-                            onSelect={(option) => setUnit([option])}
-                            onClear={() => setUnit([])}
-                        />
+                        <div className="w-3/4">
+                            <BackendLookupField
+                                resource="units"
+                                value={unit?.[0]?.name ?? (typeof unit?.[0] === 'string' ? unit[0] : (unit?.name ?? ''))}
+                                placeholder="Cari/Pilih..."
+                                searchLabel="Cari satuan"
+                                onSelect={(option) => setUnit([option])}
+                                onClear={() => setUnit([])}
+                            />
+                        </div>
                     </FormRow>
 
                     <FormRow label="Biaya Satuan" required>
-                        <SimpleTextField
-                            value={unitCost}
-                            onChange={(e) => setUnitCost(formatAmountInput(e.target.value))}
-                            onBlur={(e) => calculateTotalCost(quantity, e.target.value)}
-                            prefix="Rp"
-                            trailing={<CalculatorIcon className="h-4.5 w-4.5 text-slate-500" />}
-                        />
+                        <div className="w-3/4">
+                            <SimpleTextField
+                                value={unitCost}
+                                onChange={(e) => setUnitCost(formatAmountInput(e.target.value))}
+                                onBlur={(e) => calculateTotalCost(quantity, e.target.value)}
+                                prefix="Rp"
+                                inputClassName="text-right"
+                                trailing={<CalculatorIcon className="h-4.5 w-4.5 text-slate-500" />}
+                            />
+                        </div>
                     </FormRow>
 
                     <FormRow label="Total Biaya">
-                        <SimpleTextField
-                            value={formattedTotalCost}
-                            disabled={true}
-                        />
+                        <div className="w-3/4">
+                            <SimpleTextField
+                                value={formatAmountInput(totalCost)}
+                                prefix="Rp"
+                                disabled={true}
+                                inputClassName="text-right"
+                            />
+                        </div>
                     </FormRow>
                 </div>
             )}

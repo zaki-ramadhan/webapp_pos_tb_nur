@@ -381,9 +381,11 @@ export default function ItemsServicesFormView({
                 ) : activeTabId === 'stock' ? (
                     (() => {
                         const openingStockRows = values.openingStockRows || [];
-                        const confirmedRows = openingStockRows.filter((r) => r.__fromDb);
-                        const totalQty = confirmedRows.reduce((sum, r) => sum + (parseAmountInput(r.quantity) || 0), 0);
-                        const totalCost = confirmedRows.reduce((sum, r) => {
+                        const targetRows = isDetail && openingStockRows.some((r) => r.__fromDb)
+                            ? openingStockRows.filter((r) => r.__fromDb)
+                            : openingStockRows;
+                        const totalQty = targetRows.reduce((sum, r) => sum + (parseAmountInput(r.quantity) || 0), 0);
+                        const totalCost = targetRows.reduce((sum, r) => {
                             const qty = parseAmountInput(r.quantity) || 0;
                             const cost = parseAmountInput(r.unitCost) || 0;
                             return sum + (qty * cost);
