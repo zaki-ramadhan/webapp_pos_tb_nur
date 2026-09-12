@@ -217,7 +217,7 @@ export default function ReferenceLookupInput({
                                 onClick={() => inputRef.current?.focus()}
                                 disabled={disabled}
                                 aria-label={searchLabel}
-                                className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-slate-600 hover:text-slate-800 disabled:text-slate-300 focus:outline-none cursor-pointer"
+                                className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-text-darkest hover:text-brand-dark disabled:text-slate-300 focus:outline-none cursor-pointer"
                             >
                                 {searching ? (
                                     <LoadingIcon className="h-4 w-4 animate-spin" />
@@ -274,7 +274,13 @@ export default function ReferenceLookupInput({
                             disabled={disabled || isSingleSelected}
                             tabIndex={isSingleSelected ? -1 : 0}
                             aria-label={searchLabel}
-                            className={`inline-flex h-full w-10 shrink-0 items-center justify-center focus:outline-none ${disabled || isSingleSelected ? 'cursor-default text-slate-300 pointer-events-none' : 'cursor-pointer text-text-darkest hover:text-brand-dark'}`.trim()}
+                            className={`inline-flex h-full w-10 shrink-0 items-center justify-center focus:outline-none ${
+                                disabled
+                                    ? 'cursor-default text-slate-300 pointer-events-none'
+                                    : isSingleSelected
+                                        ? 'cursor-default text-text-darkest pointer-events-none'
+                                        : 'cursor-pointer text-text-darkest hover:text-brand-dark'
+                            }`.trim()}
                         >
                             {searching ? (
                                 <LoadingIcon className="h-5 w-5 animate-spin" />
