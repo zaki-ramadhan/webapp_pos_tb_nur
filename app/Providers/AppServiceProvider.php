@@ -28,5 +28,22 @@ class AppServiceProvider extends ServiceProvider
                 $request->user()?->id ?: $request->ip()
             );
         });
+
+        try {
+            if (! app()->runningInConsole() || app()->runningUnitTests()) {
+                $hasConversionsTable = \Illuminate\Support\Facades\Cache::remember(
+                    'schema_has_product_unit_conversions',
+                    3600,
+                    fn () => \Illuminate\Support\Facades\Schema::hasTable('product_unit_conversions')
+                );
+
+                if (! $hasConversionsTable) {
+                    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                    \Illuminate\Support\Facades\Cache::forget('schema_has_product_unit_conversions');
+                }
+            }
+        } catch (\Throwable) {
+            // Silently ignore if database is temporarily unreachable
+        }
     }
 }

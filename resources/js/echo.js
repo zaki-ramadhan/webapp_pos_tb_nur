@@ -21,7 +21,21 @@ if (typeof window !== 'undefined' && reverbKey) {
             wssPort: port,
             forceTLS: isSecure,
             enabledTransports: ['ws', 'wss'],
+            maxReconnectionAttempts: 2,
         });
+
+        if (window.Echo?.connector?.pusher?.connection) {
+            window.Echo.connector.pusher.connection.bind('unavailable', () => {
+                try {
+                    window.Echo?.disconnect();
+                } catch {}
+            });
+            window.Echo.connector.pusher.connection.bind('failed', () => {
+                try {
+                    window.Echo?.disconnect();
+                } catch {}
+            });
+        }
 
         window.Echo.channel('workspace-resources')
             .listen('.resource.updated', (e) => {

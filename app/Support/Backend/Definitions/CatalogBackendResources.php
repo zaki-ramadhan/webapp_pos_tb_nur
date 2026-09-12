@@ -149,22 +149,24 @@ class CatalogBackendResources
                 label: 'Products',
                 searchColumns: ['code', 'barcode', 'name', 'product_type'],
                 modelClass: Product::class,
-                with: [
-                    'category', 'brand', 'mainSupplier', 'preferredSupplier', 'baseUnit', 'purchaseUnit', 'salesUnit', 'attachments',
-                    'groupItems', 'groupItems.childProduct', 'groupItems.unit',
-                    'unitConversions', 'unitConversions.unit',
-                ],
+                with: self::productRelations(),
                 storeRules: self::productRules(),
                 updateRules: fn (Model $record) => self::productRules($record),
                 syncUsing: function (Model $record, array $payload): void {
                     if (array_key_exists('unit_conversions', $payload)) {
-                        BackendRelationSync::syncHasMany(
-                            $record,
-                            'unitConversions',
-                            $payload['unit_conversions'],
-                            ['unit_id', 'quantity'],
-                            fn (array $row): bool => filled($row['unit_id'] ?? null),
-                        );
+                        try {
+                            if (\Illuminate\Support\Facades\Schema::hasTable('product_unit_conversions')) {
+                                BackendRelationSync::syncHasMany(
+                                    $record,
+                                    'unitConversions',
+                                    $payload['unit_conversions'],
+                                    ['unit_id', 'quantity'],
+                                    fn (array $row): bool => filled($row['unit_id'] ?? null),
+                                );
+                            }
+                        } catch (\Throwable $e) {
+                            \Illuminate\Support\Facades\Log::warning('Sync unit conversions skipped: ' . $e->getMessage());
+                        }
                     }
 
                     if (array_key_exists('prices', $payload)) {
@@ -264,6 +266,28 @@ class CatalogBackendResources
                 },
             ),
         ];
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected static function productRelations(): array
+    {
+        $relations = [
+            'category', 'brand', 'mainSupplier', 'preferredSupplier', 'baseUnit', 'purchaseUnit', 'salesUnit', 'attachments',
+            'groupItems', 'groupItems.childProduct', 'groupItems.unit',
+        ];
+
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('product_unit_conversions')) {
+                $relations[] = 'unitConversions';
+                $relations[] = 'unitConversions.unit';
+            }
+        } catch (\Throwable) {
+            // Silently fallback if schema check fails
+        }
+
+        return $relations;
     }
 
     /**
