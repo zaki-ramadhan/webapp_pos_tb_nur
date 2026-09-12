@@ -3,7 +3,6 @@ import { DocumentModalCurrencyField } from '@/features/workspace/modules/shared/
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import TextInput from '@/components/ui/TextInput';
-import { CalcIcon } from '@/features/workspace/shared/Icons';
 import { parseNumericInput, formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 
 const FIELD_H = 'h-[38px]';
@@ -116,11 +115,9 @@ export function ItemDetailEditTab({ form, onChange, errors = {} }) {
                     onBlur={handleQtyBlur}
                     allowDecimal
                     allowNegative={false}
-                    trailing={<CalcIcon className="h-4 w-4 text-text-darkest" />}
                     error={errors.quantity}
                     className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
                     inputClassName={FIELD_INPUT_RIGHT_CLS}
-                    trailingClassName="px-3"
                     containerClassName="w-full max-w-full"
                 />
                 <AccountLookupField
@@ -141,8 +138,6 @@ export function ItemDetailEditTab({ form, onChange, errors = {} }) {
                 value={price}
                 onChange={handlePriceChange}
                 onBlur={handlePriceBlur}
-                trailing={<CalcIcon className="h-4 w-4 text-text-darkest" />}
-                trailingClassName="px-3"
             />
 
             {/* Diskon */}
@@ -164,8 +159,6 @@ export function ItemDetailEditTab({ form, onChange, errors = {} }) {
                     value={discountValue}
                     onChange={handleDiscountValueChange}
                     onBlur={handleDiscountValueBlur}
-                    trailing={<CalcIcon className="h-4 w-4 text-text-darkest" />}
-                    trailingClassName="px-3"
                 />
             </div>
 
