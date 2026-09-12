@@ -239,25 +239,88 @@ class InventoryInquiryQueryService
             if ($batch->source_id && \Illuminate\Support\Facades\DB::table('operation_documents')->where('id', $batch->source_id)->where('document_type', 'inventory_adjustment')->exists()) {
                 continue;
             }
-            $wh = $warehouses->get($batch->warehouse_id);
-            $cost = (float) ($batch->unit_cost > 0 ? $batch->unit_cost : ($product->default_purchase_price ?: 0));
-            $rows->push([
-                'id' => 'batch-' . $batch->id,
-                'warehouse_id' => (int) $batch->warehouse_id,
-                'warehouse' => $wh?->name ?? ('Gudang #' . $batch->warehouse_id),
-                'branch_id' => $wh?->branch_id ?? 1,
-                'branch_name' => $wh?->branch?->name ?? 'JAKARTA',
-                'date' => $batch->entry_date ? Carbon::parse($batch->entry_date)->format('d/m/Y') : Carbon::now()->format('d/m/Y'),
-                'quantity' => (float) $batch->qty_received,
-                'raw_quantity' => (float) $batch->qty_received,
-                'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
-                'unit_id' => $product->base_unit_id ?? $product->purchase_unit_id,
-                'unit_cost' => $cost,
-                'raw_unit_cost' => $cost,
-                'document_id' => null,
-                'document_number' => null,
-                'created_at' => $batch->created_at ?? $batch->entry_date,
-            ]);
+
+            // Link to existing adjustment document for this product and warehouse if available
+            $existingDoc = OperationDocument::query()
+                ->where('document_type', 'inventory_adjustment')
+                ->where('warehouse_id', $batch->warehouse_id)
+                ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
+                ->where(fn ($q) => $q->where('notes', 'like', '%Stok awal%')->orWhere('document_number', 'like', 'PS.%'))
+                ->first();
+
+            if ($existingDoc) {
+                \Illuminate\Support\Facades\DB::table('inventory_batches')->where('id', $batch->id)->update([
+                    'source_type' => get_class($existingDoc),
+                    'source_id' => $existingDoc->id,
+                ]);
+                continue;
+            }
+
+            try {
+                $docDate = $batch->entry_date ? Carbon::parse($batch->entry_date)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+                $docNum = app(\App\Support\Backend\BackendResourceWriter::class)->generateNextSequentialNumber('inventory-adjustments', $docDate);
+                if (empty($docNum)) {
+                    $docNum = 'PS.' . date('Y.m.') . sprintf('%04d', rand(1, 9999));
+                }
+                $cost = (float) ($batch->unit_cost > 0 ? $batch->unit_cost : ($product->default_purchase_price ?: 0));
+                $qty = (float) $batch->qty_received;
+
+                $opDoc = \App\Domain\Inventory\Models\InventoryAdjustment::create([
+                    'document_type' => 'inventory_adjustment',
+                    'branch_id' => $warehouses->get($batch->warehouse_id)?->branch_id ?? 1,
+                    'warehouse_id' => $batch->warehouse_id ?? 1,
+                    'status' => 'Selesai',
+                    'entry_date' => $docDate,
+                    'notes' => 'Stok awal barang: ' . $product->name,
+                    'subtotal' => $qty * $cost,
+                    'total_amount' => $qty * $cost,
+                    'is_closed' => true,
+                ]);
+
+                $opLine = $opDoc->lines()->create([
+                    'line_type' => 'item',
+                    'product_id' => $productId,
+                    'unit_id' => $product->base_unit_id ?? $product->purchase_unit_id ?? 1,
+                    'warehouse_id' => $batch->warehouse_id ?? 1,
+                    'quantity' => $qty,
+                    'unit_price' => $cost,
+                    'total_amount' => $qty * $cost,
+                    'description' => 'Stok awal ' . $product->name,
+                    'attributes' => [
+                        'unit_price' => $cost,
+                        'total_amount' => $qty * $cost,
+                        'adjustment_type' => 'Penambahan',
+                    ],
+                ]);
+
+                \Illuminate\Support\Facades\DB::table('inventory_batches')->where('id', $batch->id)->update([
+                    'source_type' => get_class($opDoc),
+                    'source_id' => $opDoc->id,
+                    'source_line_id' => $opLine->id,
+                ]);
+
+                continue;
+            } catch (\Throwable) {
+                $wh = $warehouses->get($batch->warehouse_id);
+                $cost = (float) ($batch->unit_cost > 0 ? $batch->unit_cost : ($product->default_purchase_price ?: 0));
+                $rows->push([
+                    'id' => 'batch-' . $batch->id,
+                    'warehouse_id' => (int) $batch->warehouse_id,
+                    'warehouse' => $wh?->name ?? ('Gudang #' . $batch->warehouse_id),
+                    'branch_id' => $wh?->branch_id ?? 1,
+                    'branch_name' => $wh?->branch?->name ?? 'JAKARTA',
+                    'date' => $batch->entry_date ? Carbon::parse($batch->entry_date)->format('d/m/Y') : Carbon::now()->format('d/m/Y'),
+                    'quantity' => (float) $batch->qty_received,
+                    'raw_quantity' => (float) $batch->qty_received,
+                    'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
+                    'unit_id' => $product->base_unit_id ?? $product->purchase_unit_id,
+                    'unit_cost' => $cost,
+                    'raw_unit_cost' => $cost,
+                    'document_id' => null,
+                    'document_number' => null,
+                    'created_at' => $batch->created_at ?? $batch->entry_date,
+                ]);
+            }
         }
 
         // 2. Operation Document Adjustments (Opening stock entries created as OperationDocument)

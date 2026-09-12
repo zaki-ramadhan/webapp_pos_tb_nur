@@ -139,9 +139,52 @@ class TransactionDataSeeder extends Seeder
             'KWT-001' => 250,
         ];
 
+        $seq = 0;
         foreach ($allProducts as $p) {
+            $seq++;
             $received = $openingQtyMap[$p->code] ?? 250;
             $remaining = (int) round($received * 0.45);
+            $cost = (float) ($p->default_purchase_price ?: 0);
+            $totalAmount = $received * $cost;
+            $entryDate = sprintf('%04d-01-02', $startYear);
+            $docNumber = sprintf('PS.%04d.01.%04d', $startYear, $seq);
+            $dt = sprintf('%04d-01-02 08:00:00', $startYear);
+
+            $opDocId = DB::table('operation_documents')->insertGetId([
+                'document_type' => 'inventory_adjustment',
+                'branch_id' => $branchId,
+                'warehouse_id' => $warehouseId,
+                'responsible_user_id' => $userAdminId,
+                'document_number' => $docNumber,
+                'status' => 'Selesai',
+                'entry_date' => $entryDate,
+                'notes' => 'Stok awal barang: ' . $p->name,
+                'subtotal' => $totalAmount,
+                'total_amount' => $totalAmount,
+                'is_closed' => true,
+                'created_at' => $dt,
+                'updated_at' => $dt,
+            ]);
+
+            $lineId = DB::table('operation_document_lines')->insertGetId([
+                'operation_document_id' => $opDocId,
+                'line_type' => 'item',
+                'product_id' => $p->id,
+                'unit_id' => $p->base_unit_id ?? 1,
+                'warehouse_id' => $warehouseId,
+                'description' => 'Stok awal ' . $p->name,
+                'quantity' => $received,
+                'unit_price' => $cost,
+                'total_amount' => $totalAmount,
+                'attributes' => json_encode([
+                    'unit_price' => $cost,
+                    'total_amount' => $totalAmount,
+                    'adjustment_type' => 'Penambahan',
+                ]),
+                'sort_order' => 1,
+                'created_at' => $dt,
+                'updated_at' => $dt,
+            ]);
 
             DB::table('inventory_batches')->insert([
                 'product_id' => $p->id,
@@ -150,9 +193,9 @@ class TransactionDataSeeder extends Seeder
                 'qty_received' => $received,
                 'qty_remaining' => $remaining,
                 'unit_cost' => $p->default_purchase_price,
-                'source_type' => 'opening_balance',
-                'source_id' => $p->id,
-                'source_line_id' => null,
+                'source_type' => 'App\Domain\Inventory\Models\InventoryAdjustment',
+                'source_id' => $opDocId,
+                'source_line_id' => $lineId,
                 'created_at' => sprintf('%04d-01-02 08:00:00', $startYear),
                 'updated_at' => now(),
             ]);
