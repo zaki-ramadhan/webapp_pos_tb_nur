@@ -296,6 +296,7 @@ export default function ItemsServicesFormView({
                             quantity: item.quantity ? parseAmountInput(item.quantity) : 1,
                         }))
                         .filter((item) => item.child_product_id && item.quantity > 0),
+                    expected_updated_at: detailRow?.updated_at ?? detailRow?.__updatedAt ?? null,
                 };
 
                 const response = isDetail && detailRow?.id

@@ -162,6 +162,23 @@ class BackendResourceWriter
     protected function persist(BackendResourceBlueprint $blueprint, Model $record, array $payload): Model
     {
         return DB::transaction(function () use ($blueprint, $record, $payload): Model {
+            // 0a. Optimistic Concurrency Check (Mencegah Lost Update Problem)
+            if ($record->exists && !empty($payload['expected_updated_at']) && method_exists($record, 'usesTimestamps') && $record->usesTimestamps()) {
+                $freshRecord = DB::table($record->getTable())->where($record->getKeyName(), $record->getKey())->lockForUpdate()->first();
+                if ($freshRecord && !empty($freshRecord->updated_at)) {
+                    $freshTimestamp = \Carbon\Carbon::parse($freshRecord->updated_at)->timestamp;
+                    $expectedTimestamp = \Carbon\Carbon::parse($payload['expected_updated_at'])->timestamp;
+                    if ($freshTimestamp > $expectedTimestamp && ($freshTimestamp - $expectedTimestamp) >= 1) {
+                        $docLabel = $record->document_number ?? $record->name ?? $record->code ?? $blueprint->label;
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            'concurrency' => [
+                                "Data '{$docLabel}' telah diperbarui oleh pengguna lain sejak Anda membuka formulir ini. Silakan muat ulang (refresh) halaman untuk melihat versi terbaru sebelum menyimpan perubahan."
+                            ],
+                        ]);
+                    }
+                }
+            }
+
             // 0. Auto-numbering sequential generation
             if (!$record->exists) {
                 if (is_subclass_of($blueprint->modelClass(), \App\Domain\Support\Models\OperationDocument::class)) {
@@ -363,6 +380,28 @@ class BackendResourceWriter
 
             // Validasi & Kalkulasi Penyesuaian Persediaan (Inventory Adjustment)
             if ($blueprint->key === 'inventory-adjustments' && !empty($payload['lines'])) {
+                // Kunci baris produk yang terlibat secara konsisten untuk mencegah race condition & stok negatif
+                $productIdsToLock = collect($payload['lines'])
+                    ->map(function ($l) {
+                        $pId = $l['product_id'] ?? null;
+                        if (!$pId && !empty($l['reference_code'])) {
+                            $pId = \App\Domain\Catalog\Models\Product::where('code', $l['reference_code'])->value('id');
+                        }
+                        if (!$pId && !empty($l['description'])) {
+                            $pId = \App\Domain\Catalog\Models\Product::where('name', $l['description'])->value('id');
+                        }
+                        return $pId ? (int) $pId : null;
+                    })
+                    ->filter()
+                    ->unique()
+                    ->sort()
+                    ->values()
+                    ->all();
+
+                if (!empty($productIdsToLock)) {
+                    DB::table('products')->whereIn('id', $productIdsToLock)->lockForUpdate()->get();
+                }
+
                 $docWarehouseId = $payload['warehouse_id'] ?? null;
                 foreach ($payload['lines'] as &$adjLine) {
                     $productId = $adjLine['product_id'] ?? null;

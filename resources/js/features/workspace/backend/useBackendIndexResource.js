@@ -53,6 +53,24 @@ let liveUpdateSubscribers = new Set();
 let globalLiveUpdateInterval = null;
 let lastGlobalSeenTimestamp = 0;
 
+export function notifyLiveUpdateChange(change) {
+    if (!change) return;
+    if (change.resource) {
+        clearGlobalIndexCache(change.resource);
+    }
+    liveUpdateSubscribers.forEach((cb) => {
+        try {
+            cb(change);
+        } catch {
+            // ignore
+        }
+    });
+}
+
+if (typeof window !== 'undefined') {
+    window.__notifyLiveUpdateChange = notifyLiveUpdateChange;
+}
+
 function subscribeToLiveUpdates(callback) {
     liveUpdateSubscribers.add(callback);
 

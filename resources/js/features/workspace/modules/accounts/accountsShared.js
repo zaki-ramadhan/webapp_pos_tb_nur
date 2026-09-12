@@ -235,6 +235,8 @@ export function buildAccountSourceRecord(record, config) {
     return {
         ...config.createValues,
         id: String(record.id),
+        __updatedAt: record.updated_at ?? null,
+        updated_at: record.updated_at ?? null,
         parentId: record.parent_id ?? null,
         parentAccount: record.parent ? [record.parent.name] : [],
         parentAccountLabel: record.parent ? `${record.parent.code} - ${record.parent.name}` : '',
@@ -290,6 +292,7 @@ export function buildAccountPayload(values) {
     const hasManualCode = Boolean(rawCode && rawCode !== '(Otomatis)');
 
     return {
+        expected_updated_at: values.__updatedAt ?? values.updated_at ?? null,
         parent_id: values.isSubAccount ? (values.parentId ?? null) : null,
         currency_id: values.currencyId ?? null,
         code: hasManualCode ? rawCode : null,

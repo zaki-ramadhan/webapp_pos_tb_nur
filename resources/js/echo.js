@@ -22,6 +22,23 @@ if (typeof window !== 'undefined' && reverbKey) {
             forceTLS: isSecure,
             enabledTransports: ['ws', 'wss'],
         });
+
+        window.Echo.channel('workspace-resources')
+            .listen('.resource.updated', (e) => {
+                if (e && e.resourceKey) {
+                    if (typeof window !== 'undefined' && typeof window.__notifyLiveUpdateChange === 'function') {
+                        window.__notifyLiveUpdateChange({
+                            resource: e.resourceKey,
+                            action: e.action,
+                            recordId: e.recordId,
+                            timestamp: Date.now(),
+                        });
+                    }
+                    if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {
+                        window.__clearBackendCache(e.resourceKey);
+                    }
+                }
+            });
     } catch (e) {
         // Safe Echo fallback
     }

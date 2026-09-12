@@ -193,7 +193,15 @@ export async function createBackendResource(resource, payload) {
 }
 
 export async function updateBackendResource(resource, recordId, payload) {
-    const response = await getBackendClient().put(`/api/backend/${resource}/${recordId}`, sanitizePayload(payload));
+    const dataToSend = { ...payload };
+    if (!dataToSend.expected_updated_at) {
+        if (dataToSend.__updatedAt) {
+            dataToSend.expected_updated_at = dataToSend.__updatedAt;
+        } else if (dataToSend.updated_at) {
+            dataToSend.expected_updated_at = dataToSend.updated_at;
+        }
+    }
+    const response = await getBackendClient().put(`/api/backend/${resource}/${recordId}`, sanitizePayload(dataToSend));
     clearBackendCache(resource);
     return response.data;
 }

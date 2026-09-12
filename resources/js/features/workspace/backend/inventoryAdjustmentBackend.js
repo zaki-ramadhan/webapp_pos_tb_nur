@@ -75,6 +75,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
 
     return {
         __backendRecordId: record.id,
+        __updatedAt: record.updated_at ?? null,
         __branchId: record.branch_id ?? null,
         __adjustmentAccountId: record.primary_account_id ?? null,
         date: formatIsoDate(record.entry_date),
@@ -127,6 +128,7 @@ export function buildInventoryAdjustmentPayload(values) {
         );
 
     return {
+        expected_updated_at: values.__updatedAt ?? values.updated_at ?? null,
         branch_id: values.__branchId ?? 1,
         warehouse_id: values.__warehouseId ?? 1,
         primary_account_id: values.__adjustmentAccountId ?? null,

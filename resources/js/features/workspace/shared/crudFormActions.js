@@ -67,6 +67,7 @@ export async function executeCrudFormAction({
             ok: true,
             result,
         };
+    } catch (error) {
         if (error?.__isReconciliationLock || error?.isHandledModal) {
             dismissCrudLoadingToast(loadingToastId);
             setSaving(false);
