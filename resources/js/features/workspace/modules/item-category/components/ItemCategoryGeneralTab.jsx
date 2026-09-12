@@ -39,15 +39,21 @@ export default function ItemCategoryGeneralTab({
             </ItemCategoryFieldRow>
 
             <ItemCategoryFieldRow label={config.labels.isDefault}>
-                <CheckboxField
-                    label={config.labels.yes}
-                    checked={Boolean(values.isDefault)}
-                    onChange={(event) => onChange('isDefault', event.target.checked)}
-                    align="center"
-                    labelClassName="text-base cursor-pointer"
-                    inputClassName="mt-0 h-[18px] w-[18px]"
-                    containerClassName="w-auto"
-                />
+                {isDetail && detailRow?.isDefault ? (
+                    <span className="text-xs sm:text-sm text-brand-dark font-normal leading-6 select-none">
+                        {config.labels.yes || 'Ya'}
+                    </span>
+                ) : (
+                    <CheckboxField
+                        label={config.labels.yes}
+                        checked={Boolean(values.isDefault)}
+                        onChange={(event) => onChange('isDefault', event.target.checked)}
+                        align="center"
+                        labelClassName="text-base cursor-pointer"
+                        inputClassName="mt-0 h-[18px] w-[18px]"
+                        containerClassName="w-auto"
+                    />
+                )}
             </ItemCategoryFieldRow>
 
             <ItemCategoryFieldRow
