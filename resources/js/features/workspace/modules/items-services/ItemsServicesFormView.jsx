@@ -10,6 +10,7 @@ import {
     ItemImagesTab,
     ItemMutationTab,
     ItemOtherTab,
+    ItemSellingPriceTab,
     ItemStockTab,
     ItemWarehouseTab,
 } from '@/features/workspace/modules/items-services/ItemsServicesSecondaryTabs';
@@ -193,10 +194,13 @@ export default function ItemsServicesFormView({
     }, [values.kind]);
 
     const rightTabs = useMemo(() => {
-        if (!isDetail || !isStock) return [];
+        if (!isDetail) return [];
         return [
-            { id: 'mutasi', label: 'Mutasi' },
-            { id: 'gudang', label: 'Gudang' },
+            { id: 'selling-price', label: 'Harga Jual' },
+            ...(isStock ? [
+                { id: 'mutasi', label: 'Mutasi' },
+                { id: 'gudang', label: 'Gudang' },
+            ] : []),
         ];
     }, [isDetail, isStock]);
 
@@ -403,8 +407,10 @@ export default function ItemsServicesFormView({
                     <ItemImagesTab values={values} onChange={handleChange} />
                 ) : activeTabId === 'other' ? (
                     <ItemOtherTab config={config} values={values} onChange={handleChange} />
+                ) : activeTabId === 'selling-price' ? (
+                    <ItemSellingPriceTab values={values} detailRow={detailRow} />
                 ) : activeTabId === 'mutasi' ? (
-                    <ItemMutationTab productId={detailRow?.id} />
+                    <ItemMutationTab productId={detailRow?.id} product={detailRow} values={values} />
                 ) : activeTabId === 'gudang' ? (
                     <ItemWarehouseTab productId={detailRow?.id} />
                 ) : (
