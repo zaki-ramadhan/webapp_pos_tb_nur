@@ -66,8 +66,15 @@ export function LookupEmptyState({
     className = '',
     children = null,
 }) {
+    const hasCustomPadding = className.includes('p-') || className.includes('px-') || className.includes('py-');
+    const defaultPadding = hasCustomPadding
+        ? ''
+        : children
+            ? 'px-2.5 py-2.5'
+            : 'px-4 py-5';
+
     return (
-        <div className={`px-4 py-5 text-center ${className}`.trim()}>
+        <div className={`${defaultPadding} text-center ${className}`.trim()}>
             <div className="text-xs sm:text-sm font-normal text-text-workspace-dark">{title}</div>
             {description ? <div className="mt-1 text-xs text-text-workspace-dark">{description}</div> : null}
             {children}
