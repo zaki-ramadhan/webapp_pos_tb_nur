@@ -15,7 +15,7 @@ import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspac
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { ItemCategoryAccountsTab, ItemCategoryGeneralTab } from './ItemCategorySections';
-import { buildFormValues } from './itemCategoryShared';
+import { buildFormValues, buildHierarchicalCategories } from './itemCategoryShared';
 
 export default function ItemCategoryFormView({
     page,
@@ -59,10 +59,11 @@ export default function ItemCategoryFormView({
     const parentCategoryOptions = useMemo(() => {
         const rows = config.table?.rows ?? [];
         const currentId = detailRow?.id ?? values?.id;
+        let eligible = rows;
         if (currentId) {
-            return rows.filter((row) => String(row.id) !== String(currentId));
+            eligible = rows.filter((row) => String(row.id) !== String(currentId));
         }
-        return rows;
+        return buildHierarchicalCategories(eligible);
     }, [config.table?.rows, detailRow?.id, values?.id]);
 
     const activeTabInstanceId = activeLevel2Tab?.id;

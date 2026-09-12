@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import ItemCategoryFormView from './ItemCategoryFormView';
 import ItemCategoryTableView from './ItemCategoryTableView';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import { buildHierarchicalCategories } from './itemCategoryShared';
 
 export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const {
@@ -33,6 +34,8 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
                 id: String(row.id),
                 code: row.code ?? '',
                 name: row.name ?? '',
+                parentId: row.parent_id ? String(row.parent_id) : '',
+                parent_id: row.parent_id,
                 defaultLabel: row.is_default ? 'Ya' : 'Tidak',
                 isDefault: Boolean(row.is_default),
                 isSubCategory: Boolean(row.parent_id),
@@ -116,7 +119,10 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
                     const filteredExtra = extraCols.filter(col => !baseCols.some(bc => bc.id === col.id));
                     return [...baseCols, ...filteredExtra];
                 })(),
-                rows: mappedRows,
+                rows: buildHierarchicalCategories(mappedRows).map((r) => ({
+                    ...r,
+                    name: r.hierarchicalName ?? r.name,
+                })),
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,

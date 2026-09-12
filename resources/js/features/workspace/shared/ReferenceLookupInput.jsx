@@ -309,11 +309,17 @@ export default function ReferenceLookupInput({
                                     className="flex w-full items-start gap-3 border-b border-slate-200 px-3 py-3 text-left transition last:border-b-0 odd:bg-white even:bg-[#F8F8F8] hover:!bg-ui-bg-hover"
                                 >
                                     {renderOption ? (
-                                        renderOption(item)
+                                        renderOption(item, query)
                                     ) : (
-                                        <div className="min-w-0">
+                                        <div
+                                            className="min-w-0 flex-1"
+                                            style={{ paddingLeft: (item?.level ?? 0) > 0 ? `${item.level * 16}px` : undefined }}
+                                        >
                                             <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">
-                                                <HighlightText text={getOptionLabel(item)} search={query} />
+                                                <HighlightText
+                                                    text={`${item?.hierarchicalPrefix ?? ''}${getOptionLabel(item)}`}
+                                                    search={query}
+                                                />
                                             </div>
                                         </div>
                                     )}
