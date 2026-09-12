@@ -24,7 +24,7 @@
 10. **`salary_allowances`** – Master komponen gaji & tunjangan karyawan.
 
 ### 📦 3. Modul Katalog, Produk & Persediaan (Catalog & Inventory)
-11. **`products`** – Master data barang & jasa bangunan.
+11. **`products`** – Master data barang bangunan.
 12. **`product_categories`** – Master kategori barang (Semen, Cat, Kayu, Besi).
 13. **`product_group_items`** – Racikan item paket/bundling barang.
 14. **`brands`** – Master merek barang (Tiga Roda, Dulux, Holcim).

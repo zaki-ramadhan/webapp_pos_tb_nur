@@ -423,7 +423,7 @@ Untuk dokumen transaksi, hampir pasti butuh tambahan:
 - View: `ItemCategoryView`
 - Confidence: `tinggi`
 
-### Barang & Jasa
+### Barang
 
 - Model utama: `products`
 - Child model:

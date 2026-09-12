@@ -29,14 +29,14 @@ Dokumen ini memetakan entitas domain, relasi langsungnya, halaman yang memakainy
 
 | Entitas | Relasi Langsung | Halaman Terkait | Status |
 | --- | --- | --- | --- |
-| `product_categories` | self-reference via `parent_id`; has-many `products` | `Kategori Barang`, `Barang & Jasa` | Tercatat |
-| `brands` | has-many `products` | `Barang & Jasa` | Tercatat |
-| `units` | direferensikan `products`, `product_unit_conversions`, item transaksi | `Satuan Barang`, `Barang & Jasa` | Tercatat |
-| `products` | belongs-to `product_categories`, `brands`, `units`; has-many `product_unit_conversions`, `product_barcodes`, `product_prices`; direferensikan hampir semua item transaksi | `Barang & Jasa`, `Harga Pemasok`, `Barang Stok Minimum`, seluruh transaksi barang | Tercatat |
-| `product_unit_conversions` | belongs-to `products`; from/to `units` | `Barang & Jasa` | Tercatat |
-| `product_barcodes` | belongs-to `products`; belongs-to `units` | `Barang & Jasa` | Tercatat |
-| `price_tiers` | has-many `product_prices`; direferensikan `customers.default_price_tier_id` | `Pelanggan`, `Barang & Jasa` | Tercatat |
-| `product_prices` | belongs-to `products`; belongs-to `price_tiers`; belongs-to `units` | `Barang & Jasa`, `Pelanggan` | Tercatat |
+| `product_categories` | self-reference via `parent_id`; has-many `products` | `Kategori Barang`, `Barang` | Tercatat |
+| `brands` | has-many `products` | `Barang` | Tercatat |
+| `units` | direferensikan `products`, `product_unit_conversions`, item transaksi | `Satuan Barang`, `Barang` | Tercatat |
+| `products` | belongs-to `product_categories`, `brands`, `units`; has-many `product_unit_conversions`, `product_barcodes`, `product_prices`; direferensikan hampir semua item transaksi | `Barang`, `Harga Pemasok`, `Barang Stok Minimum`, seluruh transaksi barang | Tercatat |
+| `product_unit_conversions` | belongs-to `products`; from/to `units` | `Barang` | Tercatat |
+| `product_barcodes` | belongs-to `products`; belongs-to `units` | `Barang` | Tercatat |
+| `price_tiers` | has-many `product_prices`; direferensikan `customers.default_price_tier_id` | `Pelanggan`, `Barang` | Tercatat |
+| `product_prices` | belongs-to `products`; belongs-to `price_tiers`; belongs-to `units` | `Barang`, `Pelanggan` | Tercatat |
 
 ### Business Partners
 

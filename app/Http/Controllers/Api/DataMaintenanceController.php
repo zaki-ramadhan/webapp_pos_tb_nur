@@ -75,7 +75,7 @@ class DataMaintenanceController extends Controller
                 ['label' => 'Pencatatan Beban', 'count' => (int) ($docCounts['expense_entry'] ?? 0)],
                 ['label' => 'Pencatatan Gaji', 'count' => (int) ($docCounts['payroll_entry'] ?? 0)],
 
-                ['label' => 'Barang & Jasa', 'count' => $countTable('products')],
+                ['label' => 'Barang', 'count' => $countTable('products')],
                 ['label' => 'Kategori Barang', 'count' => $countTable('product_categories')],
                 ['label' => 'Merek Barang', 'count' => $countTable('brands')],
                 ['label' => 'Penyesuaian Persediaan', 'count' => (int) ($docCounts['inventory_adjustment'] ?? 0)],
