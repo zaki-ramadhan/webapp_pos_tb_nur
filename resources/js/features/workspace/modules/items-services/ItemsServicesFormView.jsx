@@ -413,16 +413,18 @@ export default function ItemsServicesFormView({
                 ) : activeTabId === 'stock' ? (
                     (() => {
                         const openingStockRows = values.openingStockRows || [];
-                        const targetRows = openingStockRows;
+                        const targetRows = isDetail
+                            ? (dbStockRows.length > 0 ? dbStockRows : openingStockRows.filter((r) => r.__fromDb))
+                            : [];
                         const totalQty = targetRows.reduce((sum, r) => sum + (parseAmountInput(r.quantity) || 0), 0);
                         const totalCost = targetRows.reduce((sum, r) => {
                             const qty = parseAmountInput(r.quantity) || 0;
-                            const cost = parseAmountInput(r.unitCost) || 0;
+                            const cost = parseAmountInput(r.unitCost ?? r.raw_unit_cost ?? r.unit_cost) || 0;
                             return sum + (qty * cost);
                         }, 0);
                         const avgCost = totalQty > 0
                             ? (totalCost / totalQty)
-                            : (detailRow?.default_purchase_price ? Number(detailRow.default_purchase_price) : 0);
+                            : (detailRow?.default_purchase_price ? Number(detailRow.default_purchase_price) : (parseAmountInput(values.purchasePrice) || 0));
                         const stockValues = {
                             ...values,
                             stockQuantity: String(totalQty),
