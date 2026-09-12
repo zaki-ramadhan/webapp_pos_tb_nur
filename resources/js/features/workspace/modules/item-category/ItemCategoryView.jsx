@@ -121,7 +121,7 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
                 })(),
                 rows: buildHierarchicalCategories(mappedRows).map((r) => ({
                     ...r,
-                    name: r.hierarchicalName ?? r.name,
+                    name: r.rawName ?? r.name,
                 })),
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
