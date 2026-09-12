@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
     DataTable,
     DataTableBody,
@@ -15,17 +15,75 @@ import {
 } from '@/features/workspace/modules/items-services/itemsServicesViewShared';
 import useTableSort from '@/features/workspace/shared/useTableSort';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import { showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
+import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import OpeningStockModal from '../../OpeningStockModal';
+
+function getMultiUnitBreakdown(qtyVal, baseUnitName, conversions) {
+    const validConversions = (conversions || [])
+        .map((conv) => {
+            const name = conv.unitName ?? conv.unit?.[0]?.name ?? conv.name ?? (typeof conv.unit === 'string' ? conv.unit : '');
+            const ratio = Number(conv.quantity || 0);
+            return { name, ratio };
+        })
+        .filter((c) => c.name && c.ratio > 0)
+        .sort((a, b) => b.ratio - a.ratio);
+
+    const qty = typeof qtyVal === 'number' ? qtyVal : (parseAmountInput(qtyVal) || 0);
+
+    if (validConversions.length === 0) {
+        return baseUnitName ? `[ ${formatAmountInput(qty)} ${baseUnitName} ]` : '';
+    }
+
+    if (qty <= 0) {
+        return `[ 0 ${baseUnitName} ]`;
+    }
+
+    let remaining = qty;
+    const parts = [];
+
+    for (const conv of validConversions) {
+        if (remaining >= conv.ratio) {
+            const count = Math.floor(remaining / conv.ratio);
+            if (count > 0) {
+                parts.push(`${formatAmountInput(count, { allowDecimal: false })} ${conv.name}`);
+                remaining = Math.round((remaining - count * conv.ratio) * 10000) / 10000;
+            }
+        }
+    }
+
+    if (remaining > 0.0001 || parts.length === 0) {
+        parts.push(`${formatAmountInput(remaining)} ${baseUnitName}`);
+    }
+
+    return `[ ${parts.join(' ')} ]`;
+}
 
 export default function ItemStockTab({ config, values, onChange }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const perPage = 5;
-    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(values.openingStockRows || []);
+    const openingStockList = values.openingStockRows || [];
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(openingStockList);
 
     const totalRows = sortedRows.length;
     const totalPages = Math.max(1, Math.ceil(totalRows / perPage));
     const paginatedRows = sortedRows.slice((currentPage - 1) * perPage, currentPage * perPage);
+
+    const totalOpeningStock = useMemo(() => {
+        return openingStockList.reduce(
+            (sum, row) => sum + (parseAmountInput(row.quantity) || 0),
+            0
+        );
+    }, [openingStockList]);
+
+    const baseUnit = values.primaryUnit?.[0] ?? null;
+    const baseUnitName = baseUnit?.name ?? (typeof baseUnit === 'string' ? baseUnit : (values.unitName ?? values.unit ?? ''));
+    const conversions = Array.isArray(values.unitConversions) ? values.unitConversions : [];
+
+    const multiUnitBreakdown = useMemo(() => {
+        return getMultiUnitBreakdown(values.stockQuantity, baseUnitName, conversions);
+    }, [values.stockQuantity, baseUnitName, conversions]);
 
     function handleAddOpeningStock(data) {
         const newRow = {
@@ -46,23 +104,29 @@ export default function ItemStockTab({ config, values, onChange }) {
     return (
         <div className="space-y-8">
             <section className="space-y-2">
-                <div className="flex items-center gap-4 border-b border-abc-card-border pb-1.5">
-                    <h3 className="text-lg font-normal text-input-brand sm:text-lg xl:text-xl 2xl:text-2xl">
-                        {config.labels.openingStock}
-                    </h3>
-                    <button
-                        type="button"
-                        onClick={async () => {
-                            if (!values.name?.trim()) {
-                                await showCrudValidationToast('Nama Barang harus diisi.');
-                                return;
-                            }
-                            setModalOpen(true);
-                        }}
-                        className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer"
-                    >
-                        <PlusIcon className="h-5 w-5" />
-                    </button>
+                <div className="flex items-center justify-between border-b border-abc-card-border pb-1.5">
+                    <div className="flex items-center gap-4">
+                        <h3 className="text-lg font-normal text-input-brand sm:text-lg xl:text-xl 2xl:text-2xl">
+                            {config.labels.openingStock}
+                        </h3>
+                        <button
+                            type="button"
+                            onClick={async () => {
+                                if (!values.name?.trim()) {
+                                    await showCrudValidationToast('Nama Barang harus diisi.');
+                                    return;
+                                }
+                                setModalOpen(true);
+                            }}
+                            className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer"
+                        >
+                            <PlusIcon className="h-5 w-5" />
+                        </button>
+                    </div>
+                    <div className="text-xs sm:text-sm text-brand-dark flex items-center gap-3">
+                        <span className="font-normal text-brand-dark">Total Stok Awal</span>
+                        <span className="font-normal text-brand-dark">{formatAmountInput(totalOpeningStock)}</span>
+                    </div>
                 </div>
 
                 <DataTable wrapperClassName="border-table-wrapper-border">
@@ -83,17 +147,24 @@ export default function ItemStockTab({ config, values, onChange }) {
                     </DataTableHeader>
                     <DataTableBody>
                         {paginatedRows.length ? (
-                            paginatedRows.map((row, index) => {
-                                const rowNumber = (currentPage - 1) * perPage + index + 1;
+                            paginatedRows.map((row) => {
                                 return (
                                     <DataTableRow key={row.id} className="border-ui-border-row bg-white">
                                         {config.openingStockTable.columns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
-                                                className="px-3 text-center text-[15px] text-text-workspace-dark"
+                                                className={`px-3 text-[15px] text-text-workspace-dark ${
+                                                    column.align === 'right'
+                                                        ? 'text-right'
+                                                        : column.align === 'center'
+                                                        ? 'text-center'
+                                                        : 'text-left'
+                                                }`}
                                             >
-                                                {column.id === 'number'
-                                                    ? rowNumber
+                                                {column.id === 'unitCost'
+                                                    ? formatAmountInput(row.unitCost)
+                                                    : column.id === 'quantity'
+                                                    ? formatAmountInput(row.quantity)
                                                     : formatTableTextValue(row[column.id], column)}
                                             </DataTableCell>
                                         ))}
@@ -144,40 +215,56 @@ export default function ItemStockTab({ config, values, onChange }) {
             </section>
 
             <section className="space-y-2">
-                <div className="lg:max-w-[33.33%] w-full">
+                <div className="w-full">
                     <SectionHeading title={values.stockWarehouseLabel} />
 
                     <div className="mt-4 space-y-2">
                         <FormRow label="Kuantitas">
-                            <SimpleTextField
-                                value={values.stockQuantity}
-                                onChange={() => {}}
-                                inputClassName="text-right"
-                                formatAsAmount
-                                disabled
-                            />
+                            <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                                <div className="w-48 shrink-0">
+                                    <SimpleTextField
+                                        value={values.stockQuantity}
+                                        onChange={() => {}}
+                                        inputClassName="text-right"
+                                        formatAsAmount
+                                        disabled
+                                    />
+                                </div>
+                                <span className="text-xs sm:text-sm text-brand-dark select-none shrink-0 min-w-[32px]">
+                                    {baseUnitName}
+                                </span>
+                                <div className="w-full max-w-[280px] shrink-0">
+                                    <SimpleTextField
+                                        value={multiUnitBreakdown}
+                                        onChange={() => {}}
+                                        disabled
+                                    />
+                                </div>
+                            </div>
                         </FormRow>
 
                         <FormRow label="Nilai Satuan">
-                            <SimpleTextField
-                                value={values.stockUnitValue}
-                                onChange={() => {}}
-                                inputClassName="text-right"
-                                prefix="Rp"
-                                formatAsAmount
-                                disabled
-                            />
+                            <div className="w-48">
+                                <SimpleTextField
+                                    value={values.stockUnitValue}
+                                    onChange={() => {}}
+                                    inputClassName="text-right"
+                                    formatAsAmount
+                                    disabled
+                                />
+                            </div>
                         </FormRow>
 
                         <FormRow label="Beban Pokok">
-                            <SimpleTextField
-                                value={values.stockCostOfGoods}
-                                onChange={() => {}}
-                                inputClassName="text-right"
-                                prefix="Rp"
-                                formatAsAmount
-                                disabled
-                            />
+                            <div className="w-48">
+                                <SimpleTextField
+                                    value={values.stockCostOfGoods}
+                                    onChange={() => {}}
+                                    inputClassName="text-right"
+                                    formatAsAmount
+                                    disabled
+                                />
+                            </div>
                         </FormRow>
                     </div>
                 </div>
