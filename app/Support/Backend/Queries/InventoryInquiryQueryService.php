@@ -168,7 +168,7 @@ class InventoryInquiryQueryService
                     'warehouse' => $warehouse->name,
                     'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
                     'unit_name' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
-                    'multi_unit_quantity' => sprintf('%s %s', $this->formatNumber($quantity), $product->baseUnit?->name ?? ''),
+                    'multi_unit_quantity' => $this->formatMultiUnitQuantity((float) $quantity, $product),
                     'saleable_stock' => $this->formatNumber($quantity),
                     'quantity' => (float) $quantity,
                     'raw_quantity' => (float) $quantity,
@@ -925,9 +925,50 @@ class InventoryInquiryQueryService
     protected function queryProducts(array $filters): Collection
     {
         return Product::query()
-            ->with(['baseUnit', 'purchaseUnit', 'salesUnit', 'preferredSupplier', 'mainSupplier'])
+            ->with(['baseUnit', 'purchaseUnit', 'salesUnit', 'preferredSupplier', 'mainSupplier', 'unitConversions', 'unitConversions.unit'])
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
             ->get();
+    }
+
+    protected function formatMultiUnitQuantity(float $quantity, Product $product): string
+    {
+        $baseUnitName = $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '';
+        $conversions = $product->relationLoaded('unitConversions')
+            ? $product->unitConversions
+            : $product->unitConversions()->with('unit')->get();
+
+        $validConversions = $conversions
+            ->filter(fn ($conv) => $conv->unit && (float) $conv->quantity > 0)
+            ->sortByDesc(fn ($conv) => (float) $conv->quantity)
+            ->values();
+
+        if ($validConversions->isEmpty() || $quantity <= 0) {
+            return sprintf('%s %s', $this->formatNumber($quantity), $baseUnitName);
+        }
+
+        $parts = [];
+        $remaining = $quantity;
+
+        foreach ($validConversions as $conv) {
+            $ratio = (float) $conv->quantity;
+            if ($ratio <= 0) {
+                continue;
+            }
+
+            if ($remaining >= $ratio) {
+                $count = floor($remaining / $ratio);
+                if ($count > 0) {
+                    $parts[] = sprintf('%s %s', $this->formatNumber($count), $conv->unit->name);
+                    $remaining = round($remaining - ($count * $ratio), 4);
+                }
+            }
+        }
+
+        if ($remaining > 0.00001 || empty($parts)) {
+            $parts[] = sprintf('%s %s', $this->formatNumber($remaining), $baseUnitName);
+        }
+
+        return implode(', ', $parts);
     }
 
     /**

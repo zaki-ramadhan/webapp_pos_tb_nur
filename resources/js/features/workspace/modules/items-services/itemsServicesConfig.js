@@ -280,7 +280,18 @@ function buildFallbackDetailRecord(row, config) {
         barcode: row.barcode ?? buildBarcode(row.code),
         primaryUnit: baseUnitName ? [{ id: baseUnitId, name: baseUnitName }] : [],
         baseUnitId: baseUnitId,
-        unitConversions: [],
+        unitConversions: (row.unit_conversions ?? row.unitConversions ?? []).map((uc) => {
+            const uId = uc.unit_id ?? uc.unitId ?? uc.unit?.id ?? null;
+            const uName = uc.unit?.name ?? uc.unitName ?? '';
+            const qty = uc.quantity !== undefined && uc.quantity !== null ? String(Number(uc.quantity)) : '';
+            return {
+                id: uc.id ?? null,
+                unitId: uId,
+                unitName: uName,
+                unit: uName ? [{ id: uId, name: uName }] : (uId ? [{ id: uId, name: '' }] : []),
+                quantity: qty,
+            };
+        }),
         brand: (brandName && brandName !== '-') ? [{ id: brandId, name: brandName }] : [],
         brandId: brandId,
         mainSupplier: (supplierName && supplierName !== '-') ? [{ id: supplierId, name: supplierName }] : [],

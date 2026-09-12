@@ -51,7 +51,7 @@ class ItemLocationPage
                     'tableClassName' => 'min-w-[1180px]',
                     'columns' => [
                         ['id' => 'warehouse', 'label' => 'Gudang', 'widthClassName' => 'w-[300px]', 'align' => 'left'],
-                        ['id' => 'multiUnitQuantity', 'label' => 'Kuantitas Multi Satuan', 'widthClassName' => 'w-[200px]', 'align' => 'center'],
+                        ['id' => 'multiUnitQuantity', 'label' => 'KTS dalam multi satuan', 'widthClassName' => 'w-[200px]', 'align' => 'center'],
                         ['id' => 'saleableStock', 'label' => 'Stok dapat dijual', 'widthClassName' => 'w-[200px]', 'align' => 'center'],
                         ['id' => 'address', 'label' => 'Alamat', 'align' => 'center'],
                     ],

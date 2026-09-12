@@ -96,31 +96,29 @@ export default function InventoryInquiryView({ config, pageId }) {
     const tableRows = useMemo(() => mapInventoryRows(pageId, rawRows), [pageId, rawRows]);
 
     const cleanedColumns = useMemo(() => {
+        if (isItemLocation && values.itemType === 'warehouse') {
+            return [
+                { id: 'productName', label: 'Nama Barang', align: 'left', widthClassName: 'w-[280px]' },
+                { id: 'productCode', label: 'Kode Barang', align: 'left', widthClassName: 'w-[160px]' },
+                { id: 'multiUnitQuantity', label: 'Multi Satuan', align: 'center', widthClassName: 'w-[200px]' },
+                { id: 'saleableStock', label: 'Stok dapat dijual', align: 'center', widthClassName: 'w-[200px]' },
+            ];
+        }
+
         const columns = config.table.columns ?? [];
-        return columns
-            .filter(col => !(values.itemType === 'warehouse' && col.id === 'address'))
-            .map(col => {
-                if (col.id === 'warehouse') {
-                    if (values.itemType === 'warehouse') {
-                        return {
-                            ...col,
-                            id: 'productName',
-                            label: 'Barang',
-                            align: 'left',
-                        };
-                    }
-                    return {
-                        ...col,
-                        align: 'left',
-                        label: cleanHeaderLabel(col.label),
-                    };
-                }
+        return columns.map((col) => {
+            if (col.id === 'multiUnitQuantity') {
                 return {
                     ...col,
-                    label: cleanHeaderLabel(col.label),
+                    label: 'KTS dalam multi satuan',
                 };
-            });
-    }, [config.table.columns, values.itemType]);
+            }
+            return {
+                ...col,
+                label: cleanHeaderLabel(col.label),
+            };
+        });
+    }, [config.table.columns, values.itemType, isItemLocation]);
 
   // Pisahkan kolom checkbox dari kolom data
 
@@ -570,7 +568,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                             style={getCellStyle(column.id)}
                                             onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
-                                            {column.id === 'itemName' ? (
+                                            {column.id === 'itemName' || column.id === 'productName' ? (
                                                 <button
                                                     type="button"
                                                     onClick={(e) => {
@@ -582,8 +580,8 @@ export default function InventoryInquiryView({ config, pageId }) {
                                                                     detail: {
                                                                         pageId: 'items-services',
                                                                         recordId: prodId,
-                                                                        label: row.itemName,
-                                                                        tabLabel: row.itemName,
+                                                                        label: row.productName || row.itemName,
+                                                                        tabLabel: row.productName || row.itemName,
                                                                         openForm: true,
                                                                     },
                                                                 })
