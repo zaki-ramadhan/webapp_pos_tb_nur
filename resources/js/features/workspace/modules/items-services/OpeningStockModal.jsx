@@ -194,13 +194,15 @@ export default function OpeningStockModal({
 
                     {Boolean(documentNumber || documentId) && (
                         <FormRow label="No Penyesuaian #">
-                            <button
-                                type="button"
-                                onClick={handleOpenAdjustment}
-                                className="flex items-center px-3 py-2 border border-emerald-400 rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-semibold h-[38px] bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-500 cursor-pointer"
-                            >
-                                {documentNumber || `IA#${documentId}`}
-                            </button>
+                            <div className="w-3/4">
+                                <button
+                                    type="button"
+                                    onClick={handleOpenAdjustment}
+                                    className="flex items-center px-3 py-2 border border-emerald-400 rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-semibold h-[38px] bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-500 cursor-pointer"
+                                >
+                                    {documentNumber || `IA#${documentId}`}
+                                </button>
+                            </div>
                         </FormRow>
                     )}
 
