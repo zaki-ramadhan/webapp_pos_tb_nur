@@ -56,6 +56,10 @@ export function sanitizeAmountInput(value, { allowDecimal = true, allowNegative 
         return `${negativePrefix}0,${fractionPart}`;
     }
 
+    if (isInput && normalizedValue.includes(',') && !fractionPart) {
+        return `${negativePrefix}${integerPart},`;
+    }
+
     return fractionPart ? `${negativePrefix}${integerPart},${fractionPart}` : `${negativePrefix}${integerPart}`;
 }
 
@@ -66,14 +70,18 @@ export function formatAmountInput(value, options = {}) {
         return sanitizedValue;
     }
 
-    const isNegative = sanitizedValue.startsWith('-');
-    const unsignedValue = isNegative ? sanitizedValue.slice(1) : sanitizedValue;
+    const hasTrailingComma = options.isInput && sanitizedValue.endsWith(',');
+    const baseValue = hasTrailingComma ? sanitizedValue.slice(0, -1) : sanitizedValue;
+
+    const isNegative = baseValue.startsWith('-');
+    const unsignedValue = isNegative ? baseValue.slice(1) : baseValue;
     const [rawIntegerPart = '0', rawFractionPart = ''] = unsignedValue.split(',');
     const integerPart = rawIntegerPart.replace(/^0+(?=\d)/, '') || '0';
     const groupedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     const formattedValue = rawFractionPart ? `${groupedIntegerPart},${rawFractionPart}` : groupedIntegerPart;
 
-    return isNegative ? `-${formattedValue}` : formattedValue;
+    const result = isNegative ? `-${formattedValue}` : formattedValue;
+    return hasTrailingComma ? `${result},` : result;
 }
 
 export function parseAmountInput(value, { allowDecimal = true, allowNegative = false, emptyValue = null } = {}) {
