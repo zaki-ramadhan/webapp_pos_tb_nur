@@ -99,6 +99,7 @@ export default function OpeningStockModal({
                 },
             }),
         );
+        onClose?.();
     };
 
     function handleSave() {
@@ -146,7 +147,7 @@ export default function OpeningStockModal({
                                 onClose();
                             }}
                             size="md"
-                            variant="danger"
+                            variant="secondary"
                             className="rounded-[4px] min-w-[80px] cursor-pointer"
                         >
                             Hapus
