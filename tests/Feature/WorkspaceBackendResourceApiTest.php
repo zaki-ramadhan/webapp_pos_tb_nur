@@ -392,6 +392,178 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $this->assertEquals(15.0, (float) $locRows[0]['saleable_stock']);
     }
 
+    public function test_inventory_adjustment_reduction_validates_stock_and_respects_warehouse(): void
+    {
+        $user = User::factory()->create();
+        $branch = \App\Domain\Organization\Models\Branch::create(['code' => 'BR-02', 'name' => 'Toko Cabang', 'is_active' => true]);
+        $wh1 = Warehouse::create(['branch_id' => $branch->id, 'code' => 'WH-RED-01', 'name' => 'Gudang Depan', 'is_active' => true]);
+        $wh2 = Warehouse::create(['branch_id' => $branch->id, 'code' => 'WH-RED-02', 'name' => 'Gudang Belakang', 'is_active' => true]);
+        $unit = Unit::create(['code' => 'PCS-02', 'name' => 'Pcs', 'precision' => 0, 'is_active' => true]);
+        $product = Product::create([
+            'code' => 'PROD-RED-01',
+            'name' => 'Cat Tembok 5kg',
+            'base_unit_id' => $unit->id,
+            'purchase_unit_id' => $unit->id,
+            'sales_unit_id' => $unit->id,
+            'product_type' => 'stock',
+            'is_active' => true,
+            'default_purchase_price' => 100000,
+        ]);
+
+        // 1. Validasi pengurangan saat stok 0 di wh1
+        $invalidPayload = [
+            'warehouse_id' => $wh1->id,
+            'entry_date' => now()->toDateString(),
+            'notes' => 'Test Pengurangan Stok Kosong',
+            'lines' => [
+                [
+                    'product_id' => $product->id,
+                    'unit_id' => $unit->id,
+                    'warehouse_id' => $wh1->id,
+                    'quantity' => 2,
+                    'unit_price' => 0,
+                    'total_amount' => 0,
+                    'attributes' => [
+                        'adjustment_type' => 'Pengurangan',
+                    ],
+                ],
+            ],
+        ];
+
+        $failResponse = $this->actingAs($user)->postJson('/api/backend/inventory-adjustments', $invalidPayload);
+        $failResponse->assertStatus(422);
+        $failResponse->assertJsonValidationErrors(['lines']);
+
+        // 2. Beri stok awal: 10 di wh1, 5 di wh2
+        $initPayload = [
+            'warehouse_id' => $wh1->id,
+            'entry_date' => now()->toDateString(),
+            'notes' => 'Stok Awal Penambahan',
+            'lines' => [
+                [
+                    'product_id' => $product->id,
+                    'unit_id' => $unit->id,
+                    'warehouse_id' => $wh1->id,
+                    'quantity' => 10,
+                    'unit_price' => 100000,
+                    'total_amount' => 1000000,
+                    'attributes' => ['adjustment_type' => 'Penambahan'],
+                ],
+                [
+                    'product_id' => $product->id,
+                    'unit_id' => $unit->id,
+                    'warehouse_id' => $wh2->id,
+                    'quantity' => 5,
+                    'unit_price' => 100000,
+                    'total_amount' => 500000,
+                    'attributes' => ['adjustment_type' => 'Penambahan'],
+                ],
+            ],
+        ];
+        $this->actingAs($user)->postJson('/api/backend/inventory-adjustments', $initPayload)->assertStatus(201);
+
+        // 3. Pengurangan 3 di wh1: stok wh1 jadi 7, wh2 tetap 5
+        $redPayload = [
+            'warehouse_id' => $wh1->id,
+            'entry_date' => now()->toDateString(),
+            'notes' => 'Pengurangan 3 di WH1',
+            'lines' => [
+                [
+                    'product_id' => $product->id,
+                    'unit_id' => $unit->id,
+                    'warehouse_id' => $wh1->id,
+                    'quantity' => 3,
+                    'unit_price' => 0,
+                    'total_amount' => 0,
+                    'attributes' => ['adjustment_type' => 'Pengurangan'],
+                ],
+            ],
+        ];
+        $this->actingAs($user)->postJson('/api/backend/inventory-adjustments', $redPayload)->assertStatus(201);
+
+        $locResponse = $this->actingAs($user)->getJson('/api/backend/item-locations?product_id='.$product->id);
+        $locResponse->assertOk();
+        $rows = collect($locResponse->json('data'));
+
+        $wh1Row = $rows->firstWhere('warehouse_id', $wh1->id);
+        $wh2Row = $rows->firstWhere('warehouse_id', $wh2->id);
+
+        $this->assertEquals(7.0, (float) $wh1Row['saleable_stock']);
+        $this->assertEquals(5.0, (float) $wh2Row['saleable_stock']);
+    }
+
+    public function test_inventory_adjustment_set_stock_calculates_delta_accurately_per_warehouse(): void
+    {
+        $user = User::factory()->create();
+        $branch = \App\Domain\Organization\Models\Branch::create(['code' => 'BR-03', 'name' => 'Cabang Gudang', 'is_active' => true]);
+        $wh = Warehouse::create(['branch_id' => $branch->id, 'code' => 'WH-SET-01', 'name' => 'Gudang Opname', 'is_active' => true]);
+        $unit = Unit::create(['code' => 'SAK-01', 'name' => 'Sak', 'precision' => 0, 'is_active' => true]);
+        $product = Product::create([
+            'code' => 'SMN-PAD-01',
+            'name' => 'Semen Padang 50kg',
+            'base_unit_id' => $unit->id,
+            'purchase_unit_id' => $unit->id,
+            'sales_unit_id' => $unit->id,
+            'product_type' => 'stock',
+            'is_active' => true,
+            'default_purchase_price' => 65000,
+        ]);
+
+        // Beri stok 100
+        $initPayload = [
+            'warehouse_id' => $wh->id,
+            'entry_date' => now()->toDateString(),
+            'notes' => 'Stok Masuk 100',
+            'lines' => [
+                [
+                    'product_id' => $product->id,
+                    'unit_id' => $unit->id,
+                    'warehouse_id' => $wh->id,
+                    'quantity' => 100,
+                    'unit_price' => 65000,
+                    'total_amount' => 6500000,
+                    'attributes' => ['adjustment_type' => 'Penambahan'],
+                ],
+            ],
+        ];
+        $this->actingAs($user)->postJson('/api/backend/inventory-adjustments', $initPayload)->assertStatus(201);
+
+        // Atur stok menjadi 85 (kasus yang ditanyakan user: awal 100 -> diatur jadi 85)
+        $setPayload = [
+            'warehouse_id' => $wh->id,
+            'entry_date' => now()->toDateString(),
+            'notes' => 'Hasil Stock Opname Fisik 85',
+            'lines' => [
+                [
+                    'product_id' => $product->id,
+                    'unit_id' => $unit->id,
+                    'warehouse_id' => $wh->id,
+                    'quantity' => 85,
+                    'unit_price' => 0,
+                    'total_amount' => 0,
+                    'attributes' => ['adjustment_type' => 'Atur Stok'],
+                ],
+            ],
+        ];
+        $setResponse = $this->actingAs($user)->postJson('/api/backend/inventory-adjustments', $setPayload);
+        $setResponse->assertStatus(201);
+        $setDocId = $setResponse->json('data.id');
+
+        // Pastikan stok di item-locations persis 85!
+        $locResponse = $this->actingAs($user)->getJson('/api/backend/item-locations?product_id='.$product->id);
+        $locResponse->assertOk();
+        $locRows = $locResponse->json('data');
+        $this->assertEquals(85.0, (float) $locRows[0]['saleable_stock']);
+
+        // Pastikan di mutasi barang tercatat selisih -15
+        $mutResponse = $this->actingAs($user)->getJson('/api/backend/product-mutations?product_id='.$product->id);
+        $mutResponse->assertOk();
+        $mutMatching = collect($mutResponse->json('data'))->firstWhere('document_id', $setDocId);
+        $this->assertNotNull($mutMatching);
+        $this->assertEquals(-15.0, (float) $mutMatching['qty_change']);
+        $this->assertEquals('15', (string) $mutMatching['out_qty']);
+    }
+
     public function test_taxes_resource_can_be_imported(): void
     {
         $user = User::factory()->create();

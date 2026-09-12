@@ -27,6 +27,7 @@ const inventoryAdjustmentDetailColumns = [
     { id: 'adjustmentType', label: 'Tipe', widthClassName: 'w-[130px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[100px]', align: 'right' },
     { id: 'unit', label: 'Satuan', widthClassName: 'w-[90px]', align: 'left' },
+    { id: 'warehouse', label: 'Gudang', widthClassName: 'w-[130px]', align: 'left' },
 ];
 
 const createDockActions = [

@@ -108,7 +108,9 @@ class InventoryInquiryQueryService
         }
 
         $stockMap = $this->buildStockMap($filters);
-        $warehouses = Warehouse::query()->with('branch')->get()->keyBy('id');
+        $warehouses = Warehouse::query()->with('branch')
+            ->when(filled($filters['warehouse_id'] ?? null), fn ($q) => $q->where('id', (int) $filters['warehouse_id']))
+            ->get()->keyBy('id');
         $products = $this->queryProducts($filters)->keyBy('id');
         $rows = collect();
 
@@ -581,6 +583,8 @@ class InventoryInquiryQueryService
                     $adjType = $attributes['adjustment_type'] ?? 'Penambahan';
                     if ($adjType === 'Pengurangan' && $qty > 0) {
                         $qty *= -1;
+                    } elseif ($adjType === 'Atur Stok') {
+                        $qty = (float) ($attributes['delta_quantity'] ?? ($qty - (float) ($attributes['system_quantity'] ?? 0)));
                     }
                 }
                 $whId = $line->warehouse_id ?? $doc->warehouse_id;
@@ -625,7 +629,11 @@ class InventoryInquiryQueryService
                         'sales_invoice' => 'Faktur Penjualan',
                         'sales_return' => 'Retur Penjualan',
                         'purchase_return' => 'Retur Pembelian',
-                        'inventory_adjustment' => 'Penyesuaian Persediaan',
+                        'inventory_adjustment' => 'Penyesuaian Persediaan' . match ($adjType ?? '') {
+                            'Atur Stok' => ' (Atur Stok)',
+                            'Pengurangan' => ' (Pengurangan)',
+                            default => ' (Penambahan)',
+                        },
                         'stock_transfer' => 'Pemindahan Barang',
                         default => ucwords(str_replace('_', ' ', (string) $doc->document_type)),
                     },
@@ -694,6 +702,9 @@ class InventoryInquiryQueryService
                             $adjType = $attributes['adjustment_type'] ?? 'Penambahan';
                             if ($adjType === 'Pengurangan') {
                                 $initialStock -= $mQty;
+                            } elseif ($adjType === 'Atur Stok') {
+                                $delta = (float) ($attributes['delta_quantity'] ?? ($mQty - (float) ($attributes['system_quantity'] ?? 0)));
+                                $initialStock += $delta;
                             } else {
                                 $initialStock += $mQty;
                             }
@@ -733,7 +744,7 @@ class InventoryInquiryQueryService
      * @param  array<string, mixed>  $filters
      * @return array<string, float>
      */
-    protected function buildStockMap(array $filters): array
+    public function buildStockMap(array $filters): array
     {
         $warehouseFilter = filled($filters['warehouse_id'] ?? null) ? (int) $filters['warehouse_id'] : null;
         $productFilter = filled($filters['product_id'] ?? null) ? (int) $filters['product_id'] : null;
@@ -814,6 +825,7 @@ class InventoryInquiryQueryService
             })
             ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return', 'inventory_adjustment', 'stock_transfer'])
             ->where(fn ($q) => $q->whereNull('status')->orWhereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled']))
+            ->when(!empty($filters['exclude_document_id']), fn ($q) => $q->where('id', '!=', (int) $filters['exclude_document_id']))
             ->get();
 
         static $refCodeProductMap = [];
@@ -869,6 +881,8 @@ class InventoryInquiryQueryService
                     $adjType = $attributes['adjustment_type'] ?? 'Penambahan';
                     if ($adjType === 'Pengurangan' && $quantity > 0) {
                         $quantity *= -1;
+                    } elseif ($adjType === 'Atur Stok') {
+                        $quantity = (float) ($attributes['delta_quantity'] ?? ($quantity - (float) ($attributes['system_quantity'] ?? 0)));
                     }
                 }
 

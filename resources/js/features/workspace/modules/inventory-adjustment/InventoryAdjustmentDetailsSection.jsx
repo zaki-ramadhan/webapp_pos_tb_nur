@@ -53,6 +53,7 @@ export default function InventoryAdjustmentDetailsSection({
             ...item,
             __rawItem: item,
             no: index + 1,
+            warehouse: Array.isArray(item.warehouse) ? (item.warehouse[0] || '—') : (item.warehouse || '—'),
             salesCategory: isPriceAdjustment ? (docSalesCategory || item.salesCategory || 'Umum') : undefined,
             oldDiscount: item.oldDiscount ?? '0',
             minQty: item.minQty ?? '0',
