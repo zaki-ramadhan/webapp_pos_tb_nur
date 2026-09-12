@@ -101,13 +101,14 @@ export function InventoryAdjustmentFormView({
             __productId: null,
             name: '',
             code: '',
-            adjustmentType: 'Penambahan',
+            adjustmentType: values.adjustmentType || 'Penambahan',
             quantity: '1',
             unit: '',
             unitLookup: [],
             unitCost: '0',
             totalCost: '0',
-            warehouse: [],
+            warehouse: ['Gudang Utama'],
+            __warehouseId: 1,
             department: [],
             notes: '',
         });
@@ -120,6 +121,9 @@ export function InventoryAdjustmentFormView({
     function handleSelectItem(product) {
         if (!product) return;
         const nextItem = buildItemFromProduct(product, pageId);
+        if (values.adjustmentType) {
+            nextItem.adjustmentType = values.adjustmentType;
+        }
         setSelectedItem(nextItem);
     }
 

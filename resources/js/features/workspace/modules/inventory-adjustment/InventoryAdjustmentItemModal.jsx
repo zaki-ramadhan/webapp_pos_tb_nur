@@ -22,9 +22,14 @@ function buildInitialValues(item = {}) {
         || (source.unitLookup && source.unitLookup[0]) 
         || '';
 
+    const defaultWarehouse = source.warehouse?.length
+        ? cloneList(source.warehouse)
+        : (source.warehouse ? [source.warehouse] : ['Gudang Utama']);
+    const defaultWarehouseId = source.__warehouseId ?? (source.warehouse?.length ? null : 1);
+
     return {
         __productId: source.__productId ?? null,
-        __warehouseId: source.__warehouseId ?? null,
+        __warehouseId: defaultWarehouseId,
         __departmentId: source.__departmentId ?? null,
         __unitId: source.__unitId ?? null,
         code: source.code ?? '',
@@ -35,7 +40,7 @@ function buildInitialValues(item = {}) {
         unitLookup: cloneList(source.unitLookup?.length ? source.unitLookup : (defaultUnit ? [defaultUnit] : [])),
         unitCost: source.unitCost ?? '',
         totalCost: source.totalCost ?? '',
-        warehouse: cloneList(source.warehouse),
+        warehouse: defaultWarehouse,
         department: cloneList(source.department),
         notes: source.notes ?? '',
     };
@@ -89,6 +94,37 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
                 const rows = extractBackendRows(res);
                 if (!ignore) {
                     setWarehouseStocks(rows);
+
+                    // Pemilihan gudang default cerdas:
+                    // Prioritaskan gudang dengan stok terbanyak (> 0).
+                    // Jika semua stok <= 0 atau seimbang, gunakan Gudang Utama atau gudang pertama.
+                    if (!isExisting && rows.length > 0) {
+                        setValues((current) => {
+                            if (current.__userSelectedWarehouse) return current;
+
+                            const sorted = [...rows].sort((a, b) => {
+                                const qtyA = parseFloat(a.raw_quantity ?? a.quantity ?? a.saleable_stock ?? 0) || 0;
+                                const qtyB = parseFloat(b.raw_quantity ?? b.quantity ?? b.saleable_stock ?? 0) || 0;
+                                return qtyB - qtyA;
+                            });
+
+                            const best = sorted[0];
+                            const bestStock = parseFloat(best.raw_quantity ?? best.quantity ?? best.saleable_stock ?? 0) || 0;
+
+                            const chosen = bestStock > 0
+                                ? best
+                                : (rows.find((r) => r.warehouse_id === 1 || r.warehouse === 'Gudang Utama') || rows[0]);
+
+                            if (chosen) {
+                                return {
+                                    ...current,
+                                    warehouse: [chosen.warehouse],
+                                    __warehouseId: chosen.warehouse_id,
+                                };
+                            }
+                            return current;
+                        });
+                    }
                 }
             } catch {
                 // Abaikan error jaringan
@@ -101,7 +137,7 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
         return () => {
             ignore = true;
         };
-    }, [values.__productId, values.code]);
+    }, [values.__productId, values.code, isExisting]);
 
     const selectedWarehouseName = values.warehouse?.[0] || '';
     const currentWarehouseStock = useMemo(() => {
@@ -113,6 +149,15 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
         );
         return matched ? (parseFloat(matched.raw_quantity ?? matched.saleable_stock ?? matched.available_stock ?? 0) || 0) : 0;
     }, [selectedWarehouseName, values.__warehouseId, warehouseStocks]);
+
+    useEffect(() => {
+        if (!loadingStock && currentWarehouseStock <= 0 && values.adjustmentType === 'Pengurangan' && !isExisting) {
+            setValues((current) => ({
+                ...current,
+                adjustmentType: 'Penambahan',
+            }));
+        }
+    }, [currentWarehouseStock, values.adjustmentType, loadingStock, isExisting]);
 
     const handleValuesChange = useCallback((updater) => {
         setValues((current) => (typeof updater === 'function' ? updater(current) : updater));
@@ -170,9 +215,10 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
         const totalCostNum = isAddition ? (qty * unitCostNum) : 0;
         const unitName = values.unitLookup?.[0] || item.unit || '';
 
+        const { __userSelectedWarehouse, ...cleanValues } = values;
         const updatedItem = {
             ...item,
-            ...values,
+            ...cleanValues,
             quantity: String(qty),
             unit: unitName,
             unitLookup: values.unitLookup?.length ? values.unitLookup : (unitName ? [unitName] : []),

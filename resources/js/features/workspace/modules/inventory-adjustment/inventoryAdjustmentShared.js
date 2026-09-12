@@ -52,7 +52,7 @@ export function buildFormValues(source = {}) {
     return {
         ...source,
         ...totals,
-        adjustmentType: source.adjustmentType ?? (source.salesCategory !== undefined ? 'Harga' : 'Pengurangan Stok'),
+        adjustmentType: source.adjustmentType ?? (source.salesCategory !== undefined ? 'Harga' : 'Penambahan'),
         adjustmentAccount: cloneList(source.adjustmentAccount),
         branches: cloneList(source.branches),
         items,
@@ -386,8 +386,8 @@ export function buildItemFromProduct(product, pageId = 'inventory-adjustment') {
         oldDiscount: '0',
         minQty: '0',
         newDiscount: '0',
-        warehouse: product.warehouse?.name ? [product.warehouse.name] : (product.warehouse ? [product.warehouse] : []),
-        __warehouseId: product.warehouse_id ?? product.warehouse?.id ?? null,
+        warehouse: product.warehouse?.name ? [product.warehouse.name] : (product.warehouse ? [product.warehouse] : ['Gudang Utama']),
+        __warehouseId: product.warehouse_id ?? product.warehouse?.id ?? 1,
         department: [],
         notes: '',
     };

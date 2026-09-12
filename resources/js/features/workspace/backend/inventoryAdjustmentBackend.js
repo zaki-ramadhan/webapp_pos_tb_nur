@@ -21,7 +21,7 @@ export function buildInventoryAdjustmentTableRows(records) {
         dateFilter: formatIsoDate(record.entry_date),
         effectiveDate: formatIsoDate(record.effective_date) || formatIsoDate(record.entry_date),
         salesCategory: record.metadata?.salesCategory?.[0] ?? '',
-        adjustmentType: record.process_type ?? record.metadata?.adjustmentType ?? 'Pengurangan Stok',
+        adjustmentType: record.process_type ?? record.metadata?.adjustmentType ?? 'Penambahan',
         inactiveFilter: record.is_closed ? 'inactive' : 'active',
     }));
 }
@@ -59,7 +59,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
             unitLookup: unitName ? [unitName] : [],
             unitCost: formatCurrencyValue(itemUnitPrice),
             totalCost: formatCurrencyValue(itemTotalAmount),
-            warehouse: line.warehouse?.name ? [line.warehouse.name] : [],
+            warehouse: line.warehouse?.name ? [line.warehouse.name] : (line.warehouse_id === 1 ? ['Gudang Utama'] : []),
             department: line.department?.name ? [line.department.name] : [],
             notes: line.notes ?? '',
             oldDiscount: String(rawAttrs?.old_discount ?? '0'),
@@ -92,7 +92,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
         dockActions: config?.detailRecords?.[record.document_number]?.dockActions ?? (Array.isArray(config?.dockActions) ? config.dockActions : config?.dockActions?.detail) ?? config?.draft?.dockActions ?? [],
         itemModal: config?.itemModal ?? config?.draft?.itemModal ?? {},
         salesCategory: record.metadata?.salesCategory ?? [],
-        adjustmentType: record.process_type ?? record.metadata?.adjustmentType ?? (isPriceAdjustment ? 'Harga' : 'Pengurangan Stok'),
+        adjustmentType: record.process_type ?? record.metadata?.adjustmentType ?? (isPriceAdjustment ? 'Harga' : 'Penambahan'),
         effectiveDate: formatIsoDate(record.effective_date) || formatIsoDate(record.entry_date),
     };
 }
