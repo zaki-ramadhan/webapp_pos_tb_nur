@@ -3,7 +3,6 @@ import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
 import { FormRow, SimpleTextField } from './itemsServicesViewShared';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
-import { CalculatorIcon } from '@/features/workspace/shared/Icons';
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -151,7 +150,6 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                                 onBlur={(e) => calculateTotalCost(e.target.value, unitCost)}
                                 allowDecimal={false}
                                 inputClassName="text-right"
-                                trailing={<CalculatorIcon className="h-4.5 w-4.5 text-slate-500" />}
                             />
                         </div>
                     </FormRow>
@@ -177,7 +175,6 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                                 onBlur={(e) => calculateTotalCost(quantity, e.target.value)}
                                 prefix="Rp"
                                 inputClassName="text-right"
-                                trailing={<CalculatorIcon className="h-4.5 w-4.5 text-slate-500" />}
                             />
                         </div>
                     </FormRow>

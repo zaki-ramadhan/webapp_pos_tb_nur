@@ -10,7 +10,6 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import TextInput from '@/components/ui/TextInput';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import TextareaField from '@/components/ui/TextareaField';
-import { CalcIcon } from '@/features/workspace/shared/Icons';
 import { parseNumericInput, formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 
 const MODAL_TABS = [
@@ -130,11 +129,9 @@ function ItemDetailEditTab({ form, onChange, errors = {} }) {
                     onBlur={handleQtyBlur}
                     allowDecimal
                     allowNegative={false}
-                    trailing={<CalcIcon className="h-4 w-4 text-text-darkest" />}
                     error={errors.quantity}
                     className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
                     inputClassName={FIELD_INPUT_RIGHT_CLS}
-                    trailingClassName="px-3"
                     containerClassName="w-full max-w-full"
                 />
                 <AccountLookupField
@@ -155,8 +152,6 @@ function ItemDetailEditTab({ form, onChange, errors = {} }) {
                 value={price}
                 onChange={handlePriceChange}
                 onBlur={handlePriceBlur}
-                trailing={<CalcIcon className="h-4 w-4 text-text-darkest" />}
-                trailingClassName="px-3"
             />
 
             {/* Diskon */}
@@ -178,8 +173,6 @@ function ItemDetailEditTab({ form, onChange, errors = {} }) {
                     value={discountValue}
                     onChange={handleDiscountValueChange}
                     onBlur={handleDiscountValueBlur}
-                    trailing={<CalcIcon className="h-4 w-4 text-text-darkest" />}
-                    trailingClassName="px-3"
                 />
             </div>
 

@@ -81,6 +81,14 @@ export default function ItemStockTab({ config, values, onChange }) {
     const baseUnitName = baseUnit?.name ?? (typeof baseUnit === 'string' ? baseUnit : (values.unitName ?? values.unit ?? ''));
     const conversions = Array.isArray(values.unitConversions) ? values.unitConversions : [];
 
+    const hasMultiUnits = useMemo(() => {
+        return conversions.some((conv) => {
+            const name = conv.unitName ?? conv.unit?.[0]?.name ?? conv.name ?? (typeof conv.unit === 'string' ? conv.unit : '');
+            const ratio = Number(conv.quantity || 0);
+            return Boolean(name && ratio > 0);
+        });
+    }, [conversions]);
+
     const multiUnitBreakdown = useMemo(() => {
         return getMultiUnitBreakdown(values.stockQuantity, baseUnitName, conversions);
     }, [values.stockQuantity, baseUnitName, conversions]);
@@ -233,13 +241,15 @@ export default function ItemStockTab({ config, values, onChange }) {
                                 <span className="text-xs sm:text-sm text-brand-dark select-none shrink-0 min-w-[32px]">
                                     {baseUnitName}
                                 </span>
-                                <div className="w-full max-w-[280px] shrink-0">
-                                    <SimpleTextField
-                                        value={multiUnitBreakdown}
-                                        onChange={() => {}}
-                                        disabled
-                                    />
-                                </div>
+                                {hasMultiUnits && (
+                                    <div className="w-full max-w-[280px] shrink-0">
+                                        <SimpleTextField
+                                            value={multiUnitBreakdown}
+                                            onChange={() => {}}
+                                            disabled
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </FormRow>
 
