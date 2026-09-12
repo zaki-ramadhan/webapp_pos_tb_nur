@@ -924,8 +924,19 @@ class InventoryInquiryQueryService
      */
     protected function queryProducts(array $filters): Collection
     {
+        $relations = ['baseUnit', 'purchaseUnit', 'salesUnit', 'preferredSupplier', 'mainSupplier'];
+
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('product_unit_conversions')) {
+                $relations[] = 'unitConversions';
+                $relations[] = 'unitConversions.unit';
+            }
+        } catch (\Throwable) {
+            // Silently fallback
+        }
+
         return Product::query()
-            ->with(['baseUnit', 'purchaseUnit', 'salesUnit', 'preferredSupplier', 'mainSupplier', 'unitConversions', 'unitConversions.unit'])
+            ->with($relations)
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
             ->get();
     }
@@ -933,6 +944,15 @@ class InventoryInquiryQueryService
     protected function formatMultiUnitQuantity(float $quantity, Product $product): string
     {
         $baseUnitName = $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '';
+
+        try {
+            if (! \Illuminate\Support\Facades\Schema::hasTable('product_unit_conversions')) {
+                return sprintf('%s %s', $this->formatNumber($quantity), $baseUnitName);
+            }
+        } catch (\Throwable) {
+            return sprintf('%s %s', $this->formatNumber($quantity), $baseUnitName);
+        }
+
         $conversions = $product->relationLoaded('unitConversions')
             ? $product->unitConversions
             : $product->unitConversions()->with('unit')->get();
