@@ -334,6 +334,33 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $showResponse = $this->actingAs($user)->getJson('/api/backend/inventory-adjustments/'.$adjDoc->id);
         $showResponse->assertOk();
         $this->assertEquals('SA-TEST-99999', $showResponse->json('data.document_number'));
+
+        // Test adding a second opening stock row to an existing product that already has document lines
+        $secondUpdateResponse = $this->actingAs($user)->putJson('/api/backend/products/'.$product->id, [
+            'code' => $product->code,
+            'name' => $product->name,
+            'product_type' => 'Persediaan',
+            'base_unit_id' => $unit->id,
+            'opening_stock_rows' => [
+                [
+                    'warehouse_id' => $wh1->id,
+                    'quantity' => 77,
+                    'unit_cost' => 50000,
+                    'date' => '18/08/2026',
+                ],
+            ],
+        ]);
+        $secondUpdateResponse->assertOk();
+
+        $this->assertDatabaseHas('operation_documents', [
+            'document_type' => 'inventory_adjustment',
+            'warehouse_id' => $wh1->id,
+        ]);
+
+        $opStockResponse = $this->actingAs($user)->getJson('/api/backend/product-opening-stocks?product_id='.$product->id);
+        $opStockResponse->assertOk();
+        $opStockRows = collect($opStockResponse->json('data'));
+        $this->assertCount(3, $opStockRows);
     }
 
     public function test_inventory_adjustment_creation_updates_item_locations_and_mutations(): void

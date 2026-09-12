@@ -21,6 +21,7 @@ import {
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import {
+    clearBackendCache,
     createBackendResource,
     deleteBackendResource,
     extractBackendRows,
@@ -156,10 +157,20 @@ export default function ItemsServicesFormView({
 
         const loadStock = async () => {
             try {
-                const response = await listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() });
+                let stockRows = [];
+                const opRes = await listBackendResource('product-opening-stocks', { product_id: recordId, per_page: 100, _refresh: Date.now() });
                 if (!active) return;
-                const rows = extractBackendRows(response);
-                const stockRows = mapBackendStockRows(rows, detailRow);
+                const opRows = extractBackendRows(opRes);
+                if (opRows && opRows.length > 0) {
+                    stockRows = mapBackendStockRows(opRows, detailRow);
+                } else {
+                    const response = await listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() });
+                    if (!active) return;
+                    const rows = extractBackendRows(response);
+                    stockRows = mapBackendStockRows(rows, detailRow);
+                }
+
+                if (!active) return;
 
                 setDbStockRows(stockRows);
                 updateDbBaseline((prev) => {
@@ -280,8 +291,10 @@ export default function ItemsServicesFormView({
                         .map((r) => ({
                             warehouse_id: r.warehouse_id ?? r.warehouseId ?? null,
                             warehouse_name: typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse?.name ?? null),
+                            warehouse: typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse?.name ?? null),
                             quantity: parseAmountInput(r.quantity),
                             unit_cost: parseAmountInput(r.unitCost),
+                            unit_id: r.unit_id ?? null,
                             unit_name: typeof r.unit === 'string' ? r.unit : (r.unit?.name ?? null),
                             date: r.date || null,
                         })),
@@ -311,28 +324,42 @@ export default function ItemsServicesFormView({
             },
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
+                clearBackendCache('item-locations');
+                clearBackendCache('product-opening-stocks');
+
+                const effectiveId = record?.id ?? recordId;
+                let stockRows = [];
+                if (effectiveId) {
+                    try {
+                        const opRes = await listBackendResource('product-opening-stocks', { product_id: effectiveId, per_page: 100, _refresh: Date.now() });
+                        const opRows = extractBackendRows(opRes);
+                        if (opRows && opRows.length > 0) {
+                            stockRows = mapBackendStockRows(opRows, record ?? detailRow);
+                        } else {
+                            const locRes = await listBackendResource('item-locations', { product_id: effectiveId, per_page: 100, _refresh: Date.now() });
+                            const locRows = extractBackendRows(locRes);
+                            stockRows = mapBackendStockRows(locRows, record ?? detailRow);
+                        }
+                    } catch (_) {}
+                }
+
+                setDbStockRows(stockRows);
+
                 if (record) {
                     const mappedRecord = mapProductRow(record);
                     setFetchedRow(mappedRecord);
                     const newFormValues = buildItemsServicesFormValues(config, mappedRecord);
+                    newFormValues.openingStockRows = stockRows;
                     updateDbBaseline(newFormValues);
+                } else {
+                    setValues((prev) => ({
+                        ...prev,
+                        openingStockRows: stockRows,
+                    }));
                 }
+
                 await onRefresh?.();
                 markClean();
-                if (recordId) {
-                    listBackendResource('item-locations', { product_id: recordId, per_page: 100, _refresh: Date.now() })
-                        .then((res) => {
-                            const rows = extractBackendRows(res);
-                            const stockRows = mapBackendStockRows(rows, detailRow);
-
-                            setDbStockRows(stockRows);
-                            setValues((prev) => ({
-                                ...prev,
-                                openingStockRows: stockRows,
-                            }));
-                        })
-                        .catch(() => {});
-                }
                 if (isDetail && record && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
@@ -381,9 +408,7 @@ export default function ItemsServicesFormView({
                 ) : activeTabId === 'stock' ? (
                     (() => {
                         const openingStockRows = values.openingStockRows || [];
-                        const targetRows = isDetail && openingStockRows.some((r) => r.__fromDb)
-                            ? openingStockRows.filter((r) => r.__fromDb)
-                            : openingStockRows;
+                        const targetRows = openingStockRows;
                         const totalQty = targetRows.reduce((sum, r) => sum + (parseAmountInput(r.quantity) || 0), 0);
                         const totalCost = targetRows.reduce((sum, r) => {
                             const qty = parseAmountInput(r.quantity) || 0;
