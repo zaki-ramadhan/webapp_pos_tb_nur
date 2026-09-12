@@ -64,7 +64,7 @@ export default function ChipLookupField({
             ref={resolvedContentRef}
             onMouseDown={hasItems ? undefined : focusSearchButton}
             aria-invalid={error}
-            className={`flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${error ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus' : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]'} ${disabled ? 'bg-slate-100 text-slate-400 cursor-default' : error ? `bg-red-500/5 ${wrapperCursor}` : `bg-white ${wrapperCursor}`} ${heightClassName} ${className}`.trim()}
+            className={`flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${error ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus' : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]'} ${disabled ? 'bg-ui-bg-panel text-slate-400 cursor-default' : error ? `bg-red-500/5 ${wrapperCursor}` : `bg-white ${wrapperCursor}`} ${heightClassName} ${className}`.trim()}
         >
             <div className={`flex min-w-0 flex-1 flex-wrap items-center gap-2 pl-1.5 pr-2 py-1.5 ${wrapperCursor} ${contentClassName}`.trim()}>
                 {items.length ? (

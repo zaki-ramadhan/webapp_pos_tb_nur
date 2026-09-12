@@ -116,6 +116,10 @@ class BackendResourceIndexQuery
             }
         }
 
+        if ($blueprint->key === 'product-categories') {
+            $query->withCount('products');
+        }
+
         if ($blueprint->key === 'sales-deposits' && filter_var($filters['only_available'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
             $query->where('outstanding_amount', '>', 0)
                   ->whereNotIn('status', ['Void', 'Cancelled']);

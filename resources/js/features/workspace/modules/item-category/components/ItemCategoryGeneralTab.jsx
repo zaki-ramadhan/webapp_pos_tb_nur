@@ -3,7 +3,35 @@ import { AccountLookupField } from '@/features/workspace/shared/AccountLookupCon
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import { ClearableTextInput, ItemCategoryFieldRow } from './itemCategoryHelpers';
 
-export default function ItemCategoryGeneralTab({ config, values, onChange, parentCategoryOptions = [] }) {
+export default function ItemCategoryGeneralTab({
+    config,
+    values,
+    onChange,
+    parentCategoryOptions = [],
+    isDetail = false,
+    detailRow = null,
+    parentCategoryError = '',
+    onParentCategorySelect = null,
+    onParentCategoryClear = null,
+}) {
+    const handleSelectParent = (item) => {
+        if (onParentCategorySelect) {
+            onParentCategorySelect(item);
+        } else {
+            onChange('parentId', item.id);
+            onChange('parentName', item.name);
+        }
+    };
+
+    const handleClearParent = () => {
+        if (onParentCategoryClear) {
+            onParentCategoryClear();
+        } else {
+            onChange('parentId', '');
+            onChange('parentName', '');
+        }
+    };
+
     return (
         <div className="space-y-4">
             <ItemCategoryFieldRow label={config.labels.name} required>
@@ -11,16 +39,22 @@ export default function ItemCategoryGeneralTab({ config, values, onChange, paren
             </ItemCategoryFieldRow>
 
             <ItemCategoryFieldRow label={config.labels.isDefault}>
-                <CheckboxField
-                    id="item-category-default"
-                    label={config.labels.yes}
-                    checked={values.isDefault}
-                    onChange={(event) => onChange('isDefault', event.target.checked)}
-                    align="center"
-                    labelClassName="text-base"
-                    inputClassName="mt-0 h-[18px] w-[18px]"
-                    containerClassName="w-auto"
-                />
+                {isDetail && detailRow?.isDefault ? (
+                    <span className="text-xs sm:text-sm text-brand-dark font-normal leading-6 select-none">
+                        {config.labels.yes || 'Ya'}
+                    </span>
+                ) : (
+                    <CheckboxField
+                        id="item-category-default"
+                        label={config.labels.yes}
+                        checked={values.isDefault}
+                        onChange={(event) => onChange('isDefault', event.target.checked)}
+                        align="center"
+                        labelClassName="text-base"
+                        inputClassName="mt-0 h-[18px] w-[18px]"
+                        containerClassName="w-auto"
+                    />
+                )}
             </ItemCategoryFieldRow>
 
             <ItemCategoryFieldRow
@@ -32,8 +66,7 @@ export default function ItemCategoryGeneralTab({ config, values, onChange, paren
                         onChange={(event) => {
                             onChange('isSubCategory', event.target.checked);
                             if (!event.target.checked) {
-                                onChange('parentId', '');
-                                onChange('parentName', '');
+                                handleClearParent();
                             }
                         }}
                         align="center"
@@ -47,21 +80,17 @@ export default function ItemCategoryGeneralTab({ config, values, onChange, paren
                     <ReferenceLookupInput
                         value={values.parentName}
                         items={parentCategoryOptions}
-                        onSelect={(item) => {
-                            onChange('parentId', item.id);
-                            onChange('parentName', item.name);
-                        }}
-                        onClear={() => {
-                            onChange('parentId', '');
-                            onChange('parentName', '');
-                        }}
+                        error={Boolean(parentCategoryError)}
+                        message={parentCategoryError}
+                        onSelect={handleSelectParent}
+                        onClear={handleClearParent}
                         placeholder="Cari/Pilih Kategori Induk..."
                         searchLabel="Cari kategori"
                         className="w-full max-w-[420px]"
                         getOptionLabel={(option) => option.name}
                         getOptionSearchText={(option) => option.name}
                         renderOption={(option) => (
-                            <div className="text-xs sm:text-sm font-medium text-text-workspace-dark">
+                            <div className="text-xs sm:text-sm font-normal text-text-workspace-dark">
                                 {option.name}
                             </div>
                         )}

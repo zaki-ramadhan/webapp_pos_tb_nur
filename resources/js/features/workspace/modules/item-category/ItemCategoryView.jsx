@@ -51,6 +51,7 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
                 purchaseReturnAccountLabel: purRet ? `[${purRet.code}] ${purRet.name}` : '-',
                 unbilledPurchaseAccountLabel: unbilled ? `[${unbilled.code}] ${unbilled.name}` : '-',
                 isActiveText: row.is_active !== false ? 'Tidak' : 'Ya',
+                products_count: Number(row.products_count ?? 0),
             };
         });
 
@@ -69,11 +70,13 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
             const unbilled = row.unbilled_purchase_account ?? row.unbilledPurchaseAccount;
 
             detailRecords[String(row.id)] = {
+                id: String(row.id),
                 name: row.name ?? '',
                 isDefault: Boolean(row.is_default),
                 isSubCategory: Boolean(row.parent_id),
                 parentId: row.parent_id ? String(row.parent_id) : '',
                 parentName: (row.parent?.name) ?? '',
+                products_count: Number(row.products_count ?? 0),
                 accounts: {
                     inventoryAccount: inv ? `[${inv.code}] ${inv.name}` : '',
                     expenseAccount: exp ? `[${exp.code}] ${exp.name}` : '',
