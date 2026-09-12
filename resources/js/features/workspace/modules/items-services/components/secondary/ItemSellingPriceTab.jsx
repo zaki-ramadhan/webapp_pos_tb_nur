@@ -10,12 +10,10 @@ import {
 } from '@/components/ui/DataTable';
 import { RefreshIcon } from '@/features/workspace/shared/Icons';
 import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared/amountFormatting';
-import starterStateImg from '@/features/workspace/modules/bank-inquiry/assets/rekonsiliasi_starter_state.webp';
 
 export default function ItemSellingPriceTab({ values = {}, detailRow = null }) {
     const [selectedBranch, setSelectedBranch] = useState('all');
     const [loading, setLoading] = useState(false);
-    const [hasLoaded, setHasLoaded] = useState(false);
 
     const baseUnit = values.primaryUnit?.[0] ?? detailRow?.base_unit ?? null;
     const baseUnitName = baseUnit?.name ?? (typeof baseUnit === 'string' ? baseUnit : (values.unitName ?? 'PCS'));
@@ -51,9 +49,8 @@ export default function ItemSellingPriceTab({ values = {}, detailRow = null }) {
     const handleRefresh = () => {
         setLoading(true);
         setTimeout(() => {
-            setHasLoaded(true);
             setLoading(false);
-        }, 200);
+        }, 300);
     };
 
     return (
@@ -84,12 +81,12 @@ export default function ItemSellingPriceTab({ values = {}, detailRow = null }) {
 
             {/* Section Headings */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-1">
-                <div>
+                <div className="border-b border-ui-border-medium pb-1.5">
                     <h3 className="text-base sm:text-lg font-normal text-[#0089d0]">
                         Harga Berlaku Saat Ini
                     </h3>
                 </div>
-                <div>
+                <div className="border-b border-ui-border-medium pb-1.5">
                     <h3 className="text-base sm:text-lg font-normal text-[#0089d0]">
                         Harga Jual Mendatang
                     </h3>
@@ -97,20 +94,7 @@ export default function ItemSellingPriceTab({ values = {}, detailRow = null }) {
             </div>
 
             {/* Content Area */}
-            {!hasLoaded ? (
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                    <img
-                        src={starterStateImg}
-                        alt="Klik button “Refresh” untuk memperbaharui data"
-                        className="w-36 sm:w-44 h-auto object-contain mb-4 opacity-60"
-                        style={{ filter: 'saturate(0.3)' }}
-                    />
-                    <p className="text-sm font-normal text-slate-500">
-                        Klik button “Refresh” untuk memperbaharui data
-                    </p>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                     {/* Harga Berlaku Saat Ini */}
                     <div className="border border-ui-border rounded-[4px] overflow-hidden">
                         <DataTable wrapperClassName="border-0">
@@ -174,7 +158,6 @@ export default function ItemSellingPriceTab({ values = {}, detailRow = null }) {
                         </DataTable>
                     </div>
                 </div>
-            )}
         </div>
     );
 }
