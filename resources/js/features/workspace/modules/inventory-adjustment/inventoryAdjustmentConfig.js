@@ -73,7 +73,7 @@ const baseInventoryAdjustmentConfig = {
         notes: 'Keterangan',
     },
     numberingOptions: ['Penyesuaian Persediaan', 'Manual'],
-    adjustmentTypeOptions: ['Pengurangan Stok', 'Penambahan Stok', 'Penyesuaian Nilai'],
+    adjustmentTypeOptions: ['Penambahan', 'Pengurangan', 'Atur Stok'],
     sectionTabs: inventoryAdjustmentSectionTabs,
     table: {
         columns: inventoryAdjustmentListColumns,
@@ -114,7 +114,7 @@ export function buildInventoryAdjustmentConfig(page = {}) {
         dockActions: isNew ? createDockActions : detailDockActions,
         formDefaults: {
             ...draftRecord,
-            adjustmentType: isPriceAdjustment ? 'Harga' : 'Pengurangan Stok',
+            adjustmentType: isPriceAdjustment ? 'Harga' : 'Penambahan',
             date: page?.date || draftRecord.date,
         },
     };

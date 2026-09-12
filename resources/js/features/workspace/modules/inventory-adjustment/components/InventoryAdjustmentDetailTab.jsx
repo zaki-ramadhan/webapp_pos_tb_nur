@@ -112,25 +112,32 @@ export default function InventoryAdjustmentDetailTab({
                 ) : (
                     <div className="grid grid-cols-5 gap-2.5">
                         <div className="col-span-3 flex flex-col gap-2 pt-0.5">
-                            {adjustmentOptions.map((option) => (
-                                <RadioField
-                                    key={option}
-                                    id={`adjustment-type-${option.toLowerCase().replace(/\s+/g, '-')}`}
-                                    name="adjustmentType"
-                                    label={option}
-                                    containerClassName="w-auto"
-                                    labelClassName="!text-table-row-text font-normal"
-                                    checked={values.adjustmentType === option}
-                                    onChange={() =>
-                                        setValues((current) => ({
-                                            ...current,
-                                            adjustmentType: option,
-                                            unitCost: option === 'Penambahan' ? current.unitCost : '0',
-                                            totalCost: option === 'Penambahan' ? current.totalCost : '0',
-                                        }))
-                                    }
-                                />
-                            ))}
+                            {adjustmentOptions.map((option) => {
+                                const isReduction = option === 'Pengurangan';
+                                const isOptionDisabled = !isExisting && isReduction && currentWarehouseStock <= 0 && !loadingStock;
+
+                                return (
+                                    <RadioField
+                                        key={option}
+                                        id={`adjustment-type-${option.toLowerCase().replace(/\s+/g, '-')}`}
+                                        name="adjustmentType"
+                                        label={option}
+                                        disabled={isOptionDisabled}
+                                        containerClassName={isOptionDisabled ? 'w-auto opacity-50 cursor-not-allowed' : 'w-auto'}
+                                        labelClassName={isOptionDisabled ? '!text-slate-400 cursor-not-allowed font-normal' : '!text-table-row-text font-normal'}
+                                        checked={values.adjustmentType === option}
+                                        onChange={() => {
+                                            if (isOptionDisabled) return;
+                                            setValues((current) => ({
+                                                ...current,
+                                                adjustmentType: option,
+                                                unitCost: option === 'Penambahan' ? current.unitCost : '0',
+                                                totalCost: option === 'Penambahan' ? current.totalCost : '0',
+                                            }));
+                                        }}
+                                    />
+                                );
+                            })}
                         </div>
                     </div>
                 )}
@@ -239,6 +246,7 @@ export default function InventoryAdjustmentDetailTab({
                                     ...current,
                                     warehouse: [option.name],
                                     __warehouseId: option.id,
+                                    __userSelectedWarehouse: true,
                                 }));
                             }}
                             onClear={() => {
@@ -246,6 +254,7 @@ export default function InventoryAdjustmentDetailTab({
                                     ...current,
                                     warehouse: [],
                                     __warehouseId: null,
+                                    __userSelectedWarehouse: true,
                                 }));
                             }}
                             error={errors.warehouse}
