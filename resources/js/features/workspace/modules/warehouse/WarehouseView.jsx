@@ -72,15 +72,21 @@ export default function WarehouseView({
     }, []);
 
     // ─── Config untuk tabel ───────────────────────────────────────────────────
+    const isAccessRestricted = Boolean(
+        error && String(error).toLowerCase().includes('hak akses')
+    );
+
     const config = useMemo(() => {
         const baseConfig = page.warehouse;
         return {
             ...baseConfig,
             table: {
+                ...baseConfig.table,
                 loading,
                 error,
-                emptyLabel: error || baseConfig.table?.emptyLabel || 'Belum ada data',
-                ...baseConfig.table,
+                emptyLabel: isAccessRestricted
+                    ? 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.'
+                    : (error || baseConfig.table?.emptyLabel || 'Belum ada data'),
                 columns: (() => {
                     const baseCols = baseConfig.table?.columns ?? [];
                     const extraCols = [
@@ -93,22 +99,22 @@ export default function WarehouseView({
                     const filteredExtra = extraCols.filter((col) => !baseCols.some((bc) => bc.id === col.id));
                     return [...baseCols, ...filteredExtra];
                 })(),
-                rows: rows.map(mapWarehouseTableRow),
+                rows: isAccessRestricted ? [] : rows.map(mapWarehouseTableRow),
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
                 ...serverTableProps,
             },
         };
-    }, [loading, error, page.warehouse, rows, total, reload, serverTableProps]);
+    }, [isAccessRestricted, loading, error, page.warehouse, rows, total, reload, serverTableProps]);
 
     return (
         <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
             <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                 <WarehouseTableView
                     config={config}
-                    onCreate={onOpenContent}
-                    onOpenDetail={onOpenDetail}
+                    onCreate={isAccessRestricted ? undefined : onOpenContent}
+                    onOpenDetail={isAccessRestricted ? undefined : onOpenDetail}
                     onRefresh={reload}
                 />
             </div>

@@ -49,7 +49,18 @@ class CatalogBackendResources
                 modelClass: ProductCategory::class,
                 with: ['parent'],
                 storeRules: [
-                    'parent_id' => ['nullable', 'integer', 'exists:product_categories,id'],
+                    'parent_id' => [
+                        'nullable',
+                        'integer',
+                        'exists:product_categories,id',
+                        function ($attribute, $value, $fail) {
+                            if ($value && ProductCategory::where('id', $value)->whereHas('products')->exists()) {
+                                $parent = ProductCategory::find($value);
+                                $name = $parent ? $parent->name : "ID {$value}";
+                                $fail("Kategori {$name} sudah digunakan pada barang, tidak dapat dijadikan sebagai kategori induk.");
+                            }
+                        },
+                    ],
                     'code' => ['nullable', 'string', 'max:50', 'unique:product_categories,code'],
                     'name' => ['required', 'string', 'max:120'],
                     'slug' => ['nullable', 'string', 'max:160', 'unique:product_categories,slug'],
@@ -57,7 +68,22 @@ class CatalogBackendResources
                     'is_active' => ['sometimes', 'boolean'],
                 ],
                 updateRules: fn (Model $record) => [
-                    'parent_id' => ['nullable', 'integer', 'exists:product_categories,id'],
+                    'parent_id' => [
+                        'nullable',
+                        'integer',
+                        'exists:product_categories,id',
+                        function ($attribute, $value, $fail) use ($record) {
+                            if ($value && (int) $value === (int) $record->id) {
+                                $fail('Kategori tidak dapat memilih dirinya sendiri sebagai kategori induk.');
+                                return;
+                            }
+                            if ($value && ProductCategory::where('id', $value)->whereHas('products')->exists()) {
+                                $parent = ProductCategory::find($value);
+                                $name = $parent ? $parent->name : "ID {$value}";
+                                $fail("Kategori {$name} sudah digunakan pada barang, tidak dapat dijadikan sebagai kategori induk.");
+                            }
+                        },
+                    ],
                     'code' => ['nullable', 'string', 'max:50', Rule::unique('product_categories', 'code')->ignore($record)],
                     'name' => ['required', 'string', 'max:120'],
                     'slug' => ['nullable', 'string', 'max:160', Rule::unique('product_categories', 'slug')->ignore($record)],

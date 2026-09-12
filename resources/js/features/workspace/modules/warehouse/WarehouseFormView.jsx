@@ -74,6 +74,12 @@ export default function WarehouseFormView({
         );
     }, [user, roleName]);
 
+    const warehouseAbility = user?.abilities?.['warehouses'] ?? null;
+    const canCreate = isSuperAdmin || warehouseAbility?.create !== false;
+    const canUpdate = isSuperAdmin || warehouseAbility?.update !== false;
+    const canDelete = isSuperAdmin || warehouseAbility?.delete !== false;
+    const canSave = isDetailMode ? canUpdate : canCreate;
+
     const filteredTabs = useMemo(() => {
         return (config.tabs ?? []).filter((tab) => {
             if (tab.id === 'warehouse-users') {
@@ -127,9 +133,14 @@ export default function WarehouseFormView({
         return '';
     }, [values.name]);
 
-    const saveDisabled = saving || Boolean(validationMessage);
+    const saveDisabled = saving || !canSave || Boolean(validationMessage);
 
     async function handleSave() {
+        if (!canSave) {
+            rejectCrudFormAction('Anda tidak memiliki hak akses untuk menyimpan data ini.', { setStatus });
+            return;
+        }
+
         if (validationMessage) {
             rejectCrudFormAction(validationMessage, {
                 setStatus,
@@ -199,12 +210,12 @@ export default function WarehouseFormView({
     }
 
     function requestDelete() {
-        if (!entry.id || saving) return;
+        if (!entry.id || saving || !canDelete) return;
         setDeleteConfirmationOpen(true);
     }
 
     async function handleDelete() {
-        if (!entry.id) return;
+        if (!entry.id || !canDelete) return;
         await executeCrudFormAction({
             loadingMessage: 'Sedang menghapus gudang.',
             successMessage: 'Gudang berhasil dihapus.',
@@ -234,7 +245,7 @@ export default function WarehouseFormView({
             saveDisabled={saveDisabled}
             onSave={handleSave}
             actionsSlot={
-                isDetailMode ? (
+                isDetailMode && canDelete ? (
                     <DockActionButton
                         label={saving ? 'Memproses...' : (config.deleteLabel || 'Hapus Gudang')}
                         tone="danger"

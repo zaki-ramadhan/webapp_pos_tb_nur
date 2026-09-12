@@ -135,15 +135,27 @@ export default function ModuleTableTemplate({
         }
     }, [keyword, hasExternalPagination]);
 
+    const isAccessRestricted = Boolean(
+        table.readOnly ||
+        (table.error && String(table.error).toLowerCase().includes('hak akses')) ||
+        (table.emptyLabel && String(table.emptyLabel).toLowerCase().includes('hak akses'))
+    );
+
     const displayRows = useMemo(() => {
+        if (isAccessRestricted) {
+            return [];
+        }
         if (hasExternalPagination) {
             return sortedRows;
         }
         const start = (localPage - 1) * localPerPage;
         return sortedRows.slice(start, start + localPerPage);
-    }, [sortedRows, hasExternalPagination, localPage, localPerPage]);
+    }, [sortedRows, hasExternalPagination, localPage, localPerPage, isAccessRestricted]);
 
     const paginationConfig = useMemo(() => {
+        if (isAccessRestricted) {
+            return null;
+        }
         if (hasExternalPagination) {
             return table.pagination;
         }
@@ -164,7 +176,7 @@ export default function ModuleTableTemplate({
                 setLocalPage(1);
             },
         };
-    }, [hasExternalPagination, table.pagination, sortedRows.length, localPage, localPerPage]);
+    }, [hasExternalPagination, table.pagination, sortedRows.length, localPage, localPerPage, isAccessRestricted]);
 
     useEffect(() => {
         tableRegistry.setActiveTable(cleanedColumns, sortedRows, resourceName);
@@ -174,12 +186,6 @@ export default function ModuleTableTemplate({
             }
         };
     }, [cleanedColumns, sortedRows, resourceName]);
-
-    const isAccessRestricted = Boolean(
-        table.readOnly ||
-        (table.error && String(table.error).toLowerCase().includes('hak akses')) ||
-        (table.emptyLabel && String(table.emptyLabel).toLowerCase().includes('hak akses'))
-    );
 
     const resolvedCreateButton = isAccessRestricted ? null : (onCreate ? {
         label: table.createLabel,
@@ -264,9 +270,9 @@ export default function ModuleTableTemplate({
                                 displayRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
-                                        className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''}`.trim()}
+                                        className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${onOpenDetail && !isAccessRestricted ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''}`.trim()}
                                         onClick={() =>
-                                            onOpenDetail?.({
+                                            !isAccessRestricted && onOpenDetail?.({
                                                 recordId: String(row.id),
                                                 label: row.name,
                                                 tabLabel: row.tabLabel ?? row.name,

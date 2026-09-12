@@ -59,7 +59,7 @@ export default function YearInput({
                     disabled={disabled}
                     aria-label={ariaLabel}
                     aria-expanded={open}
-                    className={`inline-flex h-[36px] items-center justify-between gap-2 rounded-[4px] border border-ui-border bg-white px-2.5 sm:px-3 text-xs sm:text-sm text-brand-dark font-normal shadow-2xs hover:border-slate-400 focus:outline-hidden disabled:cursor-not-allowed disabled:bg-slate-100/80 cursor-pointer ${buttonClassName}`.trim()}
+                    className={`inline-flex h-[36px] items-center justify-between gap-2 rounded-[4px] border border-ui-border bg-white px-2.5 sm:px-3 text-xs sm:text-sm text-brand-dark font-normal shadow-2xs hover:border-slate-400 focus:outline-hidden disabled:cursor-not-allowed disabled:bg-ui-bg-panel cursor-pointer ${buttonClassName}`.trim()}
                     {...props}
                 >
                     <span className="whitespace-nowrap">{displayValue}</span>

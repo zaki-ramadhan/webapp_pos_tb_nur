@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import SystemErrorModal from '@/components/ui/SystemErrorModal';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import { useWorkspaceFormDraftState } from '@/features/workspace/shared/hooks/useWorkspaceFormDraftState';
@@ -49,14 +50,20 @@ export default function ItemCategoryFormView({
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+    const [parentCategoryError, setParentCategoryError] = useState('');
+    const [invalidParentModal, setInvalidParentModal] = useState({
+        open: false,
+        categoryName: '',
+    });
 
     const parentCategoryOptions = useMemo(() => {
         const rows = config.table?.rows ?? [];
-        if (isDetail && detailRow) {
-            return rows.filter((row) => String(row.id) !== String(detailRow.id));
+        const currentId = detailRow?.id ?? values?.id;
+        if (currentId) {
+            return rows.filter((row) => String(row.id) !== String(currentId));
         }
         return rows;
-    }, [config.table?.rows, isDetail, detailRow]);
+    }, [config.table?.rows, detailRow?.id, values?.id]);
 
     const activeTabInstanceId = activeLevel2Tab?.id;
 
@@ -64,6 +71,8 @@ export default function ItemCategoryFormView({
         setActiveTabId(config.tabs?.[0]?.id ?? 'item-category-general');
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
+        setParentCategoryError('');
+        setInvalidParentModal({ open: false, categoryName: '' });
     }, [activeTabInstanceId, detailRow?.id]);
 
     function handleChange(field, nextValue) {
@@ -89,15 +98,61 @@ export default function ItemCategoryFormView({
 
 
 
+    function handleParentCategorySelect(item) {
+        if (!item) return;
+        const productsCount = Number(item.products_count ?? 0);
+        if (productsCount > 0) {
+            setParentCategoryError('Kategori ini sudah digunakan pada barang, pilih kategori lain.');
+            setInvalidParentModal({
+                open: true,
+                categoryName: item.name ?? 'ini',
+            });
+            setValues((currentValues) => ({
+                ...currentValues,
+                parentId: item.id,
+                parentName: item.name,
+            }));
+            return;
+        }
+
+        setParentCategoryError('');
+        setValues((currentValues) => ({
+            ...currentValues,
+            parentId: item.id,
+            parentName: item.name,
+        }));
+    }
+
+    function handleParentCategoryClear() {
+        setParentCategoryError('');
+        setValues((currentValues) => ({
+            ...currentValues,
+            parentId: '',
+            parentName: '',
+        }));
+    }
+
     async function handleSave() {
         if (!values.name?.trim()) {
             rejectCrudFormAction('Nama Kategori wajib diisi.', { setStatus });
             return;
         }
 
-        if (values.isSubCategory && !values.parentId) {
-            rejectCrudFormAction('Kategori Induk wajib dipilih saat Sub Kategori aktif.', { setStatus });
-            return;
+        if (values.isSubCategory) {
+            if (!values.parentId) {
+                rejectCrudFormAction('Kategori Induk wajib dipilih saat Sub Kategori aktif.', { setStatus });
+                return;
+            }
+
+            const selectedParent = parentCategoryOptions.find((opt) => String(opt.id) === String(values.parentId));
+            if (selectedParent && Number(selectedParent.products_count ?? 0) > 0) {
+                setParentCategoryError('Kategori ini sudah digunakan pada barang, pilih kategori lain.');
+                setInvalidParentModal({
+                    open: true,
+                    categoryName: selectedParent.name ?? 'ini',
+                });
+                return;
+            }
         }
 
         await executeCrudFormAction({
@@ -193,7 +248,7 @@ export default function ItemCategoryFormView({
             setActiveTabId={setActiveTabId}
             status={status}
             saving={saving}
-            saveDisabled={saving || !values.name?.trim() || (values.isSubCategory && !values.parentId)}
+            saveDisabled={saving || !values.name?.trim() || (values.isSubCategory && (!values.parentId || Boolean(parentCategoryError)))}
             onSave={handleSave}
             actionsSlot={
                 isDetail ? (
@@ -207,7 +262,17 @@ export default function ItemCategoryFormView({
                 ) : null
             }
         >
-            <ItemCategoryGeneralTab config={config} values={values} onChange={handleChange} parentCategoryOptions={parentCategoryOptions} />
+            <ItemCategoryGeneralTab
+                config={config}
+                values={values}
+                onChange={handleChange}
+                parentCategoryOptions={parentCategoryOptions}
+                isDetail={isDetail}
+                detailRow={detailRow}
+                parentCategoryError={parentCategoryError}
+                onParentCategorySelect={handleParentCategorySelect}
+                onParentCategoryClear={handleParentCategoryClear}
+            />
 
             <ConfirmationModal
                 open={deleteConfirmationOpen}
@@ -219,6 +284,16 @@ export default function ItemCategoryFormView({
                 cancelLabel="Batal"
                 confirmVariant="primary"
                 confirmLoading={saving}
+            />
+
+            <SystemErrorModal
+                open={invalidParentModal.open}
+                onClose={() => setInvalidParentModal((prev) => ({ ...prev, open: false }))}
+                onConfirm={() => setInvalidParentModal((prev) => ({ ...prev, open: false }))}
+                confirmLabel="Oke"
+                maxWidthClassName="max-w-[540px]"
+                description=""
+                messages={[`Kategori ${invalidParentModal.categoryName} sudah digunakan pada barang, tidak dapat dijadikan sebagai kategori induk.`]}
             />
         </ModuleFormTemplate>
     );

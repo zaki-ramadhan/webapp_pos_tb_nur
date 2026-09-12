@@ -517,5 +517,9 @@ class BackendResourceController extends Controller
         if ($resource === 'suppliers' && $model instanceof \App\Domain\Partner\Models\Supplier) {
             $model->append('balance');
         }
+
+        if ($resource === 'product-categories' && $model instanceof \App\Domain\Catalog\Models\ProductCategory) {
+            $model->loadCount('products');
+        }
     }
 }

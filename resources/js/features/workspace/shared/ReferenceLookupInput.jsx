@@ -173,7 +173,7 @@ export default function ReferenceLookupInput({
             <div
                 onMouseDown={isSingleSelected ? undefined : focusInput}
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : resolvedError ? `bg-red-500/5 ${wrapperCursor}` : `bg-white ${wrapperCursor}`}`.trim()}
+                className={`group flex w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel cursor-default' : resolvedError ? `bg-red-500/5 ${wrapperCursor}` : `bg-white ${wrapperCursor}`}`.trim()}
             >
                 {multiValueMode ? (
                     <div className={`flex min-w-0 flex-1 flex-col gap-1.5 p-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
