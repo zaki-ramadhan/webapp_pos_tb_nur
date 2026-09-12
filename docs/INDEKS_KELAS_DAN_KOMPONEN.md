@@ -155,7 +155,7 @@ Semua kelas di bawah dipakai oleh halaman `Preferensi`:
 | `ContactView` | `Kontak` |
 | `BusinessPartnerView` | `Pelanggan`, `Pemasok` |
 | `WarehouseView` | `Gudang` |
-| `ItemsServicesView` | `Barang & Jasa` |
+| `ItemsServicesView` | `Barang` |
 | `SimpleMasterView` | `FOB`, `Satuan Barang`, `Kategori Pelanggan`, `Kategori Pemasok`, `Kategori Penjualan` |
 | `ItemCategoryView` | `Kategori Barang` |
 | `InventoryInquiryView` | `Barang per Gudang`, `Barang Stok Minimum` |

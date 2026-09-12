@@ -265,7 +265,7 @@ Catatan:
 - pencarian tabel
 - field master gudang, cabang, dan pengguna
 
-### `Barang & Jasa`
+### `Barang`
 
 - tab form:
   - `Umum`

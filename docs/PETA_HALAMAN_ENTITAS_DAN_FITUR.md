@@ -123,7 +123,7 @@ Dokumen ini memetakan halaman ke fitur, entitas utama, dan komponen yang merende
 | Penyelesaian Pesanan | `work-completion` | completion hasil kerja | kandidat `work_completions` | `WorkCompletionView` | Implemented |
 | Perintah Stok Opname | `stock-opname-order` | order/count instruction | `stock_opnames`, `stock_opname_items` | `StockOpnameOrderView` | Implemented |
 | Hasil Stok Opname | `stock-opname-result` | hasil opname | `stock_opnames`, `stock_opname_items` | `StockOpnameResultView` | Implemented |
-| Barang & Jasa | `items-services` | master item | `products`, `product_categories`, `brands`, `units`, `product_prices` | `ItemsServicesView` | Implemented |
+| Barang | `items-services` | master item | `products`, `product_categories`, `brands`, `units`, `product_prices` | `ItemsServicesView` | Implemented |
 | Gudang | `warehouse-master` | master gudang | `warehouses` | `WarehouseView` | Implemented |
 | Satuan Barang | `item-unit` | master satuan | `units` | `SimpleMasterView` | Implemented |
 | Kategori Barang | `item-category` | kategori item | `product_categories` | `ItemCategoryView` | Implemented |

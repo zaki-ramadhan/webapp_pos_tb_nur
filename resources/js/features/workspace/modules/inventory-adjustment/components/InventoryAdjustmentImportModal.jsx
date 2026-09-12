@@ -155,7 +155,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
                 if (!matchedProduct) {
                     notFoundCount++;
-                    errorReportLines.push(`"${itemIdentifier}", tidak ditemukan di Barang dan Jasa pada data impor baris ke-${rowNumber}, Nama Barang: ${rawName || '-'}, Kode Barang: ${rawCode || '-'}`);
+                    errorReportLines.push(`"${itemIdentifier}", tidak ditemukan di Barang pada data impor baris ke-${rowNumber}, Nama Barang: ${rawName || '-'}, Kode Barang: ${rawCode || '-'}`);
                     return;
                 }
 
@@ -201,7 +201,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
             const failureReasons = [];
             if (notFoundCount > 0) {
-                failureReasons.push(`${notFoundCount} baris barang: tidak ditemukan di Barang dan Jasa`);
+                failureReasons.push(`${notFoundCount} baris barang: tidak ditemukan di Barang`);
             }
             if (invalidDataCount > 0) {
                 failureReasons.push(`${invalidDataCount} baris barang: kuantitas atau format data tidak valid`);
