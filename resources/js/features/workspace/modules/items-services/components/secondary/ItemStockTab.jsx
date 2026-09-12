@@ -120,8 +120,6 @@ export default function ItemStockTab({ config, values, onChange }) {
                 unitCost: Number(data.unitCost),
                 warehouse: data.warehouse,
                 warehouse_id: data.warehouse_id ?? null,
-                branch: data.branch,
-                branch_id: data.branch_id ?? 1,
                 serials: data.serials || [],
                 __fromDb: false,
             };
