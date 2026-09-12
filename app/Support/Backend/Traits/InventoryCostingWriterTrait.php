@@ -102,7 +102,8 @@ trait InventoryCostingWriterTrait
                         $attributes = is_string($line->attributes) ? json_decode($line->attributes, true) : ($line->attributes ?? []);
                         $adjType = $attributes['adjustment_type'] ?? 'Penambahan';
                         $qty = (float) $line->quantity;
-                        if ($adjType === 'Pengurangan' || $qty < 0) {
+
+                        if ($adjType === 'Pengurangan' || ($adjType === 'Penambahan' && $qty < 0)) {
                             $this->consumeStockHelper(
                                 $costingService,
                                 $line,
@@ -111,6 +112,30 @@ trait InventoryCostingWriterTrait
                                 abs($qty),
                                 $entryDate
                             );
+                        } elseif ($adjType === 'Atur Stok') {
+                            $delta = (float) ($attributes['delta_quantity'] ?? ($qty - (float) ($attributes['system_quantity'] ?? 0)));
+                            if ($delta < 0) {
+                                $this->consumeStockHelper(
+                                    $costingService,
+                                    $line,
+                                    $productId,
+                                    $warehouseId,
+                                    abs($delta),
+                                    $entryDate
+                                );
+                            } elseif ($delta > 0) {
+                                $this->recordEntryHelper(
+                                    $costingService,
+                                    $sourceType,
+                                    $sourceId,
+                                    $sourceLineId,
+                                    $productId,
+                                    $warehouseId,
+                                    $delta,
+                                    (float) ($line->unit_price ?? 0),
+                                    $entryDate
+                                );
+                            }
                         } else {
                             $this->recordEntryHelper(
                                 $costingService,

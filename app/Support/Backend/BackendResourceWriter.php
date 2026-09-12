@@ -361,6 +361,92 @@ class BackendResourceWriter
                 }
             }
 
+            // Validasi & Kalkulasi Penyesuaian Persediaan (Inventory Adjustment)
+            if ($blueprint->key === 'inventory-adjustments' && !empty($payload['lines'])) {
+                $docWarehouseId = $payload['warehouse_id'] ?? null;
+                foreach ($payload['lines'] as &$adjLine) {
+                    $productId = $adjLine['product_id'] ?? null;
+                    if (!$productId && !empty($adjLine['reference_code'])) {
+                        $productId = \App\Domain\Catalog\Models\Product::where('code', $adjLine['reference_code'])->value('id');
+                    }
+                    if (!$productId && !empty($adjLine['description'])) {
+                        $productId = \App\Domain\Catalog\Models\Product::where('name', $adjLine['description'])->value('id');
+                    }
+
+                    if (!$productId) {
+                        continue;
+                    }
+
+                    $lineWarehouseId = $adjLine['warehouse_id'] ?? $docWarehouseId ?? null;
+                    if (!$lineWarehouseId) {
+                        $lineWarehouseId = \App\Domain\Catalog\Models\Warehouse::first()?->id ?? 1;
+                    }
+                    $adjLine['warehouse_id'] = $lineWarehouseId;
+
+                    $attrs = is_array($adjLine['attributes'] ?? null)
+                        ? $adjLine['attributes']
+                        : (is_string($adjLine['attributes'] ?? null) ? json_decode($adjLine['attributes'], true) : []);
+                    $adjType = $attrs['adjustment_type'] ?? 'Penambahan';
+                    $qty = (float) ($adjLine['quantity'] ?? 0);
+
+                    // Ambil stok saat ini untuk kombinasi product & warehouse
+                    $stockMap = app(\App\Support\Backend\Queries\InventoryInquiryQueryService::class)->buildStockMap([
+                        'product_id' => $productId,
+                        'warehouse_id' => $lineWarehouseId,
+                        'exclude_document_id' => $record->exists ? $record->id : null,
+                    ]);
+
+                    $compositeKey = sprintf('%d:%d', $productId, $lineWarehouseId);
+                    $currentStock = (float) ($stockMap[$compositeKey] ?? 0.0);
+
+                    $product = \App\Domain\Catalog\Models\Product::find($productId);
+                    $productName = $product?->name ?? 'Barang';
+                    $warehouse = \App\Domain\Catalog\Models\Warehouse::find($lineWarehouseId);
+                    $warehouseName = $warehouse?->name ?? 'Gudang';
+
+                    if ($adjType === 'Penambahan') {
+                        if ($qty <= 0) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'lines' => ["Kuantitas penambahan barang '{$productName}' harus lebih besar dari 0."]
+                            ]);
+                        }
+                        $attrs['system_quantity'] = $currentStock;
+                        $attrs['delta_quantity'] = $qty;
+                    } elseif ($adjType === 'Pengurangan') {
+                        if ($qty <= 0) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'lines' => ["Kuantitas pengurangan barang '{$productName}' harus lebih besar dari 0."]
+                            ]);
+                        }
+                        if ($currentStock <= 0) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'lines' => ["Stok barang '{$productName}' di gudang '{$warehouseName}' saat ini 0. Pengurangan stok tidak dapat dilakukan."]
+                            ]);
+                        }
+                        if ($qty > $currentStock) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'lines' => ["Kuantitas pengurangan ({$qty}) untuk barang '{$productName}' melebihi stok yang tersedia ({$currentStock}) di gudang '{$warehouseName}'."]
+                            ]);
+                        }
+                        $attrs['system_quantity'] = $currentStock;
+                        $attrs['delta_quantity'] = -$qty;
+                    } elseif ($adjType === 'Atur Stok') {
+                        if ($qty < 0) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'lines' => ["Kuantitas fisik untuk atur stok barang '{$productName}' tidak boleh bernilai negatif."]
+                            ]);
+                        }
+                        $delta = $qty - $currentStock;
+                        $attrs['system_quantity'] = $currentStock;
+                        $attrs['physical_quantity'] = $qty;
+                        $attrs['delta_quantity'] = $delta;
+                    }
+
+                    $adjLine['attributes'] = $attrs;
+                }
+                unset($adjLine);
+            }
+
             if ($blueprint->key === 'sales-invoices') {
                 $advancePayments = $payload['metadata']['advance_payments'] ?? [];
                 $totalAdvance = 0.0;

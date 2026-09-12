@@ -23,30 +23,39 @@ export default function InventoryAdjustmentDetailTab({
     modal,
     errors = {},
     isExisting = false,
+    warehouseStocks: passedWarehouseStocks,
+    currentWarehouseStock: passedStock,
+    loadingStock: passedLoading,
 }) {
-    const [warehouseStocks, setWarehouseStocks] = useState([]);
-    const [loadingStock, setLoadingStock] = useState(false);
+    const [localStocks, setLocalStocks] = useState([]);
+    const [localLoading, setLocalLoading] = useState(false);
+
+    const warehouseStocks = passedWarehouseStocks !== undefined ? passedWarehouseStocks : localStocks;
+    const loadingStock = passedLoading !== undefined ? passedLoading : localLoading;
 
     useEffect(() => {
+        if (passedWarehouseStocks !== undefined) return undefined;
         let ignore = false;
+        const productId = values.__productId;
         const code = values.code || '';
-        if (!code) {
-            setWarehouseStocks([]);
+        if (!productId && !code) {
+            setLocalStocks([]);
             return undefined;
         }
 
         async function fetchStock() {
-            setLoadingStock(true);
+            setLocalLoading(true);
             try {
-                const res = await listBackendResource('item-locations', { search: code });
+                const params = productId ? { product_id: productId } : { search: code };
+                const res = await listBackendResource('item-locations', params);
                 const rows = extractBackendRows(res);
                 if (!ignore) {
-                    setWarehouseStocks(rows);
+                    setLocalStocks(rows);
                 }
             } catch {
                 // Abaikan error jaringan
             } finally {
-                if (!ignore) setLoadingStock(false);
+                if (!ignore) setLocalLoading(false);
             }
         }
 
@@ -54,18 +63,19 @@ export default function InventoryAdjustmentDetailTab({
         return () => {
             ignore = true;
         };
-    }, [values.code]);
+    }, [values.__productId, values.code, passedWarehouseStocks]);
 
     const selectedWarehouseName = values.warehouse?.[0] || '';
     const currentWarehouseStock = useMemo(() => {
+        if (passedStock !== undefined) return passedStock;
         if (!warehouseStocks.length) return 0;
         const matched = warehouseStocks.find(
             (row) =>
-                (selectedWarehouseName && row.warehouse === selectedWarehouseName) ||
-                (values.__warehouseId && String(row.warehouse_id) === String(values.__warehouseId)),
+                (values.__warehouseId && String(row.warehouse_id) === String(values.__warehouseId)) ||
+                (selectedWarehouseName && row.warehouse === selectedWarehouseName),
         );
-        return matched ? (parseFloat(matched.saleable_stock ?? matched.available_stock ?? 0) || 0) : 0;
-    }, [selectedWarehouseName, values.__warehouseId, warehouseStocks]);
+        return matched ? (parseFloat(matched.raw_quantity ?? matched.saleable_stock ?? matched.available_stock ?? 0) || 0) : 0;
+    }, [passedStock, selectedWarehouseName, values.__warehouseId, warehouseStocks]);
 
     const isAddition = values.adjustmentType === 'Penambahan';
     const adjustmentOptions = modal?.adjustmentTypeOptions ?? ['Penambahan', 'Pengurangan', 'Atur Stok'];
@@ -135,6 +145,7 @@ export default function InventoryAdjustmentDetailTab({
                             isCurrency={true}
                             allowDecimal={false}
                             value={values.quantity}
+                            error={errors.quantity}
                             onChange={(event) =>
                                 setValues((current) => ({
                                     ...current,
@@ -242,8 +253,8 @@ export default function InventoryAdjustmentDetailTab({
                     </div>
                     <div className="col-span-2 flex items-center gap-1.5 text-xs sm:text-sm font-medium text-table-row-text min-w-0 truncate pl-0.5">
                         <span className="text-table-row-text font-normal shrink-0">Stok:</span>
-                        <span className="font-semibold text-table-row-text tabular-nums truncate">
-                            {formatAmountInput(currentWarehouseStock ?? 0)}
+                        <span className={`font-semibold tabular-nums truncate ${currentWarehouseStock <= 0 ? 'text-amber-600' : 'text-table-row-text'}`}>
+                            {loadingStock ? '...' : formatAmountInput(currentWarehouseStock ?? 0)}
                         </span>
                     </div>
                 </div>

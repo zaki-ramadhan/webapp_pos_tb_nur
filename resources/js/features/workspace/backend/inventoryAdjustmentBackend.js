@@ -49,6 +49,8 @@ export function buildInventoryAdjustmentRecord(record, config) {
             __lineId: line.id ?? null,
             __productId: line.product_id ?? null,
             __unitId: line.unit_id ?? null,
+            __warehouseId: line.warehouse_id ?? null,
+            __departmentId: line.department_id ?? null,
             name: line.product?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
             code: line.product?.code ?? line.reference_code ?? '',
             adjustmentType: rawAttrs?.adjustment_type ?? line.adjustment_type ?? 'Penambahan',
