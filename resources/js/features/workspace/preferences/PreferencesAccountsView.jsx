@@ -138,7 +138,6 @@ function AccountFieldRow({
                 <BackendLookupField
                     resource="accounts"
                     multi={multi}
-                    fullWidthChips={multi}
                     value={currentSingle}
                     values={currentList}
                     placeholder={placeholder}
