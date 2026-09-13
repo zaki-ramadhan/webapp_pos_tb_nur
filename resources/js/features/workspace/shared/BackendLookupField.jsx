@@ -42,7 +42,9 @@ export default function BackendLookupField({
     const queryParamsString = JSON.stringify(queryParams);
 
     const loadRecords = useCallback(async (isRefresh = false) => {
-        setSearching(true);
+        if (!isRefresh && items.length === 0) {
+            setSearching(true);
+        }
         try {
             const effectivePerPage = resource === 'product-categories' ? 250 : 150;
             const params = { per_page: effectivePerPage, ...queryParams };
@@ -56,7 +58,7 @@ export default function BackendLookupField({
         } finally {
             setSearching(false);
         }
-    }, [resource, queryParamsString]);
+    }, [resource, queryParamsString, items.length]);
 
     useEffect(() => {
         if (!hasActivated || disabled) return;
@@ -96,9 +98,6 @@ export default function BackendLookupField({
     const handleActivate = () => {
         if (!hasActivated && !disabled) {
             setHasActivated(true);
-        } else if (!disabled) {
-            // Muat ulang di latar belakang agar selalu sinkron ketika dibuka kembali
-            loadRecords();
         }
     };
 
@@ -195,7 +194,6 @@ export default function BackendLookupField({
     return (
         <div
             onFocusCapture={handleActivate}
-            onMouseDownCapture={handleActivate}
             className="w-full"
         >
             <ReferenceLookupInput
