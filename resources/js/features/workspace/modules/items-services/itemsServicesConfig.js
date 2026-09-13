@@ -25,7 +25,6 @@ export const defaultAccountValues = {
     costOfGoodsSold: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-cogs'] ?? ['[511.001-01] Beban Pokok Penjualan Barang Dagang'],
     purchaseReturn: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-purchase-return'] ?? ['[115.000-00] Persediaan Barang Dagang'],
     expense: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-expense'] ?? ['[611.001-04] Beban Angkut Pembelian'],
-    uninvoicedPurchase: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-uninvoiced-purchase'] ?? ['[213.000-99] Penerimaan Belum Tertagih'],
 };
 
 export function buildDefaultAccountValues(preferences = {}) {
@@ -44,7 +43,6 @@ export function buildDefaultAccountValues(preferences = {}) {
         costOfGoodsSold: getPref('accounts-items-cogs', defaultAccountValues.costOfGoodsSold),
         purchaseReturn: getPref('accounts-items-purchase-return', defaultAccountValues.purchaseReturn),
         expense: getPref('accounts-items-expense', defaultAccountValues.expense),
-        uninvoicedPurchase: getPref('accounts-items-uninvoiced-purchase', defaultAccountValues.uninvoicedPurchase),
     };
 }
 

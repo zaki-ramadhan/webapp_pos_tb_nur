@@ -28,9 +28,6 @@ export const DEFAULT_ACCOUNTS_PREFERENCES = {
     'accounts-items-expense': [
         '[611.001-04] Beban Angkut Pembelian',
     ],
-    'accounts-items-uninvoiced-purchase': [
-        '[213.000-99] Penerimaan Belum Tertagih',
-    ],
 
     // Penjualan/Pembelian
     'accounts-sales-purchase-discount': [
@@ -51,7 +48,6 @@ const PREFERENCE_ACCOUNT_FILTERS = {
     'accounts-items-cogs': { account_type: 'Cost of Sales' },
     'accounts-items-purchase-return': { account_type: ['Other Current Asset', 'Inventory', 'Other Current Liability', 'Cost of Sales', 'Expense', 'Other Expense'] },
     'accounts-items-expense': { account_type: ['Other Current Asset', 'Inventory', 'Other Asset', 'Other Current Liability', 'Revenue', 'Cost of Sales', 'Expense', 'Other Expense'] },
-    'accounts-items-uninvoiced-purchase': { account_type: 'Other Current Liability' },
     'accounts-sales-purchase-discount': { account_type: ['Other Current Asset', 'Other Current Liability', 'Cost of Sales', 'Expense', 'Other Expense'] },
     'accounts-inventory-adjustment': { account_type: ['Equity', 'Expense', 'Other Expense'] },
 };
@@ -187,7 +183,6 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                             <AccountFieldRow label="Beban Pokok Penjualan" fieldId="accounts-items-cogs" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Retur Pembelian" fieldId="accounts-items-purchase-return" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Beban" fieldId="accounts-items-expense" values={values} onChange={onChange} disabled={readOnly} />
-                            <AccountFieldRow label="Pembelian Belum Tertagih" fieldId="accounts-items-uninvoiced-purchase" values={values} onChange={onChange} disabled={readOnly} />
                         </div>
                     </div>
                 </div>
