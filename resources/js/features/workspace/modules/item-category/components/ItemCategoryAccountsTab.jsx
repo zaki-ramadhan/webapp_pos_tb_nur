@@ -7,7 +7,6 @@ const ACCOUNT_TYPE_MAP = {
     salesAccount: 'Revenue',
     salesReturnAccount: 'Revenue',
     salesDiscountAccount: 'Revenue',
-    goodsInTransitAccount: ['Inventory', 'Other Current Asset'],
     costOfGoodsSoldAccount: 'Cost of Sales',
     purchaseReturnAccount: ['Inventory', 'Cost of Sales'],
     unbilledPurchaseAccount: ['Payable', 'Other Current Liability'],

@@ -55,7 +55,7 @@ const draftRecord = {
     copyItems: [{ id: 'copy-lines', label: 'Salin rincian barang' }],
     items: [],
     itemCountLabel: 'Rincian Barang',
-    adjustmentAccount: [],
+    adjustmentAccount: ['[310101] Modal Usaha / Pemilik'],
     __adjustmentAccountId: null,
     notes: '',
     branches: [],
@@ -94,9 +94,13 @@ const baseInventoryAdjustmentConfig = {
     formDefaults: draftRecord,
 };
 
-export function buildInventoryAdjustmentConfig(page = {}) {
+export function buildInventoryAdjustmentConfig(page = {}, preferences = {}) {
     const isNew = page?.mode !== 'detail';
     const isPriceAdjustment = page?.id === 'price-adjustment';
+    const prefAdj = preferences['accounts-inventory-adjustment'];
+    const defaultAdjAccount = (Array.isArray(prefAdj) && prefAdj.length > 0)
+        ? prefAdj
+        : (typeof prefAdj === 'string' && prefAdj.trim() ? [prefAdj.trim()] : draftRecord.adjustmentAccount);
 
     return {
         ...baseInventoryAdjustmentConfig,
@@ -114,6 +118,7 @@ export function buildInventoryAdjustmentConfig(page = {}) {
         dockActions: isNew ? createDockActions : detailDockActions,
         formDefaults: {
             ...draftRecord,
+            adjustmentAccount: isPriceAdjustment ? [] : defaultAdjAccount,
             adjustmentType: isPriceAdjustment ? 'Harga' : 'Penambahan',
             date: page?.date || draftRecord.date,
         },

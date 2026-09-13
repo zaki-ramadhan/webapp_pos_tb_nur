@@ -16,16 +16,36 @@ const itemTabs = [
     { id: 'other', label: 'Lain-lain' },
 ];
 
-const defaultAccountValues = {
-    inventory: ['[115.000-01] Persediaan Handphone'],
-    sales: ['[411.000-01] Penjualan Handphone'],
-    salesReturn: ['[431.000-01] Retur Penjualan Handphone'],
-    salesDiscount: ['[421.000-01] Potongan Penjualan Handphone'],
-    deliveredGoods: ['[115.000-99] Barang Terkirim'],
-    costOfGoodsSold: ['[511.000-01] Beban Pokok Penjualan Handphone'],
-    purchaseReturn: ['[115.000-01] Persediaan Handphone'],
-    uninvoicedPurchase: ['[213.000-99] Penerimaan Belum Tertagih'],
+export const defaultAccountValues = {
+    inventory: ['[110301] Persediaan Barang Dagang'],
+    sales: ['[410101] Pendapatan Penjualan Barang Dagang'],
+    salesReturn: [],
+    salesDiscount: ['[410103] Potongan / Diskon Penjualan'],
+    costOfGoodsSold: ['[510101] HPP Barang Dagang'],
+    purchaseReturn: ['[110301] Persediaan Barang Dagang'],
+    expense: ['[510102] Biaya Angkut Pembelian Barang'],
+    uninvoicedPurchase: [],
 };
+
+export function buildDefaultAccountValues(preferences = {}) {
+    const getPref = (key, fallback) => {
+        const val = preferences[key];
+        if (Array.isArray(val) && val.length > 0) return val;
+        if (typeof val === 'string' && val.trim()) return [val.trim()];
+        return fallback;
+    };
+
+    return {
+        inventory: getPref('accounts-items-inventory', defaultAccountValues.inventory),
+        sales: getPref('accounts-items-sales', defaultAccountValues.sales),
+        salesReturn: getPref('accounts-items-sales-return', defaultAccountValues.salesReturn),
+        salesDiscount: getPref('accounts-items-sales-discount', defaultAccountValues.salesDiscount),
+        costOfGoodsSold: getPref('accounts-items-cogs', defaultAccountValues.costOfGoodsSold),
+        purchaseReturn: getPref('accounts-items-purchase-return', defaultAccountValues.purchaseReturn),
+        expense: getPref('accounts-items-expense', defaultAccountValues.expense),
+        uninvoicedPurchase: getPref('accounts-items-uninvoiced-purchase', defaultAccountValues.uninvoicedPurchase),
+    };
+}
 
 const listColumns = [
     { id: 'name', label: 'Nama Barang', widthClassName: 'min-w-[220px] w-full', align: 'left', truncate: true },
@@ -332,11 +352,14 @@ function buildFallbackDetailRecord(row, config) {
     };
 }
 
-export function buildItemsServicesConfig(pageConfig = {}) {
+export function buildItemsServicesConfig(pageConfig = {}, preferences = {}) {
     const resolvedRows = (pageConfig.table?.rows ?? defaultConfig.table.rows).map((row) => ({
         ...row,
         categoryFilter: row.categoryFilter ?? inferCategory(row),
     }));
+
+    const resolvedAccounts = pageConfig.createDefaults?.accounts
+        ?? (Object.keys(preferences).length > 0 ? buildDefaultAccountValues(preferences) : defaultConfig.createDefaults.accounts);
 
     return {
         ...defaultConfig,
@@ -368,7 +391,7 @@ export function buildItemsServicesConfig(pageConfig = {}) {
         createDefaults: {
             ...defaultConfig.createDefaults,
             ...(pageConfig.createDefaults ?? {}),
-            accounts: cloneAccounts(pageConfig.createDefaults?.accounts ?? defaultConfig.createDefaults.accounts),
+            accounts: cloneAccounts(resolvedAccounts),
         },
         detailRecords: {
             ...defaultConfig.detailRecords,

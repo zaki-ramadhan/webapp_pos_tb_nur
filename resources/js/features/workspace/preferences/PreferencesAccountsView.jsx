@@ -17,7 +17,6 @@ export const DEFAULT_ACCOUNTS_PREFERENCES = {
     'accounts-items-sales-discount': [
         '[410103] Potongan / Diskon Penjualan',
     ],
-    'accounts-items-goods-delivered': [],
     'accounts-items-cogs': [
         '[510101] HPP Barang Dagang',
     ],
@@ -29,27 +28,19 @@ export const DEFAULT_ACCOUNTS_PREFERENCES = {
     ],
     'accounts-items-uninvoiced-purchase': [],
 
-    // Toko
-    'accounts-company-opening-equity': '[310101] Modal Usaha / Pemilik',
-    'accounts-company-retained-earnings': '[310102] Laba Ditahan Tahun Lalu',
-    'accounts-company-income-tax': [],
-
     // Penjualan/Pembelian
     'accounts-sales-purchase-discount': [
         '[410103] Potongan / Diskon Penjualan',
     ],
-    'accounts-purchase-invoice-rounding': '',
 
     // Persediaan
     'accounts-inventory-adjustment': [
         '[310101] Modal Usaha / Pemilik',
     ],
-    'accounts-inventory-stock-opname-variance': [],
 };
 
 const ACCOUNT_SUB_TABS = [
     { id: 'items-services', label: 'Barang & Jasa' },
-    { id: 'store', label: 'Toko' },
     { id: 'sales-purchase', label: 'Penjualan/Pembelian' },
     { id: 'inventory', label: 'Persediaan' },
 ];
@@ -173,30 +164,10 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                             <AccountFieldRow label="Penjualan" fieldId="accounts-items-sales" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Retur Penjualan" fieldId="accounts-items-sales-return" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Diskon Penjualan" fieldId="accounts-items-sales-discount" values={values} onChange={onChange} disabled={readOnly} />
-                            <AccountFieldRow label="Barang Terkirim" fieldId="accounts-items-goods-delivered" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Beban Pokok Penjualan" fieldId="accounts-items-cogs" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Retur Pembelian" fieldId="accounts-items-purchase-return" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Beban" fieldId="accounts-items-expense" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Pembelian Belum Tertagih" fieldId="accounts-items-uninvoiced-purchase" values={values} onChange={onChange} disabled={readOnly} />
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {activeTabId === 'store' && (
-                <div className="space-y-6">
-                    <div>
-                        <PreferencesSectionHeading icon="ledger" title="Neraca" />
-                        <div className="space-y-4 pt-4">
-                            <AccountFieldRow label="Ekuitas Saldo Awal" fieldId="accounts-company-opening-equity" values={values} onChange={onChange} multi={false} disabled={readOnly} />
-                            <AccountFieldRow label="Laba Ditahan" fieldId="accounts-company-retained-earnings" values={values} onChange={onChange} multi={false} disabled={readOnly} />
-                        </div>
-                    </div>
-
-                    <div>
-                        <PreferencesSectionHeading icon="tax" title="Laba/Rugi" />
-                        <div className="space-y-4 pt-4">
-                            <AccountFieldRow label="Pajak Penghasilan" fieldId="accounts-company-income-tax" values={values} onChange={onChange} disabled={readOnly} />
                         </div>
                     </div>
                 </div>
@@ -210,21 +181,6 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                             <AccountFieldRow label="Akun Diskon" fieldId="accounts-sales-purchase-discount" values={values} onChange={onChange} disabled={readOnly} />
                         </div>
                     </div>
-
-                    <div>
-                        <PreferencesSectionHeading icon="purchases" title="Faktur Pembelian" />
-                        <div className="space-y-4 pt-4">
-                            <AccountFieldRow
-                                label="Akun Pembulatan"
-                                fieldId="accounts-purchase-invoice-rounding"
-                                values={values}
-                                onChange={onChange}
-                                multi={false}
-                                disabled={readOnly}
-                                note="Digunakan untuk menampung nilai pembulatan transaksi dan selisih pembulatan akibat diskon/alokasi biaya"
-                            />
-                        </div>
-                    </div>
                 </div>
             )}
 
@@ -234,13 +190,6 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                         <PreferencesSectionHeading icon="stock" title="Penyesuaian Persediaan" />
                         <div className="space-y-4 pt-4">
                             <AccountFieldRow label="Akun Penyesuaian" fieldId="accounts-inventory-adjustment" values={values} onChange={onChange} disabled={readOnly} />
-                        </div>
-                    </div>
-
-                    <div>
-                        <PreferencesSectionHeading icon="inventory" title="Perintah Stok Opname" />
-                        <div className="space-y-4 pt-4">
-                            <AccountFieldRow label="Beban Selisih Stok" fieldId="accounts-inventory-stock-opname-variance" values={values} onChange={onChange} placeholder="Cari/Pilih Akun Perkiraan..." disabled={readOnly} />
                         </div>
                     </div>
                 </div>

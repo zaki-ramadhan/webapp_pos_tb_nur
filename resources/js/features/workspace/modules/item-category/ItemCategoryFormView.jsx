@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import SystemErrorModal from '@/components/ui/SystemErrorModal';
@@ -25,6 +26,8 @@ export default function ItemCategoryFormView({
     onCloseDetail,
     onRefresh,
 }) {
+    const inertiaProps = usePage()?.props ?? {};
+    const preferences = inertiaProps.dashboard?.preferences ?? inertiaProps.workspace?.preferences ?? {};
     const config = page.itemCategory;
     const detailRow = useMemo(() => {
         const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
@@ -35,7 +38,7 @@ export default function ItemCategoryFormView({
     }, [activeLevel2Tab, config.table.rows]);
     const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'item-category-general');
-    const initialValues = useMemo(() => buildFormValues(config, detailRow), [config, detailRow]);
+    const initialValues = useMemo(() => buildFormValues(config, detailRow, preferences), [config, detailRow, preferences]);
     const {
         values,
         setValues,

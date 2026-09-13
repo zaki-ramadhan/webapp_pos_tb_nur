@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 import { buildItemsServicesConfig } from '@/features/workspace/modules/items-services/itemsServicesConfig';
 import ItemsServicesFormView from '@/features/workspace/modules/items-services/ItemsServicesFormView';
@@ -12,6 +13,8 @@ export default function ItemsServicesView({
     activeLevel2Tab, level2Tabs = [],
     onOpenContent,
     onOpenDetail,}) {
+    const inertiaProps = usePage()?.props ?? {};
+    const preferences = inertiaProps.dashboard?.preferences ?? inertiaProps.workspace?.preferences ?? {};
     const {
         rows,
         total,
@@ -25,7 +28,7 @@ export default function ItemsServicesView({
     });
 
     const config = useMemo(() => {
-        const baseConfig = buildItemsServicesConfig(page.itemsServices);
+        const baseConfig = buildItemsServicesConfig(page.itemsServices, preferences);
         const mapped = rows.map(mapProductRow);
 
         const uniqueBrands = [...new Set(mapped.map((r) => r.brand).filter(Boolean))];
