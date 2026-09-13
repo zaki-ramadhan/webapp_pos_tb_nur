@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 import DocumentModalLayout, {
     DocumentModalFooter,
@@ -16,10 +17,17 @@ function normalizeLookupValue(value) {
     return value ? [value] : [];
 }
 
-function buildModalState(modal, invoice) {
+function buildModalState(modal, invoice, preferences = {}) {
     const invoiceState = invoice ?? {};
     const invoiceTab = modal?.invoice ?? {};
     const discountState = modal?.discountInfo ?? {};
+    const prefDiscount = preferences['accounts-sales-purchase-discount'];
+    const defaultDiscountAccount = (Array.isArray(prefDiscount) && prefDiscount.length > 0)
+        ? prefDiscount
+        : (typeof prefDiscount === 'string' && prefDiscount.trim() ? [prefDiscount.trim()] : ['[410103] Potongan / Diskon Penjualan']);
+
+    const currentDiscountAccount = normalizeLookupValue(discountState.discountAccount ?? invoiceState.discountAccount);
+    const resolvedDiscountAccount = currentDiscountAccount.length > 0 ? currentDiscountAccount : defaultDiscountAccount;
 
     return {
         formNumber: invoiceState.formNumber ?? invoiceTab.formNumber ?? '',
@@ -32,7 +40,7 @@ function buildModalState(modal, invoice) {
         pphAmount: invoiceTab.pphAmount ?? invoiceState.pphAmount ?? '',
         withholdingProof: invoiceTab.withholdingProof ?? invoiceState.withholdingProof ?? '',
         notice: invoiceTab.notice ?? '',
-        discountAccount: normalizeLookupValue(discountState.discountAccount ?? invoiceState.discountAccount),
+        discountAccount: resolvedDiscountAccount,
         discountAmount: discountState.discountAmount ?? invoiceState.discountValue ?? '',
         discountNotes: discountState.discountNotes ?? invoiceState.discountNotes ?? '',
         department: normalizeLookupValue(discountState.department ?? invoiceState.department),
@@ -41,17 +49,19 @@ function buildModalState(modal, invoice) {
 }
 
 export default function PurchasePaymentInvoiceModal({ open, onClose, modal, invoice }) {
+    const inertiaProps = usePage()?.props ?? {};
+    const preferences = inertiaProps.dashboard?.preferences ?? inertiaProps.workspace?.preferences ?? {};
     const tabs = modal?.tabs ?? [
         { id: 'invoice', label: 'Faktur' },
         { id: 'discount-info', label: 'Informasi Diskon' },
     ];
     const [activeTabId, setActiveTabId] = useState(tabs[0]?.id ?? 'invoice');
-    const [values, setValues] = useState(() => buildModalState(modal, invoice));
+    const [values, setValues] = useState(() => buildModalState(modal, invoice, preferences));
 
     useEffect(() => {
         setActiveTabId(tabs[0]?.id ?? 'invoice');
-        setValues(buildModalState(modal, invoice));
-    }, [invoice, modal, open, tabs]);
+        setValues(buildModalState(modal, invoice, preferences));
+    }, [invoice, modal, open, tabs, preferences]);
 
     if (!modal || !invoice) {
         return null;

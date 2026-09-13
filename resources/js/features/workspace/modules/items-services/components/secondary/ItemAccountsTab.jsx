@@ -11,14 +11,13 @@ export default function ItemAccountsTab({ config, values, onChange }) {
         { key: 'sales', idKey: 'salesAccountId', label: 'Penjualan' },
         { key: 'salesReturn', idKey: 'salesReturnAccountId', label: 'Retur Penjualan' },
         { key: 'salesDiscount', idKey: 'salesDiscountAccountId', label: 'Diskon Penjualan' },
-        { key: 'deliveredGoods', idKey: 'deliveredGoodsAccountId', label: 'Barang Terkirim' },
         { key: 'purchaseReturn', idKey: 'purchaseReturnAccountId', label: 'Retur Pembelian' },
         { key: 'uninvoicedPurchase', idKey: 'uninvoicedPurchaseAccountId', label: 'Pembelian Belum Tertagih' },
     ];
 
     const fields = allFields.filter(({ key }) => {
         if (values.kind === 'Non Persediaan') {
-            return key !== 'inventory' && key !== 'deliveredGoods';
+            return key !== 'inventory';
         }
         return true;
     });

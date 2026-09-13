@@ -1,9 +1,30 @@
-export function buildFormValues(config, detailRow = null) {
+export function buildDefaultCategoryAccounts(preferences = {}) {
+    const getVal = (key, fallback) => {
+        const val = preferences[key];
+        if (Array.isArray(val) && val.length > 0) return val[0];
+        if (typeof val === 'string' && val.trim()) return val.trim();
+        return fallback;
+    };
+
+    return {
+        inventoryAccount: getVal('accounts-items-inventory', '[110301] Persediaan Barang Dagang'),
+        expenseAccount: getVal('accounts-items-expense', '[510102] Biaya Angkut Pembelian Barang'),
+        salesAccount: getVal('accounts-items-sales', '[410101] Pendapatan Penjualan Barang Dagang'),
+        salesReturnAccount: getVal('accounts-items-sales-return', ''),
+        salesDiscountAccount: getVal('accounts-items-sales-discount', '[410103] Potongan / Diskon Penjualan'),
+        costOfGoodsSoldAccount: getVal('accounts-items-cogs', '[510101] HPP Barang Dagang'),
+        purchaseReturnAccount: getVal('accounts-items-purchase-return', '[110301] Persediaan Barang Dagang'),
+        unbilledPurchaseAccount: getVal('accounts-items-uninvoiced-purchase', ''),
+    };
+}
+
+export function buildFormValues(config, detailRow = null, preferences = {}) {
     const detailRecord = detailRow ? config?.detailRecords?.[detailRow.id] : null;
     const isDetail = Boolean(detailRow);
     const rows = config?.table?.rows ?? [];
     const hasAnyCategory = rows.length > 0;
     const hasDefaultCategory = rows.some((r) => r.isDefault);
+    const defaultAccounts = buildDefaultCategoryAccounts(preferences);
 
     const source = {
         ...(config?.createDefaults ?? {}),
@@ -25,7 +46,8 @@ export function buildFormValues(config, detailRow = null) {
         parentId: source.parentId ?? source.parent_id ?? '',
         parentName: source.parentName ?? source.parent?.name ?? '',
         accounts: (config?.accountFields ?? []).reduce((result, field) => {
-            result[field.id] = source.accounts?.[field.id] ?? '';
+            result[field.id] = source.accounts?.[field.id]
+                ?? (isDetail ? '' : (defaultAccounts[field.id] ?? ''));
             return result;
         }, {}),
         accountIds: (config?.accountFields ?? []).reduce((result, field) => {

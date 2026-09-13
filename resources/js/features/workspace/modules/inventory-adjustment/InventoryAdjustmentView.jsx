@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 import {
     buildInventoryAdjustmentRecord as buildBackendInventoryAdjustmentRecord,
@@ -18,10 +19,14 @@ import {
 export default function InventoryAdjustmentView({
     page,
     mode,
-    activeLevel2Tab, level2Tabs = [],
+    activeLevel2Tab,
+    level2Tabs = [],
     onOpenContent,
     onOpenDetail,
-    onCloseDetail,}) {
+    onCloseDetail,
+}) {
+    const inertiaProps = usePage()?.props ?? {};
+    const preferences = inertiaProps.dashboard?.preferences ?? inertiaProps.workspace?.preferences ?? {};
     const backendConfig = INVENTORY_ADJUSTMENT_BACKEND_CONFIG[page?.id] ?? null;
     const {
         rows,
@@ -39,7 +44,7 @@ export default function InventoryAdjustmentView({
     const isPriceAdjustment = page?.id === 'price-adjustment';
     const config = useMemo(
         () => {
-            const baseConfig = buildInventoryAdjustmentConfig(pageConfig);
+            const baseConfig = buildInventoryAdjustmentConfig(pageConfig, preferences);
 
             baseConfig.labels = {
                 ...(baseConfig.labels ?? {}),

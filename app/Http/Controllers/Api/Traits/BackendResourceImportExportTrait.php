@@ -315,16 +315,10 @@ trait BackendResourceImportExportTrait
             'others-aging-inventory-range', 'others-sales-commission-source',
           // Akun Perkiraan
             'accounts-items-inventory', 'accounts-items-sales', 'accounts-items-sales-return',
-            'accounts-items-sales-discount', 'accounts-items-goods-delivered', 'accounts-items-cogs',
+            'accounts-items-sales-discount', 'accounts-items-cogs',
             'accounts-items-purchase-return', 'accounts-items-expense', 'accounts-items-uninvoiced-purchase',
-            'accounts-company-opening-equity', 'accounts-company-retained-earnings',
-            'accounts-company-income-tax', 'accounts-company-pph21-payable', 'accounts-company-pension-payable',
-            'accounts-company-health-payable', 'accounts-company-employee-receivable',
-            'accounts-company-interest-receivable', 'accounts-company-unearned-interest',
-            'accounts-company-interest-income', 'accounts-company-fine-income',
-            'accounts-sales-purchase-discount', 'accounts-purchase-invoice-rounding',
-            'accounts-inventory-adjustment', 'accounts-inventory-stock-opname-variance',
-            'accounts-inventory-job-order', 'accounts-inventory-job-order-variance',
+            'accounts-sales-purchase-discount',
+            'accounts-inventory-adjustment',
         ];
     }
 }
