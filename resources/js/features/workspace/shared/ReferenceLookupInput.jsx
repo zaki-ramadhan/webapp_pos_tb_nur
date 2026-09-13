@@ -64,10 +64,6 @@ export default function ReferenceLookupInput({
     }, [selectedLabel, selectedLabels]);
 
     useEffect(() => {
-        setHighlightedIndex(-1);
-    }, [query, filteredItems.length]);
-
-    useEffect(() => {
         let timer = null;
         function handleOutsideClick(event) {
             const target = event.target;
@@ -117,6 +113,10 @@ export default function ReferenceLookupInput({
             return buildNormalizedSearchValue(getOptionSearchText(item)).includes(normalizedQuery);
         });
     }, [getOptionLabel, getOptionSearchText, items, multiValueMode, query, selectedLabelSet]);
+
+    useEffect(() => {
+        setHighlightedIndex(-1);
+    }, [query, filteredItems.length]);
 
     const isSingleSelected = !multiValueMode && selectedLabels.length > 0;
     const wrapperCursor = disabled || isSingleSelected ? 'cursor-default' : 'cursor-text';
