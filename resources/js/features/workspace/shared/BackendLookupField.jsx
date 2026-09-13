@@ -49,7 +49,7 @@ export default function BackendLookupField({
             setSearching(true);
         }
         try {
-            const effectivePerPage = resource === 'product-categories' ? 250 : 150;
+            const effectivePerPage = resource === 'accounts' ? 300 : resource === 'product-categories' ? 250 : 150;
             const params = { per_page: effectivePerPage, ...queryParams };
             if (isRefresh) {
                 params._refresh = Date.now();

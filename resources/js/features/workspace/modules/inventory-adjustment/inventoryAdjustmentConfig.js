@@ -55,7 +55,7 @@ const draftRecord = {
     copyItems: [{ id: 'copy-lines', label: 'Salin rincian barang' }],
     items: [],
     itemCountLabel: 'Rincian Barang',
-    adjustmentAccount: ['[310101] Modal Usaha / Pemilik'],
+    adjustmentAccount: ['[711.000-98] Biaya Selisih Penyesuaian Persediaan'],
     __adjustmentAccountId: null,
     notes: '',
     branches: [],

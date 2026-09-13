@@ -60,527 +60,1421 @@ class FinancialEntitySeeder extends Seeder
 
         $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id');
 
-        // Seed accounts (Header & Detail)
-        // 1. Kas & Bank (Induk 1101, Detail minimal 3 anak)
-        $parentKas = DB::table('accounts')->insertGetId([
+
+        // Seed accounts (Accurate Online Chart of Accounts Standard)
+        $accountMap = [];
+        // Level 0
+        $accountMap['111.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '1101',
-            'name' => 'Kas & Bank',
+            'code' => '111.000-00',
+            'name' => 'Kas dan Setara Kas',
             'account_type' => 'Cash/Bank',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentKas,
-                'currency_id' => $currencyId,
-                'code' => '110101',
-                'name' => 'Kas Tunai / Kasir',
-                'account_type' => 'Cash/Bank',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentKas,
-                'currency_id' => $currencyId,
-                'code' => '110102',
-                'name' => 'Bank BRI',
-                'account_type' => 'Cash/Bank',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 2. Piutang Usaha (Induk 1102)
-        $parentReceivable = DB::table('accounts')->insertGetId([
+        $accountMap['112.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '1102',
-            'name' => 'Piutang Usaha',
+            'code' => '112.000-00',
+            'name' => 'Piutang',
             'account_type' => 'Receivable',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentReceivable,
-                'currency_id' => $currencyId,
-                'code' => '110201',
-                'name' => 'Piutang Dagang Pelanggan',
-                'account_type' => 'Receivable',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentReceivable,
-                'currency_id' => $currencyId,
-                'code' => '110202',
-                'name' => 'Kasbon / Piutang Karyawan',
-                'account_type' => 'Receivable',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentReceivable,
-                'currency_id' => $currencyId,
-                'code' => '110203',
-                'name' => 'Uang Muka Pembelian ke Pemasok',
-                'account_type' => 'Receivable',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 3. Persediaan (Induk 1103)
-        $parentInventory = DB::table('accounts')->insertGetId([
+        $accountMap['113.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '1103',
-            'name' => 'Persediaan',
+            'code' => '113.000-00',
+            'name' => 'Uang Muka Pembelian',
+            'account_type' => 'Receivable',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['114.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '114.000-00',
+            'name' => 'Piutang Diluar Usaha',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['115.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '115.000-00',
+            'name' => 'Persediaan Barang Dagang',
             'account_type' => 'Inventory',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentInventory,
-                'currency_id' => $currencyId,
-                'code' => '110301',
-                'name' => 'Persediaan Barang Dagang',
-                'account_type' => 'Inventory',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 4. Aset Tetap (Induk 1201)
-        $parentAsset = DB::table('accounts')->insertGetId([
+        $accountMap['116.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '1201',
-            'name' => 'Aset Tetap',
+            'code' => '116.000-00',
+            'name' => 'Biaya Dibayar Dimuka',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['117.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '117.000-00',
+            'name' => 'Pajak Dibayar Dimuka',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['121.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '121.000-00',
+            'name' => 'Asset Tetap',
             'account_type' => 'Fixed Asset',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentAsset,
-                'currency_id' => $currencyId,
-                'code' => '120101',
-                'name' => 'Bangunan Toko & Gudang',
-                'account_type' => 'Fixed Asset',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentAsset,
-                'currency_id' => $currencyId,
-                'code' => '120102',
-                'name' => 'Kendaraan Operasional (Truk / Pick-up)',
-                'account_type' => 'Fixed Asset',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentAsset,
-                'currency_id' => $currencyId,
-                'code' => '120103',
-                'name' => 'Peralatan Toko & Komputer Kasir',
-                'account_type' => 'Fixed Asset',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 5. Akumulasi Penyusutan (Induk 1202)
-        $parentDepr = DB::table('accounts')->insertGetId([
+        $accountMap['122.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '1202',
+            'code' => '122.000-00',
             'name' => 'Akumulasi Penyusutan',
             'account_type' => 'Accumulated Depreciation',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentDepr,
-                'currency_id' => $currencyId,
-                'code' => '120201',
-                'name' => 'Akm. Peny. Bangunan Toko & Gudang',
-                'account_type' => 'Accumulated Depreciation',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentDepr,
-                'currency_id' => $currencyId,
-                'code' => '120202',
-                'name' => 'Akm. Peny. Kendaraan Operasional',
-                'account_type' => 'Accumulated Depreciation',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentDepr,
-                'currency_id' => $currencyId,
-                'code' => '120203',
-                'name' => 'Akm. Peny. Peralatan Toko & Komputer Kasir',
-                'account_type' => 'Accumulated Depreciation',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 7. Utang Usaha (Induk 2101)
-        $parentPayable = DB::table('accounts')->insertGetId([
+        $accountMap['123.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '2101',
-            'name' => 'Utang Usaha',
+            'code' => '123.000-00',
+            'name' => 'Asset Lainnya',
+            'account_type' => 'Other Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['211.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '211.000-00',
+            'name' => 'Hutang',
             'account_type' => 'Payable',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentPayable,
-                'currency_id' => $currencyId,
-                'code' => '210101',
-                'name' => 'Utang Pemasok Bahan Bangunan',
-                'account_type' => 'Payable',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentPayable,
-                'currency_id' => $currencyId,
-                'code' => '210102',
-                'name' => 'Uang Muka Penjualan Pelanggan',
-                'account_type' => 'Payable',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 8. Liabilitas Jangka Pendek (Induk 2102)
-        $parentOcl = DB::table('accounts')->insertGetId([
+        $accountMap['212.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '2102',
-            'name' => 'Liabilitas Jangka Pendek',
+            'code' => '212.000-00',
+            'name' => 'Uang Muka Penjualan',
+            'account_type' => 'Payable',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['213.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '213.000-00',
+            'name' => 'Hutang Diluar Usaha',
             'account_type' => 'Other Current Liability',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentOcl,
-                'currency_id' => $currencyId,
-                'code' => '210201',
-                'name' => 'Utang Gaji & Upah Karyawan',
-                'account_type' => 'Other Current Liability',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentOcl,
-                'currency_id' => $currencyId,
-                'code' => '210202',
-                'name' => 'Utang Beban Listrik & Air',
-                'account_type' => 'Other Current Liability',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 9. Ekuitas & Modal (Induk 3101)
-        $parentEquity = DB::table('accounts')->insertGetId([
+        $accountMap['214.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '3101',
-            'name' => 'Ekuitas & Modal',
-            'account_type' => 'Modal',
+            'code' => '214.000-00',
+            'name' => 'Biaya Yang Masih Harus Dibayar',
+            'account_type' => 'Other Current Liability',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentEquity,
-                'currency_id' => $currencyId,
-                'code' => '310101',
-                'name' => 'Modal Usaha / Pemilik',
-                'account_type' => 'Modal',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentEquity,
-                'currency_id' => $currencyId,
-                'code' => '310102',
-                'name' => 'Laba Ditahan Tahun Lalu',
-                'account_type' => 'Modal',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentEquity,
-                'currency_id' => $currencyId,
-                'code' => '310103',
-                'name' => 'Ambil Uang Pribadi (Owner)',
-                'account_type' => 'Modal',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
-
-        // 10. Pendapatan Usaha (Induk 4101)
-        $parentRevenue = DB::table('accounts')->insertGetId([
+        $accountMap['215.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '4101',
-            'name' => 'Pendapatan Usaha',
+            'code' => '215.000-00',
+            'name' => 'Hutang Pajak',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['221.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '221.000-00',
+            'name' => 'Hutang Jangka Panjang',
+            'account_type' => 'Long Term Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['311.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '311.000-00',
+            'name' => 'Ekuitas',
+            'account_type' => 'Equity',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['411.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '411.000-00',
+            'name' => 'Penjualan',
             'account_type' => 'Revenue',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentRevenue,
-                'currency_id' => $currencyId,
-                'code' => '410101',
-                'name' => 'Pendapatan Penjualan Barang Dagang',
-                'account_type' => 'Revenue',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentRevenue,
-                'currency_id' => $currencyId,
-                'code' => '410102',
-                'name' => 'Pendapatan Ongkos Kirim Barang',
-                'account_type' => 'Revenue',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentRevenue,
-                'currency_id' => $currencyId,
-                'code' => '410103',
-                'name' => 'Potongan / Diskon Penjualan',
-                'account_type' => 'Revenue',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 11. Beban Pokok Penjualan (Induk 5101)
-        $parentCos = DB::table('accounts')->insertGetId([
+        $accountMap['421.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '5101',
+            'code' => '421.000-00',
+            'name' => 'Potongan Penjualan Barang',
+            'account_type' => 'Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['422.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '422.000-00',
+            'name' => 'Potongan Penjualan Faktur',
+            'account_type' => 'Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['431.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '431.000-00',
+            'name' => 'Retur Penjualan',
+            'account_type' => 'Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['511.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '511.000-00',
             'name' => 'Beban Pokok Penjualan',
             'account_type' => 'Cost of Sales',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentCos,
-                'currency_id' => $currencyId,
-                'code' => '510101',
-                'name' => 'HPP Barang Dagang',
-                'account_type' => 'Cost of Sales',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentCos,
-                'currency_id' => $currencyId,
-                'code' => '510102',
-                'name' => 'Biaya Angkut Pembelian Barang',
-                'account_type' => 'Cost of Sales',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 12. Beban Operasional (Induk 6101)
-        $parentGaji = DB::table('accounts')->insertGetId([
+        $accountMap['512.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '6101',
-            'name' => 'Beban Operasional & Gaji',
+            'code' => '512.000-00',
+            'name' => 'Potongan Pembelian',
+            'account_type' => 'Cost of Sales',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '611.000-00',
+            'name' => 'Beban',
             'account_type' => 'Expense',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentGaji,
-                'currency_id' => $currencyId,
-                'code' => '610101',
-                'name' => 'Beban Gaji & Upah Karyawan',
-                'account_type' => 'Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentGaji,
-                'currency_id' => $currencyId,
-                'code' => '610102',
-                'name' => 'Beban Listrik, Air & Internet Toko',
-                'account_type' => 'Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentGaji,
-                'currency_id' => $currencyId,
-                'code' => '610103',
-                'name' => 'Beban Bahan Bakar & Perawatan Truk',
-                'account_type' => 'Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 13. Beban Penyusutan (Induk 6102)
-        $parentPeny = DB::table('accounts')->insertGetId([
+        $accountMap['711.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
             'currency_id' => $currencyId,
-            'code' => '6102',
+            'code' => '711.000-00',
+            'name' => 'Biaya Diluar Usaha',
+            'account_type' => 'Other Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['811.000-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => null,
+            'currency_id' => $currencyId,
+            'code' => '811.000-00',
+            'name' => 'Pendapatan Diluar Usaha',
+            'account_type' => 'Other Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        // Level 1
+        $accountMap['111.101-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['111.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '111.101-00',
+            'name' => 'Kas',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['111.102-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['111.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '111.102-00',
+            'name' => 'Bank',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['112.101-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['112.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '112.101-00',
+            'name' => 'Piutang Usaha IDR',
+            'account_type' => 'Receivable',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['112.103-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['112.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '112.103-00',
+            'name' => 'Piutang Tidak Tertagih IDR',
+            'account_type' => 'Receivable',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['113.101-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['113.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '113.101-00',
+            'name' => 'Uang Muka Pembelian Barang',
+            'account_type' => 'Receivable',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['114.100-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['114.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '114.100-01',
+            'name' => 'Piutang Direksi',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['114.100-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['114.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '114.100-02',
+            'name' => 'Piutang Karyawan',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['114.100-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['114.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '114.100-03',
+            'name' => 'Piutang Lain-lain',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['116.100-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['116.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '116.100-01',
+            'name' => 'Gaji Dibayar Dimuka',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['116.100-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['116.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '116.100-02',
+            'name' => 'Sewa Dibayar Dimuka',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['116.100-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['116.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '116.100-03',
+            'name' => 'Asuransi Dibayar Dimuka',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['117.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['117.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '117.000-01',
+            'name' => 'PPN Masukan',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['117.000-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['117.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '117.000-02',
+            'name' => 'PPh Pasal 23',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['117.000-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['117.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '117.000-03',
+            'name' => 'PPh Pasal 25',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['117.000-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['117.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '117.000-04',
+            'name' => 'PPh Pasal 22',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['121.100-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['121.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '121.100-01',
+            'name' => 'Tanah',
+            'account_type' => 'Fixed Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['121.100-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['121.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '121.100-02',
+            'name' => 'Bangunan',
+            'account_type' => 'Fixed Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['121.100-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['121.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '121.100-03',
+            'name' => 'Kendaraan',
+            'account_type' => 'Fixed Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['121.100-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['121.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '121.100-04',
+            'name' => 'Peralatan & Perlengkapan Kantor',
+            'account_type' => 'Fixed Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['122.100-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['122.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '122.100-01',
+            'name' => 'Akm. Peny. Bangunan',
+            'account_type' => 'Accumulated Depreciation',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['122.100-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['122.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '122.100-02',
+            'name' => 'Akm. Peny. Kendaraan',
+            'account_type' => 'Accumulated Depreciation',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['122.100-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['122.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '122.100-03',
+            'name' => 'Akm. Peny. Peralatan & Perlengkapan',
+            'account_type' => 'Accumulated Depreciation',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['123.100-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['123.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '123.100-01',
+            'name' => 'Asset Dalam Proses',
+            'account_type' => 'Other Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['123.100-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['123.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '123.100-02',
+            'name' => 'Pembangunan Dalam Proses',
+            'account_type' => 'Other Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['123.100-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['123.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '123.100-03',
+            'name' => 'Pembiayaan Pra Operasional',
+            'account_type' => 'Other Asset',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['211.101-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['211.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '211.101-00',
+            'name' => 'Hutang Usaha IDR',
+            'account_type' => 'Payable',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['211.103-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['211.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '211.103-00',
+            'name' => 'Hutang Tidak Tertagih IDR',
+            'account_type' => 'Payable',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['212.101-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['212.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '212.101-00',
+            'name' => 'Uang Muka Penjualan Barang IDR',
+            'account_type' => 'Payable',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['213.000-99'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['213.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '213.000-99',
+            'name' => 'Penerimaan Belum Tertagih',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['213.100-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['213.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '213.100-01',
+            'name' => 'Hutang Pemegang Saham',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['213.100-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['213.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '213.100-02',
+            'name' => 'Hutang Deviden',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['213.100-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['213.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '213.100-03',
+            'name' => 'Hutang Leasing',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['213.100-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['213.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '213.100-04',
+            'name' => 'Hutang diluar Usaha Lainnya',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['214.100-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['214.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '214.100-01',
+            'name' => 'BYMD - Gaji',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['214.100-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['214.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '214.100-02',
+            'name' => 'BYMD - Asuransi',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['214.100-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['214.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '214.100-03',
+            'name' => 'BYMD - BPJS Kesehatan',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['214.100-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['214.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '214.100-04',
+            'name' => 'BYMD - BPJS Ketenagakerjaan',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['214.100-05'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['214.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '214.100-05',
+            'name' => 'BYMD - Sewa',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['214.100-06'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['214.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '214.100-06',
+            'name' => 'BYMD - Telepon dan Internet',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['214.100-07'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['214.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '214.100-07',
+            'name' => 'BYMD - Listrik dan PDAM Air',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['214.100-08'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['214.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '214.100-08',
+            'name' => 'BYMD - Hutang Bunga Bank',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['215.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['215.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '215.000-01',
+            'name' => 'PPn Keluaran',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['215.000-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['215.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '215.000-02',
+            'name' => 'Hutang Pajak PPh Ps 21',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['215.000-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['215.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '215.000-03',
+            'name' => 'Hutang Pajak PPh Ps 23',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['215.000-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['215.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '215.000-04',
+            'name' => 'Hutang Pajak PPh Ps 29',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['215.000-05'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['215.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '215.000-05',
+            'name' => 'Hutang Pajak PPh Ps 4 (2)',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['221.100-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['221.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '221.100-01',
+            'name' => 'Hutang Bank BCA',
+            'account_type' => 'Long Term Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['221.100-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['221.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '221.100-02',
+            'name' => 'Hutang Sewa Guna Usaha',
+            'account_type' => 'Long Term Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['221.100-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['221.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '221.100-03',
+            'name' => 'Hutang Jangka Panjang Pihak Ketiga',
+            'account_type' => 'Long Term Liability',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['311.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['311.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '311.000-01',
+            'name' => 'Modal Setoran Awal',
+            'account_type' => 'Equity',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['311.000-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['311.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '311.000-02',
+            'name' => 'Modal Saham',
+            'account_type' => 'Equity',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['311.000-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['311.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '311.000-03',
+            'name' => 'Deviden',
+            'account_type' => 'Equity',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['311.000-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['311.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '311.000-04',
+            'name' => 'Laba ditahan',
+            'account_type' => 'Equity',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['311.000-05'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['311.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '311.000-05',
+            'name' => 'Prive',
+            'account_type' => 'Equity',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['411.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['411.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '411.000-01',
+            'name' => 'Penjualan Barang Dagang',
+            'account_type' => 'Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['411.000-99'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['411.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '411.000-99',
+            'name' => 'Pendapatan Jasa',
+            'account_type' => 'Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['421.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['421.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '421.000-01',
+            'name' => 'Potongan Penjualan Barang',
+            'account_type' => 'Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['421.000-99'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['421.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '421.000-99',
+            'name' => 'Potongan Pendapatan Jasa',
+            'account_type' => 'Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['422.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['422.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '422.000-01',
+            'name' => 'Potongan Penjualan IDR',
+            'account_type' => 'Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['431.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['431.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '431.000-01',
+            'name' => 'Retur Penjualan Barang',
+            'account_type' => 'Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['511.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['511.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '511.000-01',
+            'name' => 'Beban Pokok Penjualan Barang Dagang',
+            'account_type' => 'Cost of Sales',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['511.000-05'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['511.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '511.000-05',
+            'name' => 'Beban Selisih Nilai barang (Item Transfer)',
+            'account_type' => 'Cost of Sales',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['511.000-06'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['511.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '511.000-06',
+            'name' => 'Beban Selisih Pembelian Barang',
+            'account_type' => 'Cost of Sales',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['512.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['512.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '512.000-01',
+            'name' => 'Potongan Pembelian Barang',
+            'account_type' => 'Cost of Sales',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-00',
+            'name' => 'Beban Penjualan',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-00',
+            'name' => 'Beban Umum dan Administrasi',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['612.001-00'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '612.001-00',
             'name' => 'Beban Penyusutan',
             'account_type' => 'Expense',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentPeny,
-                'currency_id' => $currencyId,
-                'code' => '610201',
-                'name' => 'Beban Penyusutan Bangunan Toko & Gudang',
-                'account_type' => 'Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentPeny,
-                'currency_id' => $currencyId,
-                'code' => '610202',
-                'name' => 'Beban Penyusutan Kendaraan Operasional',
-                'account_type' => 'Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentPeny,
-                'currency_id' => $currencyId,
-                'code' => '610203',
-                'name' => 'Beban Penyusutan Peralatan Toko & Komputer Kasir',
-                'account_type' => 'Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 14. Beban Lainnya (Induk 7101)
-        $parentOtherExpense = DB::table('accounts')->insertGetId([
+        $accountMap['711.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['711.000-00'] ?? null,
             'currency_id' => $currencyId,
-            'code' => '7101',
-            'name' => 'Beban Non-Operasional',
+            'code' => '711.000-01',
+            'name' => 'Biaya Administrasi Bank',
             'account_type' => 'Other Expense',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentOtherExpense,
-                'currency_id' => $currencyId,
-                'code' => '710101',
-                'name' => 'Biaya Administrasi Bank',
-                'account_type' => 'Other Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentOtherExpense,
-                'currency_id' => $currencyId,
-                'code' => '710102',
-                'name' => 'Biaya Lain-lain',
-                'account_type' => 'Other Expense',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
-
-        // 15. Pendapatan Lainnya (Induk 8101)
-        $parentOtherRevenue = DB::table('accounts')->insertGetId([
+        $accountMap['711.000-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['711.000-00'] ?? null,
             'currency_id' => $currencyId,
-            'code' => '8101',
-            'name' => 'Pendapatan Non-Operasional',
+            'code' => '711.000-02',
+            'name' => 'Biaya Zakat dan Donasi',
+            'account_type' => 'Other Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['711.000-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['711.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '711.000-03',
+            'name' => 'Bunga Pinjaman',
+            'account_type' => 'Other Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['711.000-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['711.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '711.000-04',
+            'name' => 'Beban Pajak Penghasilan',
+            'account_type' => 'Other Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['711.000-05'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['711.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '711.000-05',
+            'name' => 'Laba/Rugi Penghentian Asset',
+            'account_type' => 'Other Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['711.000-98'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['711.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '711.000-98',
+            'name' => 'Biaya Selisih Penyesuaian Persediaan',
+            'account_type' => 'Other Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['711.000-99'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['711.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '711.000-99',
+            'name' => 'Biaya Diluar Usaha Lainnya',
+            'account_type' => 'Other Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['811.000-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['811.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '811.000-01',
+            'name' => 'Pendapatan Bunga Bank',
             'account_type' => 'Other Revenue',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        DB::table('accounts')->insert([
-            [
-                'parent_id' => $parentOtherRevenue,
-                'currency_id' => $currencyId,
-                'code' => '810101',
-                'name' => 'Pendapatan Komisi / Cashback Pemasok',
-                'account_type' => 'Other Revenue',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'parent_id' => $parentOtherRevenue,
-                'currency_id' => $currencyId,
-                'code' => '810102',
-                'name' => 'Pendapatan Lain-lain',
-                'account_type' => 'Other Revenue',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
+        $accountMap['811.000-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['811.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '811.000-02',
+            'name' => 'Pendapatan Bunga Deposito',
+            'account_type' => 'Other Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['811.000-99'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['811.000-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '811.000-99',
+            'name' => 'Pendapatan Diluar Usaha Lainnya',
+            'account_type' => 'Other Revenue',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        // Level 2
+        $accountMap['111.101-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['111.101-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '111.101-01',
+            'name' => 'Kas Kecil Kantor',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['111.101-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['111.101-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '111.101-02',
+            'name' => 'Kas Besar Kantor',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['111.102-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['111.102-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '111.102-01',
+            'name' => 'Bank BCA',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['111.102-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['111.102-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '111.102-04',
+            'name' => 'Bank Mandiri',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-01',
+            'name' => 'Beban Gaji Penjualan',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-02',
+            'name' => 'Beban Komisi Penjualan',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-03',
+            'name' => 'Beban Konsumsi',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-04',
+            'name' => 'Beban Angkut Pembelian',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-05'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-05',
+            'name' => 'Beban Kesehatan',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-06'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-06',
+            'name' => 'Beban Asuransi',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-07'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-07',
+            'name' => 'Beban Komunikasi',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-08'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-08',
+            'name' => 'Beban Bensin, Tol dan Parkir',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-09'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-09',
+            'name' => 'Beban Transportasi',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-10'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-10',
+            'name' => 'Beban Tunjangan',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-11'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-11',
+            'name' => 'Beban Entertaiment',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-12'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-12',
+            'name' => 'Beban Iklan',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-13'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-13',
+            'name' => 'Beban Perbaikan dan Perawatan Asset',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.001-99'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.001-99',
+            'name' => 'Beban Penjualan Lainnya',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-01',
+            'name' => 'Beban Gaji Umum & Admin',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-02',
+            'name' => 'Beban Listrik dan Air',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-03',
+            'name' => 'Beban Sewa',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-04'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-04',
+            'name' => 'Beban Telepon',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-05'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-05',
+            'name' => 'Beban Internet',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-06'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-06',
+            'name' => 'Beban Konsumsi Umum & Admin',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-07'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-07',
+            'name' => 'Beban Transportasi Umum & Admin',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-08'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-08',
+            'name' => 'Beban Alat Tulis Kantor',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-09'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-09',
+            'name' => 'Beban Rumah Tangga Kantor',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-10'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-10',
+            'name' => 'Beban Perlengkapan Kantor',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-11'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-11',
+            'name' => 'Beban Langganan Majalah & Koran',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-12'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-12',
+            'name' => 'Beban Bensin, Tol dan Parkir Umum & Admin',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-13'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-13',
+            'name' => 'Beban Perbaikan dan Perawatan Asset Umum & admin',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-14'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-14',
+            'name' => 'Beban Denda Pajak',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-15'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-15',
+            'name' => 'Beban Bonus',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-16'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-16',
+            'name' => 'Beban Tunjangan Hari Raya',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['611.002-99'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['611.002-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '611.002-99',
+            'name' => 'Beban Umum & Admin Lainnya',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['612.001-01'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['612.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '612.001-01',
+            'name' => 'Beban Penyusutan Bangunan',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['612.001-02'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['612.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '612.001-02',
+            'name' => 'Beban Penyusutan Kendaraan',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $accountMap['612.001-03'] = DB::table('accounts')->insertGetId([
+            'parent_id' => $accountMap['612.001-00'] ?? null,
+            'currency_id' => $currencyId,
+            'code' => '612.001-03',
+            'name' => 'Beban Penyusutan Peralatan & Perlengkapan Kantor',
+            'account_type' => 'Expense',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Seed taxes
@@ -634,7 +1528,7 @@ class FinancialEntitySeeder extends Seeder
 
         // Seed fixed assets
         $branchId = DB::table('branches')->first()?->id;
-        $assetAcc = DB::table('accounts')->where('code', '1201')->value('id');
+        $assetAcc = DB::table('accounts')->where('code', '121.100-03')->value('id');
 
         $startYear = (int) date('Y') - 1;
 

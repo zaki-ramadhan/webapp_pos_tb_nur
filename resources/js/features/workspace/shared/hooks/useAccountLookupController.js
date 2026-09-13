@@ -153,7 +153,7 @@ export default function useAccountLookupController({ value, values, disabled = f
             try {
                 const payload = await listBackendResource(resource, {
                     search: fetchKey,
-                    per_page: resource === 'product-categories' ? 250 : 15,
+                    per_page: resource === 'accounts' ? 300 : resource === 'product-categories' ? 250 : 15,
                     ...queryParams,
                 });
 

@@ -7,14 +7,14 @@ export function buildDefaultCategoryAccounts(preferences = {}) {
     };
 
     return {
-        inventoryAccount: getVal('accounts-items-inventory', '[110301] Persediaan Barang Dagang'),
-        expenseAccount: getVal('accounts-items-expense', '[510102] Biaya Angkut Pembelian Barang'),
-        salesAccount: getVal('accounts-items-sales', '[410101] Pendapatan Penjualan Barang Dagang'),
-        salesReturnAccount: getVal('accounts-items-sales-return', ''),
-        salesDiscountAccount: getVal('accounts-items-sales-discount', '[410103] Potongan / Diskon Penjualan'),
-        costOfGoodsSoldAccount: getVal('accounts-items-cogs', '[510101] HPP Barang Dagang'),
-        purchaseReturnAccount: getVal('accounts-items-purchase-return', '[110301] Persediaan Barang Dagang'),
-        unbilledPurchaseAccount: getVal('accounts-items-uninvoiced-purchase', ''),
+        inventoryAccount: getVal('accounts-items-inventory', '[115.000-00] Persediaan Barang'),
+        expenseAccount: getVal('accounts-items-expense', '[611.002-14] Beban Operasional Lainnya'),
+        salesAccount: getVal('accounts-items-sales', '[411.000-01] Penjualan Barang'),
+        salesReturnAccount: getVal('accounts-items-sales-return', '[412.000-01] Retur Penjualan Barang'),
+        salesDiscountAccount: getVal('accounts-items-sales-discount', '[421.000-01] Potongan Penjualan Barang'),
+        costOfGoodsSoldAccount: getVal('accounts-items-cogs', '[511.000-00] Beban Pokok Penjualan'),
+        purchaseReturnAccount: getVal('accounts-items-purchase-return', '[115.000-00] Persediaan Barang'),
+        unbilledPurchaseAccount: getVal('accounts-items-uninvoiced-purchase', '[211.200-00] Utang Pembelian Belum Ditagih'),
     };
 }
 

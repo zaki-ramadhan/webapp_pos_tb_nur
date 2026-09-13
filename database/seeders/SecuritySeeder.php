@@ -242,7 +242,13 @@ class SecuritySeeder extends Seeder
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['siti.rahmawati95@gmail.com']]);
 
         // Seed account_user pivot relationships (Akses Akun Kas & Bank Per Pengguna)
-        $accounts = DB::table('accounts')->whereIn('code', ['110101', '110102', '110103'])->pluck('id');
+        $accounts = DB::table('accounts')->whereIn('code', ['111.101-01', '111.101-02', '111.102-01', '111.102-04'])->pluck('id');
+        if ($accounts->isEmpty()) {
+            $accounts = DB::table('accounts')->whereIn('code', ['110101', '110102', '110103'])->pluck('id');
+        }
+        if ($accounts->isEmpty()) {
+            $accounts = DB::table('accounts')->where('account_type', 'Cash/Bank')->pluck('id');
+        }
         foreach ($usersMap as $userId) {
             foreach ($accounts as $accId) {
                 DB::table('account_user')->insertOrIgnore([

@@ -24,7 +24,7 @@ function buildModalState(modal, invoice, preferences = {}) {
     const prefDiscount = preferences['accounts-sales-purchase-discount'];
     const defaultDiscountAccount = (Array.isArray(prefDiscount) && prefDiscount.length > 0)
         ? prefDiscount
-        : (typeof prefDiscount === 'string' && prefDiscount.trim() ? [prefDiscount.trim()] : ['[410103] Potongan / Diskon Penjualan']);
+        : (typeof prefDiscount === 'string' && prefDiscount.trim() ? [prefDiscount.trim()] : ['[421.000-01] Potongan Penjualan Barang']);
 
     const currentDiscountAccount = normalizeLookupValue(discountState.discountAccount ?? invoiceState.discountAccount);
     const resolvedDiscountAccount = currentDiscountAccount.length > 0 ? currentDiscountAccount : defaultDiscountAccount;

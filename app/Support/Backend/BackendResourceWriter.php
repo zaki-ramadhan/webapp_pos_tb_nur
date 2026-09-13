@@ -658,21 +658,48 @@ class BackendResourceWriter
                     if (!empty($payload['parent_id'])) {
                         $parent = \App\Domain\Finance\Models\Account::find($payload['parent_id']);
                         if ($parent) {
-                            $parentCode = (string) preg_replace('/[^0-9]/', '', $parent->code);
                             $needsGeneration = !$record->exists 
                                 || $record->parent_id != $payload['parent_id'] 
                                 || empty($record->code);
 
                             if ($needsGeneration) {
-                                $existingChildren = \App\Domain\Finance\Models\Account::where('parent_id', $parent->id)
-                                    ->when($record->exists, fn ($q) => $q->where('id', '!=', $record->id))
-                                    ->get();
-                                $index = count($existingChildren) + 1;
-                                do {
-                                    $suffix = str_pad($index, 2, '0', STR_PAD_LEFT);
-                                    $generatedCode = $parentCode . $suffix;
-                                    $index++;
-                                } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->where('id', '!=', $record->id ?? 0)->exists());
+                                if (preg_match('/^(\d{3}\.\d{3})-00$/', $parent->code, $matches)) {
+                                    // Parent is a sub-header ending in -00 (e.g. 111.101-00) -> children 111.101-01, 02...
+                                    $prefix = $matches[1];
+                                    $children = \App\Domain\Finance\Models\Account::where('parent_id', $parent->id)->pluck('code')->all();
+                                    $maxSeq = 0;
+                                    foreach ($children as $cCode) {
+                                        if (preg_match('/^' . preg_quote($prefix, '/') . '-(\d{2})$/', $cCode, $cm)) {
+                                            $maxSeq = max($maxSeq, (int) $cm[1]);
+                                        }
+                                    }
+                                    $nextSeq = str_pad($maxSeq + 1, 2, '0', STR_PAD_LEFT);
+                                    $generatedCode = "{$prefix}-{$nextSeq}";
+                                } elseif (preg_match('/^(\d{3})\.000-00$/', $parent->code, $matches)) {
+                                    // Parent is a root header like 111.000-00 -> next sub-header 111.101-00...
+                                    $prefix = $matches[1];
+                                    $children = \App\Domain\Finance\Models\Account::where('parent_id', $parent->id)->pluck('code')->all();
+                                    $maxSub = 100;
+                                    foreach ($children as $cCode) {
+                                        if (preg_match('/^' . preg_quote($prefix, '/') . '\.(\d{3})-00$/', $cCode, $cm)) {
+                                            $maxSub = max($maxSub, (int) $cm[1]);
+                                        }
+                                    }
+                                    $nextSub = str_pad($maxSub + 1, 3, '0', STR_PAD_LEFT);
+                                    $generatedCode = "{$prefix}.{$nextSub}-00";
+                                } else {
+                                    // Numeric fallback
+                                    $parentCode = (string) preg_replace('/[^0-9]/', '', $parent->code);
+                                    $existingChildren = \App\Domain\Finance\Models\Account::where('parent_id', $parent->id)
+                                        ->when($record->exists, fn ($q) => $q->where('id', '!=', $record->id))
+                                        ->get();
+                                    $index = count($existingChildren) + 1;
+                                    do {
+                                        $suffix = str_pad($index, 2, '0', STR_PAD_LEFT);
+                                        $generatedCode = $parentCode . $suffix;
+                                        $index++;
+                                    } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->where('id', '!=', $record->id ?? 0)->exists());
+                                }
 
                                 $payload['code'] = $generatedCode;
                             } else {
@@ -688,29 +715,29 @@ class BackendResourceWriter
                         if ($needsGeneration) {
                             $type = $payload['account_type'] ?? 'Cash/Bank';
                             $typePrefixMap = [
-                                'Cash/Bank' => '11',
-                                'Receivable' => '11',
-                                'Inventory' => '11',
-                                'Other Current Asset' => '11',
-                                'Fixed Asset' => '12',
-                                'Accumulated Depreciation' => '12',
-                                'Other Asset' => '13',
-                                'Payable' => '21',
-                                'Other Current Liability' => '21',
-                                'Long Term Liability' => '22',
-                                'Equity' => '31',
-                                'Revenue' => '41',
-                                'Cost of Sales' => '51',
-                                'Expense' => '61',
-                                'Other Expense' => '71',
-                                'Other Revenue' => '81',
+                                'Cash/Bank' => '111',
+                                'Receivable' => '112',
+                                'Inventory' => '115',
+                                'Other Current Asset' => '116',
+                                'Fixed Asset' => '121',
+                                'Accumulated Depreciation' => '122',
+                                'Other Asset' => '123',
+                                'Payable' => '211',
+                                'Other Current Liability' => '213',
+                                'Long Term Liability' => '221',
+                                'Equity' => '311',
+                                'Revenue' => '411',
+                                'Cost of Sales' => '511',
+                                'Expense' => '611',
+                                'Other Expense' => '711',
+                                'Other Revenue' => '811',
                             ];
-                            $prefix = $typePrefixMap[$type] ?? '99';
+                            $prefix = $typePrefixMap[$type] ?? '999';
                             
                             $index = 1;
                             do {
-                                $seqNum = str_pad($index, 2, '0', STR_PAD_LEFT);
-                                $generatedCode = "{$prefix}{$seqNum}";
+                                $seqNum = str_pad($index, 3, '0', STR_PAD_LEFT);
+                                $generatedCode = "{$prefix}.{$seqNum}-00";
                                 $index++;
                             } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->where('id', '!=', $record->id ?? 0)->exists());
 
@@ -1189,7 +1216,7 @@ class BackendResourceWriter
 
         if ($docType === 'expense_entry' || $docType === 'payroll_entry') {
             $defaultDebitAcc = ($docType === 'payroll_entry')
-                ? (DB::table('accounts')->where('code', '610101')->value('id') ?? DB::table('accounts')->where('code', 'like', '6101%')->value('id'))
+                ? (DB::table('accounts')->where('code', '611.001-01')->value('id') ?? DB::table('accounts')->where('code', '610101')->value('id') ?? DB::table('accounts')->where('code', 'like', '611%')->value('id'))
                 : null;
             foreach ($recordLines as $line) {
                 $lineAcc = $line->account_id ?: $defaultDebitAcc;
@@ -1198,7 +1225,7 @@ class BackendResourceWriter
                 }
             }
             $creditAcc = $record->primary_account_id
-                ?? ($docType === 'payroll_entry' ? (DB::table('accounts')->where('code', '210201')->value('id') ?? DB::table('accounts')->where('code', 'like', '2102%')->value('id')) : null);
+                ?? ($docType === 'payroll_entry' ? (DB::table('accounts')->where('code', '214.100-01')->value('id') ?? DB::table('accounts')->where('code', '210201')->value('id') ?? DB::table('accounts')->where('code', 'like', '214%')->value('id')) : null);
             if ($creditAcc && $record->total_amount > 0) {
                 $lines[] = ['account_id' => $creditAcc, 'description' => 'Utang / Kewajiban', 'debit_amount' => 0.00, 'credit_amount' => $record->total_amount, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
             }
@@ -1245,8 +1272,9 @@ class BackendResourceWriter
             }
         } elseif ($docType === 'sales_invoice') {
             $piutangAcc = $record->primary_account_id
-                ?? DB::table('accounts')->where('code', '110301')->value('id')
-                ?? DB::table('accounts')->where('code', 'like', '1103%')->value('id');
+                ?? DB::table('accounts')->where('code', '112.101-00')->value('id')
+                ?? DB::table('accounts')->where('code', '110201')->value('id')
+                ?? DB::table('accounts')->where('code', 'like', '112%')->value('id');
             if ($piutangAcc && $record->total_amount > 0) {
                 $lines[] = ['account_id' => $piutangAcc, 'description' => 'Piutang Penjualan', 'debit_amount' => $record->total_amount, 'credit_amount' => 0.00, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
             }
@@ -1262,8 +1290,9 @@ class BackendResourceWriter
             }
         } elseif ($docType === 'purchase_invoice') {
             $hutangAcc = $record->primary_account_id
+                ?? DB::table('accounts')->where('code', '211.101-00')->value('id')
                 ?? DB::table('accounts')->where('code', '210101')->value('id')
-                ?? DB::table('accounts')->where('code', 'like', '2101%')->value('id');
+                ?? DB::table('accounts')->where('code', 'like', '211%')->value('id');
             if ($hutangAcc && $record->total_amount > 0) {
                 $lines[] = ['account_id' => $hutangAcc, 'description' => 'Hutang Usaha', 'debit_amount' => 0.00, 'credit_amount' => $record->total_amount, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
             }
@@ -1271,6 +1300,8 @@ class BackendResourceWriter
                 if ($line->total_amount > 0) {
                     $accId = optional($line->product)->inventory_account_id
                         ?? optional(optional($line->product)->category)->inventory_account_id
+                        ?? DB::table('accounts')->where('code', '115.000-00')->value('id')
+                        ?? DB::table('accounts')->where('code', 'like', '115%')->value('id')
                         ?? DB::table('accounts')->where('code', 'like', '11%')->value('id');
                     if ($accId) {
                         $lines[] = ['account_id' => $accId, 'description' => 'Persediaan - ' . (optional($line->product)->name ?? $line->description ?? 'Barang'), 'debit_amount' => $line->total_amount, 'credit_amount' => 0.00, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];
@@ -1464,20 +1495,58 @@ class BackendResourceWriter
 
     protected function syncChildAccountCodes(\App\Domain\Finance\Models\Account $account): void
     {
-        $parentCode = (string) preg_replace('/[^0-9]/', '', $account->code);
         $children = \App\Domain\Finance\Models\Account::where('parent_id', $account->id)->orderBy('id')->get();
-        $index = 1;
-        foreach ($children as $child) {
-            do {
-                $suffix = str_pad($index, 2, '0', STR_PAD_LEFT);
-                $newCode = $parentCode . $suffix;
-                $index++;
-            } while (\App\Domain\Finance\Models\Account::where('code', $newCode)->where('id', '!=', $child->id)->exists());
+        if ($children->isEmpty()) {
+            return;
+        }
 
-            if ($child->code !== $newCode) {
-                $child->code = $newCode;
-                $child->saveQuietly();
-                $this->syncChildAccountCodes($child);
+        if (preg_match('/^(\d{3}\.\d{3})-00$/', $account->code, $matches)) {
+            $prefix = $matches[1];
+            $seq = 1;
+            foreach ($children as $child) {
+                do {
+                    $suffix = str_pad($seq, 2, '0', STR_PAD_LEFT);
+                    $newCode = "{$prefix}-{$suffix}";
+                    $seq++;
+                } while (\App\Domain\Finance\Models\Account::where('code', $newCode)->where('id', '!=', $child->id)->exists());
+
+                if ($child->code !== $newCode) {
+                    $child->code = $newCode;
+                    $child->saveQuietly();
+                    $this->syncChildAccountCodes($child);
+                }
+            }
+        } elseif (preg_match('/^(\d{3})\.000-00$/', $account->code, $matches)) {
+            $prefix = $matches[1];
+            $sub = 101;
+            foreach ($children as $child) {
+                do {
+                    $subNum = str_pad($sub, 3, '0', STR_PAD_LEFT);
+                    $newCode = "{$prefix}.{$subNum}-00";
+                    $sub++;
+                } while (\App\Domain\Finance\Models\Account::where('code', $newCode)->where('id', '!=', $child->id)->exists());
+
+                if ($child->code !== $newCode) {
+                    $child->code = $newCode;
+                    $child->saveQuietly();
+                    $this->syncChildAccountCodes($child);
+                }
+            }
+        } else {
+            $parentClean = (string) preg_replace('/[^0-9]/', '', $account->code);
+            $index = 1;
+            foreach ($children as $child) {
+                do {
+                    $suffix = str_pad($index, 2, '0', STR_PAD_LEFT);
+                    $newCode = $parentClean . $suffix;
+                    $index++;
+                } while (\App\Domain\Finance\Models\Account::where('code', $newCode)->where('id', '!=', $child->id)->exists());
+
+                if ($child->code !== $newCode) {
+                    $child->code = $newCode;
+                    $child->saveQuietly();
+                    $this->syncChildAccountCodes($child);
+                }
             }
         }
     }

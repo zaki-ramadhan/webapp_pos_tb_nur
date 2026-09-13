@@ -52,15 +52,15 @@ function buildDetailFromRecord(row, config) {
             entries = [
                 {
                     id: `${row?.id ?? '1'}-line-1`,
-                    accountCode: '110101',
-                    accountName: 'Kas Kecil Toko',
+                    accountCode: '111.101-01',
+                    accountName: 'Kas Kecil',
                     debit: formatAmount(amountNum),
                     credit: '',
                 },
                 {
                     id: `${row?.id ?? '1'}-line-2`,
-                    accountCode: '410101',
-                    accountName: 'Pendapatan Penjualan',
+                    accountCode: '411.000-01',
+                    accountName: 'Penjualan Barang',
                     debit: '',
                     credit: formatAmount(amountNum),
                 },

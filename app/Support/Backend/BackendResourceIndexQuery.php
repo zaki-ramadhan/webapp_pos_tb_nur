@@ -154,6 +154,7 @@ class BackendResourceIndexQuery
             if ($key === 'account_type' && Schema::hasColumn($tableName, 'account_type')) {
                 $typeMap = [
                     'kas dan bank' => 'Cash/Bank',
+                    'kas & bank' => 'Cash/Bank',
                     'piutang usaha' => 'Receivable',
                     'persediaan' => 'Inventory',
                     'aset lancar lainnya' => 'Other Current Asset',
@@ -161,9 +162,11 @@ class BackendResourceIndexQuery
                     'akumulasi penyusutan' => 'Accumulated Depreciation',
                     'aset lainnya' => 'Other Asset',
                     'utang usaha' => 'Payable',
+                    'hutang usaha' => 'Payable',
                     'liabilitas jangka pendek' => 'Other Current Liability',
                     'liabilitas jangka panjang' => 'Long Term Liability',
                     'modal' => 'Equity',
+                    'ekuitas' => 'Equity',
                     'pendapatan' => 'Revenue',
                     'beban pokok penjualan' => 'Cost of Sales',
                     'beban' => 'Expense',
