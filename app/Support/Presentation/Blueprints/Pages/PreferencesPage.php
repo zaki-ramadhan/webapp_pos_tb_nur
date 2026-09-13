@@ -37,7 +37,12 @@ class PreferencesPage
                 ],
                 'featureTabs' => [],
                 'attachmentsTabs' => WorkflowPreferences::attachmentsTabs($attachmentsNotice),
-                'sidebarItems' => [],
+                'sidebarItems' => [
+                    [
+                        'id' => 'accounts',
+                        'label' => 'Akun Perkiraan',
+                    ],
+                ],
                 'actions' => [
                     [
                         'id' => 'save',

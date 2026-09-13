@@ -21,6 +21,7 @@ export default function ReferenceLookupInput({
     searchLabel = 'Cari data referensi',
     disabled = false,
     searching = false,
+    fullWidthChips = false,
     className = '',
     inputClassName = '',
     menuClassName = '',
@@ -244,7 +245,7 @@ export default function ReferenceLookupInput({
                 {multiValueMode ? (
                     <div className={`flex min-w-0 flex-1 flex-col gap-1.5 p-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
                         {selectedLabels.length ? (
-                            <div className="flex flex-wrap items-center gap-2 pb-0.5">
+                            <div className={fullWidthChips ? 'flex flex-col gap-1.5 w-full pb-0.5' : 'flex flex-wrap items-center gap-2 pb-0.5'}>
                                 {selectedLabels.map((item) => (
                                     <LookupChip
                                         key={item}
@@ -252,8 +253,9 @@ export default function ReferenceLookupInput({
                                         onClear={() => handleRemove(item)}
                                         disabled={disabled}
                                         clearAriaLabel={`Hapus ${item}`}
-                                        labelClassName="max-w-[240px]"
-                                        className="shrink-0"
+                                        labelClassName={fullWidthChips ? 'truncate flex-1 text-left' : 'max-w-[240px]'}
+                                        maxWidthClassName={fullWidthChips ? 'w-full' : 'max-w-full'}
+                                        className={fullWidthChips ? 'w-full justify-between' : 'shrink-0'}
                                     />
                                 ))}
                             </div>

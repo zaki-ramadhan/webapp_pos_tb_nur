@@ -15,6 +15,7 @@ export default function BackendLookupField({
     value = null,
     values = null,
     multi = false,
+    fullWidthChips = false,
     placeholder = 'Cari/Pilih...',
     searchLabel = 'Cari data',
     getOptionLabel = (option) => (typeof option === 'string' ? option : (option?.label ?? option?.name ?? '')),
@@ -229,6 +230,7 @@ export default function BackendLookupField({
                 emptyTitle={emptyTitle}
                 emptyDescription={emptyDescription}
                 className={className}
+                fullWidthChips={fullWidthChips}
                 disabled={disabled}
                 error={error}
             />
