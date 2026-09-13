@@ -321,6 +321,7 @@ class CatalogBackendResources
         $relations = [
             'category', 'brand', 'mainSupplier', 'preferredSupplier', 'baseUnit', 'purchaseUnit', 'salesUnit', 'attachments',
             'groupItems', 'groupItems.childProduct', 'groupItems.unit',
+            'inventoryAccount', 'cogsAccount', 'expenseAccount', 'salesAccount', 'salesReturnAccount', 'salesDiscountAccount', 'purchaseReturnAccount',
         ];
 
         try {
@@ -349,11 +350,11 @@ class CatalogBackendResources
             'main_supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
             'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
             'inventory_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
+            'cogs_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
+            'expense_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'sales_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'sales_return_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'sales_discount_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
-            'delivered_goods_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
-            'cogs_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'purchase_return_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'code' => ['required', 'string', 'max:50', $record ? Rule::unique('products', 'code')->ignore($record) : 'unique:products,code'],
             'barcode' => ['nullable', 'string', 'max:100', $record ? Rule::unique('products', 'barcode')->ignore($record) : 'unique:products,barcode'],

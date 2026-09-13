@@ -18,31 +18,24 @@ const itemTabs = [
 ];
 
 export const defaultAccountValues = {
-    inventory: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-inventory'] ?? ['[115.000-00] Persediaan Barang Dagang'],
-    sales: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-sales'] ?? ['[411.000-01] Penjualan Barang Dagang'],
-    salesReturn: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-sales-return'] ?? ['[431.000-01] Retur Penjualan Barang'],
-    salesDiscount: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-sales-discount'] ?? ['[421.000-01] Potongan Penjualan Barang'],
-    costOfGoodsSold: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-cogs'] ?? ['[511.001-01] Beban Pokok Penjualan Barang Dagang'],
-    purchaseReturn: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-purchase-return'] ?? ['[115.000-00] Persediaan Barang Dagang'],
-    expense: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-expense'] ?? ['[611.001-04] Beban Angkut Pembelian'],
+    inventory: [],
+    sales: [],
+    salesReturn: [],
+    salesDiscount: [],
+    costOfGoodsSold: [],
+    purchaseReturn: [],
+    expense: [],
 };
 
 export function buildDefaultAccountValues(preferences = {}) {
-    const getPref = (key, fallback) => {
-        const val = preferences[key];
-        if (Array.isArray(val) && val.length > 0) return [val[0]];
-        if (typeof val === 'string' && val.trim()) return [val.trim()];
-        return fallback;
-    };
-
     return {
-        inventory: getPref('accounts-items-inventory', defaultAccountValues.inventory),
-        sales: getPref('accounts-items-sales', defaultAccountValues.sales),
-        salesReturn: getPref('accounts-items-sales-return', defaultAccountValues.salesReturn),
-        salesDiscount: getPref('accounts-items-sales-discount', defaultAccountValues.salesDiscount),
-        costOfGoodsSold: getPref('accounts-items-cogs', defaultAccountValues.costOfGoodsSold),
-        purchaseReturn: getPref('accounts-items-purchase-return', defaultAccountValues.purchaseReturn),
-        expense: getPref('accounts-items-expense', defaultAccountValues.expense),
+        inventory: [],
+        sales: [],
+        salesReturn: [],
+        salesDiscount: [],
+        costOfGoodsSold: [],
+        purchaseReturn: [],
+        expense: [],
     };
 }
 
@@ -109,6 +102,13 @@ const createDefaults = {
     stockUnitValue: '0',
     stockCostOfGoods: '0',
     accounts: defaultAccountValues,
+    inventoryAccountId: null,
+    cogsAccountId: null,
+    expenseAccountId: null,
+    salesAccountId: null,
+    salesReturnAccountId: null,
+    salesDiscountAccountId: null,
+    purchaseReturnAccountId: null,
     images: [],
     attachments: [],
     printGroupDetails: true,
@@ -327,14 +327,13 @@ function buildFallbackDetailRecord(row, config) {
         stockCostOfGoods: '0',
         minimumStock: formatAmountInput(row.minimum_stock ?? row.minimumStock ?? '0'),
         accounts: row.accounts ? cloneAccounts(row.accounts) : cloneAccounts(config.createDefaults.accounts),
-        inventoryAccountId: row.inventoryAccountId ?? null,
-        salesAccountId: row.salesAccountId ?? null,
-        salesReturnAccountId: row.salesReturnAccountId ?? null,
-        salesDiscountAccountId: row.salesDiscountAccountId ?? null,
-        deliveredGoodsAccountId: row.deliveredGoodsAccountId ?? null,
-        cogsAccountId: row.cogsAccountId ?? null,
-        expenseAccountId: row.expenseAccountId ?? null,
-        purchaseReturnAccountId: row.purchaseReturnAccountId ?? null,
+        inventoryAccountId: row.inventoryAccountId ?? row.inventory_account_id ?? null,
+        cogsAccountId: row.cogsAccountId ?? row.cogs_account_id ?? null,
+        expenseAccountId: row.expenseAccountId ?? row.expense_account_id ?? null,
+        salesAccountId: row.salesAccountId ?? row.sales_account_id ?? null,
+        salesReturnAccountId: row.salesReturnAccountId ?? row.sales_return_account_id ?? null,
+        salesDiscountAccountId: row.salesDiscountAccountId ?? row.sales_discount_account_id ?? null,
+        purchaseReturnAccountId: row.purchaseReturnAccountId ?? row.purchase_return_account_id ?? null,
         printGroupDetails: row.print_group_details ?? row.printGroupDetails ?? true,
         allowEditGroupQuantity: row.allow_edit_group_quantity ?? row.allowEditGroupQuantity ?? false,
         useGroupPrice: row.use_group_price ?? row.useGroupPrice ?? true,

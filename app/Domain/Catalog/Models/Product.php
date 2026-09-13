@@ -30,6 +30,13 @@ class Product extends DomainModel
         'print_group_details',
         'allow_edit_group_quantity',
         'use_group_price',
+        'inventory_account_id',
+        'cogs_account_id',
+        'expense_account_id',
+        'sales_account_id',
+        'sales_return_account_id',
+        'sales_discount_account_id',
+        'purchase_return_account_id',
     ];
 
     protected array $searchable = ['code', 'barcode', 'name', 'product_type'];
@@ -137,5 +144,40 @@ class Product extends DomainModel
     public function unitConversions(): HasMany
     {
         return $this->hasMany(ProductUnitConversion::class);
+    }
+
+    public function inventoryAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'inventory_account_id');
+    }
+
+    public function cogsAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'cogs_account_id');
+    }
+
+    public function expenseAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'expense_account_id');
+    }
+
+    public function salesAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'sales_account_id');
+    }
+
+    public function salesReturnAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'sales_return_account_id');
+    }
+
+    public function salesDiscountAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'sales_discount_account_id');
+    }
+
+    public function purchaseReturnAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'purchase_return_account_id');
     }
 }
