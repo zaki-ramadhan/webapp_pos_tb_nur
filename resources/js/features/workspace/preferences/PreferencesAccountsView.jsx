@@ -57,7 +57,7 @@ const PREFERENCE_ACCOUNT_FILTERS = {
 };
 
 const ACCOUNT_SUB_TABS = [
-    { id: 'items-services', label: 'Barang & Jasa' },
+    { id: 'items-services', label: 'Barang' },
     { id: 'sales-purchase', label: 'Penjualan/Pembelian' },
     { id: 'inventory', label: 'Persediaan' },
 ];
@@ -178,7 +178,7 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
             {activeTabId === 'items-services' && (
                 <div className="space-y-6">
                     <div>
-                        <PreferencesSectionHeading icon="inventory" title="Barang & Jasa" />
+                        <PreferencesSectionHeading icon="inventory" title="Barang" />
                         <div className="space-y-4 pt-4">
                             <AccountFieldRow label="Persediaan" fieldId="accounts-items-inventory" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Penjualan" fieldId="accounts-items-sales" values={values} onChange={onChange} disabled={readOnly} />
