@@ -160,6 +160,31 @@ export default function BackendLookupField({
                 return formattedRecord;
             }
         } catch (err) {
+            const status = err?.response?.status;
+            if (status === 422) {
+                try {
+                    const searchRes = await listBackendResource(resource, { search: rawTrimmed, _refresh: Date.now() });
+                    const rows = extractBackendRows(searchRes);
+                    const matched = rows.find((r) => String(r.name ?? '').trim().toLowerCase() === lowerTrimmed);
+                    if (matched) {
+                        if (filterOptionRef.current && !filterOptionRef.current(matched)) {
+                            showCrudErrorToast(`Satuan "${matched.name || rawTrimmed}" sudah digunakan pada barang ini.`);
+                            return null;
+                        }
+                        const label = getOptionLabel(matched) || matched.name || rawTrimmed;
+                        const formatted = { ...matched, label };
+                        setItems((prev) => {
+                            const exists = prev.some((it) => String(it.id) === String(matched.id));
+                            return exists ? prev : [...prev, formatted];
+                        });
+                        onSelect?.(formatted);
+                        showCrudSuccessToast(`Satuan "${matched.name || rawTrimmed}" dipilih.`);
+                        return formatted;
+                    }
+                } catch {
+                    // Fallback to error handling below
+                }
+            }
             const msg = err?.response?.data?.errors?.name?.[0] || err?.response?.data?.message || err?.message || 'Gagal menambahkan satuan baru.';
             showCrudErrorToast(msg);
             throw err;
