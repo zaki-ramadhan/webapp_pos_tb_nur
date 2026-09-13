@@ -7,101 +7,43 @@ import { buildAccountLookupLabel } from '@/features/workspace/shared/AccountLook
 export const DEFAULT_ACCOUNTS_PREFERENCES = {
     // Barang & Jasa
     'accounts-items-inventory': [
-        '[115.000-01] Persediaan Handphone',
-        '[115.000-02] Persediaan Sparepart Handphone',
-        '[115.000-03] Persediaan Assesoris Handphone',
-        '[115.000-98] Persediaan Dalam Proses',
+        '[110301] Persediaan Barang Dagang',
     ],
     'accounts-items-sales': [
-        '[411.000-01] Penjualan Handphone',
-        '[411.000-02] Penjualan Sparepart Handphone',
-        '[411.000-03] Penjualan Assesoris Handphone',
-        '[411.000-99] Pendapatan Jasa',
+        '[410101] Pendapatan Penjualan Barang Dagang',
     ],
-    'accounts-items-sales-return': [
-        '[431.000-01] Retur Penjualan Handphone',
-        '[431.000-02] Retur Penjualan Sparepart Handphone',
-    ],
+    'accounts-items-sales-return': [],
     'accounts-items-sales-discount': [
-        '[421.000-01] Potongan Penjualan Handphone',
-        '[421.000-02] Potongan Penjualan Sparepart Handphone',
-        '[421.000-03] Potongan Penjualan Assesoris Handphone',
-        '[421.000-99] Potongan Pendapatan Jasa',
+        '[410103] Potongan / Diskon Penjualan',
     ],
-    'accounts-items-goods-delivered': [
-        '[115.000-99] Barang Terkirim',
-    ],
+    'accounts-items-goods-delivered': [],
     'accounts-items-cogs': [
-        '[511.000-01] Beban Pokok Penjualan Handphone',
-        '[511.000-02] Beban Pokok Penjualan Sparepart Handphone',
-        '[511.000-03] Beban Pokok Penjualan Assesoris Handphone',
-        '[511.000-04] Beban Perakitan',
+        '[510101] HPP Barang Dagang',
     ],
     'accounts-items-purchase-return': [
-        '[115.000-01] Persediaan Handphone',
-        '[115.000-02] Persediaan Sparepart Handphone',
-        '[115.000-03] Persediaan Assesoris Handphone',
+        '[110301] Persediaan Barang Dagang',
     ],
     'accounts-items-expense': [
-        '[611.001-04] Beban Angkut Pembelian',
-        '[611.001-13] Beban Perbaikan dan Perawatan Alat',
-        '[611.002-99] Beban Umum & Admin Lainnya',
-        '[611.002-09] Beban Rumah Tangga Kantor',
+        '[510102] Biaya Angkut Pembelian Barang',
     ],
-    'accounts-items-uninvoiced-purchase': [
-        '[213.000-99] Penerimaan Belum Tertagih',
-    ],
+    'accounts-items-uninvoiced-purchase': [],
 
     // Toko
-    'accounts-company-opening-equity': '[300001] Equitas Saldo Awal',
-    'accounts-company-retained-earnings': '[311.000-04] Laba ditahan',
-    'accounts-company-income-tax': [
-        '[711.000-04] Beban Pajak Penghasilan',
-    ],
-    'accounts-company-pph21-payable': [
-        '[215.000-02] Hutang Pajak PPh Ps 21',
-    ],
-    'accounts-company-pension-payable': [
-        '[214.100-04] BYMD - BPJS Ketenagakerjaan Jakarta',
-        '[214.200-04] BYMD - BPJS Ketenagakerjaan Surabaya',
-    ],
-    'accounts-company-health-payable': [
-        '[214.100-03] BYMD - BPJS Kesehatan Jakarta',
-        '[214.200-03] BYMD - BPJS Kesehatan Surabaya',
-    ],
-    'accounts-company-employee-receivable': [],
-    'accounts-company-interest-receivable': [],
-    'accounts-company-unearned-interest': [],
-    'accounts-company-interest-income': [],
-    'accounts-company-fine-income': [],
+    'accounts-company-opening-equity': '[310101] Modal Usaha / Pemilik',
+    'accounts-company-retained-earnings': '[310102] Laba Ditahan Tahun Lalu',
+    'accounts-company-income-tax': [],
 
     // Penjualan/Pembelian
     'accounts-sales-purchase-discount': [
-        '[421.000-01] Potongan Penjualan Handphone',
-        '[421.000-02] Potongan Penjualan Sparepart Handphone',
-        '[421.000-03] Potongan Penjualan Assesoris Handphone',
-        '[421.000-99] Potongan Pendapatan Jasa',
-        '[422.000-01] Potongan Penjualan IDR',
-        '[422.000-02] Potongan Penjualan USD',
-        '[422.000-03] Potongan Penjualan SGD',
-        '[512.000-01] Potongan Pembelian Handphone',
-        '[512.000-02] Potongan Pembelian Sparepart Handphone',
-        '[512.000-03] Potongan Pembelian Assesoris Handphone',
+        '[410103] Potongan / Diskon Penjualan',
     ],
-    'accounts-purchase-invoice-rounding': '[711.000-99] Biaya Diluar Usaha Lainnya',
+    'accounts-purchase-invoice-rounding': '',
 
     // Persediaan
     'accounts-inventory-adjustment': [
-        '[300001] Equitas Saldo Awal',
-        '[711.000-98] Biaya Selisih Penyesuaian Persediaan',
+        '[310101] Modal Usaha / Pemilik',
     ],
     'accounts-inventory-stock-opname-variance': [],
-    'accounts-inventory-job-order': [
-        '[115.000-98] Persediaan Dalam Proses',
-    ],
-    'accounts-inventory-job-order-variance': [
-        '[711.000-97] Biaya Selisih Pembiayaan Pesanan',
-    ],
 };
 
 const ACCOUNT_SUB_TABS = [
@@ -224,26 +166,6 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                             <AccountFieldRow label="Pajak Penghasilan" fieldId="accounts-company-income-tax" values={values} onChange={onChange} disabled={readOnly} />
                         </div>
                     </div>
-
-                    <div>
-                        <PreferencesSectionHeading icon="employee" title="Penggajian Karyawan" />
-                        <div className="space-y-4 pt-4">
-                            <AccountFieldRow label="Utang PPh21" fieldId="accounts-company-pph21-payable" values={values} onChange={onChange} disabled={readOnly} />
-                            <AccountFieldRow label="Utang Premi Pensiun" fieldId="accounts-company-pension-payable" values={values} onChange={onChange} disabled={readOnly} />
-                            <AccountFieldRow label="Utang Premi Kesehatan" fieldId="accounts-company-health-payable" values={values} onChange={onChange} disabled={readOnly} />
-                        </div>
-                    </div>
-
-                    <div>
-                        <PreferencesSectionHeading icon="employee" title="Peminjaman Karyawan" />
-                        <div className="space-y-4 pt-4">
-                            <AccountFieldRow label="Piutang Karyawan" fieldId="accounts-company-employee-receivable" values={values} onChange={onChange} disabled={readOnly} />
-                            <AccountFieldRow label="Piutang Bunga" fieldId="accounts-company-interest-receivable" values={values} onChange={onChange} disabled={readOnly} />
-                            <AccountFieldRow label="Pendapatan Bunga Dimuka" fieldId="accounts-company-unearned-interest" values={values} onChange={onChange} disabled={readOnly} />
-                            <AccountFieldRow label="Pendapatan Bunga" fieldId="accounts-company-interest-income" values={values} onChange={onChange} disabled={readOnly} />
-                            <AccountFieldRow label="Pendapatan Denda" fieldId="accounts-company-fine-income" values={values} onChange={onChange} disabled={readOnly} />
-                        </div>
-                    </div>
                 </div>
             )}
 
@@ -266,7 +188,7 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                                 onChange={onChange}
                                 multi={false}
                                 disabled={readOnly}
-                                note="Digunakan untuk menampung nilai pembulatan pajak (Inclusive Tax) dan pembulatan nilai biaya barang akibat diskon/alokasi nilai biaya pembelian"
+                                note="Digunakan untuk menampung nilai pembulatan transaksi dan selisih pembulatan akibat diskon/alokasi biaya"
                             />
                         </div>
                     </div>
@@ -286,14 +208,6 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                         <PreferencesSectionHeading icon="inventory" title="Perintah Stok Opname" />
                         <div className="space-y-4 pt-4">
                             <AccountFieldRow label="Beban Selisih Stok" fieldId="accounts-inventory-stock-opname-variance" values={values} onChange={onChange} placeholder="Cari/Pilih Akun Perkiraan..." disabled={readOnly} />
-                        </div>
-                    </div>
-
-                    <div>
-                        <PreferencesSectionHeading icon="box" title="Pekerjaan Pesanan" />
-                        <div className="space-y-4 pt-4">
-                            <AccountFieldRow label="Akun Pekerjaan" fieldId="accounts-inventory-job-order" values={values} onChange={onChange} disabled={readOnly} />
-                            <AccountFieldRow label="Selisih Biaya" fieldId="accounts-inventory-job-order-variance" values={values} onChange={onChange} disabled={readOnly} />
                         </div>
                     </div>
                 </div>
