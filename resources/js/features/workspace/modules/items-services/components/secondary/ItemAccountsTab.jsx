@@ -35,12 +35,8 @@ export default function ItemAccountsTab({ config, values, onChange }) {
 
     const allFields = [
         { key: 'inventory', idKey: 'inventoryAccountId', label: 'Persediaan', prefKey: 'accounts-items-inventory' },
-        {
-            key: isNonInventory ? 'expense' : 'costOfGoodsSold',
-            idKey: isNonInventory ? 'expenseAccountId' : 'cogsAccountId',
-            label: isNonInventory ? 'Beban' : 'Beban Pokok Penjualan',
-            prefKey: isNonInventory ? 'accounts-items-expense' : 'accounts-items-cogs',
-        },
+        { key: 'costOfGoodsSold', idKey: 'cogsAccountId', label: 'Beban Pokok Penjualan', prefKey: 'accounts-items-cogs' },
+        { key: 'expense', idKey: 'expenseAccountId', label: 'Beban', prefKey: 'accounts-items-expense' },
         { key: 'sales', idKey: 'salesAccountId', label: 'Penjualan', prefKey: 'accounts-items-sales' },
         { key: 'salesReturn', idKey: 'salesReturnAccountId', label: 'Retur Penjualan', prefKey: 'accounts-items-sales-return' },
         { key: 'salesDiscount', idKey: 'salesDiscountAccountId', label: 'Diskon Penjualan', prefKey: 'accounts-items-sales-discount' },
@@ -68,9 +64,9 @@ export default function ItemAccountsTab({ config, values, onChange }) {
                                 ? [prefRaw.trim()]
                                 : (DEFAULT_ACCOUNTS_PREFERENCES[prefKey] ?? []));
 
-                        const currentValues = values.accounts[key]
-                            ?? (isNonInventory && key === 'expense' ? values.accounts.costOfGoodsSold : null)
-                            ?? [];
+                        const currentValues = Array.isArray(values?.accounts?.[key])
+                            ? values.accounts[key]
+                            : (allowedList.length > 0 ? [allowedList[0]] : []);
 
                         return (
                             <FormRow key={key} label={label}>
@@ -85,7 +81,6 @@ export default function ItemAccountsTab({ config, values, onChange }) {
                                         onChange('accounts', {
                                             ...values.accounts,
                                             [key]: currentValues.filter((value) => value !== item),
-                                            ...(isNonInventory && key === 'expense' ? { costOfGoodsSold: [] } : {}),
                                         });
                                     }}
                                     onSelectAccount={(record, accountLabel) => {
@@ -93,7 +88,6 @@ export default function ItemAccountsTab({ config, values, onChange }) {
                                         onChange('accounts', {
                                             ...values.accounts,
                                             [key]: accountLabel ? [accountLabel] : [],
-                                            ...(isNonInventory && key === 'expense' ? { costOfGoodsSold: accountLabel ? [accountLabel] : [] } : {}),
                                         });
                                     }}
                                 />
