@@ -22,11 +22,35 @@ export const DEFAULT_ACCOUNTS_PREFERENCES = {
         '[431.000-01] Retur Penjualan Handphone',
         '[431.000-02] Retur Penjualan Sparepart Handphone',
     ],
-    'accounts-items-sales-discount': [],
-    'accounts-items-goods-delivered': [],
-    'accounts-items-cogs': [],
-    'accounts-items-purchase-return': [],
-    'accounts-items-uninvoiced-purchase': [],
+    'accounts-items-sales-discount': [
+        '[421.000-01] Potongan Penjualan Handphone',
+        '[421.000-02] Potongan Penjualan Sparepart Handphone',
+        '[421.000-03] Potongan Penjualan Assesoris Handphone',
+        '[421.000-99] Potongan Pendapatan Jasa',
+    ],
+    'accounts-items-goods-delivered': [
+        '[115.000-99] Barang Terkirim',
+    ],
+    'accounts-items-cogs': [
+        '[511.000-01] Beban Pokok Penjualan Handphone',
+        '[511.000-02] Beban Pokok Penjualan Sparepart Handphone',
+        '[511.000-03] Beban Pokok Penjualan Assesoris Handphone',
+        '[511.000-04] Beban Perakitan',
+    ],
+    'accounts-items-purchase-return': [
+        '[115.000-01] Persediaan Handphone',
+        '[115.000-02] Persediaan Sparepart Handphone',
+        '[115.000-03] Persediaan Assesoris Handphone',
+    ],
+    'accounts-items-expense': [
+        '[611.001-04] Beban Angkut Pembelian',
+        '[611.001-13] Beban Perbaikan dan Perawatan Alat',
+        '[611.002-99] Beban Umum & Admin Lainnya',
+        '[611.002-09] Beban Rumah Tangga Kantor',
+    ],
+    'accounts-items-uninvoiced-purchase': [
+        '[213.000-99] Penerimaan Belum Tertagih',
+    ],
 
     // Toko
     'accounts-company-opening-equity': '[300001] Equitas Saldo Awal',
@@ -39,7 +63,17 @@ export const DEFAULT_ACCOUNTS_PREFERENCES = {
     ],
     'accounts-company-pension-payable': [
         '[214.100-04] BYMD - BPJS Ketenagakerjaan Jakarta',
+        '[214.200-04] BYMD - BPJS Ketenagakerjaan Surabaya',
     ],
+    'accounts-company-health-payable': [
+        '[214.100-03] BYMD - BPJS Kesehatan Jakarta',
+        '[214.200-03] BYMD - BPJS Kesehatan Surabaya',
+    ],
+    'accounts-company-employee-receivable': [],
+    'accounts-company-interest-receivable': [],
+    'accounts-company-unearned-interest': [],
+    'accounts-company-interest-income': [],
+    'accounts-company-fine-income': [],
 
     // Penjualan/Pembelian
     'accounts-sales-purchase-discount': [
@@ -54,6 +88,7 @@ export const DEFAULT_ACCOUNTS_PREFERENCES = {
         '[512.000-02] Potongan Pembelian Sparepart Handphone',
         '[512.000-03] Potongan Pembelian Assesoris Handphone',
     ],
+    'accounts-purchase-invoice-rounding': '[711.000-99] Biaya Diluar Usaha Lainnya',
 
     // Persediaan
     'accounts-inventory-adjustment': [
@@ -84,6 +119,7 @@ function AccountFieldRow({
     multi = true,
     placeholder = 'Cari/Pilih...',
     disabled = false,
+    note = null,
 }) {
     const rawValue = values[fieldId] !== undefined ? values[fieldId] : DEFAULT_ACCOUNTS_PREFERENCES[fieldId];
     const currentList = multi
@@ -133,6 +169,11 @@ function AccountFieldRow({
                         onChange(fieldId, multi ? [] : '');
                     }}
                 />
+                {note ? (
+                    <p className="mt-1.5 text-xs italic text-red-500 leading-relaxed">
+                        {note}
+                    </p>
+                ) : null}
             </div>
         </div>
     );
@@ -152,7 +193,7 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
             {activeTabId === 'items-services' && (
                 <div className="space-y-6">
                     <div>
-                        <PreferencesSectionHeading icon="items-services" title="Barang & Jasa" />
+                        <PreferencesSectionHeading icon="inventory" title="Barang & Jasa" />
                         <div className="space-y-4 pt-4">
                             <AccountFieldRow label="Persediaan" fieldId="accounts-items-inventory" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Penjualan" fieldId="accounts-items-sales" values={values} onChange={onChange} disabled={readOnly} />
@@ -161,6 +202,7 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                             <AccountFieldRow label="Barang Terkirim" fieldId="accounts-items-goods-delivered" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Beban Pokok Penjualan" fieldId="accounts-items-cogs" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Retur Pembelian" fieldId="accounts-items-purchase-return" values={values} onChange={onChange} disabled={readOnly} />
+                            <AccountFieldRow label="Beban" fieldId="accounts-items-expense" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Pembelian Belum Tertagih" fieldId="accounts-items-uninvoiced-purchase" values={values} onChange={onChange} disabled={readOnly} />
                         </div>
                     </div>
@@ -189,6 +231,18 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                         <div className="space-y-4 pt-4">
                             <AccountFieldRow label="Utang PPh21" fieldId="accounts-company-pph21-payable" values={values} onChange={onChange} disabled={readOnly} />
                             <AccountFieldRow label="Utang Premi Pensiun" fieldId="accounts-company-pension-payable" values={values} onChange={onChange} disabled={readOnly} />
+                            <AccountFieldRow label="Utang Premi Kesehatan" fieldId="accounts-company-health-payable" values={values} onChange={onChange} disabled={readOnly} />
+                        </div>
+                    </div>
+
+                    <div>
+                        <PreferencesSectionHeading icon="employee" title="Peminjaman Karyawan" />
+                        <div className="space-y-4 pt-4">
+                            <AccountFieldRow label="Piutang Karyawan" fieldId="accounts-company-employee-receivable" values={values} onChange={onChange} disabled={readOnly} />
+                            <AccountFieldRow label="Piutang Bunga" fieldId="accounts-company-interest-receivable" values={values} onChange={onChange} disabled={readOnly} />
+                            <AccountFieldRow label="Pendapatan Bunga Dimuka" fieldId="accounts-company-unearned-interest" values={values} onChange={onChange} disabled={readOnly} />
+                            <AccountFieldRow label="Pendapatan Bunga" fieldId="accounts-company-interest-income" values={values} onChange={onChange} disabled={readOnly} />
+                            <AccountFieldRow label="Pendapatan Denda" fieldId="accounts-company-fine-income" values={values} onChange={onChange} disabled={readOnly} />
                         </div>
                     </div>
                 </div>
@@ -200,6 +254,21 @@ export default function PreferencesAccountsView({ values = {}, onChange, readOnl
                         <PreferencesSectionHeading icon="payment" title="Penerimaan/Pembayaran" />
                         <div className="space-y-4 pt-4">
                             <AccountFieldRow label="Akun Diskon" fieldId="accounts-sales-purchase-discount" values={values} onChange={onChange} disabled={readOnly} />
+                        </div>
+                    </div>
+
+                    <div>
+                        <PreferencesSectionHeading icon="purchases" title="Faktur Pembelian" />
+                        <div className="space-y-4 pt-4">
+                            <AccountFieldRow
+                                label="Akun Pembulatan"
+                                fieldId="accounts-purchase-invoice-rounding"
+                                values={values}
+                                onChange={onChange}
+                                multi={false}
+                                disabled={readOnly}
+                                note="Digunakan untuk menampung nilai pembulatan pajak (Inclusive Tax) dan pembulatan nilai biaya barang akibat diskon/alokasi nilai biaya pembelian"
+                            />
                         </div>
                     </div>
                 </div>
