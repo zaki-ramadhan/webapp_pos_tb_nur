@@ -160,7 +160,7 @@ export default function BackendLookupField({
                 return formattedRecord;
             }
         } catch (err) {
-            const msg = err?.response?.data?.message || err?.message || 'Gagal menambahkan satuan baru.';
+            const msg = err?.response?.data?.errors?.name?.[0] || err?.response?.data?.message || err?.message || 'Gagal menambahkan satuan baru.';
             showCrudErrorToast(msg);
             throw err;
         }

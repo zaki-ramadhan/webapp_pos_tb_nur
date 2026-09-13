@@ -42,6 +42,7 @@ export default function ReferenceLookupInput({
     const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const multiValueMode = Array.isArray(values);
     const selectedLabels = useMemo(() => {
         if (multiValueMode) {
@@ -61,6 +62,10 @@ export default function ReferenceLookupInput({
     useEffect(() => {
         setQuery('');
     }, [selectedLabel, selectedLabels]);
+
+    useEffect(() => {
+        setHighlightedIndex(-1);
+    }, [query, filteredItems.length]);
 
     useEffect(() => {
         let timer = null;
@@ -166,6 +171,55 @@ export default function ReferenceLookupInput({
         inputRef.current?.focus();
     }
 
+    function handleInputKeyDown(event) {
+        if (event.key === ' ' && !disabled && !open) {
+            setOpen(true);
+        } else if (event.key === 'ArrowDown') {
+            if (!disabled) {
+                if (!open) {
+                    setOpen(true);
+                } else if (filteredItems.length > 0) {
+                    event.preventDefault();
+                    setHighlightedIndex((prev) => (prev < filteredItems.length - 1 ? prev + 1 : 0));
+                }
+            }
+        } else if (event.key === 'ArrowUp') {
+            if (!disabled && open && filteredItems.length > 0) {
+                event.preventDefault();
+                setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : filteredItems.length - 1));
+            }
+        } else if (event.key === 'Escape') {
+            if (open) {
+                event.preventDefault();
+                setOpen(false);
+            }
+        } else if (event.key === 'Enter') {
+            if (!open) {
+                setOpen(true);
+            } else if (filteredItems.length > 0) {
+                event.preventDefault();
+                event.stopPropagation();
+                const targetItem = highlightedIndex >= 0 && highlightedIndex < filteredItems.length
+                    ? filteredItems[highlightedIndex]
+                    : filteredItems[0];
+                handleSelect(targetItem);
+            } else if (onCreateNew && query.trim() && filteredItems.length === 0 && !isCreating) {
+                event.preventDefault();
+                event.stopPropagation();
+                setIsCreating(true);
+                onCreateNew(query.trim())
+                    .then(() => {
+                        setOpen(false);
+                        setQuery('');
+                    })
+                    .catch(() => {})
+                    .finally(() => {
+                        setIsCreating(false);
+                    });
+            }
+        }
+    }
+
     const toneClassName = resolvedError
         ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
@@ -205,11 +259,7 @@ export default function ReferenceLookupInput({
                                 onFocus={() => {
                                     setOpen(true);
                                 }}
-                                onKeyDown={(event) => {
-                                    if (event.key === ' ' && !disabled && !open) {
-                                        setOpen(true);
-                                    }
-                                }}
+                                onKeyDown={handleInputKeyDown}
                                 onChange={handleChange}
                                 aria-label={searchLabel}
                                 className={`h-[24px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm ${disabled ? 'cursor-default disabled:text-slate-400' : resolvedError ? 'text-red-700' : 'text-brand-dark'} outline-none placeholder:${resolvedError ? 'text-red-400' : 'text-disabled-border-t'} cursor-text ${inputClassName}`.trim()}
@@ -253,28 +303,7 @@ export default function ReferenceLookupInput({
                                     onFocus={() => {
                                         setOpen(true);
                                     }}
-                                    onKeyDown={(event) => {
-                                        if (event.key === ' ' && !disabled && !open) {
-                                            setOpen(true);
-                                        } else if (event.key === 'Enter') {
-                                            if (!open) {
-                                                setOpen(true);
-                                            } else if (onCreateNew && query.trim() && filteredItems.length === 0 && !isCreating) {
-                                                event.preventDefault();
-                                                event.stopPropagation();
-                                                setIsCreating(true);
-                                                onCreateNew(query.trim())
-                                                    .then(() => {
-                                                        setOpen(false);
-                                                        setQuery('');
-                                                    })
-                                                    .catch(() => {})
-                                                    .finally(() => {
-                                                        setIsCreating(false);
-                                                    });
-                                            }
-                                        }
-                                    }}
+                                    onKeyDown={handleInputKeyDown}
                                     onChange={handleChange}
                                     aria-label={searchLabel}
                                     className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm ${disabled ? 'cursor-default disabled:text-slate-400' : resolvedError ? 'text-red-700' : 'text-brand-dark'} outline-none placeholder:${resolvedError ? 'text-red-400' : 'text-slate-600'} cursor-text ${inputClassName}`.trim()}
@@ -317,15 +346,23 @@ export default function ReferenceLookupInput({
                         <LookupLoadingState />
                     ) : filteredItems.length ? (
                         <div className="max-h-[260px] overflow-y-auto flex-1 min-h-0">
-                            {filteredItems.map((item) => (
+                            {filteredItems.map((item, index) => (
                                 <button
                                     key={item.id ?? getOptionLabel(item)}
                                     type="button"
-                                    onClick={(e) => {
+                                    onMouseDown={(e) => {
+                                        e.preventDefault();
                                         e.stopPropagation();
                                         handleSelect(item);
                                     }}
-                                    className="flex w-full items-start gap-3 border-b border-slate-200 px-3 py-3 text-left transition last:border-b-0 odd:bg-white even:bg-[#F8F8F8] hover:!bg-ui-bg-hover"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleSelect(item);
+                                    }}
+                                    className={`flex w-full items-start gap-3 border-b border-slate-200 px-3 py-3 text-left transition last:border-b-0 odd:bg-white even:bg-[#F8F8F8] hover:!bg-ui-bg-hover ${
+                                        highlightedIndex === index ? '!bg-ui-bg-hover ring-1 ring-inset ring-brand-blue/30' : ''
+                                    }`.trim()}
                                 >
                                     {renderOption ? (
                                         renderOption(item, query)
