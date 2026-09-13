@@ -21,12 +21,12 @@ class BackendResourceWriter
     public function create(BackendResourceBlueprint $blueprint, array $payload): Model
     {
         if ($blueprint->key === 'units' && !empty($payload['name'])) {
-            $normalizedName = mb_strtolower(trim($payload['name']));
-            $payload['name'] = $normalizedName;
-            $existing = \App\Domain\Catalog\Models\Unit::whereRaw('LOWER(TRIM(name)) = ?', [$normalizedName])->first();
+            $trimmedName = trim($payload['name']);
+            $existing = \App\Domain\Catalog\Models\Unit::whereRaw('LOWER(TRIM(name)) = ?', [mb_strtolower($trimmedName)])->first();
             if ($existing) {
                 return $existing;
             }
+            $payload['name'] = $trimmedName;
         }
 
         $modelClass = $blueprint->modelClass();

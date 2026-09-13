@@ -263,7 +263,7 @@ export default function ReferenceLookupInput({
                                                 event.preventDefault();
                                                 event.stopPropagation();
                                                 setIsCreating(true);
-                                                onCreateNew(query.trim().toLowerCase())
+                                                onCreateNew(query.trim())
                                                     .then(() => {
                                                         setOpen(false);
                                                         setQuery('');
@@ -357,7 +357,7 @@ export default function ReferenceLookupInput({
                                             e.stopPropagation();
                                             setIsCreating(true);
                                             try {
-                                                await onCreateNew(query.trim().toLowerCase());
+                                                await onCreateNew(query.trim());
                                                 setOpen(false);
                                                 setQuery('');
                                             } catch {
@@ -374,7 +374,7 @@ export default function ReferenceLookupInput({
                                                 Menyimpan...
                                             </span>
                                         ) : (
-                                            `Simpan "${query.trim().toLowerCase()}" sebagai data baru?`
+                                            `Simpan "${query.trim()}" sebagai data baru?`
                                         )}
                                     </button>
                                 </div>
