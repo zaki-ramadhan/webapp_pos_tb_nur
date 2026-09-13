@@ -44,7 +44,6 @@ class ItemCategoryPage
                     ['id' => 'salesDiscountAccount', 'label' => 'Diskon Penjualan'],
                     ['id' => 'costOfGoodsSoldAccount', 'label' => 'Beban Pokok Penjualan'],
                     ['id' => 'purchaseReturnAccount', 'label' => 'Retur Pembelian'],
-                    ['id' => 'unbilledPurchaseAccount', 'label' => 'Pembelian Belum Tertagih'],
                 ],
                 'createDefaults' => [
                     'name' => '',
@@ -157,7 +156,6 @@ class ItemCategoryPage
                             'salesDiscountAccount' => '[421.000-01] Potongan Penjualan',
                             'costOfGoodsSoldAccount' => '[511.000-01] Beban Pokok Penjualan',
                             'purchaseReturnAccount' => '[115.000-01] Persediaan Bahan Bangunan',
-                            'unbilledPurchaseAccount' => '[213.000-99] Penerimaan Belum Tertagih',
                         ],
                     ],
                     'item-category-besi-baja' => [
@@ -172,7 +170,6 @@ class ItemCategoryPage
                             'salesDiscountAccount' => '[421.000-02] Potongan Penjualan',
                             'costOfGoodsSoldAccount' => '[511.000-02] Beban Pokok Penjualan Besi & Baja',
                             'purchaseReturnAccount' => '[115.000-02] Persediaan Besi & Baja',
-                            'unbilledPurchaseAccount' => '[213.000-99] Penerimaan Belum Tertagih',
                         ],
                     ],
                     'item-category-cat' => [
@@ -187,7 +184,6 @@ class ItemCategoryPage
                             'salesDiscountAccount' => '[421.000-03] Potongan Penjualan Cat',
                             'costOfGoodsSoldAccount' => '[511.000-03] Beban Pokok Penjualan Cat',
                             'purchaseReturnAccount' => '[115.000-03] Persediaan Cat',
-                            'unbilledPurchaseAccount' => '[213.000-99] Penerimaan Belum Tertagih',
                         ],
                     ],
                     'item-category-umum' => [
@@ -202,7 +198,6 @@ class ItemCategoryPage
                             'salesDiscountAccount' => '[421.000-10] Potongan Penjualan Umum',
                             'costOfGoodsSoldAccount' => '[511.000-10] Beban Pokok Penjualan Umum',
                             'purchaseReturnAccount' => '[115.000-10] Persediaan Umum',
-                            'unbilledPurchaseAccount' => '[213.000-99] Penerimaan Belum Tertagih',
                         ],
                     ],
                 ],

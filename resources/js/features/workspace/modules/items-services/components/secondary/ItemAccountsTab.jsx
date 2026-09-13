@@ -45,7 +45,6 @@ export default function ItemAccountsTab({ config, values, onChange }) {
         { key: 'salesReturn', idKey: 'salesReturnAccountId', label: 'Retur Penjualan', prefKey: 'accounts-items-sales-return' },
         { key: 'salesDiscount', idKey: 'salesDiscountAccountId', label: 'Diskon Penjualan', prefKey: 'accounts-items-sales-discount' },
         { key: 'purchaseReturn', idKey: 'purchaseReturnAccountId', label: 'Retur Pembelian', prefKey: 'accounts-items-purchase-return' },
-        { key: 'uninvoicedPurchase', idKey: 'uninvoicedPurchaseAccountId', label: 'Pembelian Belum Tertagih', prefKey: 'accounts-items-uninvoiced-purchase' },
     ];
 
     const fields = allFields.filter(({ key }) => {

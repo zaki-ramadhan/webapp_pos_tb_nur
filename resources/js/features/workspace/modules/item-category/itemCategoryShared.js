@@ -14,7 +14,6 @@ export function buildDefaultCategoryAccounts(preferences = {}) {
         salesDiscountAccount: getVal('accounts-items-sales-discount', '[421.000-01] Potongan Penjualan Barang'),
         costOfGoodsSoldAccount: getVal('accounts-items-cogs', '[511.000-00] Beban Pokok Penjualan'),
         purchaseReturnAccount: getVal('accounts-items-purchase-return', '[115.000-00] Persediaan Barang'),
-        unbilledPurchaseAccount: getVal('accounts-items-uninvoiced-purchase', '[211.200-00] Utang Pembelian Belum Ditagih'),
     };
 }
 

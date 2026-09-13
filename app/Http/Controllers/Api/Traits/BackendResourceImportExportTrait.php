@@ -316,7 +316,7 @@ trait BackendResourceImportExportTrait
           // Akun Perkiraan
             'accounts-items-inventory', 'accounts-items-sales', 'accounts-items-sales-return',
             'accounts-items-sales-discount', 'accounts-items-cogs',
-            'accounts-items-purchase-return', 'accounts-items-expense', 'accounts-items-uninvoiced-purchase',
+            'accounts-items-purchase-return', 'accounts-items-expense',
             'accounts-sales-purchase-discount',
             'accounts-inventory-adjustment',
         ];

@@ -9,7 +9,6 @@ const ACCOUNT_TYPE_MAP = {
     salesDiscountAccount: 'Revenue',
     costOfGoodsSoldAccount: 'Cost of Sales',
     purchaseReturnAccount: ['Inventory', 'Cost of Sales'],
-    unbilledPurchaseAccount: ['Payable', 'Other Current Liability'],
 };
 
 export default function ItemCategoryAccountsTab({ config, values, onAccountChange }) {
