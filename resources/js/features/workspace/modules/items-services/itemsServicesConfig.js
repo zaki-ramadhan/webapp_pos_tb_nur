@@ -4,6 +4,7 @@ import {
     WORKSPACE_INACTIVE_HINT,
 } from '@/features/workspace/shared/workspaceAvailability';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { DEFAULT_ACCOUNTS_PREFERENCES } from '@/features/workspace/preferences/PreferencesAccountsView';
 
 
 const itemTabs = [
@@ -17,20 +18,20 @@ const itemTabs = [
 ];
 
 export const defaultAccountValues = {
-    inventory: ['[115.000-00] Persediaan Barang'],
-    sales: ['[411.000-01] Penjualan Barang'],
-    salesReturn: ['[412.000-01] Retur Penjualan Barang'],
-    salesDiscount: ['[421.000-01] Potongan Penjualan Barang'],
-    costOfGoodsSold: ['[511.000-00] Beban Pokok Penjualan'],
-    purchaseReturn: ['[115.000-00] Persediaan Barang'],
-    expense: ['[611.002-14] Beban Operasional Lainnya'],
-    uninvoicedPurchase: ['[211.200-00] Utang Pembelian Belum Ditagih'],
+    inventory: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-inventory'] ?? ['[115.000-00] Persediaan Barang Dagang'],
+    sales: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-sales'] ?? ['[411.000-01] Penjualan Barang Dagang'],
+    salesReturn: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-sales-return'] ?? ['[431.000-01] Retur Penjualan Barang'],
+    salesDiscount: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-sales-discount'] ?? ['[421.000-01] Potongan Penjualan Barang'],
+    costOfGoodsSold: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-cogs'] ?? ['[511.001-01] Beban Pokok Penjualan Barang Dagang'],
+    purchaseReturn: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-purchase-return'] ?? ['[115.000-00] Persediaan Barang Dagang'],
+    expense: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-expense'] ?? ['[611.001-04] Beban Angkut Pembelian'],
+    uninvoicedPurchase: DEFAULT_ACCOUNTS_PREFERENCES['accounts-items-uninvoiced-purchase'] ?? ['[213.000-99] Penerimaan Belum Tertagih'],
 };
 
 export function buildDefaultAccountValues(preferences = {}) {
     const getPref = (key, fallback) => {
         const val = preferences[key];
-        if (Array.isArray(val) && val.length > 0) return val;
+        if (Array.isArray(val) && val.length > 0) return [val[0]];
         if (typeof val === 'string' && val.trim()) return [val.trim()];
         return fallback;
     };
@@ -364,6 +365,7 @@ export function buildItemsServicesConfig(pageConfig = {}, preferences = {}) {
     return {
         ...defaultConfig,
         ...pageConfig,
+        preferences,
         topActions: pageConfig.topActions ?? defaultConfig.topActions,
         tabs: pageConfig.tabs ?? defaultConfig.tabs,
         labels: {
