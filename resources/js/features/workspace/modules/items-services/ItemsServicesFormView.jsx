@@ -280,6 +280,10 @@ export default function ItemsServicesFormView({
                     allow_edit_group_quantity: Boolean(values.allowEditGroupQuantity),
                     use_group_price: values.useGroupPrice !== false,
                     notes: values.notes?.trim() || null,
+                    length: values.length ? parseAmountInput(values.length) : null,
+                    width: values.width ? parseAmountInput(values.width) : null,
+                    height: values.height ? parseAmountInput(values.height) : null,
+                    weight: values.weight ? parseAmountInput(values.weight) : null,
                     attachment_ids: (values.attachments ?? [])
                         .map((att) => (typeof att === 'object' ? att?.id : att))
                         .filter((id) => id != null && !isNaN(Number(id)) && Number(id) > 0)

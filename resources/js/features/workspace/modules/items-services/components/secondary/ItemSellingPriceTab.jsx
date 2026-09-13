@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import SelectField from '@/components/ui/SelectField';
 import {
     DataTable,
     DataTableBody,
@@ -12,7 +11,6 @@ import { RefreshIcon } from '@/features/workspace/shared/Icons';
 import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 export default function ItemSellingPriceTab({ values = {}, detailRow = null }) {
-    const [selectedBranch, setSelectedBranch] = useState('all');
     const [loading, setLoading] = useState(false);
 
     const baseUnit = values.primaryUnit?.[0] ?? detailRow?.base_unit ?? null;
@@ -56,18 +54,7 @@ export default function ItemSellingPriceTab({ values = {}, detailRow = null }) {
     return (
         <div className="space-y-4">
             {/* Toolbar */}
-            <div className="flex flex-wrap items-center gap-2">
-                <div className="w-[180px]">
-                    <SelectField
-                        value={selectedBranch}
-                        onChange={(e) => setSelectedBranch(e.target.value)}
-                        className="h-[34px] rounded-[4px] border-ui-border"
-                        selectClassName="text-xs sm:text-sm text-brand-dark"
-                        options={[
-                            { value: 'all', label: 'Semua Cabang' },
-                        ]}
-                    />
-                </div>
+            <div className="flex items-center justify-end">
                 <button
                     type="button"
                     onClick={handleRefresh}
