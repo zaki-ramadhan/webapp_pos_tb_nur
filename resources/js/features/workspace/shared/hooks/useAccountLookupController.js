@@ -6,6 +6,9 @@ import {
 } from '@/features/workspace/backend/workspaceBackendApi';
 
 export function buildAccountLookupLabel(record, resource = null) {
+    if (typeof record === 'string') {
+        return record;
+    }
     if (record?.document_number) {
         return record.document_number;
     }

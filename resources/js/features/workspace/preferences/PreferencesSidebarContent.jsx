@@ -8,6 +8,7 @@ import PreferencesPurchaseView from '@/features/workspace/preferences/Preference
 import PreferencesSalesView from '@/features/workspace/preferences/PreferencesSalesView';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import PreferencesTaxView from '@/features/workspace/preferences/PreferencesTaxView';
+import PreferencesAccountsView from '@/features/workspace/preferences/PreferencesAccountsView';
 import PreferenceField from './components/PreferenceField';
 import PreferenceCompanyAddress from './components/PreferenceCompanyAddress';
 
@@ -38,7 +39,18 @@ export default function PreferencesSidebarContent({
     setActiveProfileTabId,
     companyRootItem,
     sideItems,
+    readOnly = false,
 }) {
+    if (activeSideItemId === 'accounts') {
+        return (
+            <PreferencesAccountsView
+                workspace={workspace}
+                values={values}
+                onChange={handleValueChange}
+                readOnly={readOnly}
+            />
+        );
+    }
     if (activeSideItemId === 'features' && tabsData.features?.length) {
         return (
             <PreferencesFeatureView

@@ -246,7 +246,7 @@ trait BackendResourceImportExportTrait
                     ],
                     [
                         'label' => ucwords(str_replace('-', ' ', $key)),
-                        'data_type' => 'string',
+                        'data_type' => is_array($val) ? 'json' : 'string',
                         'value' => $val,
                         'is_active' => true,
                     ]
@@ -313,6 +313,15 @@ trait BackendResourceImportExportTrait
             'others-decimal-format', 'others-decimal-option-value', 'others-decimal-option-condition',
             'others-date-display', 'others-aging-ar-range', 'others-aging-ar-source',
             'others-aging-inventory-range', 'others-sales-commission-source',
+          // Akun Perkiraan
+            'accounts-items-inventory', 'accounts-items-sales', 'accounts-items-sales-return',
+            'accounts-items-sales-discount', 'accounts-items-goods-delivered', 'accounts-items-cogs',
+            'accounts-items-purchase-return', 'accounts-items-uninvoiced-purchase',
+            'accounts-company-opening-equity', 'accounts-company-retained-earnings',
+            'accounts-company-income-tax', 'accounts-company-pph21-payable', 'accounts-company-pension-payable',
+            'accounts-sales-purchase-discount',
+            'accounts-inventory-adjustment', 'accounts-inventory-stock-opname-variance',
+            'accounts-inventory-job-order', 'accounts-inventory-job-order-variance',
         ];
     }
 }
