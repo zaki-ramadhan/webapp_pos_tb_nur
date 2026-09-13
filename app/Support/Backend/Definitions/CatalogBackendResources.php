@@ -28,7 +28,19 @@ class CatalogBackendResources
                 storeRules: [
                     'tax_id' => ['nullable', 'integer', 'exists:taxes,id'],
                     'code' => ['nullable', 'string', 'max:50', 'unique:units,code'],
-                    'name' => ['required', 'string', 'max:120'],
+                    'name' => [
+                        'required',
+                        'string',
+                        'max:120',
+                        function ($attribute, $value, $fail) {
+                            $trimmed = trim((string) $value);
+                            if ($trimmed === '') return;
+                            $exists = Unit::whereRaw('LOWER(TRIM(name)) = ?', [mb_strtolower($trimmed)])->exists();
+                            if ($exists) {
+                                $fail("Nama satuan \"{$trimmed}\" sudah digunakan.");
+                            }
+                        },
+                    ],
                     'precision' => ['nullable', 'integer', 'min:0', 'max:6'],
                     'tax_reference_code' => ['nullable', 'string', 'max:100'],
                     'is_active' => ['sometimes', 'boolean'],
@@ -36,7 +48,21 @@ class CatalogBackendResources
                 updateRules: fn (Model $record) => [
                     'tax_id' => ['nullable', 'integer', 'exists:taxes,id'],
                     'code' => ['nullable', 'string', 'max:50', Rule::unique('units', 'code')->ignore($record)],
-                    'name' => ['required', 'string', 'max:120'],
+                    'name' => [
+                        'required',
+                        'string',
+                        'max:120',
+                        function ($attribute, $value, $fail) use ($record) {
+                            $trimmed = trim((string) $value);
+                            if ($trimmed === '') return;
+                            $exists = Unit::where('id', '!=', $record->id)
+                                ->whereRaw('LOWER(TRIM(name)) = ?', [mb_strtolower($trimmed)])
+                                ->exists();
+                            if ($exists) {
+                                $fail("Nama satuan \"{$trimmed}\" sudah digunakan.");
+                            }
+                        },
+                    ],
                     'precision' => ['nullable', 'integer', 'min:0', 'max:6'],
                     'tax_reference_code' => ['nullable', 'string', 'max:100'],
                     'is_active' => ['sometimes', 'boolean'],

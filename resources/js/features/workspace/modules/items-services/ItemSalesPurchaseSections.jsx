@@ -78,8 +78,10 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                         placeholder="Cari/Pilih..."
                         searchLabel="Cari satuan beli"
                         onSelect={(option) => {
-                            onChange('purchaseUnit', [{ id: option.id, name: option.name }]);
-                            onChange('purchaseUnitId', option.id);
+                            const unitName = option?.name ?? option?.label ?? '';
+                            const unitId = option?.id ?? null;
+                            onChange('purchaseUnit', [{ id: unitId, name: unitName }]);
+                            onChange('purchaseUnitId', unitId);
                         }}
                         onClear={() => {
                             onChange('purchaseUnit', []);

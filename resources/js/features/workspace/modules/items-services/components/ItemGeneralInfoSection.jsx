@@ -57,13 +57,15 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
     };
 
     const handleConversionSelectUnit = (index, option) => {
+        const unitName = option?.name ?? option?.label ?? '';
+        const unitId = option?.id ?? null;
         const nextConversions = conversions.map((conv, i) => {
             if (i !== index) return conv;
             return {
                 ...conv,
-                unitId: option.id,
-                unitName: option.name,
-                unit: [{ id: option.id, name: option.name }],
+                unitId: unitId,
+                unitName: unitName,
+                unit: [{ id: unitId, name: unitName }],
             };
         });
         onChange('unitConversions', nextConversions);
@@ -75,11 +77,13 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
     };
 
     const handleTrailingUnitSelect = (option) => {
+        const unitName = option?.name ?? option?.label ?? '';
+        const unitId = option?.id ?? null;
         const newConv = {
             id: 'conv-' + Date.now(),
-            unitId: option.id,
-            unitName: option.name,
-            unit: [{ id: option.id, name: option.name }],
+            unitId: unitId,
+            unitName: unitName,
+            unit: [{ id: unitId, name: unitName }],
             quantity: trailingQty ? formatQuantityInput(trailingQty) : '',
         };
         onChange('unitConversions', [...conversions, newConv]);
@@ -175,8 +179,10 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                             searchLabel="Cari satuan"
                             filterOption={(option) => !selectedUnitIds.has(Number(option.id)) || Number(option.id) === Number(baseUnitId)}
                             onSelect={(option) => {
-                                onChange('primaryUnit', [{ id: option.id, name: option.name }]);
-                                onChange('baseUnitId', option.id);
+                                const unitName = option?.name ?? option?.label ?? '';
+                                const unitId = option?.id ?? null;
+                                onChange('primaryUnit', [{ id: unitId, name: unitName }]);
+                                onChange('baseUnitId', unitId);
                             }}
                             onClear={() => {
                                 onChange('primaryUnit', []);
