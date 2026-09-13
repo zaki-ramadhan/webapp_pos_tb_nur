@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
-import { buildAccountLookupLabel } from '@/features/workspace/shared/AccountLookupControls';
+import { buildAccountLookupLabel, translateAccountType } from '@/features/workspace/shared/AccountLookupControls';
+import { HighlightText } from '@/features/workspace/shared/LookupPrimitives';
 
 export const DEFAULT_ACCOUNTS_PREFERENCES = {
     // Barang & Jasa
@@ -85,6 +86,38 @@ function AccountFieldRow({
                     placeholder={placeholder}
                     searchLabel={`Cari ${label}`}
                     getOptionLabel={buildAccountLookupLabel}
+                    getOptionSearchText={(account) => {
+                        if (typeof account === 'string') return account;
+                        const type = translateAccountType(account?.account_type);
+                        return `${account?.name ?? ''} ${account?.code ?? ''} ${type}`.trim();
+                    }}
+                    renderOption={(account, query) => {
+                        const name = account?.name ?? (typeof account === 'string' ? account.replace(/^\[[^\]]+\]\s*/, '') : '');
+                        const code = account?.code ?? (typeof account === 'string' ? (account.match(/^\[([^\]]+)\]/)?.[1] ?? '') : '');
+                        const typeLabel = translateAccountType(account?.account_type);
+                        const prefix = account?.hierarchicalPrefix ?? '';
+
+                        return (
+                            <div
+                                className="flex w-full min-w-0 flex-col gap-0.5 select-none"
+                                style={{ paddingLeft: (account?.level ?? 0) > 0 ? `${account.level * 14}px` : undefined }}
+                            >
+                                <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">
+                                    <HighlightText text={`${prefix}${name}`} search={query} />
+                                </div>
+                                <div className="flex items-center justify-between gap-4 text-xs sm:text-[13px] text-text-workspace-dark">
+                                    <span className="truncate font-normal not-italic">
+                                        <HighlightText text={code} search={query} />
+                                    </span>
+                                    {typeLabel ? (
+                                        <span className="shrink-0 italic font-normal text-slate-500">
+                                            {typeLabel}
+                                        </span>
+                                    ) : null}
+                                </div>
+                            </div>
+                        );
+                    }}
                     disabled={disabled}
                     onSelect={(account) => {
                         const optLabel = buildAccountLookupLabel(account);

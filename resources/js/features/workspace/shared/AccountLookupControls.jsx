@@ -5,6 +5,7 @@ import { useFormError } from '@/components/ui/FormErrorContext';
 import useAccountLookupController, {
     buildAccountLookupLabel,
     buildAccountLookupMeta,
+    translateAccountType,
 } from './hooks/useAccountLookupController';
 
 import AccountLookupSearchInput from './components/AccountLookupSearchInput';
@@ -13,6 +14,7 @@ import AccountLookupSuggestions from './components/AccountLookupSuggestions';
 export {
     buildAccountLookupLabel,
     buildAccountLookupMeta,
+    translateAccountType,
 };
 
 function normalizeInputValue(value) {
