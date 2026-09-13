@@ -27,13 +27,6 @@ class Unit extends DomainModel
         ];
     }
 
-    protected function name(): \Illuminate\Database\Eloquent\Casts\Attribute
-    {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            set: fn ($value) => is_string($value) ? mb_strtolower(trim($value)) : $value,
-        );
-    }
-
     public function tax(): BelongsTo
     {
         return $this->belongsTo(Tax::class);

@@ -116,34 +116,35 @@ export default function BackendLookupField({
 
     const handleQuickCreate = async (keyword) => {
         if (!keyword || !keyword.trim()) return null;
-        const trimmed = keyword.trim().toLowerCase();
+        const rawTrimmed = keyword.trim();
+        const lowerTrimmed = rawTrimmed.toLowerCase();
 
         // 1. Cek apakah satuan sudah ada di database / list items (case-insensitive)
         const existingRecord = items.find((item) => {
             const name = String(item?.name ?? item?.label ?? '').trim().toLowerCase();
-            return name === trimmed;
+            return name === lowerTrimmed;
         });
 
         if (existingRecord) {
             // Cek apakah item ini sedang difilter keluar (misal sudah dipilih sebagai satuan dasar / konversi lain)
             if (filterOptionRef.current && !filterOptionRef.current(existingRecord)) {
-                showCrudErrorToast(`Satuan "${existingRecord.name || trimmed}" sudah digunakan pada barang ini.`);
+                showCrudErrorToast(`Satuan "${existingRecord.name || rawTrimmed}" sudah digunakan pada barang ini.`);
                 return null;
             }
             onSelect?.(existingRecord);
-            showCrudSuccessToast(`Satuan "${existingRecord.name || trimmed}" dipilih.`);
+            showCrudSuccessToast(`Satuan "${existingRecord.name || rawTrimmed}" dipilih.`);
             return existingRecord;
         }
 
         try {
             const payload = {
-                name: trimmed,
+                name: rawTrimmed,
                 is_active: true,
             };
             const result = await createBackendResource(resource, payload);
             const newRecord = result?.data ?? result;
             if (newRecord && newRecord.id) {
-                const label = getOptionLabel(newRecord) || newRecord.name || trimmed;
+                const label = getOptionLabel(newRecord) || newRecord.name || rawTrimmed;
                 const formattedRecord = {
                     ...newRecord,
                     id: newRecord.id,
@@ -155,7 +156,7 @@ export default function BackendLookupField({
                     return exists ? prev : [...prev, formattedRecord];
                 });
                 onSelect?.(formattedRecord);
-                showCrudSuccessToast(`Satuan "${trimmed}" berhasil ditambahkan.`);
+                showCrudSuccessToast(`Satuan "${newRecord.name ?? rawTrimmed}" berhasil ditambahkan.`);
                 return formattedRecord;
             }
         } catch (err) {
