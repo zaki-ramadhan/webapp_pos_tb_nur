@@ -110,7 +110,7 @@ function AccountFieldRow({
                                         <HighlightText text={code} search={query} />
                                     </span>
                                     {typeLabel ? (
-                                        <span className="shrink-0 italic font-normal text-slate-500">
+                                        <span className="shrink-0 italic font-normal">
                                             {typeLabel}
                                         </span>
                                     ) : null}
