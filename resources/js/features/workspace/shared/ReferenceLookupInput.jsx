@@ -66,12 +66,13 @@ export default function ReferenceLookupInput({
     useEffect(() => {
         let timer = null;
         function handleOutsideClick(event) {
-            const target = event.target;
-            if (target instanceof HTMLElement && !document.body.contains(target)) {
+            const rawTarget = event.target;
+            const target = rawTarget instanceof Element ? rawTarget : rawTarget?.parentElement;
+            if (target && !document.body.contains(target)) {
                 return;
             }
             if (rootRef.current && !rootRef.current.contains(target)) {
-                if (target instanceof HTMLElement && target.closest('[data-portal-dropdown]')) {
+                if (target && typeof target.closest === 'function' && target.closest('[data-portal-dropdown]')) {
                     return;
                 }
                 timer = setTimeout(() => {
@@ -171,6 +172,26 @@ export default function ReferenceLookupInput({
         inputRef.current?.focus();
     }
 
+    async function handleCreateNew(event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        const trimmed = query.trim();
+        if (!onCreateNew || !trimmed || isCreating) return;
+
+        setIsCreating(true);
+        try {
+            await onCreateNew(trimmed);
+            setOpen(false);
+            setQuery('');
+        } catch {
+            // Handled in parent
+        } finally {
+            setIsCreating(false);
+        }
+    }
+
     function handleInputKeyDown(event) {
         if (event.key === ' ' && !disabled && !open) {
             setOpen(true);
@@ -204,18 +225,7 @@ export default function ReferenceLookupInput({
                     : filteredItems[0];
                 handleSelect(targetItem);
             } else if (onCreateNew && query.trim() && filteredItems.length === 0 && !isCreating) {
-                event.preventDefault();
-                event.stopPropagation();
-                setIsCreating(true);
-                onCreateNew(query.trim())
-                    .then(() => {
-                        setOpen(false);
-                        setQuery('');
-                    })
-                    .catch(() => {})
-                    .finally(() => {
-                        setIsCreating(false);
-                    });
+                handleCreateNew(event);
             }
         }
     }
@@ -389,20 +399,8 @@ export default function ReferenceLookupInput({
                                     <button
                                         type="button"
                                         disabled={isCreating}
-                                        onClick={async (e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setIsCreating(true);
-                                            try {
-                                                await onCreateNew(query.trim());
-                                                setOpen(false);
-                                                setQuery('');
-                                            } catch {
-                                                // Handled in parent
-                                            } finally {
-                                                setIsCreating(false);
-                                            }
-                                        }}
+                                        onMouseDown={handleCreateNew}
+                                        onClick={handleCreateNew}
                                         className="w-full inline-flex items-center justify-center px-2 py-1.5 min-h-[30px] text-xs font-medium text-white bg-brand-blue hover:bg-brand-blue-hover active:scale-[0.98] rounded-[4px] shadow-button-primary transition-all cursor-pointer text-center leading-snug break-words disabled:opacity-50"
                                     >
                                         {isCreating ? (
