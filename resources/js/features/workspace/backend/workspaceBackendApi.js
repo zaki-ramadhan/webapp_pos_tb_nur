@@ -67,6 +67,16 @@ export function clearBackendCache(resource = null) {
     if (!resource) {
         apiCache.clear();
         inFlightRequests.clear();
+        if (typeof window !== 'undefined' && window.sessionStorage) {
+            try {
+                for (let i = window.sessionStorage.length - 1; i >= 0; i--) {
+                    const k = window.sessionStorage.key(i);
+                    if (k && (k.startsWith('list::') || k.startsWith('show::'))) {
+                        window.sessionStorage.removeItem(k);
+                    }
+                }
+            } catch {}
+        }
         if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {
             window.__clearBackendCache();
         }
@@ -83,6 +93,17 @@ export function clearBackendCache(resource = null) {
         if (key.toLowerCase().includes(norm)) {
             inFlightRequests.delete(key);
         }
+    }
+
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+        try {
+            for (let i = window.sessionStorage.length - 1; i >= 0; i--) {
+                const k = window.sessionStorage.key(i);
+                if (k && k.toLowerCase().includes(norm)) {
+                    window.sessionStorage.removeItem(k);
+                }
+            }
+        } catch {}
     }
 
     if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {

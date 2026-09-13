@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 import {
     createBackendResource,
     extractBackendRows,
     listBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
+import { subscribeToLiveUpdates } from '@/features/workspace/backend/useBackendIndexResource';
 import { buildHierarchicalCategories } from '@/features/workspace/modules/item-category/itemCategoryShared';
 import { showCrudErrorToast, showCrudSuccessToast } from '@/features/workspace/shared/crudFeedback';
 import ReferenceLookupInput from './ReferenceLookupInput';
@@ -35,34 +36,69 @@ export default function BackendLookupField({
     const [items, setItems] = useState([]);
     const [searching, setSearching] = useState(false);
     const [hasActivated, setHasActivated] = useState(false);
+    const filterOptionRef = useRef(filterOption);
+    filterOptionRef.current = filterOption;
 
     const queryParamsString = JSON.stringify(queryParams);
 
+    const loadRecords = useCallback(async (isRefresh = false) => {
+        setSearching(true);
+        try {
+            const effectivePerPage = resource === 'product-categories' ? 250 : 150;
+            const params = { per_page: effectivePerPage, ...queryParams };
+            if (isRefresh) {
+                params._refresh = Date.now();
+            }
+            const payload = await listBackendResource(resource, params);
+            setItems(extractBackendRows(payload));
+        } catch {
+            // Abaikan error
+        } finally {
+            setSearching(false);
+        }
+    }, [resource, queryParamsString]);
+
     useEffect(() => {
         if (!hasActivated || disabled) return;
+        loadRecords();
+    }, [hasActivated, disabled, loadRecords]);
 
-        let ignore = false;
-        async function fetchRecords() {
-            setSearching(true);
-            try {
-                const effectivePerPage = resource === 'product-categories' ? 250 : 150;
-                const payload = await listBackendResource(resource, { per_page: effectivePerPage, ...queryParams });
-                if (!ignore) {
-                    setItems(extractBackendRows(payload));
+    // Berlangganan event live update (Reverb WebSocket / Polling)
+    useEffect(() => {
+        const unsubscribe = subscribeToLiveUpdates((change) => {
+            if (!change || !change.resource) return;
+            const res = String(change.resource).toLowerCase();
+            const targetRes = String(resource || '').toLowerCase();
+            const isMatch = res === targetRes ||
+                (targetRes === 'units' && (res === 'units' || res === 'item-unit')) ||
+                (targetRes === 'item-unit' && (res === 'units' || res === 'item-unit'));
+
+            if (!isMatch) return;
+
+            if (change.action === 'deleted' && change.recordId) {
+                setItems((prev) => prev.filter((item) => String(item.id) !== String(change.recordId)));
+                // Jika nilai yang sedang aktif adalah data yang baru saja dihapus, bersihkan
+                if (value && typeof value === 'object' && String(value.id) === String(change.recordId)) {
+                    onClear?.();
+                } else if (value && String(value) === String(change.recordId)) {
+                    onClear?.();
                 }
-            } catch {
-                // Abaikan error
-            } finally {
-                if (!ignore) setSearching(false);
+            } else if (hasActivated) {
+                loadRecords(true);
             }
-        }
-        fetchRecords();
-        return () => { ignore = true; };
-    }, [resource, hasActivated, disabled, queryParamsString]);
+        });
+
+        return () => {
+            unsubscribe();
+        };
+    }, [resource, hasActivated, value, onClear, loadRecords]);
 
     const handleActivate = () => {
         if (!hasActivated && !disabled) {
             setHasActivated(true);
+        } else if (!disabled) {
+            // Muat ulang di latar belakang agar selalu sinkron ketika dibuka kembali
+            loadRecords();
         }
     };
 
@@ -80,7 +116,25 @@ export default function BackendLookupField({
 
     const handleQuickCreate = async (keyword) => {
         if (!keyword || !keyword.trim()) return null;
-        const trimmed = keyword.trim();
+        const trimmed = keyword.trim().toLowerCase();
+
+        // 1. Cek apakah satuan sudah ada di database / list items (case-insensitive)
+        const existingRecord = items.find((item) => {
+            const name = String(item?.name ?? item?.label ?? '').trim().toLowerCase();
+            return name === trimmed;
+        });
+
+        if (existingRecord) {
+            // Cek apakah item ini sedang difilter keluar (misal sudah dipilih sebagai satuan dasar / konversi lain)
+            if (filterOptionRef.current && !filterOptionRef.current(existingRecord)) {
+                showCrudErrorToast(`Satuan "${existingRecord.name || trimmed}" sudah digunakan pada barang ini.`);
+                return null;
+            }
+            onSelect?.(existingRecord);
+            showCrudSuccessToast(`Satuan "${existingRecord.name || trimmed}" dipilih.`);
+            return existingRecord;
+        }
+
         try {
             const payload = {
                 name: trimmed,
@@ -96,7 +150,10 @@ export default function BackendLookupField({
                     name: newRecord.name ?? label,
                     label: label,
                 };
-                setItems((prev) => [...prev, formattedRecord]);
+                setItems((prev) => {
+                    const exists = prev.some((it) => String(it.id) === String(newRecord.id));
+                    return exists ? prev : [...prev, formattedRecord];
+                });
                 onSelect?.(formattedRecord);
                 showCrudSuccessToast(`Satuan "${trimmed}" berhasil ditambahkan.`);
                 return formattedRecord;

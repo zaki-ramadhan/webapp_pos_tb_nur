@@ -55,7 +55,7 @@ class BackendRelationSync
 
         $keptIds = $normalizedRows
             ->pluck('id')
-            ->filter(fn ($id) => filled($id))
+            ->filter(fn ($id) => filled($id) && is_numeric($id) && (int) $id > 0)
             ->map(fn ($id) => (int) $id)
             ->all();
 
@@ -79,9 +79,10 @@ class BackendRelationSync
         foreach ($normalizedRows as $row) {
             $attributes = Arr::only($row, $fillableColumns);
             $id = Arr::get($row, 'id');
+            $numericId = (filled($id) && is_numeric($id) && (int) $id > 0) ? (int) $id : null;
 
-            if (filled($id)) {
-                $relationQuery->updateOrCreate(['id' => $id], $attributes);
+            if ($numericId !== null) {
+                $relationQuery->updateOrCreate(['id' => $numericId], $attributes);
                 continue;
             }
 
