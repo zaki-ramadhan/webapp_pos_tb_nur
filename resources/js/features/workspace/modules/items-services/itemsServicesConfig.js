@@ -17,14 +17,14 @@ const itemTabs = [
 ];
 
 export const defaultAccountValues = {
-    inventory: ['[110301] Persediaan Barang Dagang'],
-    sales: ['[410101] Pendapatan Penjualan Barang Dagang'],
-    salesReturn: [],
-    salesDiscount: ['[410103] Potongan / Diskon Penjualan'],
-    costOfGoodsSold: ['[510101] HPP Barang Dagang'],
-    purchaseReturn: ['[110301] Persediaan Barang Dagang'],
-    expense: ['[510102] Biaya Angkut Pembelian Barang'],
-    uninvoicedPurchase: [],
+    inventory: ['[115.000-00] Persediaan Barang'],
+    sales: ['[411.000-01] Penjualan Barang'],
+    salesReturn: ['[412.000-01] Retur Penjualan Barang'],
+    salesDiscount: ['[421.000-01] Potongan Penjualan Barang'],
+    costOfGoodsSold: ['[511.000-00] Beban Pokok Penjualan'],
+    purchaseReturn: ['[115.000-00] Persediaan Barang'],
+    expense: ['[611.002-14] Beban Operasional Lainnya'],
+    uninvoicedPurchase: ['[211.200-00] Utang Pembelian Belum Ditagih'],
 };
 
 export function buildDefaultAccountValues(preferences = {}) {

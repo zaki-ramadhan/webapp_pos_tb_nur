@@ -103,16 +103,18 @@ class GeneralJournalSyncService
         $userAdminId = DB::table('users')->where('email', 'piscokpiscok2610@gmail.com')->value('id')
             ?? (DB::table('users')->value('id') ?? 1);
 
-        $accBebanPenyKendaraan = DB::table('accounts')->where('code', '610202')->value('id');
-        $accAkmPenyKendaraan   = DB::table('accounts')->where('code', '120202')->value('id');
-        $accBebanPenyPeralatan = DB::table('accounts')->where('code', '610203')->value('id');
-        $accAkmPenyPeralatan   = DB::table('accounts')->where('code', '120203')->value('id');
-        $accBebanPerlengkapan  = DB::table('accounts')->where('code', '610103')->value('id');
-        $accPerlengkapanToko   = DB::table('accounts')->where('code', '120101')->value('id');
-        $accBebanSelisihKas    = DB::table('accounts')->where('code', '7101')->value('id')
+        $accBebanPenyKendaraan = DB::table('accounts')->where('code', '612.001-02')->value('id') ?? DB::table('accounts')->where('code', '610202')->value('id');
+        $accAkmPenyKendaraan   = DB::table('accounts')->where('code', '122.100-02')->value('id') ?? DB::table('accounts')->where('code', '120202')->value('id');
+        $accBebanPenyPeralatan = DB::table('accounts')->where('code', '612.001-03')->value('id') ?? DB::table('accounts')->where('code', '610203')->value('id');
+        $accAkmPenyPeralatan   = DB::table('accounts')->where('code', '122.100-03')->value('id') ?? DB::table('accounts')->where('code', '120203')->value('id');
+        $accBebanPerlengkapan  = DB::table('accounts')->where('code', '611.002-10')->value('id') ?? DB::table('accounts')->where('code', '610103')->value('id');
+        $accPerlengkapanToko   = DB::table('accounts')->where('code', '121.100-04')->value('id') ?? DB::table('accounts')->where('code', '120101')->value('id');
+        $accBebanSelisihKas    = DB::table('accounts')->where('code', '711.000-98')->value('id')
+            ?? DB::table('accounts')->where('code', '7101')->value('id')
             ?? DB::table('accounts')->where('code', 'like', '71%')->value('id');
-        $accKasKecilToko       = DB::table('accounts')->where('code', '110101')->value('id')
-            ?? (DB::table('accounts')->where('code', 'like', '1101%')->value('id') ?? 1);
+        $accKasKecilToko       = DB::table('accounts')->where('code', '111.101-01')->value('id')
+            ?? DB::table('accounts')->where('code', '110101')->value('id')
+            ?? (DB::table('accounts')->where('code', 'like', '111%')->value('id') ?? 1);
 
         $now = Carbon::now();
         $startYear = 2025;

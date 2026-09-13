@@ -8,35 +8,52 @@ import { HighlightText } from '@/features/workspace/shared/LookupPrimitives';
 export const DEFAULT_ACCOUNTS_PREFERENCES = {
     // Barang & Jasa
     'accounts-items-inventory': [
-        '[110301] Persediaan Barang Dagang',
+        '[115.000-00] Persediaan Barang Dagang',
     ],
     'accounts-items-sales': [
-        '[410101] Pendapatan Penjualan Barang Dagang',
+        '[411.000-01] Penjualan Barang Dagang',
     ],
-    'accounts-items-sales-return': [],
+    'accounts-items-sales-return': [
+        '[431.000-01] Retur Penjualan Barang',
+    ],
     'accounts-items-sales-discount': [
-        '[410103] Potongan / Diskon Penjualan',
+        '[421.000-01] Potongan Penjualan Barang',
     ],
     'accounts-items-cogs': [
-        '[510101] HPP Barang Dagang',
+        '[511.000-01] Beban Pokok Penjualan Barang Dagang',
     ],
     'accounts-items-purchase-return': [
-        '[110301] Persediaan Barang Dagang',
+        '[115.000-00] Persediaan Barang Dagang',
     ],
     'accounts-items-expense': [
-        '[510102] Biaya Angkut Pembelian Barang',
+        '[611.001-04] Beban Angkut Pembelian',
     ],
-    'accounts-items-uninvoiced-purchase': [],
+    'accounts-items-uninvoiced-purchase': [
+        '[213.000-99] Penerimaan Belum Tertagih',
+    ],
 
     // Penjualan/Pembelian
     'accounts-sales-purchase-discount': [
-        '[410103] Potongan / Diskon Penjualan',
+        '[421.000-01] Potongan Penjualan Barang',
     ],
 
     // Persediaan
     'accounts-inventory-adjustment': [
-        '[310101] Modal Usaha / Pemilik',
+        '[711.000-98] Biaya Selisih Penyesuaian Persediaan',
     ],
+};
+
+const PREFERENCE_ACCOUNT_FILTERS = {
+    'accounts-items-inventory': { account_type: 'Inventory' },
+    'accounts-items-sales': { account_type: ['Other Current Asset', 'Other Current Liability', 'Long Term Liability', 'Revenue', 'Other Revenue'] },
+    'accounts-items-sales-return': { account_type: ['Other Current Asset', 'Other Current Liability', 'Revenue', 'Other Revenue'] },
+    'accounts-items-sales-discount': { account_type: ['Other Current Asset', 'Other Current Liability', 'Revenue', 'Other Revenue'] },
+    'accounts-items-cogs': { account_type: 'Cost of Sales' },
+    'accounts-items-purchase-return': { account_type: ['Other Current Asset', 'Inventory', 'Other Current Liability', 'Cost of Sales', 'Expense', 'Other Expense'] },
+    'accounts-items-expense': { account_type: ['Other Current Asset', 'Inventory', 'Other Asset', 'Other Current Liability', 'Revenue', 'Cost of Sales', 'Expense', 'Other Expense'] },
+    'accounts-items-uninvoiced-purchase': { account_type: 'Other Current Liability' },
+    'accounts-sales-purchase-discount': { account_type: ['Other Current Asset', 'Other Current Liability', 'Cost of Sales', 'Expense', 'Other Expense'] },
+    'accounts-inventory-adjustment': { account_type: ['Equity', 'Expense', 'Other Expense'] },
 };
 
 const ACCOUNT_SUB_TABS = [
@@ -54,7 +71,9 @@ function AccountFieldRow({
     placeholder = 'Cari/Pilih...',
     disabled = false,
     note = null,
+    queryParams = null,
 }) {
+    const effectiveQueryParams = queryParams || PREFERENCE_ACCOUNT_FILTERS[fieldId] || {};
     const rawValue = values[fieldId] !== undefined ? values[fieldId] : DEFAULT_ACCOUNTS_PREFERENCES[fieldId];
     const currentList = multi
         ? (Array.isArray(rawValue) ? rawValue : (rawValue ? [rawValue] : []))
@@ -76,6 +95,7 @@ function AccountFieldRow({
                     values={currentList}
                     placeholder={placeholder}
                     searchLabel={`Cari ${label}`}
+                    queryParams={effectiveQueryParams}
                     getOptionLabel={buildAccountLookupLabel}
                     getOptionSearchText={(account) => {
                         if (typeof account === 'string') return account;

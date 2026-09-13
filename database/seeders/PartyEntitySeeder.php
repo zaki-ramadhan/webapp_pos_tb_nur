@@ -10,8 +10,9 @@ class PartyEntitySeeder extends Seeder
     public function run(): void
     {
         $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id') ?? DB::table('currencies')->value('id') ?? 1;
-        $accBebanGajiId = DB::table('accounts')->where('code', '610101')->value('id')
+        $accBebanGajiId = DB::table('accounts')->where('code', '611.001-01')->value('id')
             ?? DB::table('accounts')->where('code', '611.002-01')->value('id')
+            ?? DB::table('accounts')->where('code', '610101')->value('id')
             ?? DB::table('accounts')->value('id');
 
         $branchId = DB::table('branches')->first()->id ?? 1;

@@ -27,9 +27,9 @@ class TransactionDataSeeder extends Seeder
         $currentDay = (int) $now->day;
         $startYear = $currentYear - 1;
 
-        $accKasKecil  = DB::table('accounts')->where('code', '110101')->value('id') ?? DB::table('accounts')->value('id');
-        $accBankBCA   = DB::table('accounts')->where('code', '110102')->value('id') ?? $accKasKecil;
-        $accBankMnd   = DB::table('accounts')->where('code', '110103')->value('id') ?? $accKasKecil;
+        $accKasKecil  = DB::table('accounts')->where('code', '111.101-01')->value('id') ?? DB::table('accounts')->where('code', '110101')->value('id') ?? DB::table('accounts')->value('id');
+        $accBankBCA   = DB::table('accounts')->where('code', '111.102-01')->value('id') ?? DB::table('accounts')->where('code', '110102')->value('id') ?? $accKasKecil;
+        $accBankMnd   = DB::table('accounts')->where('code', '111.102-04')->value('id') ?? DB::table('accounts')->where('code', '110103')->value('id') ?? $accKasKecil;
 
         $customersMap = DB::table('customers')->pluck('id', 'code')->toArray();
         $suppliersMap = DB::table('suppliers')->pluck('id', 'code')->toArray();
@@ -945,7 +945,9 @@ class TransactionDataSeeder extends Seeder
         }
 
         // 17. Cash Payments
-        $accPerlengkapan = DB::table('accounts')->where('code', '120101')->value('id') ?? 18;
+        $accPerlengkapan = DB::table('accounts')->where('code', '121.100-04')->value('id')
+            ?? DB::table('accounts')->where('code', '120101')->value('id')
+            ?? (DB::table('accounts')->value('id') ?? 1);
         $cpSeq = 0;
         $monthlyCpSeq = [];
         for ($year = $startYear; $year <= $currentYear; $year++) {
@@ -1030,7 +1032,9 @@ class TransactionDataSeeder extends Seeder
         }
 
         // 18. Cash Receipts
-        $accPendapatanLain = DB::table('accounts')->where('code', '410102')->value('id') ?? 47;
+        $accPendapatanLain = DB::table('accounts')->where('code', '811.000-99')->value('id')
+            ?? DB::table('accounts')->where('code', '410102')->value('id')
+            ?? (DB::table('accounts')->value('id') ?? 1);
         $crSeq = 0;
         for ($year = $startYear; $year <= $currentYear; $year++) {
             $maxM = ($year === $currentYear) ? $currentMonth : 12;
@@ -1108,15 +1112,19 @@ class TransactionDataSeeder extends Seeder
         // 20. General Journal Entries (akan disinkronkan otomatis di akhir setelah seluruh transaksi operasional terisi)
 
         // 21. Expense Entries (Monthly Expenses - Calibrated with Realistic Variety & Varied Status)
-        $accUtangBeban = DB::table('accounts')->where('code', '210202')->value('id')
+        $accUtangBeban = DB::table('accounts')->where('code', '214.100-01')->value('id')
+            ?? DB::table('accounts')->where('code', '210202')->value('id')
             ?? DB::table('accounts')->where('code', '2102')->value('id')
-            ?? 35;
-        $accBebanListrik = DB::table('accounts')->where('code', '610102')->value('id')
+            ?? (DB::table('accounts')->value('id') ?? 1);
+        $accBebanListrik = DB::table('accounts')->where('code', '611.002-02')->value('id')
+            ?? DB::table('accounts')->where('code', '610102')->value('id')
             ?? DB::table('accounts')->where('code', '610201')->value('id')
-            ?? 66;
-        $accBebanBBM = DB::table('accounts')->where('code', '610103')->value('id')
+            ?? (DB::table('accounts')->value('id') ?? 1);
+        $accBebanBBM = DB::table('accounts')->where('code', '611.001-08')->value('id')
+            ?? DB::table('accounts')->where('code', '610103')->value('id')
             ?? $accBebanListrik;
-        $accBebanLain = DB::table('accounts')->where('code', '710102')->value('id')
+        $accBebanLain = DB::table('accounts')->where('code', '711.000-99')->value('id')
+            ?? DB::table('accounts')->where('code', '710102')->value('id')
             ?? $accBebanListrik;
 
         $monthsList = [

@@ -353,9 +353,11 @@ class FinanceBackendResources
 
     public static function getOrCreateEquitasSaldoAwalAccount(): Account
     {
-        // Gunakan akun Modal Usaha / Pemilik (310101) yang sudah ada sebagai counterpart saldo awal
-        $account = Account::where('code', '310101')
+        // Gunakan akun Modal Setoran Awal (311.000-01) atau Modal Usaha / Pemilik (310101) sebagai counterpart saldo awal
+        $account = Account::where('code', '311.000-01')
+            ->orWhere('code', '310101')
             ->orWhere('code', '300001')
+            ->orWhere('name', 'Modal Setoran Awal')
             ->orWhere('name', 'Modal Usaha / Pemilik')
             ->orWhere('name', 'Equitas Saldo Awal')
             ->orWhere('name', 'Ekuitas Saldo Awal')
