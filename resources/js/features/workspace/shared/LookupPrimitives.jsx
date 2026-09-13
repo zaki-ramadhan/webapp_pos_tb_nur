@@ -54,6 +54,7 @@ export function LookupDropdownSurface({ className = '', children, maxHeightLimit
             side={side}
             className={className}
             anchorRef={anchorRef}
+            stopMouseDownPropagation={false}
         >
             {children}
         </PortalDropdown>
