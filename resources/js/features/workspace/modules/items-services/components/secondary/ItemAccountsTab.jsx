@@ -8,7 +8,7 @@ import { DEFAULT_ACCOUNTS_PREFERENCES } from '@/features/workspace/preferences/P
 
 function isRecordInAllowedList(record, allowedList) {
     if (!Array.isArray(allowedList) || allowedList.length === 0) {
-        return false;
+        return true;
     }
     const label = buildAccountLookupLabel(record, 'accounts');
     const code = String(record?.code ?? '').trim();
@@ -64,23 +64,24 @@ export default function ItemAccountsTab({ config, values, onChange }) {
                                 ? [prefRaw.trim()]
                                 : (DEFAULT_ACCOUNTS_PREFERENCES[prefKey] ?? []));
 
-                        const currentValues = Array.isArray(values?.accounts?.[key])
-                            ? values.accounts[key]
-                            : [];
+                        const rawVal = values?.accounts?.[key];
+                        const currentValue = Array.isArray(rawVal)
+                            ? (rawVal[0] ?? '')
+                            : (typeof rawVal === 'string' ? rawVal : '');
 
                         return (
                             <FormRow key={key} label={label}>
                                 <AccountLookupField
-                                    values={currentValues}
+                                    value={currentValue}
                                     placeholder="Cari/Pilih..."
                                     searchLabel={`Cari akun ${label}`}
                                     dialogTitle={`Pilih akun ${label}`}
                                     filterRows={(record) => isRecordInAllowedList(record, allowedList)}
-                                    onRemove={(item) => {
+                                    onRemove={() => {
                                         onChange(idKey, null);
                                         onChange('accounts', {
                                             ...values.accounts,
-                                            [key]: currentValues.filter((value) => value !== item),
+                                            [key]: [],
                                         });
                                     }}
                                     onSelectAccount={(record, accountLabel) => {

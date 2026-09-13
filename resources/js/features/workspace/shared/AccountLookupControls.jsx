@@ -85,8 +85,8 @@ export function AccountLookupField({
                     id={id}
                     value={controller.draftValue}
                     selectedValue={controller.selectedValue}
-                    placeholder={placeholder}
-                    searchLabel={searchLabel}
+                    placeholder={resolvedPlaceholder}
+                    searchLabel={resolvedSearchLabel}
                     disabled={disabled}
                     className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus' : 'border-slate-400'} ${className}`.trim()}
                     inputClassName="text-xs sm:text-sm text-brand-dark"
