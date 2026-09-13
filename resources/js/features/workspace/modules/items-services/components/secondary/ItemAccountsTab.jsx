@@ -66,7 +66,7 @@ export default function ItemAccountsTab({ config, values, onChange }) {
 
                         const currentValues = Array.isArray(values?.accounts?.[key])
                             ? values.accounts[key]
-                            : (allowedList.length > 0 ? [allowedList[0]] : []);
+                            : [];
 
                         return (
                             <FormRow key={key} label={label}>

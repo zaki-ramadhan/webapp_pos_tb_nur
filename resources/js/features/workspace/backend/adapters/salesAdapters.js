@@ -247,16 +247,15 @@ export function mapProductRow(record) {
         brandName: record.brand?.name ?? null,
         categoryFilter: record.category?.name ?? 'Umum',
         kind: normalizedKind,
-        inventoryAccountId: record.inventory_account_id ?? null,
-        salesAccountId: record.sales_account_id ?? null,
-        salesReturnAccountId: record.sales_return_account_id ?? null,
-        salesDiscountAccountId: record.sales_discount_account_id ?? null,
-        cogsAccountId: record.cogs_account_id ?? null,
-        purchaseReturnAccountId: record.purchase_return_account_id ?? null,
-        uninvoicedPurchaseAccountId: record.uninvoiced_purchase_account_id ?? null,
-        
-      // Pemetaan kolom baru untuk Settings Table
+        inventoryAccountId: record.inventory_account_id ?? record.inventoryAccountId ?? record.inventoryAccount?.id ?? null,
+        cogsAccountId: record.cogs_account_id ?? record.cogsAccountId ?? record.cogsAccount?.id ?? null,
+        expenseAccountId: record.expense_account_id ?? record.expenseAccountId ?? record.expenseAccount?.id ?? null,
+        salesAccountId: record.sales_account_id ?? record.salesAccountId ?? record.salesAccount?.id ?? null,
+        salesReturnAccountId: record.sales_return_account_id ?? record.salesReturnAccountId ?? record.salesReturnAccount?.id ?? null,
+        salesDiscountAccountId: record.sales_discount_account_id ?? record.salesDiscountAccountId ?? record.salesDiscountAccount?.id ?? null,
+        purchaseReturnAccountId: record.purchase_return_account_id ?? record.purchaseReturnAccountId ?? record.purchaseReturnAccount?.id ?? null,
 
+        // Pemetaan kolom baru untuk Settings Table
         purchaseUnit: record.purchase_unit?.name ?? record.purchase_unit?.code ?? '',
         barcode: record.barcode ?? '',
         isActiveText: record.is_active ? 'Tidak' : 'Ya',
@@ -264,13 +263,13 @@ export function mapProductRow(record) {
         substituteProduct: record.substitute_product?.name ?? null,
 
         accounts: {
-            inventory: buildAccountVal(record.inventory_account),
-            sales: buildAccountVal(record.sales_account),
-            salesReturn: buildAccountVal(record.sales_return_account),
-            salesDiscount: buildAccountVal(record.sales_discount_account),
-            costOfGoodsSold: buildAccountVal(record.cogs_account),
-            purchaseReturn: buildAccountVal(record.purchase_return_account),
-            uninvoicedPurchase: buildAccountVal(record.uninvoiced_purchase_account),
+            inventory: buildAccountVal(record.inventory_account ?? record.inventoryAccount),
+            costOfGoodsSold: buildAccountVal(record.cogs_account ?? record.cogsAccount),
+            expense: buildAccountVal(record.expense_account ?? record.expenseAccount),
+            sales: buildAccountVal(record.sales_account ?? record.salesAccount),
+            salesReturn: buildAccountVal(record.sales_return_account ?? record.salesReturnAccount),
+            salesDiscount: buildAccountVal(record.sales_discount_account ?? record.salesDiscountAccount),
+            purchaseReturn: buildAccountVal(record.purchase_return_account ?? record.purchaseReturnAccount),
         },
     };
 }

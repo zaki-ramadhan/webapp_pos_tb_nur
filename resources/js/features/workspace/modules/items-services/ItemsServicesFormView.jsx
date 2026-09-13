@@ -285,12 +285,12 @@ export default function ItemsServicesFormView({
                         .filter((id) => id != null && !isNaN(Number(id)) && Number(id) > 0)
                         .map(Number),
                     inventory_account_id: values.inventoryAccountId ?? null,
+                    cogs_account_id: values.cogsAccountId ?? null,
+                    expense_account_id: values.expenseAccountId ?? null,
                     sales_account_id: values.salesAccountId ?? null,
                     sales_return_account_id: values.salesReturnAccountId ?? null,
                     sales_discount_account_id: values.salesDiscountAccountId ?? null,
-                    cogs_account_id: values.cogsAccountId ?? null,
                     purchase_return_account_id: values.purchaseReturnAccountId ?? null,
-                    uninvoiced_purchase_account_id: values.uninvoicedPurchaseAccountId ?? null,
                     opening_stock_rows: (values.openingStockRows ?? [])
                         .filter((r) => !r.__fromDb)
                         .map((r) => ({
