@@ -304,19 +304,29 @@ export default function ItemsServicesFormView({
                             date: r.date || null,
                         })),
                     unit_conversions: (values.unitConversions ?? [])
-                        .map((conv) => ({
-                            id: String(conv.id).startsWith('conversion-') ? undefined : conv.id,
-                            unit_id: conv.unit?.[0]?.id ?? conv.unitId ?? null,
-                            quantity: conv.quantity ? parseAmountInput(conv.quantity) : 0,
-                        }))
+                        .map((conv) => {
+                            const numericId = typeof conv.id === 'number'
+                                ? conv.id
+                                : (typeof conv.id === 'string' && /^\d+$/.test(conv.id) ? Number(conv.id) : null);
+                            return {
+                                id: numericId && numericId > 0 ? numericId : undefined,
+                                unit_id: conv.unit?.[0]?.id ?? conv.unitId ?? null,
+                                quantity: conv.quantity ? parseAmountInput(conv.quantity) : 0,
+                            };
+                        })
                         .filter((conv) => conv.unit_id && conv.quantity > 0),
                     group_items: (values.groupItems ?? [])
-                        .map((item) => ({
-                            id: String(item.id).startsWith('group-item-') ? undefined : item.id,
-                            child_product_id: item.child_product_id ?? item.child_product?.id ?? item.id,
-                            unit_id: item.unit_id ?? item.unitId ?? null,
-                            quantity: item.quantity ? parseAmountInput(item.quantity) : 1,
-                        }))
+                        .map((item) => {
+                            const numericId = typeof item.id === 'number'
+                                ? item.id
+                                : (typeof item.id === 'string' && /^\d+$/.test(item.id) ? Number(item.id) : null);
+                            return {
+                                id: numericId && numericId > 0 ? numericId : undefined,
+                                child_product_id: item.child_product_id ?? item.child_product?.id ?? item.id,
+                                unit_id: item.unit_id ?? item.unitId ?? null,
+                                quantity: item.quantity ? parseAmountInput(item.quantity) : 1,
+                            };
+                        })
                         .filter((item) => item.child_product_id && item.quantity > 0),
                     expected_updated_at: detailRow?.updated_at ?? detailRow?.__updatedAt ?? null,
                 };

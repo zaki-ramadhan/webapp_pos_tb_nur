@@ -71,7 +71,7 @@ if (typeof window !== 'undefined') {
     window.__notifyLiveUpdateChange = notifyLiveUpdateChange;
 }
 
-function subscribeToLiveUpdates(callback) {
+export function subscribeToLiveUpdates(callback) {
     liveUpdateSubscribers.add(callback);
 
     if (!globalLiveUpdateInterval && typeof window !== 'undefined') {
@@ -408,6 +408,17 @@ if (typeof window !== 'undefined') {
             if (isMatch) {
                 globalCache.delete(key);
             }
+        }
+
+        if (window.sessionStorage) {
+            try {
+                for (let i = window.sessionStorage.length - 1; i >= 0; i--) {
+                    const k = window.sessionStorage.key(i);
+                    if (k && k.toLowerCase().includes(normalizedPageId)) {
+                        window.sessionStorage.removeItem(k);
+                    }
+                }
+            } catch {}
         }
     };
 }
