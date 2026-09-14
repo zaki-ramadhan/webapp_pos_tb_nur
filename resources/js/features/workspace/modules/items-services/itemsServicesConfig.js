@@ -303,12 +303,16 @@ function buildFallbackDetailRecord(row, config) {
             const qty = uc.quantity !== undefined && uc.quantity !== null && uc.quantity !== ''
                 ? formatAmountInput(uc.quantity)
                 : '';
+            const price = uc.price !== undefined && uc.price !== null && uc.price !== ''
+                ? formatAmountInput(uc.price)
+                : '';
             return {
                 id: uc.id ?? null,
                 unitId: uId,
                 unitName: uName,
                 unit: uName ? [{ id: uId, name: uName }] : (uId ? [{ id: uId, name: '' }] : []),
                 quantity: qty,
+                price: price,
             };
         }),
         brand: (brandName && brandName !== '-') ? [{ id: brandId, name: brandName }] : [],

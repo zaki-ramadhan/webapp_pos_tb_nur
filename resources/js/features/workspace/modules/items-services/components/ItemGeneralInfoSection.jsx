@@ -16,7 +16,7 @@ import {
     WORKSPACE_INACTIVE_HINT,
 } from '@/features/workspace/shared/workspaceAvailability';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
-import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 function formatQuantityInput(rawVal) {
     let str = String(rawVal ?? '');
@@ -79,12 +79,17 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
     const handleTrailingUnitSelect = (option) => {
         const unitName = option?.name ?? option?.label ?? '';
         const unitId = option?.id ?? null;
+        const basePrice = parseAmountInput(values.sellPriceLevel1 || 0);
+        const qtyNum = trailingQty ? parseAmountInput(trailingQty) : 1;
+        const defaultConvPrice = (basePrice > 0 && qtyNum > 0) ? formatAmountInput(basePrice * qtyNum) : '';
+
         const newConv = {
             id: 'conv-' + Date.now(),
             unitId: unitId,
             unitName: unitName,
             unit: [{ id: unitId, name: unitName }],
             quantity: trailingQty ? formatQuantityInput(trailingQty) : '',
+            price: defaultConvPrice,
         };
         onChange('unitConversions', [...conversions, newConv]);
         setTrailingQty('');

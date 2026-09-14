@@ -11,12 +11,14 @@ class ProductUnitConversion extends DomainModel
         'product_id',
         'unit_id',
         'quantity',
+        'price',
     ];
 
     protected function casts(): array
     {
         return [
             'quantity' => 'decimal:4',
+            'price' => 'decimal:2',
         ];
     }
 

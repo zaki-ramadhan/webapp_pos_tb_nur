@@ -38,9 +38,10 @@ class ProductMultiUnitConversionTest extends TestCase
             'name' => 'Barang Multi Satuan',
             'product_type' => 'Persediaan',
             'base_unit_id' => $pcs->id,
+            'default_sale_price' => 50000,
             'unit_conversions' => [
-                ['unit_id' => $box->id, 'quantity' => 24],
-                ['unit_id' => $karton->id, 'quantity' => 120],
+                ['unit_id' => $box->id, 'quantity' => 24, 'price' => 1100000],
+                ['unit_id' => $karton->id, 'quantity' => 120, 'price' => 5200000],
             ],
         ]);
 
@@ -51,11 +52,13 @@ class ProductMultiUnitConversionTest extends TestCase
             'product_id' => $productId,
             'unit_id' => $box->id,
             'quantity' => 24,
+            'price' => 1100000,
         ]);
         $this->assertDatabaseHas('product_unit_conversions', [
             'product_id' => $productId,
             'unit_id' => $karton->id,
             'quantity' => 120,
+            'price' => 5200000,
         ]);
 
         // 2. Fetch product via GET and verify relations are loaded

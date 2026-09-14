@@ -186,5 +186,50 @@ class InventoryEntitySeeder extends Seeder
                 ['parent_product_id' => $groupProdId, 'child_product_id' => $productIds['THN-001'], 'unit_id' => $uKlg, 'quantity' => 1, 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
+
+        if (DB::getSchemaBuilder()->hasTable('product_unit_conversions')) {
+            DB::table('product_unit_conversions')->insert([
+                [
+                    'product_id' => $productIds['PAK-050'],
+                    'unit_id' => $uDus,
+                    'quantity' => 20,
+                    'price' => 410000,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                [
+                    'product_id' => $productIds['LEM-045'],
+                    'unit_id' => $uDus,
+                    'quantity' => 24,
+                    'price' => 285000,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                [
+                    'product_id' => $productIds['KUS-003'],
+                    'unit_id' => $uDus,
+                    'quantity' => 12,
+                    'price' => 200000,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                [
+                    'product_id' => $productIds['KRN-001'],
+                    'unit_id' => $uDus,
+                    'quantity' => 10,
+                    'price' => 420000,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                [
+                    'product_id' => $productIds['KWT-001'],
+                    'unit_id' => $uRol,
+                    'quantity' => 25,
+                    'price' => 575000,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+            ]);
+        }
     }
 }

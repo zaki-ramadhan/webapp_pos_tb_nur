@@ -186,7 +186,7 @@ class CatalogBackendResources
                                     $record,
                                     'unitConversions',
                                     $payload['unit_conversions'],
-                                    ['unit_id', 'quantity'],
+                                    ['unit_id', 'quantity', 'price'],
                                     fn (array $row): bool => filled($row['unit_id'] ?? null),
                                 );
                             }
@@ -387,6 +387,7 @@ class CatalogBackendResources
             'unit_conversions.*.id' => ['nullable'],
             'unit_conversions.*.unit_id' => ['nullable'],
             'unit_conversions.*.quantity' => ['nullable'],
+            'unit_conversions.*.price' => ['nullable'],
         ];
     }
 }
