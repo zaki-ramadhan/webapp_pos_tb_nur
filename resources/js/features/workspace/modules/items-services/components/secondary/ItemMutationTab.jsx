@@ -141,9 +141,9 @@ export default function ItemMutationTab({ productId, product = null, values = nu
     return (
         <div className="space-y-2">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 w-full py-1 items-center">
-                {/* Parent 1: Tanggal 1, s/d, Tanggal 2, Refresh - jarak isinya space-around */}
-                <div className="flex items-center justify-around gap-2 w-full">
-                    <div className="flex-1 max-w-[140px] sm:max-w-[170px]">
+                {/* Parent 1: Tanggal 1, s/d, Tanggal 2, Refresh */}
+                <div className="flex items-center gap-2">
+                    <div className="w-[135px] sm:w-[155px] shrink-0">
                         <TransactionDateInput
                             value={dateFrom}
                             onChange={(nextVal) => {
@@ -162,7 +162,7 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                         />
                     </div>
                     <span className="text-sm text-text-darkest font-normal shrink-0">s/d</span>
-                    <div className="flex-1 max-w-[140px] sm:max-w-[170px]">
+                    <div className="w-[135px] sm:w-[155px] shrink-0">
                         <TransactionDateInput
                             value={dateTo}
                             minDate={dateFrom}
