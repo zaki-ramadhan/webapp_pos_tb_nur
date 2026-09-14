@@ -1,7 +1,6 @@
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
-import { showWarningToast } from '@/components/feedback/toast';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import SalesReceiptInvoiceModal from '@/features/workspace/modules/sales-receipt/SalesReceiptInvoiceModal';
@@ -90,16 +89,6 @@ export default function SalesReceiptFormView({
                                         placeholder="Cari/Pilih Pelanggan..."
                                         searchLabel="Cari pelanggan"
                                         clearDisabled={hasInvoices}
-                                        onBeforeClear={() => {
-                                            if (hasInvoices) {
-                                                showWarningToast({
-                                                    title: 'Perhatian',
-                                                    message: 'Hapus data faktur pada tabel terlebih dahulu sebelum menghapus pelanggan.',
-                                                });
-                                                return false;
-                                            }
-                                            return true;
-                                        }}
                                         onSelectAccount={(record, label) => {
                                             setValues((current) => {
                                                 const nextCustomerId = record ? record.id : null;
