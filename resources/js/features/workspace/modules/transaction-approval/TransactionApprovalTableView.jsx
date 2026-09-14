@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
     DataTable,
     DataTableBody,
@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/DataTable';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { PlusIcon, RefreshIcon, CogIcon } from '@/features/workspace/shared/Icons';
+import { PlusIcon, RefreshIcon, CogIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort, { sortRows } from '@/features/workspace/shared/useTableSort';
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
@@ -19,7 +19,37 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
     const isServerSearch = Boolean(table.onSearch || table.pagination?.onSearch);
     const isServerSort = Boolean(table.onSort || table.pagination?.onSort);
 
-    const filteredRows = table.rows ?? [];
+    const [keyword, setKeyword] = useState(table.search ?? table.pagination?.search ?? '');
+    const isFirstMount = useRef(true);
+    const prevKeywordRef = useRef(keyword);
+
+    useEffect(() => {
+        if (!isServerSearch) return;
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+        if (prevKeywordRef.current === keyword) {
+            return;
+        }
+        prevKeywordRef.current = keyword;
+
+        const timer = setTimeout(() => {
+            const onSearch = table.onSearch || table.pagination?.onSearch;
+            onSearch?.(keyword);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [keyword, isServerSearch, table.onSearch, table.pagination?.onSearch]);
+
+    const filteredRows = useMemo(() => {
+        if (isServerSearch || !keyword.trim()) {
+            return table.rows ?? [];
+        }
+        const q = keyword.trim().toLowerCase();
+        return (table.rows ?? []).filter((row) =>
+            Object.values(row).some((val) => String(val ?? '').toLowerCase().includes(q))
+        );
+    }, [isServerSearch, keyword, table.rows]);
 
     const { sortKey, sortDir, handleSort: handleClientSort } = useTableSort(filteredRows);
     const activeSortKey = isServerSort ? (table.sortBy || table.pagination?.sortBy || sortKey) : sortKey;
@@ -50,6 +80,13 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                 createButton={{ label: table.createLabel, onClick: onCreate, icon: <PlusIcon className="h-6 w-6" /> }}
                 refreshButton={{ label: table.refreshLabel, onClick: onRefresh, icon: <RefreshIcon className="h-5 w-5" /> }}
                 menuButton={{ label: table.actionsLabel, icon: <CogIcon className="h-5 w-5" />, buttonClassName: 'w-[70px]', items: table.menuItems }}
+                search={{
+                    value: keyword,
+                    onChange: (event) => setKeyword(event.target.value),
+                    placeholder: 'Cari data...',
+                    widthClassName: 'sm:w-[340px]',
+                    trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
+                }}
                 pageValue={table.pageValue}
             />
 
