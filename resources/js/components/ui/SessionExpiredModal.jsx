@@ -15,7 +15,7 @@ export default function SessionExpiredModal({ open, onClose, onConfirm }) {
             open={open}
             onClose={onClose}
             title="Sesi Login Berakhir"
-            maxWidthClassName="max-w-[440px]"
+            maxWidthClassName="max-w-[480px]"
             footer={
                 <div className="flex justify-end">
                     <Button onClick={onConfirm} variant="primary" size="md" className="min-w-[80px] rounded-[4px]">
@@ -27,7 +27,7 @@ export default function SessionExpiredModal({ open, onClose, onConfirm }) {
             <div className="flex items-start gap-5">
                 <SessionExpiredIllustration />
                 <div className="min-w-0 flex-1 pt-2">
-                    <p className="text-xs sm:text-sm leading-6 text-brand-dark">
+                    <p className="text-sm sm:text-base leading-6 text-slate-800 font-normal">
                         Sesi login Anda telah berakhir. Silakan login kembali.
                     </p>
                 </div>
