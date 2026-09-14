@@ -141,8 +141,8 @@ export default function ItemMutationTab({ productId, product = null, values = nu
     return (
         <div className="space-y-2">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 w-full py-1 items-center">
-                {/* Parent 1: Tanggal 1, s/d, Tanggal 2, Refresh - jarak isinya evenly spaced */}
-                <div className="flex items-center justify-between sm:justify-evenly gap-2 w-full">
+                {/* Parent 1: Tanggal 1, s/d, Tanggal 2, Refresh - jarak isinya space-around */}
+                <div className="flex items-center justify-around gap-2 w-full">
                     <div className="flex-1 max-w-[140px] sm:max-w-[170px]">
                         <TransactionDateInput
                             value={dateFrom}
@@ -188,18 +188,18 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                     />
                 </div>
 
-                {/* Parent 2: Dropdown Satuan & Input Pencarian - space between */}
+                {/* Parent 2: Dropdown Satuan & Input Pencarian - stretch search input */}
                 <div className="flex items-center justify-between gap-3 w-full">
                     <div className="w-[140px] sm:w-[170px] shrink-0">
                         <SelectField
                             value={selectedMode}
                             onChange={(e) => setSelectedMode(e.target.value)}
                             className="h-[40px] rounded-[4px] border-ui-border w-full"
-                            selectClassName="text-sm text-brand-dark sm:text-xs sm:text-sm"
+                            selectClassName="text-sm text-brand-dark"
                             options={unitOptions}
                         />
                     </div>
-                    <div className="flex-1 max-w-[240px] sm:max-w-[280px]">
+                    <div className="flex-1 min-w-0 w-full">
                         <TextInput
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
@@ -229,7 +229,7 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                                 </button>
                             }
                             className="h-[40px] rounded-[4px] border-ui-border w-full"
-                            inputClassName="text-sm text-brand-dark sm:text-xs sm:text-sm py-1 h-full"
+                            inputClassName="text-sm text-brand-dark py-1 h-full"
                             trailingClassName="px-2.5"
                             containerClassName="w-full"
                         />
