@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import TextInput from '@/components/ui/TextInput';
 import SelectField from '@/components/ui/SelectField';
 import {
     DataTable,
@@ -10,7 +10,8 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import Pagination from '@/components/ui/Pagination';
-import { RefreshIcon } from '@/features/workspace/shared/Icons';
+import RefreshButton from '@/features/workspace/shared/RefreshButton';
+import { SearchIcon } from '@/features/workspace/shared/Icons';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { extractBackendRows, listBackendResource, clearBackendCache } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatAmountInput, parseAmountInput, formatMultiUnitQuantity } from '@/features/workspace/shared/amountFormatting';
@@ -78,6 +79,14 @@ export default function ItemMutationTab({ productId, product = null, values = nu
         setPage(1);
     }, [productId]);
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setAppliedSearch(search.trim());
+            setPage(1);
+        }, 350);
+        return () => clearTimeout(timer);
+    }, [search]);
+
     const fetchMutations = async (force = false) => {
         if (!productId) return;
         setLoading(true);
@@ -131,84 +140,100 @@ export default function ItemMutationTab({ productId, product = null, values = nu
 
     return (
         <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-3 py-1">
-                <TransactionDateInput
-                    value={dateFrom}
-                    onChange={(e) => {
-                        const nextDateFrom = typeof e === 'string' ? e : e?.target?.value;
-                        if (nextDateFrom) {
-                            setDateFrom(nextDateFrom);
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 w-full py-1 items-center">
+                {/* Parent 1: Tanggal 1, s/d, Tanggal 2, Refresh - jarak isinya evenly spaced */}
+                <div className="flex items-center justify-between sm:justify-evenly gap-2 w-full">
+                    <div className="flex-1 max-w-[140px] sm:max-w-[170px]">
+                        <TransactionDateInput
+                            value={dateFrom}
+                            onChange={(nextVal) => {
+                                const val = typeof nextVal === 'string' ? nextVal : nextVal?.target?.value;
+                                if (val) {
+                                    setDateFrom(val);
+                                    setPage(1);
+                                    if (dateTo && val > dateTo) {
+                                        setDateTo(val);
+                                    }
+                                }
+                            }}
+                            className="h-[40px] rounded-[4px] border-ui-border w-full"
+                            inputClassName="text-sm text-brand-dark py-1 h-full"
+                            trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
+                        />
+                    </div>
+                    <span className="text-sm text-text-darkest font-normal shrink-0">s/d</span>
+                    <div className="flex-1 max-w-[140px] sm:max-w-[170px]">
+                        <TransactionDateInput
+                            value={dateTo}
+                            minDate={dateFrom}
+                            onChange={(nextVal) => {
+                                const val = typeof nextVal === 'string' ? nextVal : nextVal?.target?.value;
+                                if (val) {
+                                    setDateTo(val);
+                                    setPage(1);
+                                }
+                            }}
+                            className="h-[40px] rounded-[4px] border-ui-border w-full"
+                            inputClassName="text-sm text-brand-dark py-1 h-full"
+                            trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
+                        />
+                    </div>
+                    <RefreshButton
+                        label="Muat ulang"
+                        onClick={() => {
                             setPage(1);
-                            if (dateTo && nextDateFrom > dateTo) {
-                                setDateTo(nextDateFrom);
-                            }
-                        }
-                    }}
-                    className="w-[130px] sm:w-[140px]"
-                />
-                <span className="text-xs sm:text-sm text-slate-500 font-normal px-0.5">s/d</span>
-                <TransactionDateInput
-                    value={dateTo}
-                    minDate={dateFrom}
-                    onChange={(e) => {
-                        const nextDateTo = typeof e === 'string' ? e : e?.target?.value;
-                        if (nextDateTo) {
-                            setDateTo(nextDateTo);
-                            setPage(1);
-                        }
-                    }}
-                    className="w-[130px] sm:w-[140px]"
-                />
-                <button
-                    type="button"
-                    onClick={() => {
-                        setPage(1);
-                        fetchMutations(true);
-                    }}
-                    disabled={loading}
-                    aria-label="Muat ulang"
-                    className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer disabled:opacity-60 shrink-0"
-                >
-                    <RefreshIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                </button>
-
-                {/* Unit Dropdown */}
-                <div className="w-[130px] sm:w-[150px] shrink-0">
-                    <SelectField
-                        value={selectedMode}
-                        onChange={(e) => setSelectedMode(e.target.value)}
-                        className="h-[34px] rounded-[4px] border-ui-border"
-                        selectClassName="text-xs sm:text-sm text-brand-dark"
-                        options={unitOptions}
+                            fetchMutations(true);
+                        }}
+                        loading={loading}
                     />
                 </div>
 
-                {/* Search Input */}
-                <div className="relative w-[180px] sm:w-[210px] shrink-0">
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
+                {/* Parent 2: Dropdown Satuan & Input Pencarian - space between */}
+                <div className="flex items-center justify-between gap-3 w-full">
+                    <div className="w-[140px] sm:w-[170px] shrink-0">
+                        <SelectField
+                            value={selectedMode}
+                            onChange={(e) => setSelectedMode(e.target.value)}
+                            className="h-[40px] rounded-[4px] border-ui-border w-full"
+                            selectClassName="text-sm text-brand-dark sm:text-xs sm:text-sm"
+                            options={unitOptions}
+                        />
+                    </div>
+                    <div className="flex-1 max-w-[240px] sm:max-w-[280px]">
+                        <TextInput
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    setAppliedSearch(search.trim());
+                                    setPage(1);
+                                }
+                            }}
+                            onClear={() => {
+                                setSearch('');
+                                setAppliedSearch('');
                                 setPage(1);
-                                setAppliedSearch(search.trim());
+                            }}
+                            placeholder="Cari/Pilih..."
+                            trailing={
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setAppliedSearch(search.trim());
+                                        setPage(1);
+                                    }}
+                                    className="flex items-center justify-center p-0 m-0 border-0 bg-transparent text-text-darkest hover:text-brand-blue cursor-pointer"
+                                    aria-label="Cari data"
+                                >
+                                    <SearchIcon className="h-5 w-5" />
+                                </button>
                             }
-                        }}
-                        placeholder="Cari/Pilih..."
-                        className="h-[34px] w-full rounded-[4px] border border-ui-border bg-white pl-3 pr-8 text-xs sm:text-sm text-brand-dark placeholder:text-slate-400 focus:border-[var(--color-input-focus)] focus:outline-none focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
-                    />
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setPage(1);
-                            setAppliedSearch(search.trim());
-                        }}
-                        aria-label="Cari mutasi"
-                        className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                    >
-                        <Search className="h-4 w-4" />
-                    </button>
+                            className="h-[40px] rounded-[4px] border-ui-border w-full"
+                            inputClassName="text-sm text-brand-dark sm:text-xs sm:text-sm py-1 h-full"
+                            trailingClassName="px-2.5"
+                            containerClassName="w-full"
+                        />
+                    </div>
                 </div>
             </div>
 
