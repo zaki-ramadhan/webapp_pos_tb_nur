@@ -10,6 +10,7 @@ import TextInput from '@/components/ui/TextInput';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { SearchIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 import { Trash2 } from 'lucide-react';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 
 function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
@@ -37,8 +38,11 @@ function cloneItemModal(modal) {
 }
 
 export function buildSalesDocumentFormState(source = {}) {
+    const isNewDraft = !source.__backendRecordId && !source.id;
     return {
         ...source,
+        entryDate: isNewDraft ? buildTodayDisplayDate() : (source.entryDate || buildTodayDisplayDate()),
+        shippingDate: isNewDraft ? buildTodayDisplayDate() : (source.shippingDate || source.entryDate || buildTodayDisplayDate()),
         customer: cloneList(source.customer),
         items: cloneList(source.items),
         bankAccounts: cloneList(source.bankAccounts),
@@ -205,7 +209,7 @@ export function SearchableTableSection({
                                                     : 'bg-white'
                                             }`.trim()}
                                             onClick={rowClickable ? () => onRowClick(row) : undefined}
-                                            title={isRowUnavailable ? 'Barang ini telah dihapus dari daftar barang sehingga rinciannya tidak dapat diedit.' : undefined}
+                                            aria-label={isRowUnavailable ? 'Barang ini telah dihapus dari daftar barang sehingga rinciannya tidak dapat diedit.' : undefined}
                                         >
                                             {columns.map((column) => (
                                                 <DataTableCell

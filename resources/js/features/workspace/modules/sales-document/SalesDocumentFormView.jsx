@@ -13,6 +13,7 @@ import {
     buildOperationDocumentPayload,
     parseNumericInput,
 } from '@/features/workspace/backend/operationDocumentBackend';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import SalesDocumentModals from './components/SalesDocumentModals';
 import DocumentStamp from '@/components/ui/DocumentStamp';
 import {
@@ -161,11 +162,14 @@ export default function SalesDocumentFormView({
                 const supplierName = init.supplier ?? init.customer ?? current.customer;
                 const nextSupplier = Array.isArray(supplierName) ? supplierName : (supplierName ? [String(supplierName)] : []);
                 const nextPartnerId = init.__partnerId ?? current.__partnerId;
+                const dynamicDate = init.entryDate || current.entryDate || buildTodayDisplayDate();
                 return applyComputedTotals({
                     ...current,
                     customer: nextSupplier,
                     supplier: nextSupplier,
                     __partnerId: nextPartnerId,
+                    entryDate: dynamicDate,
+                    shippingDate: init.shippingDate || current.shippingDate || dynamicDate,
                 }, nextItems);
             });
         }

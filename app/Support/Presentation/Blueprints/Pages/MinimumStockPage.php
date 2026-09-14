@@ -34,18 +34,13 @@ class MinimumStockPage
                         'type' => 'button',
                         'label' => 'Pesan',
                     ],
-                    [
-                        'id' => 'request',
-                        'type' => 'button',
-                        'label' => 'Minta',
-                    ],
                 ],
                 'search' => [
                     'placeholder' => 'Cari Nama/Kode Barang...',
                     'className' => 'w-full sm:w-[320px] lg:w-[360px]',
                 ],
                 'table' => [
-                    'tableClassName' => 'min-w-[1560px]',
+                    'tableClassName' => 'min-w-[1410px]',
                     'searchKeys' => ['supplier', 'itemName', 'itemCode'],
                     'columns' => [
                         ['id' => 'selected', 'label' => '', 'kind' => 'checkbox', 'widthClassName' => 'w-[64px]', 'align' => 'center'],
@@ -55,7 +50,6 @@ class MinimumStockPage
                         ['id' => 'unit', 'label' => 'Satuan', 'widthClassName' => 'w-[140px]', 'align' => 'center'],
                         ['id' => 'availableStock', 'label' => 'Stok tersedia', 'widthClassName' => 'w-[160px]', 'align' => 'center'],
                         ['id' => 'ordered', 'label' => 'Dipesan', 'widthClassName' => 'w-[150px]', 'align' => 'center'],
-                        ['id' => 'requested', 'label' => 'Diminta', 'widthClassName' => 'w-[150px]', 'align' => 'center'],
                         ['id' => 'minimumLimit', 'label' => 'Batas Minimum Stok', 'widthClassName' => 'w-[180px]', 'align' => 'center'],
                     ],
                     'rows' => [],
