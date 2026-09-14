@@ -42,6 +42,7 @@ export function AccountLookupField({
     showType = false,
     resource = 'accounts',
     filterRows = null,
+    allowQuickCreate = ['customers', 'suppliers'].includes(resource),
 }) {
     const isProducts = resource === 'products';
     const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
@@ -52,7 +53,7 @@ export function AccountLookupField({
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : (error || ''));
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
 
-    const controller = useAccountLookupController({ value, values, disabled, queryParams, resource, filterRows });
+    const controller = useAccountLookupController({ value, values, disabled, queryParams, resource, filterRows, allowQuickCreate });
     const isMultiValue = Array.isArray(values);
     const inputWrapperRef = useRef(null);
 
@@ -122,6 +123,12 @@ export function AccountLookupField({
                 }}
                 showType={showType}
                 resource={resource}
+                allowQuickCreate={controller.allowQuickCreate}
+                isCreating={controller.isCreating}
+                onCreateNew={(keyword) => {
+                    controller.handleQuickCreate(keyword, onSelectAccount);
+                    clearError(contextKey);
+                }}
             />
 
             {feedbackMessage ? (
@@ -156,6 +163,7 @@ export function AccountLookupTextInput({
     showType = false,
     resource = 'accounts',
     filterRows = null,
+    allowQuickCreate = ['customers', 'suppliers'].includes(resource),
 }) {
     const isProducts = resource === 'products';
     const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
@@ -166,7 +174,7 @@ export function AccountLookupTextInput({
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : (error || ''));
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
 
-    const controller = useAccountLookupController({ value, disabled, queryParams, resource, onBeforeOpen, filterRows });
+    const controller = useAccountLookupController({ value, disabled, queryParams, resource, onBeforeOpen, filterRows, allowQuickCreate });
     const inputWrapperRef = useRef(null);
 
     return (
@@ -194,6 +202,16 @@ export function AccountLookupTextInput({
                     controller.handleInputChange(e);
                     onChange?.(e);
                 }}
+                onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                        if (controller.open && controller.allowQuickCreate && controller.query.trim() && controller.rows.length === 0 && !controller.isCreating) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            controller.handleQuickCreate(controller.query, onSelectAccount);
+                            clearError(contextKey);
+                        }
+                    }
+                }}
                 error={Boolean(resolvedError)}
                 onClear={() => {
                     if (clearDisabled) return;
@@ -220,6 +238,12 @@ export function AccountLookupTextInput({
                 }}
                 showType={showType}
                 resource={resource}
+                allowQuickCreate={controller.allowQuickCreate}
+                isCreating={controller.isCreating}
+                onCreateNew={(keyword) => {
+                    controller.handleQuickCreate(keyword, onSelectAccount);
+                    clearError(contextKey);
+                }}
             />
 
             {feedbackMessage ? (

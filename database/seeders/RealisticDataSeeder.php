@@ -30,7 +30,6 @@ class RealisticDataSeeder extends Seeder
             'customers',
             'suppliers',
             'customer_categories',
-            'supplier_categories',
             'salary_allowances',
             'accounts',
             'currencies',

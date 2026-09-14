@@ -37,7 +37,6 @@ const HELPER_LOOKUP_RESOURCES = new Set([
     'brands',
     'product-categories',
     'customer-categories',
-    'supplier-categories',
     'payment-terms',
     'taxes',
     'item-locations',

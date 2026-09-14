@@ -6,7 +6,6 @@ use App\Domain\Partner\Models\Customer;
 use App\Domain\Partner\Models\CustomerCategory;
 use App\Domain\Partner\Models\SalesCategory;
 use App\Domain\Partner\Models\Supplier;
-use App\Domain\Partner\Models\SupplierCategory;
 use App\Support\Backend\BackendRelationSync;
 use App\Support\Backend\BackendResourceBlueprint;
 use Illuminate\Database\Eloquent\Model;
@@ -36,28 +35,6 @@ class PartnerBackendResources
                 updateRules: fn (Model $record) => [
                     'parent_id' => ['nullable', 'integer', 'exists:customer_categories,id'],
                     'code' => ['nullable', 'string', 'max:50', Rule::unique('customer_categories', 'code')->ignore($record)],
-                    'name' => ['required', 'string', 'max:120'],
-                    'is_default' => ['sometimes', 'boolean'],
-                    'notes' => ['nullable', 'string'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-            ),
-            'supplier-categories' => new BackendResourceBlueprint(
-                key: 'supplier-categories',
-                label: 'Supplier Categories',
-                searchColumns: ['code', 'name', 'notes'],
-                modelClass: SupplierCategory::class,
-                storeRules: [
-                    'parent_id' => ['nullable', 'integer', 'exists:supplier_categories,id'],
-                    'code' => ['nullable', 'string', 'max:50', 'unique:supplier_categories,code'],
-                    'name' => ['required', 'string', 'max:120'],
-                    'is_default' => ['sometimes', 'boolean'],
-                    'notes' => ['nullable', 'string'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-                updateRules: fn (Model $record) => [
-                    'parent_id' => ['nullable', 'integer', 'exists:supplier_categories,id'],
-                    'code' => ['nullable', 'string', 'max:50', Rule::unique('supplier_categories', 'code')->ignore($record)],
                     'name' => ['required', 'string', 'max:120'],
                     'is_default' => ['sometimes', 'boolean'],
                     'notes' => ['nullable', 'string'],
@@ -107,9 +84,8 @@ class PartnerBackendResources
                 label: 'Suppliers',
                 searchColumns: ['code', 'name', 'mobile_phone', 'email'],
                 modelClass: Supplier::class,
-                with: ['category', 'branches'],
+                with: ['branches'],
                 storeRules: [
-                    'category_id' => ['nullable', 'integer', 'exists:supplier_categories,id'],
                     'code' => ['nullable', 'string', 'max:50', 'unique:suppliers,code'],
                     'name' => ['required', 'string', 'max:160'],
                     'mobile_phone' => ['nullable', 'string', 'max:50'],
@@ -122,7 +98,6 @@ class PartnerBackendResources
                     'branch_ids.*' => ['integer', 'exists:branches,id'],
                 ],
                 updateRules: fn (Model $record) => [
-                    'category_id' => ['nullable', 'integer', 'exists:supplier_categories,id'],
                     'code' => ['required', 'string', 'max:50', Rule::unique('suppliers', 'code')->ignore($record)],
                     'name' => ['required', 'string', 'max:160'],
                     'mobile_phone' => ['nullable', 'string', 'max:50'],

@@ -31,7 +31,7 @@ export default function BackendLookupField({
     onClear,
     emptyTitle,
     emptyDescription,
-    allowQuickCreate = resource === 'units',
+    allowQuickCreate = ['units', 'customers', 'suppliers'].includes(resource),
     className = '',
     disabled = false,
     error = '',
@@ -157,8 +157,9 @@ export default function BackendLookupField({
         if (!keyword || !keyword.trim()) return null;
         const rawTrimmed = keyword.trim();
         const lowerTrimmed = rawTrimmed.toLowerCase();
+        const entityLabel = resource === 'customers' ? 'Pelanggan' : (resource === 'suppliers' ? 'Pemasok' : (resource === 'units' ? 'Satuan' : 'Data'));
 
-        // 1. Cek apakah satuan sudah ada di database / list items (case-insensitive)
+        // 1. Cek apakah record sudah ada di database / list items (case-insensitive)
         const existingRecord = items.find((item) => {
             const name = String(item?.name ?? item?.label ?? '').trim().toLowerCase();
             return name === lowerTrimmed;
@@ -167,11 +168,11 @@ export default function BackendLookupField({
         if (existingRecord) {
             // Cek apakah item ini sedang difilter keluar (misal sudah dipilih sebagai satuan dasar / konversi lain)
             if (filterOptionRef.current && !filterOptionRef.current(existingRecord)) {
-                showCrudErrorToast(`Satuan "${existingRecord.name || rawTrimmed}" sudah digunakan pada barang ini.`);
+                showCrudErrorToast(`${entityLabel} "${existingRecord.name || rawTrimmed}" sudah digunakan.`);
                 return null;
             }
             onSelect?.(existingRecord);
-            showCrudSuccessToast(`Satuan "${existingRecord.name || rawTrimmed}" dipilih.`);
+            showCrudSuccessToast(`${entityLabel} "${existingRecord.name || rawTrimmed}" dipilih.`);
             return existingRecord;
         }
 
@@ -195,7 +196,7 @@ export default function BackendLookupField({
                     return exists ? prev : [...prev, formattedRecord];
                 });
                 onSelect?.(formattedRecord);
-                showCrudSuccessToast(`Satuan "${newRecord.name ?? rawTrimmed}" berhasil ditambahkan.`);
+                showCrudSuccessToast(`${entityLabel} "${newRecord.name ?? rawTrimmed}" berhasil ditambahkan.`);
                 return formattedRecord;
             }
         } catch (err) {
@@ -207,7 +208,7 @@ export default function BackendLookupField({
                     const matched = rows.find((r) => String(r.name ?? '').trim().toLowerCase() === lowerTrimmed);
                     if (matched) {
                         if (filterOptionRef.current && !filterOptionRef.current(matched)) {
-                            showCrudErrorToast(`Satuan "${matched.name || rawTrimmed}" sudah digunakan pada barang ini.`);
+                            showCrudErrorToast(`${entityLabel} "${matched.name || rawTrimmed}" sudah digunakan.`);
                             return null;
                         }
                         const label = getOptionLabel(matched) || matched.name || rawTrimmed;
@@ -217,7 +218,7 @@ export default function BackendLookupField({
                             return exists ? prev : [...prev, formatted];
                         });
                         onSelect?.(formatted);
-                        showCrudSuccessToast(`Satuan "${matched.name || rawTrimmed}" dipilih.`);
+                        showCrudSuccessToast(`${entityLabel} "${matched.name || rawTrimmed}" dipilih.`);
                         return formatted;
                     }
                 } catch {

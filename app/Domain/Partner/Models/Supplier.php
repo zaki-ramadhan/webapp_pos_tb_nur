@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Supplier extends DomainModel
 {
     protected $fillable = [
-        'category_id',
         'code',
         'name',
         'mobile_phone',
@@ -50,10 +49,6 @@ class Supplier extends DomainModel
             ->sum('outstanding_amount');
     }
 
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(SupplierCategory::class, 'category_id');
-    }
 
     public function currency(): BelongsTo
     {

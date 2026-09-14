@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
+    createBackendResource,
     extractBackendRows,
     getBackendErrorMessage,
     listBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
+import { showCrudErrorToast, showCrudSuccessToast } from '@/features/workspace/shared/crudFeedback';
 
 export function buildAccountLookupLabel(record, resource = null) {
     if (typeof record === 'string') {
@@ -70,7 +72,16 @@ export function normalizeSelectedLabels({ value, values }) {
     return [];
 }
 
-export default function useAccountLookupController({ value, values, disabled = false, queryParams = {}, resource = 'accounts', onBeforeOpen = null, filterRows = null }) {
+export default function useAccountLookupController({
+    value,
+    values,
+    disabled = false,
+    queryParams = {},
+    resource = 'accounts',
+    onBeforeOpen = null,
+    filterRows = null,
+    allowQuickCreate = ['customers', 'suppliers'].includes(resource),
+}) {
     const selectedLabels = useMemo(() => normalizeSelectedLabels({ value, values }), [value, values]);
     const selectedValue = selectedLabels[0] ?? '';
     const rootRef = useRef(null);
@@ -78,6 +89,7 @@ export default function useAccountLookupController({ value, values, disabled = f
     const [query, setQuery] = useState('');
     const [draftValue, setDraftValue] = useState(selectedValue);
     const [loading, setLoading] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
     const [error, setError] = useState('');
     const [rows, setRows] = useState([]);
     const lastFetchKeyRef = useRef(null);
@@ -240,10 +252,84 @@ export default function useAccountLookupController({ value, values, disabled = f
         onRemove?.();
     }
 
+    async function handleQuickCreate(keyword, onSelectCallback) {
+        const rawTrimmed = String(keyword ?? query ?? '').trim();
+        if (!rawTrimmed || isCreating) return null;
+
+        const lowerTrimmed = rawTrimmed.toLowerCase();
+        const existing = rows.find((r) => {
+            const name = String(r?.name ?? r?.label ?? '').trim().toLowerCase();
+            return name === lowerTrimmed;
+        });
+
+        const entityLabel = resource === 'customers' ? 'Pelanggan' : (resource === 'suppliers' ? 'Pemasok' : (resource === 'units' ? 'Satuan' : 'Data'));
+
+        if (existing) {
+            const label = buildAccountLookupLabel(existing, resource);
+            handleSelect(existing, label, onSelectCallback);
+            showCrudSuccessToast(`${entityLabel} "${existing.name || rawTrimmed}" dipilih.`);
+            return existing;
+        }
+
+        setIsCreating(true);
+        try {
+            const payload = {
+                name: rawTrimmed,
+                is_active: true,
+            };
+            const result = await createBackendResource(resource, payload);
+            const newRecord = result?.data ?? result;
+            if (newRecord && newRecord.id) {
+                const label = buildAccountLookupLabel(newRecord, resource) || newRecord.name || rawTrimmed;
+                const formattedRecord = {
+                    ...newRecord,
+                    id: newRecord.id,
+                    name: newRecord.name ?? label,
+                    label: label,
+                };
+                setRows((prev) => {
+                    const exists = prev.some((it) => String(it.id) === String(newRecord.id));
+                    return exists ? prev : [...prev, formattedRecord];
+                });
+                handleSelect(formattedRecord, label, onSelectCallback);
+                showCrudSuccessToast(`${entityLabel} "${newRecord.name ?? rawTrimmed}" berhasil ditambahkan.`);
+                return formattedRecord;
+            }
+        } catch (err) {
+            const status = err?.response?.status;
+            if (status === 422) {
+                try {
+                    const searchRes = await listBackendResource(resource, { search: rawTrimmed, _refresh: Date.now() });
+                    const searchRows = extractBackendRows(searchRes);
+                    const matched = searchRows.find((r) => String(r.name ?? '').trim().toLowerCase() === lowerTrimmed);
+                    if (matched) {
+                        const label = buildAccountLookupLabel(matched, resource) || matched.name || rawTrimmed;
+                        const formatted = { ...matched, label };
+                        setRows((prev) => {
+                            const exists = prev.some((it) => String(it.id) === String(matched.id));
+                            return exists ? prev : [...prev, formatted];
+                        });
+                        handleSelect(formatted, label, onSelectCallback);
+                        showCrudSuccessToast(`${entityLabel} "${matched.name || rawTrimmed}" dipilih.`);
+                        return formatted;
+                    }
+                } catch (fallbackErr) {
+                    // Ignore fallback error
+                }
+            }
+            showCrudErrorToast(getBackendErrorMessage(err, `Gagal menambahkan ${entityLabel.toLowerCase()}.`));
+        } finally {
+            setIsCreating(false);
+        }
+        return null;
+    }
+
     return {
         draftValue,
         error,
         loading,
+        isCreating,
+        allowQuickCreate,
         open,
         query,
         rootRef,
@@ -253,6 +339,7 @@ export default function useAccountLookupController({ value, values, disabled = f
         closeLookup,
         handleInputChange,
         handleInputFocus,
+        handleQuickCreate,
         handleRemove,
         handleSelect,
         openLookup,
