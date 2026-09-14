@@ -144,6 +144,7 @@ export function SimpleTextField({
     onChange,
     placeholder = '',
     className = '',
+    containerClassName = '',
     prefix = null,
     trailing = null,
     inputClassName = '',
@@ -162,6 +163,7 @@ export function SimpleTextField({
             trailing={trailing}
             maxLength={maxLength}
             className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
+            containerClassName={containerClassName || undefined}
             prefixClassName={prefix ? 'min-w-[32px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text' : ''}
             inputClassName={`text-xs sm:text-sm text-brand-dark ${inputClassName}`.trim()}
             trailingClassName={trailing ? 'px-3' : ''}

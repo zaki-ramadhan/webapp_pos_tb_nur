@@ -7,6 +7,7 @@ export default function FormattedAmountInput({
     allowDecimal = true,
     allowNegative = false,
     inputMode = 'decimal',
+    containerClassName,
     ...props
 }) {
     const formattedValue = formatAmountInput(value || '0', { allowDecimal, allowNegative });
@@ -46,7 +47,7 @@ export default function FormattedAmountInput({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             inputMode={inputMode}
-            containerClassName={`w-full max-w-[240px] ${props.containerClassName ?? ''}`.trim()}
+            containerClassName={containerClassName ?? 'w-full max-w-[240px]'}
         />
     );
 }
