@@ -57,6 +57,7 @@ function isInactiveRow(row) {
 export default function InventoryInquiryView({ config, pageId }) {
     const resource = BACKEND_INVENTORY_RESOURCES[pageId];
     const isItemLocation = pageId === 'item-location';
+    const isMinimumStock = pageId === 'minimum-stock';
     const initialValues = useMemo(() => {
         const base = buildInitialValues(config);
         if (isItemLocation) {
@@ -78,6 +79,13 @@ export default function InventoryInquiryView({ config, pageId }) {
         ? Boolean(values.warehouseSearchId || (values.warehouseSearch && values.warehouseSearch.trim()))
         : Boolean(values.itemSearchId || (values.itemSearch && values.itemSearch.trim()));
 
+    const hasMinimumStockFilter = Boolean(
+        values.supplierSearchId || (values.supplierSearch && values.supplierSearch.trim()) ||
+        values.warehouseSearchId || (values.warehouseSearch && values.warehouseSearch.trim())
+    );
+
+    const isQueryEnabled = isItemLocation ? hasTarget : (isMinimumStock ? hasMinimumStockFilter : true);
+
     const {
         rows: rawRows,
         loading,
@@ -91,9 +99,13 @@ export default function InventoryInquiryView({ config, pageId }) {
         from,
         to,
         total,
-    } = useBackendIndexResource({ resource, filters });
+    } = useBackendIndexResource({ resource, filters, enabled: isQueryEnabled });
 
-    const tableRows = useMemo(() => mapInventoryRows(pageId, rawRows), [pageId, rawRows]);
+    const tableRows = useMemo(() => {
+        if (isItemLocation && !hasTarget) return [];
+        if (isMinimumStock && !hasMinimumStockFilter) return [];
+        return mapInventoryRows(pageId, rawRows);
+    }, [isItemLocation, hasTarget, isMinimumStock, hasMinimumStockFilter, pageId, rawRows]);
 
     const cleanedColumns = useMemo(() => {
         if (isItemLocation && values.itemType === 'warehouse') {
@@ -268,6 +280,15 @@ export default function InventoryInquiryView({ config, pageId }) {
 
     function handleChange(controlId, nextValue) {
         const nextValues = { ...values, [controlId]: nextValue };
+        if (controlId === 'supplierSearch' && !nextValue) {
+            nextValues.supplierSearchId = null;
+        }
+        if (controlId === 'warehouseSearch' && !nextValue) {
+            nextValues.warehouseSearchId = null;
+        }
+        if (controlId === 'itemSearch' && !nextValue) {
+            nextValues.itemSearchId = null;
+        }
         if (controlId === 'itemType') {
             nextValues.itemSearch = '';
             nextValues.itemSearchId = null;
@@ -293,17 +314,15 @@ export default function InventoryInquiryView({ config, pageId }) {
         return () => clearTimeout(timer);
     }, [pageId, values]);
 
-
-
     useEffect(() => {
-        if (error && !isAccessRestricted && (!isItemLocation || hasTarget)) {
+        if (error && !isAccessRestricted && (!isItemLocation || hasTarget) && (!isMinimumStock || hasMinimumStockFilter)) {
             showSystemErrorModal({
                 title: 'Terjadi Permasalahan pada Pemrosesan',
                 description: 'Silakan perbaiki permasalahan berikut ini:',
                 message: typeof error === 'string' ? error : (error.message || 'Terjadi kesalahan saat memuat data.'),
             });
         }
-    }, [error, isAccessRestricted, isItemLocation, hasTarget]);
+    }, [error, isAccessRestricted, isItemLocation, hasTarget, isMinimumStock, hasMinimumStockFilter]);
 
     function handleButtonClick(controlId) {
         if (controlId === 'order' || controlId === 'request') {
@@ -445,8 +464,11 @@ export default function InventoryInquiryView({ config, pageId }) {
                 ? 'Silakan cari dan pilih gudang untuk melihat daftar stok barang di gudang tersebut.'
                 : 'Silakan cari dan pilih barang untuk melihat sebaran stok di setiap gudang.';
         }
+        if (isMinimumStock && !hasMinimumStockFilter) {
+            return config.table.emptyLabel || 'Belum ada data';
+        }
         return config.table.emptyLabel || 'Belum ada data';
-    }, [loading, error, isItemLocation, hasTarget, isWarehouseMode, config.table.emptyLabel]);
+    }, [loading, error, isItemLocation, hasTarget, isWarehouseMode, isMinimumStock, hasMinimumStockFilter, config.table.emptyLabel]);
 
     return (
         <div className="flex flex-col flex-1 min-h-0 h-full overflow-hidden">
@@ -496,7 +518,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                 </div>
             </fieldset>
 
-            {error && !isAccessRestricted && (!isItemLocation || hasTarget) ? (
+            {error && !isAccessRestricted && (!isItemLocation || hasTarget) && (!isMinimumStock || hasMinimumStockFilter) ? (
                 <div className="mt-3 rounded-[6px] border border-danger-border bg-surface px-3 py-2 text-sm text-red-850">
                     {error}
                 </div>
