@@ -18,6 +18,8 @@ export default function AccountLookupSearchInput({
     searchLabel,
     hasSelectedValue,
     disabled = false,
+    clearDisabled = false,
+    onBeforeClear = null,
     error = false,
     className = 'h-11',
     inputClassName = '',
@@ -78,14 +80,22 @@ export default function AccountLookupSearchInput({
                     <LookupChip
                         label={extractCleanAccountName(selectedValue)}
                         onClear={() => {
-                            if (!disabled) {
-                                onClear?.();
-                                setTimeout(() => {
-                                    inputRef.current?.focus();
-                                }, 0);
+                            if (disabled) {
+                                return;
                             }
+                            if (onBeforeClear && onBeforeClear() === false) {
+                                return;
+                            }
+                            if (clearDisabled) {
+                                return;
+                            }
+                            onClear?.();
+                            setTimeout(() => {
+                                inputRef.current?.focus();
+                            }, 0);
                         }}
                         disabled={disabled}
+                        clearDisabled={clearDisabled}
                         clearAriaLabel={`Hapus ${searchLabel.toLowerCase()}`}
                     />
                 ) : null}

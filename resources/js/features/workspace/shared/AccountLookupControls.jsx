@@ -143,6 +143,8 @@ export function AccountLookupTextInput({
     searchLabel,
     dialogTitle,
     disabled = false,
+    clearDisabled = false,
+    onBeforeClear = null,
     className = 'h-[40px] rounded-[4px] border-slate-400',
     inputClassName = 'text-xs sm:text-sm text-brand-dark',
     trailingClassName = '',
@@ -177,6 +179,8 @@ export function AccountLookupTextInput({
                 placeholder={resolvedPlaceholder}
                 searchLabel={resolvedSearchLabel}
                 disabled={disabled}
+                clearDisabled={clearDisabled}
+                onBeforeClear={onBeforeClear}
                 className={`${resolvedError ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus' : ''} ${className}`.trim()}
                 inputClassName={inputClassName}
                 trailingClassName={trailingClassName}
@@ -191,12 +195,14 @@ export function AccountLookupTextInput({
                     onChange?.(e);
                 }}
                 error={Boolean(resolvedError)}
-                onClear={() =>
+                onClear={() => {
+                    if (clearDisabled) return;
+                    if (onBeforeClear && onBeforeClear() === false) return;
                     controller.handleRemove(() => {
                         onSelectAccount?.(null, '');
                         clearError(contextKey);
-                    })
-                }
+                    });
+                }}
             />
 
             <AccountLookupSuggestions

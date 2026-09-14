@@ -5,6 +5,7 @@ export function LookupChip({
     label,
     onClear,
     disabled = false,
+    clearDisabled = false,
     clearAriaLabel = 'Hapus',
     className = '',
     labelClassName = '',
@@ -25,7 +26,11 @@ export function LookupChip({
                     }}
                     disabled={disabled}
                     aria-label={clearAriaLabel}
-                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark hover:text-red-600 active:text-red-800 transition-colors disabled:text-slate-300 cursor-pointer"
+                    className={`inline-flex h-4 w-4 shrink-0 items-center justify-center transition-colors cursor-pointer ${
+                        clearDisabled
+                            ? 'text-slate-400 hover:text-slate-500'
+                            : 'text-text-chip-blue-dark hover:text-red-600 active:text-red-800'
+                    }`}
                 >
                     <CloseIcon className="h-3.5 w-3.5" />
                 </button>

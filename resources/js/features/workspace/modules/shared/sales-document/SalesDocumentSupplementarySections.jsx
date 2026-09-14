@@ -1,5 +1,6 @@
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
+import { showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
 export { SalesDocumentFooter } from './SalesDocumentStatusSections';
 
 export function SalesDocumentAdditionalCostSection({ config, values, setValues, handlers }) {
@@ -66,7 +67,24 @@ export function SalesDocumentAdvancePaymentsSection({ config, values, handlers }
             searchLabel={`Cari ${config.advancePaymentTitle ?? 'Uang Muka'}`}
             dialogTitle={`Pilih ${config.advancePaymentTitle ?? 'Uang Muka'}`}
             queryParams={{ customer_id: values.__partnerId, only_available: 'true' }}
-            onSelectAccount={(record) => handlers?.onSelectAdvancePayment?.(record)}
+            onBeforeOpen={() => {
+                if (!values.__partnerId) {
+                    const partnerLabel = config.labels?.customer || 'Pelanggan';
+                    const msg = `${partnerLabel} harus diisi.`;
+                    showCrudValidationToast(msg);
+                    return false;
+                }
+                return true;
+            }}
+            onSelectAccount={(record) => {
+                if (!record) return;
+                if (!values.__partnerId) {
+                    const partnerLabel = config.labels?.customer || 'Pelanggan';
+                    showCrudValidationToast(`${partnerLabel} harus diisi.`);
+                    return;
+                }
+                handlers?.onSelectAdvancePayment?.(record);
+            }}
         />
     ) : null;
 
