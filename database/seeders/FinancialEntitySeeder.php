@@ -1532,7 +1532,8 @@ class FinancialEntitySeeder extends Seeder
 
         $startYear = (int) date('Y') - 1;
 
-        DB::table('fixed_assets')->insert([
+        if (DB::getSchemaBuilder()->hasTable('fixed_assets')) {
+            DB::table('fixed_assets')->insert([
             [
                 'branch_id' => $branchId,
                 'asset_account_id' => $assetAcc,
@@ -1609,6 +1610,7 @@ class FinancialEntitySeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-        ]);
+            ]);
+        }
     }
 }
