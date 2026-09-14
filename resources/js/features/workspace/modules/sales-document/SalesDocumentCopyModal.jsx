@@ -495,7 +495,7 @@ export default function SalesDocumentCopyModal({
                                     })
                                 ) : (
                                     <LookupEmptyState
-                                        title={loadingSuggestions ? 'Mencari...' : 'Tidak ada dokumen ditemukan.'}
+                                        title={loadingSuggestions ? 'Mencari...' : 'Tidak ditemukan data yang cocok'}
                                     />
                                 )}
                             </div>

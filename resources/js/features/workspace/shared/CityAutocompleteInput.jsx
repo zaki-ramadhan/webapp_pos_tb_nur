@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFormError } from '@/components/ui/FormErrorContext';
 import { SearchIcon } from '@/features/workspace/shared/Icons';
 import { INDONESIAN_CITIES } from '@/features/workspace/shared/indonesianCities';
-import { HighlightText, LookupDropdownSurface, LookupChip } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupDropdownSurface, LookupChip, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 
 export default function CityAutocompleteInput({
     id,
@@ -206,9 +206,7 @@ export default function CityAutocompleteInput({
                                 </button>
                             ))
                         ) : (
-                            <div className="px-4 py-4 text-center text-xs sm:text-sm text-brand-dark">
-                                Tidak ada hasil yang cocok.
-                            </div>
+                            <LookupEmptyState title="Tidak ditemukan data yang cocok" />
                         )}
                     </div>
                 </LookupDropdownSurface>

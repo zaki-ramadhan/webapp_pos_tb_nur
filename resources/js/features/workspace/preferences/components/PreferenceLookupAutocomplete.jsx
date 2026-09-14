@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import { CloseIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { HighlightText, LookupDropdownSurface } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 
 export default function PreferenceLookupAutocomplete({ field, value, onChange, options = [] }) {
     const [query, setQuery] = useState('');
@@ -89,9 +89,7 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
                                 </button>
                             ))
                         ) : (
-                            <div className="px-4 py-4 text-center text-sm text-brand-dark">
-                                Tidak ada hasil yang cocok.
-                            </div>
+                            <LookupEmptyState title="Tidak ditemukan data yang cocok" />
                         )}
                     </div>
                 </LookupDropdownSurface>

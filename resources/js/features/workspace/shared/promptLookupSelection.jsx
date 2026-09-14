@@ -131,7 +131,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                         </button>
                     ))
                 ) : (
-                    <LookupEmptyState title="Tidak ada data yang cocok." className="py-4" />
+                    <LookupEmptyState title="Tidak ditemukan data yang cocok" className="py-4" />
                 )}
             </div>
         </WorkspaceDialog>
