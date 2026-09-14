@@ -79,7 +79,7 @@ export function LookupEmptyState({
     const defaultPadding = hasCustomPadding
         ? ''
         : children
-            ? 'px-2 pt-3.5 pb-2'
+            ? 'px-2 pt-3.5 pb-2.5'
             : 'px-4 py-5';
 
     return (
