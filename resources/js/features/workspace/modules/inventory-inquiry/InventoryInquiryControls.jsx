@@ -43,7 +43,7 @@ export function InquiryTextButton({ label, tone = 'default', onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className={`inline-flex h-[40px] items-center justify-center rounded-[4px] border px-3 sm:px-4 text-xs sm:text-sm ${
+            className={`inline-flex h-[40px] items-center justify-center rounded-[4px] border px-3 sm:px-4 text-xs sm:text-sm transition cursor-pointer hover:bg-brand-blue-light active:bg-brand-blue-border/20 ${
                 tone === 'primary'
                     ? 'border-brand-blue-border bg-bg-brand-blue-toggled text-brand-blue'
                     : 'border-brand-blue-border bg-white text-brand-blue'
