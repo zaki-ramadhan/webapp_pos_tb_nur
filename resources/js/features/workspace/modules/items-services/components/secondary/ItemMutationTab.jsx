@@ -260,7 +260,13 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                         </DataTableRow>
                     ) : rows.length > 0 ? (
                         rows.map((row, index) => {
-                            const isClickable = Boolean(row.page_id && row.document_id);
+                            const isOpening = Boolean(
+                                row.is_opening_stock ||
+                                row.id === 'opening-stock' ||
+                                row.raw_document_type === 'opening_stock' ||
+                                (typeof row.document_type === 'string' && row.document_type.startsWith('Stok per '))
+                            );
+                            const isClickable = !isOpening && Boolean(row.page_id && row.document_id);
                             const rawCost = parseAmountInput(row.unit_cost) || 0;
                             const rawIn = parseAmountInput(row.in_qty) || 0;
                             const rawOut = parseAmountInput(row.out_qty) || 0;
@@ -271,12 +277,12 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                             let displayBalance = '';
 
                             if (selectedMode === 'multi') {
-                                displayIn = rawIn > 0 ? formatMultiUnitQuantity(rawIn, baseUnitName, conversions) : '';
+                                displayIn = rawIn > 0 ? formatMultiUnitQuantity(rawIn, baseUnitName, conversions) : (isOpening && rawBalance > 0 ? formatMultiUnitQuantity(rawBalance, baseUnitName, conversions) : '');
                                 displayOut = rawOut > 0 ? formatMultiUnitQuantity(rawOut, baseUnitName, conversions) : '';
                                 displayBalance = formatMultiUnitQuantity(rawBalance, baseUnitName, conversions);
                             } else {
-                                displayIn = rawIn > 0 ? (formatAmountInput(rawIn) || '0') : (row.raw_document_type === 'opening_stock' ? (formatAmountInput(rawIn) || '0') : '0');
-                                displayOut = rawOut > 0 ? (formatAmountInput(rawOut) || '0') : '0';
+                                displayIn = rawIn > 0 ? (formatAmountInput(rawIn) || '0') : (isOpening ? (formatAmountInput(rawBalance) || '0') : '');
+                                displayOut = rawOut > 0 ? (formatAmountInput(rawOut) || '0') : (isOpening ? '0' : '');
                                 displayBalance = formatAmountInput(rawBalance) || '0';
                             }
 
@@ -284,8 +290,12 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                                 <DataTableRow
                                     key={row.id}
                                     onClick={isClickable ? () => handleOpenDocument(row) : undefined}
-                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${
-                                        isClickable ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''
+                                    className={`border-ui-border-row ${
+                                        isOpening
+                                            ? 'hover:bg-slate-50 transition-colors select-none bg-white'
+                                            : `${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${
+                                                isClickable ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : 'hover:bg-slate-50'
+                                            }`
                                     }`.trim()}
                                 >
                                     <DataTableCell className="text-left text-xs sm:text-sm text-text-workspace-dark px-3 py-2 font-normal">{row.date || ''}</DataTableCell>

@@ -839,21 +839,22 @@ class InventoryInquiryQueryService
 
         $formattedDateFrom = $dateFrom ? $dateFrom->format('d/m/Y') : now()->startOfMonth()->format('d/m/Y');
         $openingRow = null;
-        if ($initialStock > 0) {
+        if ($dateFrom !== null) {
             $openingRow = [
                 'id' => 'opening-stock',
                 'document_id' => null,
                 'raw_document_type' => 'opening_stock',
+                'is_opening_stock' => true,
                 'page_id' => null,
-                'raw_date' => $dateFrom ? $dateFrom->copy()->startOfDay()->timestamp : 0,
+                'raw_date' => $dateFrom->copy()->startOfDay()->timestamp,
                 'date' => '',
                 'document_number' => '',
                 'document_type' => 'Stok per '.$formattedDateFrom,
                 'description' => 'Stok per '.$formattedDateFrom,
                 'warehouse' => '',
                 'unit_cost' => '0',
-                'in_qty' => $this->formatNumber($initialStock),
-                'out_qty' => '',
+                'in_qty' => $initialStock > 0 ? $this->formatNumber($initialStock) : '0',
+                'out_qty' => '0',
                 'qty_change' => $initialStock,
                 'balance' => $this->formatNumber($initialStock),
             ];
@@ -868,11 +869,13 @@ class InventoryInquiryQueryService
             return $row;
         });
 
-        $finalRows = $movementRows;
+        $finalRows = collect();
         if ($openingRow !== null) {
-            $finalRows = $finalRows->push($openingRow);
+            $finalRows->push($openingRow);
         }
-        $finalRows = $finalRows->sortByDesc('raw_date')->values();
+        foreach ($movementRows as $mRow) {
+            $finalRows->push($mRow);
+        }
 
         $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
         if ($search !== '') {
