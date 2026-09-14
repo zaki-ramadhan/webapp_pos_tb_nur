@@ -149,6 +149,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                                 formatAsAmount
                                 maxLength={11}
                                 className="w-full"
+                                containerClassName="w-full"
                                 isLoading={isLoading}
                             />
                         </div>
@@ -164,6 +165,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                                     value={values.minimumStock}
                                     onChange={(event) => onChange('minimumStock', event.target.value)}
                                     className="w-full"
+                                    containerClassName="w-full"
                                     formatAsAmount
                                     allowDecimal={false}
                                     maxLength={11}
