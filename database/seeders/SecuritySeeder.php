@@ -378,6 +378,8 @@ class SecuritySeeder extends Seeder
             ['category_key' => 'others', 'report_key' => 'others-custom-form', 'title' => 'Daftar Form Kustom', 'section_label' => 'Lain-lain', 'icon' => 'document', 'description' => 'Kumpulan laporan pendukung dan utilitas tambahan.', 'sort_order' => 10, 'created_at' => now(), 'updated_at' => now()],
         ];
 
-        DB::table('report_catalogs')->insert($reportCatalogs);
+        if (DB::getSchemaBuilder()->hasTable('report_catalogs')) {
+            DB::table('report_catalogs')->insert($reportCatalogs);
+        }
     }
 }
