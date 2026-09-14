@@ -112,8 +112,8 @@ function AccountFieldRow({
                                 <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">
                                     <HighlightText text={`${prefix}${name}`} search={query} />
                                 </div>
-                                <div className="flex items-center justify-between gap-4 text-xs sm:text-[13px] text-text-workspace-dark">
-                                    <span className="truncate font-normal not-italic">
+                                <div className={`w-full text-xs sm:text-[13px] text-text-workspace-dark ${typeLabel ? 'flex items-center justify-between gap-4' : 'block'}`}>
+                                    <span className={`${typeLabel ? 'truncate min-w-0' : 'break-words whitespace-normal'} font-normal not-italic`}>
                                         <HighlightText text={code} search={query} />
                                     </span>
                                     {typeLabel ? (

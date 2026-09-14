@@ -471,8 +471,62 @@ class InventoryInquiryQueryService
         $productIds = $products->pluck('id')->all();
         $allTotals = $this->buildStockTotalsByProduct($productIds, $warehouseId);
 
+        $orderedQuery = DB::table('operation_document_lines as odl')
+            ->join('operation_documents as od', 'odl.operation_document_id', '=', 'od.id')
+            ->where('od.document_type', 'purchase_order')
+            ->where('od.is_closed', false)
+            ->where(function ($q) {
+                $q->whereNull('od.status')
+                  ->orWhereNotIn('od.status', ['Void', 'Cancelled', 'void', 'cancelled']);
+            });
+
+        if (!empty($productIds)) {
+            $orderedQuery->whereIn('odl.product_id', $productIds);
+        }
+        if ($warehouseId !== null) {
+            $orderedQuery->where(function ($q) use ($warehouseId) {
+                $q->where('odl.warehouse_id', $warehouseId)
+                  ->orWhere(function ($sq) use ($warehouseId) {
+                      $sq->whereNull('odl.warehouse_id')
+                         ->where('od.warehouse_id', $warehouseId);
+                  });
+            });
+        }
+        $orderedTotals = $orderedQuery
+            ->groupBy('odl.product_id')
+            ->select('odl.product_id', DB::raw('SUM(odl.quantity) as total_qty'))
+            ->pluck('total_qty', 'odl.product_id')
+            ->all();
+
+        $requestedQuery = DB::table('operation_document_lines as odl')
+            ->join('operation_documents as od', 'odl.operation_document_id', '=', 'od.id')
+            ->where('od.document_type', 'item_request')
+            ->where('od.is_closed', false)
+            ->where(function ($q) {
+                $q->whereNull('od.status')
+                  ->orWhereNotIn('od.status', ['Void', 'Cancelled', 'void', 'cancelled']);
+            });
+
+        if (!empty($productIds)) {
+            $requestedQuery->whereIn('odl.product_id', $productIds);
+        }
+        if ($warehouseId !== null) {
+            $requestedQuery->where(function ($q) use ($warehouseId) {
+                $q->where('odl.warehouse_id', $warehouseId)
+                  ->orWhere(function ($sq) use ($warehouseId) {
+                      $sq->whereNull('odl.warehouse_id')
+                         ->where('od.warehouse_id', $warehouseId);
+                  });
+            });
+        }
+        $requestedTotals = $requestedQuery
+            ->groupBy('odl.product_id')
+            ->select('odl.product_id', DB::raw('SUM(odl.quantity) as total_qty'))
+            ->pluck('total_qty', 'odl.product_id')
+            ->all();
+
         $rows = $products
-            ->map(function (Product $product) use ($allTotals, $supplierMap, $supplierId, $supplierKeyword, $searchKeyword): ?array {
+            ->map(function (Product $product) use ($allTotals, $orderedTotals, $requestedTotals, $supplierMap, $supplierId, $supplierKeyword, $searchKeyword): ?array {
                 $totals = $allTotals[$product->id] ?? [
                     'stock_on_hand' => 0.0,
                     'stock_available' => 0.0,
@@ -517,6 +571,8 @@ class InventoryInquiryQueryService
 
                 $displayAvailableStock = max(0.0, $availableStock);
                 $displayCurrentStock = max(0.0, $onHandStock);
+                $orderedQty = (float) ($orderedTotals[$product->id] ?? 0.0);
+                $requestedQty = (float) ($requestedTotals[$product->id] ?? 0.0);
 
                 return [
                     'id' => $product->id,
@@ -532,12 +588,20 @@ class InventoryInquiryQueryService
                     'price' => $purchasePrice,
                     'current_stock' => $this->formatNumber($displayCurrentStock),
                     'available_stock' => $this->formatNumber($displayAvailableStock),
+                    'ordered' => $this->formatNumber($orderedQty),
+                    'ordered_quantity' => $this->formatNumber($orderedQty),
+                    'requested' => $this->formatNumber($requestedQty),
+                    'requested_quantity' => $this->formatNumber($requestedQty),
                     'minimum_stock' => $this->formatNumber($minimumStock),
                     'minimum_limit' => $this->formatNumber($minimumStock),
                     'suggested_reorder_qty' => $this->formatNumber($deficit > 0 ? $deficit : $minimumStock),
                     'raw_cost_price' => $purchasePrice,
                     'raw_current_stock' => $displayCurrentStock,
                     'raw_available_stock' => $displayAvailableStock,
+                    'raw_ordered' => $orderedQty,
+                    'raw_ordered_quantity' => $orderedQty,
+                    'raw_requested' => $requestedQty,
+                    'raw_requested_quantity' => $requestedQty,
                     'raw_minimum_stock' => $minimumStock,
                     'raw_minimum_limit' => $minimumStock,
                 ];

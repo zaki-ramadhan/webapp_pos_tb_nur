@@ -33,8 +33,8 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake, hand
                                     <span className="block truncate text-sm font-normal text-brand-dark">
                                         {record?.full_name ?? record?.name ?? ''}
                                     </span>
-                                    <span className="mt-1 flex items-center justify-between gap-4 text-xs sm:text-[13px]">
-                                        <span className="truncate text-brand-dark font-normal">
+                                    <span className="mt-1 block w-full text-xs sm:text-[13px]">
+                                        <span className="break-words whitespace-normal text-brand-dark font-normal">
                                             {record?.employee_code ?? record?.code ?? String(record?.id ?? '')}
                                         </span>
                                     </span>
