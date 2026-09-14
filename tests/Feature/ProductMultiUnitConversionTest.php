@@ -141,4 +141,14 @@ class ProductMultiUnitConversionTest extends TestCase
         $formatted0 = $method->invoke($service, 0.0, $product);
         $this->assertEquals('0 PCS', $formatted0);
     }
+
+    public function test_inventory_entity_seeder_is_idempotent(): void
+    {
+        $this->seed(\Database\Seeders\InventoryEntitySeeder::class);
+        $this->seed(\Database\Seeders\InventoryEntitySeeder::class);
+
+        $this->assertDatabaseHas('products', ['code' => 'SMN-050']);
+        $this->assertDatabaseHas('products', ['code' => 'BND-CAT01']);
+        $this->assertDatabaseHas('product_unit_conversions', ['price' => 410000]);
+    }
 }
