@@ -195,8 +195,8 @@ export default function AccountLookupSuggestions({
                                     ) : null}
                                 </span>
                                 {(subtitleLeft || subtitleRight) ? (
-                                    <span className="flex w-full items-center justify-between gap-4 text-xs sm:text-[13px] text-black">
-                                        <span className="truncate text-black font-normal">
+                                    <span className={`w-full text-xs sm:text-[13px] text-black ${subtitleRight ? 'flex items-center justify-between gap-4' : 'block'}`}>
+                                        <span className={`${subtitleRight ? 'truncate min-w-0' : 'break-words whitespace-normal'} text-black font-normal`}>
                                             <HighlightText text={subtitleLeft} search={query} />
                                         </span>
                                         {subtitleRight ? (
