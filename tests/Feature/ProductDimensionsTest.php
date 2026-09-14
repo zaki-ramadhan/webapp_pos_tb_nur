@@ -66,5 +66,12 @@ class ProductDimensionsTest extends TestCase
             'height' => 1.5,
             'weight' => 3600,
         ]);
+
+        $getResponse = $this->actingAs($user)->getJson("/api/backend/products/{$productId}");
+        $getResponse->assertOk();
+        $this->assertEquals(61.0, (float) $getResponse->json('data.length'));
+        $this->assertEquals(61.0, (float) $getResponse->json('data.width'));
+        $this->assertEquals(1.5, (float) $getResponse->json('data.height'));
+        $this->assertEquals(3600, (float) $getResponse->json('data.weight'));
     }
 }
