@@ -31,7 +31,7 @@ export default function BackendLookupField({
     onClear,
     emptyTitle,
     emptyDescription,
-    allowQuickCreate = ['units', 'customers', 'suppliers'].includes(resource),
+    allowQuickCreate = ['units', 'customers', 'suppliers', 'product-categories'].includes(resource),
     className = '',
     disabled = false,
     error = '',
@@ -157,7 +157,10 @@ export default function BackendLookupField({
         if (!keyword || !keyword.trim()) return null;
         const rawTrimmed = keyword.trim();
         const lowerTrimmed = rawTrimmed.toLowerCase();
-        const entityLabel = resource === 'customers' ? 'Pelanggan' : (resource === 'suppliers' ? 'Pemasok' : (resource === 'units' ? 'Satuan' : 'Data'));
+        const entityLabel = resource === 'customers' ? 'Pelanggan'
+            : (resource === 'suppliers' ? 'Pemasok'
+            : (resource === 'units' ? 'Satuan'
+            : (resource === 'product-categories' ? 'Kategori Barang' : 'Data')));
 
         // 1. Cek apakah record sudah ada di database / list items (case-insensitive)
         const existingRecord = items.find((item) => {
@@ -180,6 +183,7 @@ export default function BackendLookupField({
             const payload = {
                 name: rawTrimmed,
                 is_active: true,
+                ...(resource === 'product-categories' ? { parent_id: null, is_default: false } : {}),
             };
             const result = await createBackendResource(resource, payload);
             const newRecord = result?.data ?? result;
@@ -225,7 +229,7 @@ export default function BackendLookupField({
                     // Fallback to error handling below
                 }
             }
-            const msg = err?.response?.data?.errors?.name?.[0] || err?.response?.data?.message || err?.message || 'Gagal menambahkan satuan baru.';
+            const msg = err?.response?.data?.errors?.name?.[0] || err?.response?.data?.message || err?.message || `Gagal menambahkan ${entityLabel.toLowerCase()} baru.`;
             showCrudErrorToast(msg);
             throw err;
         }

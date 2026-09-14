@@ -80,7 +80,7 @@ export default function useAccountLookupController({
     resource = 'accounts',
     onBeforeOpen = null,
     filterRows = null,
-    allowQuickCreate = ['customers', 'suppliers'].includes(resource),
+    allowQuickCreate = ['customers', 'suppliers', 'units', 'product-categories'].includes(resource),
 }) {
     const selectedLabels = useMemo(() => normalizeSelectedLabels({ value, values }), [value, values]);
     const selectedValue = selectedLabels[0] ?? '';
@@ -262,7 +262,10 @@ export default function useAccountLookupController({
             return name === lowerTrimmed;
         });
 
-        const entityLabel = resource === 'customers' ? 'Pelanggan' : (resource === 'suppliers' ? 'Pemasok' : (resource === 'units' ? 'Satuan' : 'Data'));
+        const entityLabel = resource === 'customers' ? 'Pelanggan'
+            : (resource === 'suppliers' ? 'Pemasok'
+            : (resource === 'units' ? 'Satuan'
+            : (resource === 'product-categories' ? 'Kategori Barang' : 'Data')));
 
         if (existing) {
             const label = buildAccountLookupLabel(existing, resource);
@@ -276,6 +279,7 @@ export default function useAccountLookupController({
             const payload = {
                 name: rawTrimmed,
                 is_active: true,
+                ...(resource === 'product-categories' ? { parent_id: null, is_default: false } : {}),
             };
             const result = await createBackendResource(resource, payload);
             const newRecord = result?.data ?? result;

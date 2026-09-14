@@ -20,7 +20,7 @@ class BackendResourceWriter
      */
     public function create(BackendResourceBlueprint $blueprint, array $payload): Model
     {
-        if (in_array($blueprint->key, ['units', 'customers', 'suppliers'], true) && !empty($payload['name'])) {
+        if (in_array($blueprint->key, ['units', 'customers', 'suppliers', 'product-categories'], true) && !empty($payload['name'])) {
             $trimmedName = trim($payload['name']);
             $modelClass = $blueprint->modelClass();
             $existing = $modelClass::whereRaw('LOWER(TRIM(name)) = ?', [mb_strtolower($trimmedName)])->first();
