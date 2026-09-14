@@ -38,13 +38,16 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
 
     useEffect(() => {
         let ignore = false;
-        setLoading(true);
-        setError('');
-
+        const trimmed = query.trim();
+        const delay = trimmed ? 250 : 50;
         const timeoutId = setTimeout(async () => {
+            if (!ignore) {
+                setLoading(true);
+                setError('');
+            }
             try {
                 const payload = await listBackendResource(resource, {
-                    search: query.trim(),
+                    search: trimmed,
                     per_page: 15,
                     ...queryParams,
                 });
@@ -61,7 +64,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                     setLoading(false);
                 }
             }
-        }, 200);
+        }, delay);
 
         return () => {
             ignore = true;

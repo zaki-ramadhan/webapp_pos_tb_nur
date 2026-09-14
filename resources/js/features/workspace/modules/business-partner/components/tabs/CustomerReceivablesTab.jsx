@@ -39,7 +39,9 @@ export function CustomerReceivablesTab({ recordId }) {
     };
 
     useEffect(() => {
-        loadHistory();
+        const timer = setTimeout(() => {
+            loadHistory();
+        }, 250);
 
         const handleAutoRefresh = () => {
             loadHistory();
@@ -49,6 +51,7 @@ export function CustomerReceivablesTab({ recordId }) {
         window.addEventListener('workspace:page-activated', handleAutoRefresh);
 
         return () => {
+            clearTimeout(timer);
             window.removeEventListener('workspace:resource-updated', handleAutoRefresh);
             window.removeEventListener('workspace:page-activated', handleAutoRefresh);
         };

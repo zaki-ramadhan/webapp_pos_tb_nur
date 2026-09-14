@@ -204,8 +204,17 @@ export default function InquiryWorkspaceView({
         onValuesChangeRef.current = onValuesChange;
     });
 
+    const isFirstMountRef = useRef(true);
     useEffect(() => {
-        onValuesChangeRef.current?.(values);
+        if (isFirstMountRef.current) {
+            isFirstMountRef.current = false;
+            onValuesChangeRef.current?.(values);
+            return;
+        }
+        const timer = setTimeout(() => {
+            onValuesChangeRef.current?.(values);
+        }, 300);
+        return () => clearTimeout(timer);
     }, [values]);
 
     function handleChange(controlId, nextValue, extra = null) {

@@ -157,11 +157,13 @@ export default function useAccountLookupController({
             return;
         }
 
-        setLoading(true);
-        setError('');
-
         let ignore = false;
+        const delay = fetchKey ? 250 : 50;
         const timeoutId = window.setTimeout(async () => {
+            if (!ignore) {
+                setLoading(true);
+                setError('');
+            }
             try {
                 const payload = await listBackendResource(resource, {
                     search: fetchKey,
@@ -187,7 +189,7 @@ export default function useAccountLookupController({
                     setLoading(false);
                 }
             }
-        }, 200);
+        }, delay);
 
         return () => {
             ignore = true;

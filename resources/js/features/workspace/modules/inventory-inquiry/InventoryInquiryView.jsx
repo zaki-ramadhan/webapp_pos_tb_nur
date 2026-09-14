@@ -273,13 +273,25 @@ export default function InventoryInquiryView({ config, pageId }) {
             nextValues.itemSearchId = null;
             nextValues.warehouseSearch = '';
             nextValues.warehouseSearchId = null;
+            setFilters(buildInventoryFilters(pageId, nextValues));
         }
         setValues(nextValues);
-        setFilters(buildInventoryFilters(pageId, nextValues));
         if (isItemLocation) {
             saveInquiryFilter(pageId, nextValues);
         }
     }
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const nextFilters = buildInventoryFilters(pageId, values);
+            setFilters((prev) => {
+                const prevJson = JSON.stringify(prev);
+                const nextJson = JSON.stringify(nextFilters);
+                return prevJson === nextJson ? prev : nextFilters;
+            });
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [pageId, values]);
 
 
 

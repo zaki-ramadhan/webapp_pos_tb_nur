@@ -46,7 +46,9 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0 }) {
     };
 
     useEffect(() => {
-        loadHistory();
+        const timer = setTimeout(() => {
+            loadHistory();
+        }, 250);
 
         const handleAutoRefresh = () => {
             loadHistory();
@@ -56,6 +58,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0 }) {
         window.addEventListener('workspace:page-activated', handleAutoRefresh);
 
         return () => {
+            clearTimeout(timer);
             window.removeEventListener('workspace:resource-updated', handleAutoRefresh);
             window.removeEventListener('workspace:page-activated', handleAutoRefresh);
         };

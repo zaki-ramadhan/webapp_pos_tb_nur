@@ -59,7 +59,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
             }
         }
 
-        const timeoutId = setTimeout(fetchRecords, 200);
+        const timeoutId = setTimeout(fetchRecords, searchQuery ? 250 : 0);
 
         return () => {
             ignore = true;
