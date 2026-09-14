@@ -151,4 +151,66 @@ class ProductMultiUnitConversionTest extends TestCase
         $this->assertDatabaseHas('products', ['code' => 'BND-CAT01']);
         $this->assertDatabaseHas('product_unit_conversions', ['price' => 410000]);
     }
+
+    public function test_paginate_product_mutations_sorts_ascending_with_opening_stock_row_at_the_top(): void
+    {
+        $branch = Branch::query()->create(['code' => 'BR-02', 'name' => 'Cabang 2', 'is_active' => true]);
+        $wh = Warehouse::query()->create(['branch_id' => $branch->id, 'code' => 'WH-02', 'name' => 'Gudang Utama', 'is_active' => true]);
+        $pcs = Unit::query()->create(['code' => 'PCS2', 'name' => 'PCS']);
+        $product = Product::query()->create([
+            'code' => 'PRD-MUT-01',
+            'name' => 'Barang Mutasi Test',
+            'product_type' => 'Persediaan',
+            'base_unit_id' => $pcs->id,
+            'default_purchase_price' => 10000,
+        ]);
+
+        \Illuminate\Support\Facades\DB::table('inventory_batches')->insert([
+            'product_id' => $product->id,
+            'warehouse_id' => $wh->id,
+            'qty_received' => 100,
+            'qty_remaining' => 100,
+            'unit_cost' => 10000,
+            'source_type' => 'manual',
+            'source_id' => 1,
+            'entry_date' => '2026-08-15',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $doc = new \App\Domain\Inventory\Models\InventoryDocument();
+        $doc->document_type = 'inventory_adjustment';
+        $doc->document_number = 'ADJ-001';
+        $doc->warehouse_id = $wh->id;
+        $doc->status = 'posted';
+        $doc->document_date = '2026-09-05';
+        $doc->save();
+        $doc->lines()->create([
+            'product_id' => $product->id,
+            'unit_id' => $pcs->id,
+            'quantity' => 20,
+            'warehouse_id' => $wh->id,
+            'attributes' => ['adjustment_type' => 'Penambahan'],
+        ]);
+
+        $service = app(InventoryInquiryQueryService::class);
+        $paginator = $service->paginateProductMutations([
+            'product_id' => $product->id,
+            'date_from' => '01/09/2026',
+            'date_to' => '30/09/2026',
+        ]);
+
+        $items = collect($paginator->items());
+        $this->assertGreaterThanOrEqual(2, $items->count());
+
+        $first = $items->first();
+        $this->assertEquals('opening-stock', $first['id']);
+        $this->assertEquals('Stok per 01/09/2026', $first['document_type']);
+        $this->assertEquals('0', $first['unit_cost']);
+        $this->assertEquals('100', $first['balance']);
+
+        $second = $items->get(1);
+        $this->assertEquals('ADJ-001', $second['document_number']);
+        $this->assertEquals('120', $second['balance']);
+    }
 }
