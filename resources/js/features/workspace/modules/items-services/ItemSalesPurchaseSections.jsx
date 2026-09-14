@@ -118,7 +118,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                 </FormRow>
 
                 <FormRow label="Satuan Beli">
-                    <div className="w-3/4">
+                    <div className="w-1/2">
                         <BackendLookupField
                             resource="units"
                             value={values.purchaseUnit?.[0]?.name ?? (typeof values.purchaseUnit?.[0] === 'string' ? values.purchaseUnit[0] : (values.purchaseUnitName ?? ''))}
@@ -141,7 +141,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
 
                 <FormRow label="Harga Beli" info>
                     <div className="flex items-center gap-2 w-full">
-                        <div className="w-3/4">
+                        <div className="w-1/2">
                             <SimpleTextField
                                 value={values.purchasePrice}
                                 onChange={(event) => onChange('purchasePrice', event.target.value)}
@@ -160,7 +160,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                 {values.kind !== 'Non Persediaan' && (
                     <FormRow label="Batas Minimum Stok">
                         <div className="flex items-center gap-2 w-full">
-                            <div className="w-3/4">
+                            <div className="w-1/2">
                                 <SimpleTextField
                                     value={values.minimumStock}
                                     onChange={(event) => onChange('minimumStock', event.target.value)}
