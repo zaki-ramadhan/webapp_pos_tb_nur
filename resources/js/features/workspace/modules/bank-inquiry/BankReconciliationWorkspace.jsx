@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
@@ -39,6 +39,34 @@ export default function BankReconciliationWorkspace({
     const importAnchorRef = useRef(null);
     const [startDate, setStartDate] = useState(filters.start_date || '');
     const [endDate, setEndDate] = useState(filters.end_date || '');
+    const dateDebounceTimerRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            if (dateDebounceTimerRef.current) {
+                clearTimeout(dateDebounceTimerRef.current);
+            }
+        };
+    }, []);
+
+    const updateDateFilterDebounced = (newStartDate, newEndDate) => {
+        if (dateDebounceTimerRef.current) {
+            clearTimeout(dateDebounceTimerRef.current);
+        }
+        dateDebounceTimerRef.current = setTimeout(() => {
+            onFiltersChange?.((prev) => ({
+                ...prev,
+                start_date: newStartDate,
+                end_date: newEndDate,
+            }));
+            saveInquiryFilter('bank-reconciliation', {
+                keyword,
+                account_id: filters.account_id ?? null,
+                startDate: newStartDate,
+                endDate: newEndDate,
+            });
+        }, 250);
+    };
 
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
@@ -220,13 +248,7 @@ export default function BankReconciliationWorkspace({
                                 value={startDate}
                                 onChange={(val) => {
                                     setStartDate(val);
-                                    onFiltersChange?.((prev) => ({ ...prev, start_date: val }));
-                                    saveInquiryFilter('bank-reconciliation', {
-                                        keyword,
-                                        account_id: filters.account_id ?? null,
-                                        startDate: val,
-                                        endDate,
-                                    });
+                                    updateDateFilterDebounced(val, endDate);
                                 }}
                                 className="h-[40px] rounded-[4px] border-ui-border w-full"
                                 inputClassName="text-sm text-slate-900 py-1 h-full"
@@ -239,13 +261,7 @@ export default function BankReconciliationWorkspace({
                                 value={endDate}
                                 onChange={(val) => {
                                     setEndDate(val);
-                                    onFiltersChange?.((prev) => ({ ...prev, end_date: val }));
-                                    saveInquiryFilter('bank-reconciliation', {
-                                        keyword,
-                                        account_id: filters.account_id ?? null,
-                                        startDate,
-                                        endDate: val,
-                                    });
+                                    updateDateFilterDebounced(startDate, val);
                                 }}
                                 minDate={startDate}
                                 className="h-[40px] rounded-[4px] border-ui-border w-full"
