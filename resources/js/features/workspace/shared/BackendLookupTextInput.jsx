@@ -32,9 +32,12 @@ function useBackendLookupController({ value = '', disabled = false, resource, qu
         const fetchParamsKey = `${fetchKey}_${queryParamsStr}`;
         if (lastFetchKeyRef.current === fetchParamsKey && rows.length > 0) return;
 
-        setLoading(true);
         let ignore = false;
+        const delay = fetchKey ? 250 : 50;
         const timeoutId = window.setTimeout(async () => {
+            if (!ignore) {
+                setLoading(true);
+            }
             try {
                 const payload = await listBackendResource(resource, {
                     search: fetchKey,
@@ -50,7 +53,7 @@ function useBackendLookupController({ value = '', disabled = false, resource, qu
             } finally {
                 if (!ignore) setLoading(false);
             }
-        }, 200);
+        }, delay);
 
         return () => {
             ignore = true;
