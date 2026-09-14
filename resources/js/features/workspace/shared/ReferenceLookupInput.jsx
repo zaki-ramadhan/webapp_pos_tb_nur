@@ -409,7 +409,7 @@ export default function ReferenceLookupInput({
                                         disabled={isCreating}
                                         onMouseDown={handleCreateNew}
                                         onClick={handleCreateNew}
-                                        className="w-full inline-flex items-center justify-center px-2 py-2 min-h-[35px] text-xs font-medium text-white bg-brand-blue hover:bg-brand-blue-hover active:scale-[0.98] rounded-[4px] shadow-button-primary transition-all cursor-pointer text-center leading-snug break-words disabled:opacity-50"
+                                        className="w-full inline-flex items-center justify-center px-2 py-2 min-h-[35px] text-xs sm:text-sm font-normal text-white bg-brand-blue hover:bg-brand-blue-hover active:scale-[0.98] rounded-[4px] shadow-button-primary transition-all cursor-pointer text-center leading-snug break-words disabled:opacity-50"
                                     >
                                         {isCreating ? (
                                             <span className="inline-flex items-center gap-1.5">
