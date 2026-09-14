@@ -316,6 +316,7 @@ export default function ItemsServicesFormView({
                                 id: numericId && numericId > 0 ? numericId : undefined,
                                 unit_id: conv.unit?.[0]?.id ?? conv.unitId ?? null,
                                 quantity: conv.quantity ? parseAmountInput(conv.quantity) : 0,
+                                price: conv.price !== undefined && conv.price !== null && conv.price !== '' ? parseAmountInput(conv.price) : 0,
                             };
                         })
                         .filter((conv) => conv.unit_id && conv.quantity > 0),

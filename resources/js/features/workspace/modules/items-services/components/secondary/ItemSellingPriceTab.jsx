@@ -27,7 +27,10 @@ export default function ItemSellingPriceTab({ values = {}, detailRow = null }) {
         conversions.forEach((conv, idx) => {
             const unitName = conv.unitName ?? conv.unit?.[0]?.name ?? conv.name ?? `Satuan ${idx + 2}`;
             const ratio = Number(conv.quantity || 1);
-            const price = basePrice > 0 ? basePrice * ratio : parseAmountInput(conv.price ?? 0);
+            const customPrice = conv.price !== undefined && conv.price !== null && conv.price !== ''
+                ? parseAmountInput(conv.price)
+                : 0;
+            const price = customPrice > 0 ? customPrice : (basePrice > 0 ? basePrice * ratio : 0);
             if (price > 0) {
                 rows.push({
                     id: conv.id ?? `conv-${idx}`,

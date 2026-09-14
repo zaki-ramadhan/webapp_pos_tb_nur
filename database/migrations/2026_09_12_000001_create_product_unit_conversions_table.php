@@ -14,6 +14,7 @@ return new class extends Migration
                 $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
                 $table->foreignId('unit_id')->constrained('units')->cascadeOnDelete();
                 $table->decimal('quantity', 18, 4)->default(1);
+                $table->decimal('price', 18, 2)->default(0);
                 $table->timestamps();
 
                 $table->index(['product_id', 'unit_id']);
