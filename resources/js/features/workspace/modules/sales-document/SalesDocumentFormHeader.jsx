@@ -11,7 +11,7 @@ import {
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { getBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import { applyComputedTotals } from '@/features/workspace/modules/sales-document/salesDocumentFormShared';
-import { showSuccessToast } from '@/components/feedback/toast';
+import { showSuccessToast, showWarningToast } from '@/components/feedback/toast';
 import { formatCurrencyValue } from '@/features/workspace/shared/amountFormatting';
 
 export default function SalesDocumentFormHeader({
@@ -23,6 +23,12 @@ export default function SalesDocumentFormHeader({
     backendConfig,
     handlers,
 }) {
+    const isPurchase = String(pageId || '').toLowerCase().includes('purchase');
+    const hasItems = Array.isArray(values.items) && values.items.length > 0;
+    const hasCosts = Array.isArray(values.additionalCosts) && values.additionalCosts.length > 0;
+    const hasAdvances = Array.isArray(values.advancePayments) && values.advancePayments.length > 0;
+    const hasChildRecords = hasItems || hasCosts || hasAdvances;
+
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
             {/* Left Column */}
@@ -36,6 +42,18 @@ export default function SalesDocumentFormHeader({
                             value={Array.isArray(values.customer) ? (values.customer[0] ?? '') : String(values.customer ?? '')}
                             placeholder={config.customerPlaceholder ?? 'Cari/Pilih Pelanggan...'}
                             searchLabel={config.customerSearchLabel ?? 'Cari pelanggan'}
+                            clearDisabled={hasChildRecords}
+                            onBeforeClear={() => {
+                                if (hasChildRecords) {
+                                    const partnerName = isPurchase ? 'pemasok' : 'pelanggan';
+                                    showWarningToast({
+                                        title: 'Perhatian',
+                                        message: `Hapus data rincian barang, biaya lainnya, atau uang muka terlebih dahulu sebelum menghapus ${partnerName}.`,
+                                    });
+                                    return false;
+                                }
+                                return true;
+                            }}
                             onSelectAccount={(record, label) => {
                                 setValues((current) => ({
                                     ...current,

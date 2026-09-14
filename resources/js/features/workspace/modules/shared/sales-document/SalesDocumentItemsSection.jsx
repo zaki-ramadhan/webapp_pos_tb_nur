@@ -1,5 +1,6 @@
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import { showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
 
 export function SalesDocumentItemsSection({ config, values, isDetail, handlers }) {
     const itemTitle = values.itemCountLabel || config.itemSectionTitle;
@@ -40,7 +41,14 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
     const importButton = !isDetail && handlers?.onImportClick && !hideImport ? (
         <button
             type="button"
-            onClick={handlers.onImportClick}
+            onClick={() => {
+                if (!values.__partnerId) {
+                    const partnerLabel = config.labels?.customer || 'Pelanggan';
+                    showCrudValidationToast(`${partnerLabel} harus diisi terlebih dahulu.`);
+                    return;
+                }
+                handlers.onImportClick();
+            }}
             className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent hover:bg-brand-blue-lightest transition shrink-0 cursor-pointer"
         >
             Impor Excel/CSV
@@ -52,8 +60,21 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
             resource={config.itemSearchResource}
             placeholder={config.itemSearchPlaceholder}
             searchLabel="Cari barang"
+            onBeforeOpen={() => {
+                if (!values.__partnerId) {
+                    const partnerLabel = config.labels?.customer || 'Pelanggan';
+                    showCrudValidationToast(`${partnerLabel} harus diisi terlebih dahulu.`);
+                    return false;
+                }
+                return true;
+            }}
             onSelectAccount={(record) => {
                 if (!record) return;
+                if (!values.__partnerId) {
+                    const partnerLabel = config.labels?.customer || 'Pelanggan';
+                    showCrudValidationToast(`${partnerLabel} harus diisi terlebih dahulu.`);
+                    return;
+                }
                 handlers?.onSelectItem?.(record);
             }}
         />

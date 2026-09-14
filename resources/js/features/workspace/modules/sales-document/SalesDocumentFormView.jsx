@@ -33,7 +33,7 @@ import {
     resolveInitialSectionId,
     resolveSectionComponent,
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
-import { showCrudErrorToast } from '@/features/workspace/shared/crudFeedback';
+import { showCrudErrorToast, showCrudValidationToast } from '@/features/workspace/shared/crudFeedback';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 import { handleFormSaveSuccess, clearValidationErrors } from '@/features/workspace/shared/crudFormActions';
@@ -221,6 +221,11 @@ export default function SalesDocumentFormView({
     }
 
     function handleCreateItem() {
+        if (!values.__partnerId) {
+            const partnerLabel = config.labels?.customer || 'Pelanggan';
+            showCrudValidationToast(`${partnerLabel} harus diisi terlebih dahulu.`);
+            return;
+        }
         setEditingProduct(null);
         setEditingItem(null);
         setEditItemOpen(true);
@@ -392,6 +397,11 @@ export default function SalesDocumentFormView({
                 showSuccessToast({ message: `${selectedItems.length} barang rincian retur berhasil diambil.` });
             },
             onSelectItem: (record) => {
+                if (!values.__partnerId) {
+                    const partnerLabel = config.labels?.customer || 'Pelanggan';
+                    showCrudValidationToast(`${partnerLabel} harus diisi terlebih dahulu.`);
+                    return;
+                }
                 setEditingProduct(record);
                 setEditingItem(null);
                 setEditItemOpen(true);
