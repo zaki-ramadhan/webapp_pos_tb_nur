@@ -685,16 +685,47 @@ class InventoryInquiryQueryService
                     default => str_replace('_', '-', $docTypeStr),
                 };
 
-                $linePrice = (float) ($line->unit_price ?? 0);
-                $docCost = (float) (
-                    ($linePrice > 0 ? $linePrice : null)
-                    ?: ($line->attributes['unit_price'] ?? null)
-                    ?: ($line->attributes['unit_cost'] ?? null)
-                    ?: ($line->attributes['cost'] ?? null)
-                    ?: ($doc->document_type === 'sales_invoice' || $doc->document_type === 'sales_delivery'
-                        ? ($defaultSalePrice > 0 ? $defaultSalePrice : $fallbackPrice)
-                        : ($defaultPurchasePrice > 0 ? $defaultPurchasePrice : $fallbackPrice))
-                );
+                $attrs = is_string($line->attributes) ? json_decode($line->attributes, true) : ($line->attributes ?? []);
+                $isSales = in_array($doc->document_type, ['sales_invoice', 'sales_delivery'], true);
+                $isAdjustmentReduction = ($doc->document_type === 'inventory_adjustment' && ($adjType ?? '') === 'Pengurangan');
+                $lineQty = abs((float) ($line->quantity ?? 0));
+
+                if ($isSales || $isAdjustmentReduction) {
+                    $cogs = (float) ($attrs['cogs'] ?? 0);
+                    $unitCogs = ($lineQty > 0 && $cogs > 0) ? ($cogs / $lineQty) : 0.0;
+
+                    $batchCost = null;
+                    if ($whId) {
+                        $batchCost = \Illuminate\Support\Facades\DB::table('inventory_batches')
+                            ->where('product_id', $productId)
+                            ->where('warehouse_id', $whId)
+                            ->orderBy('entry_date', 'asc')
+                            ->value('unit_cost');
+                    }
+                    if ($batchCost === null) {
+                        $batchCost = \Illuminate\Support\Facades\DB::table('inventory_batches')
+                            ->where('product_id', $productId)
+                            ->orderBy('entry_date', 'asc')
+                            ->value('unit_cost');
+                    }
+
+                    $docCost = (float) (
+                        ($unitCogs > 0 ? $unitCogs : null)
+                        ?: ($batchCost !== null && (float) $batchCost > 0 ? (float) $batchCost : null)
+                        ?: ($attrs['unit_cost'] ?? null)
+                        ?: ($attrs['cost'] ?? null)
+                        ?: ($defaultPurchasePrice > 0 ? $defaultPurchasePrice : $fallbackPrice)
+                    );
+                } else {
+                    $linePrice = (float) ($line->unit_price ?? 0);
+                    $docCost = (float) (
+                        ($linePrice > 0 ? $linePrice : null)
+                        ?: ($attrs['unit_price'] ?? null)
+                        ?: ($attrs['unit_cost'] ?? null)
+                        ?: ($attrs['cost'] ?? null)
+                        ?: ($defaultPurchasePrice > 0 ? $defaultPurchasePrice : $fallbackPrice)
+                    );
+                }
 
                 $rows->push([
                     'id' => 'op-'.$doc->id.'-'.$line->id,

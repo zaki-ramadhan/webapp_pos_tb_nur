@@ -185,10 +185,23 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
 
         const qty = parseFloat(String(values.quantity ?? '').replace(/\./g, '').replace(/,/g, '.'));
         const adjType = values.adjustmentType ?? 'Penambahan';
+        let finalAdjType = adjType;
+        let finalQty = qty;
 
         if (adjType === 'Atur Stok') {
             if (isNaN(qty) || qty < 0) {
                 newErrors.quantity = 'Kuantitas fisik tidak boleh bernilai negatif.';
+            } else {
+                const delta = qty - currentWarehouseStock;
+                if (Math.abs(delta) < 0.0001) {
+                    newErrors.quantity = `Kuantitas fisik (${qty}) sama dengan stok saat ini di gudang (${currentWarehouseStock}). Tidak ada selisih yang disesuaikan.`;
+                } else if (delta < 0) {
+                    finalAdjType = 'Pengurangan';
+                    finalQty = Math.abs(delta);
+                } else {
+                    finalAdjType = 'Penambahan';
+                    finalQty = delta;
+                }
             }
         } else {
             if (isNaN(qty) || qty <= 0) {
@@ -196,11 +209,11 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
             }
         }
 
-        if (adjType === 'Pengurangan') {
+        if (finalAdjType === 'Pengurangan') {
             if (currentWarehouseStock <= 0) {
                 newErrors.quantity = 'Stok barang di gudang ini saat ini 0, pengurangan tidak dapat dilakukan.';
-            } else if (qty > currentWarehouseStock) {
-                newErrors.quantity = `Kuantitas pengurangan (${qty}) melebihi stok yang tersedia (${currentWarehouseStock}) di gudang ini.`;
+            } else if (finalQty > currentWarehouseStock) {
+                newErrors.quantity = `Kuantitas pengurangan (${finalQty}) melebihi stok yang tersedia (${currentWarehouseStock}) di gudang ini.`;
             }
         }
 
@@ -210,20 +223,27 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
             return;
         }
 
-        const isAddition = adjType === 'Penambahan';
+        const isAddition = finalAdjType === 'Penambahan';
         const unitCostNum = isAddition ? (parseFloat(String(values.unitCost ?? '0').replace(/\./g, '').replace(/,/g, '.')) || 0) : 0;
-        const totalCostNum = isAddition ? (qty * unitCostNum) : 0;
+        const totalCostNum = isAddition ? (finalQty * unitCostNum) : 0;
         const unitName = values.unitLookup?.[0] || item.unit || '';
 
         const { __userSelectedWarehouse, ...cleanValues } = values;
         const updatedItem = {
             ...item,
             ...cleanValues,
-            quantity: String(qty),
+            adjustmentType: finalAdjType,
+            quantity: String(finalQty),
             unit: unitName,
             unitLookup: values.unitLookup?.length ? values.unitLookup : (unitName ? [unitName] : []),
             unitCost: isAddition ? (unitCostNum ? unitCostNum.toLocaleString('id-ID') : '0') : '0',
             totalCost: isAddition ? (totalCostNum ? totalCostNum.toLocaleString('id-ID') : '0') : '0',
+            attributes: {
+                ...(item.attributes ?? {}),
+                system_quantity: currentWarehouseStock,
+                physical_quantity: qty,
+                delta_quantity: qty - currentWarehouseStock,
+            },
         };
 
         onSave?.(updatedItem);
