@@ -525,7 +525,11 @@ export default function InventoryInquiryView({ config, pageId }) {
             ) : null}
 
             <div className="mt-3 flex flex-1 flex-col min-h-0 overflow-hidden">
-                <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="flex-1 min-h-0 overflow-auto border-table-wrapper-border">
+                <DataTable
+                    bordered="table"
+                    className={config.table.tableClassName ?? 'min-w-[1280px]'}
+                    wrapperClassName="flex-1 min-h-0 overflow-auto border-0"
+                >
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {firstColumnIsCheckbox ? (
