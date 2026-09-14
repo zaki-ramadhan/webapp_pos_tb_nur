@@ -10,50 +10,66 @@ class InventoryEntitySeeder extends Seeder
     public function run(): void
     {
         // Seed brands
-        $bGresik   = DB::table('brands')->insertGetId(['code' => 'SGR', 'name' => 'Semen Gresik', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $bTigaRoda = DB::table('brands')->insertGetId(['code' => 'STR', 'name' => 'Semen Tiga Roda', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $bRucika   = DB::table('brands')->insertGetId(['code' => 'RCK', 'name' => 'Rucika', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $bAvian    = DB::table('brands')->insertGetId(['code' => 'AVN', 'name' => 'Avian / Avitex', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $bDulux    = DB::table('brands')->insertGetId(['code' => 'DLX', 'name' => 'Dulux', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $bOnda     = DB::table('brands')->insertGetId(['code' => 'OND', 'name' => 'Onda', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $bEterna   = DB::table('brands')->insertGetId(['code' => 'ETN', 'name' => 'Eterna', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $bPenguin  = DB::table('brands')->insertGetId(['code' => 'PNG', 'name' => 'Penguin', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $bTekiro   = DB::table('brands')->insertGetId(['code' => 'TKR', 'name' => 'Tekiro', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $bAqua     = DB::table('brands')->insertGetId(['code' => 'AQP', 'name' => 'Aquaproof', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
+        $getOrInsertBrand = function (string $code, string $name) {
+            $existing = DB::table('brands')->where('code', $code)->first();
+            if ($existing) return $existing->id;
+            return DB::table('brands')->insertGetId(['code' => $code, 'name' => $name, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
+        };
+        $bGresik   = $getOrInsertBrand('SGR', 'Semen Gresik');
+        $bTigaRoda = $getOrInsertBrand('STR', 'Semen Tiga Roda');
+        $bRucika   = $getOrInsertBrand('RCK', 'Rucika');
+        $bAvian    = $getOrInsertBrand('AVN', 'Avian / Avitex');
+        $bDulux    = $getOrInsertBrand('DLX', 'Dulux');
+        $bOnda     = $getOrInsertBrand('OND', 'Onda');
+        $bEterna   = $getOrInsertBrand('ETN', 'Eterna');
+        $bPenguin  = $getOrInsertBrand('PNG', 'Penguin');
+        $bTekiro   = $getOrInsertBrand('TKR', 'Tekiro');
+        $bAqua     = $getOrInsertBrand('AQP', 'Aquaproof');
 
         // Seed units
-        $uZak = DB::table('units')->insertGetId(['code' => 'ZAK', 'name' => 'Zak', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uBtg = DB::table('units')->insertGetId(['code' => 'BTG', 'name' => 'Batang', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uGln = DB::table('units')->insertGetId(['code' => 'GLN', 'name' => 'Galon', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uLbr = DB::table('units')->insertGetId(['code' => 'LBR', 'name' => 'Lembar', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uKg  = DB::table('units')->insertGetId(['code' => 'KG',  'name' => 'Kilogram', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uBuh = DB::table('units')->insertGetId(['code' => 'BUH', 'name' => 'Buah', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uRol = DB::table('units')->insertGetId(['code' => 'ROL', 'name' => 'Roll', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uTub = DB::table('units')->insertGetId(['code' => 'TUB', 'name' => 'Tube', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uPup = DB::table('units')->insertGetId(['code' => 'PUP', 'name' => 'Pick Up', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uKlg = DB::table('units')->insertGetId(['code' => 'KLG', 'name' => 'Kaleng', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uPkt = DB::table('units')->insertGetId(['code' => 'PKT', 'name' => 'Paket', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $uDus = DB::table('units')->insertGetId(['code' => 'DUS', 'name' => 'Dus / Box', 'precision' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
+        $getOrInsertUnit = function (string $code, string $name, int $precision = 0) {
+            $existing = DB::table('units')->where('code', $code)->first();
+            if ($existing) return $existing->id;
+            return DB::table('units')->insertGetId(['code' => $code, 'name' => $name, 'precision' => $precision, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
+        };
+        $uZak = $getOrInsertUnit('ZAK', 'Zak', 0);
+        $uBtg = $getOrInsertUnit('BTG', 'Batang', 0);
+        $uGln = $getOrInsertUnit('GLN', 'Galon', 0);
+        $uLbr = $getOrInsertUnit('LBR', 'Lembar', 0);
+        $uKg  = $getOrInsertUnit('KG',  'Kilogram', 0);
+        $uBuh = $getOrInsertUnit('BUH', 'Buah', 0);
+        $uRol = $getOrInsertUnit('ROL', 'Roll', 0);
+        $uTub = $getOrInsertUnit('TUB', 'Tube', 0);
+        $uPup = $getOrInsertUnit('PUP', 'Pick Up', 0);
+        $uKlg = $getOrInsertUnit('KLG', 'Kaleng', 0);
+        $uPkt = $getOrInsertUnit('PKT', 'Paket', 0);
+        $uDus = $getOrInsertUnit('DUS', 'Dus / Box', 0);
 
         // Seed product categories
-        $cUtama   = DB::table('product_categories')->insertGetId(['code' => 'MAT-UTM', 'name' => 'Bahan Bangunan Utama', 'slug' => 'bahan-bangunan-utama', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $cBesi    = DB::table('product_categories')->insertGetId(['code' => 'BES-STR', 'name' => 'Besi & Struktur Baja', 'slug' => 'besi-struktur-baja', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $cCat     = DB::table('product_categories')->insertGetId(['code' => 'CAT-THN', 'name' => 'Cat & Finishing', 'slug' => 'cat-finishing', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $cPipa    = DB::table('product_categories')->insertGetId(['code' => 'PIP-SAN', 'name' => 'Perpipaan & Sanitasi', 'slug' => 'perpipaan-sanitasi', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $cList    = DB::table('product_categories')->insertGetId(['code' => 'LIS-PER', 'name' => 'Kelistrikan & Alat Pertukangan', 'slug' => 'kelistrikan-pertukangan', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $cAtap    = DB::table('product_categories')->insertGetId(['code' => 'ATP-PLF', 'name' => 'Atap, Seng & Plafon', 'slug' => 'atap-seng-plafon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-        $cKeramik = DB::table('product_categories')->insertGetId(['code' => 'KRM-GRN', 'name' => 'Keramik & Perekat', 'slug' => 'keramik-perekat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
+        $getOrInsertCat = function (string $code, string $name, string $slug) {
+            $existing = DB::table('product_categories')->where('code', $code)->first();
+            if ($existing) return $existing->id;
+            return DB::table('product_categories')->insertGetId(['code' => $code, 'name' => $name, 'slug' => $slug, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
+        };
+        $cUtama   = $getOrInsertCat('MAT-UTM', 'Bahan Bangunan Utama', 'bahan-bangunan-utama');
+        $cBesi    = $getOrInsertCat('BES-STR', 'Besi & Struktur Baja', 'besi-struktur-baja');
+        $cCat     = $getOrInsertCat('CAT-THN', 'Cat & Finishing', 'cat-finishing');
+        $cPipa    = $getOrInsertCat('PIP-SAN', 'Perpipaan & Sanitasi', 'perpipaan-sanitasi');
+        $cList    = $getOrInsertCat('LIS-PER', 'Kelistrikan & Alat Pertukangan', 'kelistrikan-pertukangan');
+        $cAtap    = $getOrInsertCat('ATP-PLF', 'Atap, Seng & Plafon', 'atap-seng-plafon');
+        $cKeramik = $getOrInsertCat('KRM-GRN', 'Keramik & Perekat', 'keramik-perekat');
 
         // Fetch seeded suppliers
         $suppliers = DB::table('suppliers')->get()->keyBy('code');
-        $suppNiaga    = $suppliers->get('SUPP-001')?->id ?? 1;
-        $suppSolusi   = $suppliers->get('SUPP-002')?->id ?? 2;
-        $suppIndowarna= $suppliers->get('SUPP-003')?->id ?? 3;
-        $suppMegaBaja = $suppliers->get('SUPP-004')?->id ?? 4;
-        $suppGias     = $suppliers->get('SUPP-005')?->id ?? 5;
-        $suppPasir    = $suppliers->get('SUPP-006')?->id ?? 6;
-        $suppPropan   = $suppliers->get('SUPP-007')?->id ?? 7;
-        $suppRkm      = $suppliers->get('SUPP-008')?->id ?? 8;
+        $firstSupplierId = DB::table('suppliers')->value('id');
+        $suppNiaga    = $suppliers->get('SUPP-001')?->id ?? $firstSupplierId;
+        $suppSolusi   = $suppliers->get('SUPP-002')?->id ?? $firstSupplierId;
+        $suppIndowarna= $suppliers->get('SUPP-003')?->id ?? $firstSupplierId;
+        $suppMegaBaja = $suppliers->get('SUPP-004')?->id ?? $firstSupplierId;
+        $suppGias     = $suppliers->get('SUPP-005')?->id ?? $firstSupplierId;
+        $suppPasir    = $suppliers->get('SUPP-006')?->id ?? $firstSupplierId;
+        $suppPropan   = $suppliers->get('SUPP-007')?->id ?? $firstSupplierId;
+        $suppRkm      = $suppliers->get('SUPP-008')?->id ?? $firstSupplierId;
 
         // Seed 45+ Authentic products
         $products = [
@@ -120,12 +136,20 @@ class InventoryEntitySeeder extends Seeder
         $productIds = [];
         $supplierPriceRows = [];
         foreach ($products as $p) {
-            $id = DB::table('products')->insertGetId(array_merge($p, [
-                'product_type' => 'stock',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]));
+            $existing = DB::table('products')->where('code', $p['code'])->first();
+            if ($existing) {
+                DB::table('products')->where('id', $existing->id)->update(array_merge($p, [
+                    'updated_at' => now(),
+                ]));
+                $id = $existing->id;
+            } else {
+                $id = DB::table('products')->insertGetId(array_merge($p, [
+                    'product_type' => 'stock',
+                    'is_active' => true,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]));
+            }
             $productIds[$p['code']] = $id;
 
             if (isset($p['main_supplier_id'])) {
@@ -136,14 +160,13 @@ class InventoryEntitySeeder extends Seeder
                     'price' => (float) ($p['default_purchase_price'] ?? 0),
                     'effective_from' => now()->toDateString(),
                     'notes' => 'Harga awal seeder',
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ];
             }
         }
 
         // Seed Group / Bundel Product
-        $groupProdId = DB::table('products')->insertGetId([
+        $existingGroup = DB::table('products')->where('code', 'BND-CAT01')->first();
+        $groupData = [
             'category_id' => $cCat,
             'brand_id' => $bAvian,
             'base_unit_id' => $uPkt,
@@ -160,9 +183,16 @@ class InventoryEntitySeeder extends Seeder
             'height' => 28.0,
             'weight' => 6200,
             'is_active' => true,
-            'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ];
+        if ($existingGroup) {
+            DB::table('products')->where('id', $existingGroup->id)->update($groupData);
+            $groupProdId = $existingGroup->id;
+        } else {
+            $groupProdId = DB::table('products')->insertGetId(array_merge($groupData, [
+                'created_at' => now(),
+            ]));
+        }
 
         $supplierPriceRows[] = [
             'supplier_id' => $suppIndowarna,
@@ -171,65 +201,86 @@ class InventoryEntitySeeder extends Seeder
             'price' => 140000,
             'effective_from' => now()->toDateString(),
             'notes' => 'Harga awal seeder',
-            'created_at' => now(),
-            'updated_at' => now(),
         ];
 
         if (DB::getSchemaBuilder()->hasTable('supplier_prices') && ! empty($supplierPriceRows)) {
-            DB::table('supplier_prices')->insert($supplierPriceRows);
+            foreach ($supplierPriceRows as $sp) {
+                DB::table('supplier_prices')->updateOrInsert(
+                    [
+                        'supplier_id' => $sp['supplier_id'],
+                        'product_id' => $sp['product_id'],
+                        'unit_id' => $sp['unit_id'],
+                    ],
+                    array_merge($sp, [
+                        'updated_at' => now(),
+                    ])
+                );
+            }
         }
 
         if (DB::getSchemaBuilder()->hasTable('product_group_items')) {
-            DB::table('product_group_items')->insert([
-                ['parent_product_id' => $groupProdId, 'child_product_id' => $productIds['CAT-005'], 'unit_id' => $uGln, 'quantity' => 1, 'created_at' => now(), 'updated_at' => now()],
-                ['parent_product_id' => $groupProdId, 'child_product_id' => $productIds['KUS-003'], 'unit_id' => $uBuh, 'quantity' => 1, 'created_at' => now(), 'updated_at' => now()],
-                ['parent_product_id' => $groupProdId, 'child_product_id' => $productIds['THN-001'], 'unit_id' => $uKlg, 'quantity' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ]);
+            $groupItems = [
+                ['parent_product_id' => $groupProdId, 'child_product_id' => $productIds['CAT-005'], 'unit_id' => $uGln, 'quantity' => 1],
+                ['parent_product_id' => $groupProdId, 'child_product_id' => $productIds['KUS-003'], 'unit_id' => $uBuh, 'quantity' => 1],
+                ['parent_product_id' => $groupProdId, 'child_product_id' => $productIds['THN-001'], 'unit_id' => $uKlg, 'quantity' => 1],
+            ];
+            foreach ($groupItems as $gi) {
+                DB::table('product_group_items')->updateOrInsert(
+                    [
+                        'parent_product_id' => $gi['parent_product_id'],
+                        'child_product_id' => $gi['child_product_id'],
+                    ],
+                    array_merge($gi, [
+                        'updated_at' => now(),
+                    ])
+                );
+            }
         }
 
         if (DB::getSchemaBuilder()->hasTable('product_unit_conversions')) {
-            DB::table('product_unit_conversions')->insert([
+            $conversions = [
                 [
                     'product_id' => $productIds['PAK-050'],
                     'unit_id' => $uDus,
                     'quantity' => 20,
                     'price' => 410000,
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ],
                 [
                     'product_id' => $productIds['LEM-045'],
                     'unit_id' => $uDus,
                     'quantity' => 24,
                     'price' => 285000,
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ],
                 [
                     'product_id' => $productIds['KUS-003'],
                     'unit_id' => $uDus,
                     'quantity' => 12,
                     'price' => 200000,
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ],
                 [
                     'product_id' => $productIds['KRN-001'],
                     'unit_id' => $uDus,
                     'quantity' => 10,
                     'price' => 420000,
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ],
                 [
                     'product_id' => $productIds['KWT-001'],
                     'unit_id' => $uRol,
                     'quantity' => 25,
                     'price' => 575000,
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ],
-            ]);
+            ];
+            foreach ($conversions as $conv) {
+                DB::table('product_unit_conversions')->updateOrInsert(
+                    [
+                        'product_id' => $conv['product_id'],
+                        'unit_id' => $conv['unit_id'],
+                    ],
+                    array_merge($conv, [
+                        'updated_at' => now(),
+                    ])
+                );
+            }
         }
     }
 }
