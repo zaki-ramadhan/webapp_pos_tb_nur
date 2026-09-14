@@ -61,9 +61,13 @@ export default function AccountLookupSearchInput({
         inputRef.current?.focus();
     }
 
+    const isLocked = (clearDisabled && isSelected) || disabled;
+
     const toneClassName = error
         ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
-        : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+        : isLocked
+            ? 'border-slate-400'
+            : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     // Kalau ada chip, wrapper non-interaktif (kursor pointer biasa) — harus clear dulu
     const wrapperCursor = disabled ? 'cursor-default' : isSelected ? 'cursor-default' : 'cursor-text';
@@ -140,7 +144,7 @@ export default function AccountLookupSearchInput({
             </div>
 
             <span
-                className={`flex h-full items-center px-3 transition-colors duration-150 ${disabled ? 'text-slate-300' : 'text-slate-400 group-focus-within:text-[var(--color-input-focus)]'} ${trailingClassName}`.trim()}
+                className={`flex h-full items-center px-3 transition-colors duration-150 ${disabled ? 'text-slate-300' : isLocked ? 'text-slate-400' : 'text-slate-400 group-focus-within:text-[var(--color-input-focus)]'} ${trailingClassName}`.trim()}
             >
                 <div className="flex items-center gap-1">
                     {loading ? (

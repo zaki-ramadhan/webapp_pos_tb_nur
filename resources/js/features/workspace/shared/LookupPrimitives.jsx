@@ -22,14 +22,17 @@ export function LookupChip({
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        if (clearDisabled || disabled) return;
                         onClear(e);
                     }}
-                    disabled={disabled}
+                    disabled={disabled || clearDisabled}
+                    tabIndex={clearDisabled ? -1 : undefined}
+                    aria-disabled={clearDisabled || disabled ? 'true' : undefined}
                     aria-label={clearAriaLabel}
-                    className={`inline-flex h-4 w-4 shrink-0 items-center justify-center transition-colors cursor-pointer ${
+                    className={`inline-flex h-4 w-4 shrink-0 items-center justify-center transition-colors ${
                         clearDisabled
-                            ? 'text-slate-400 hover:text-slate-500'
-                            : 'text-text-chip-blue-dark hover:text-red-600 active:text-red-800'
+                            ? 'text-slate-300 pointer-events-none cursor-default'
+                            : 'text-text-chip-blue-dark hover:text-red-600 active:text-red-800 cursor-pointer'
                     }`}
                 >
                     <CloseIcon className="h-3.5 w-3.5" />
