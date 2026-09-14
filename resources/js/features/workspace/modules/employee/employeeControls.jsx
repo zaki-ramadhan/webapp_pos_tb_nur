@@ -15,7 +15,7 @@ export function SuggestionTextInput({
     options = [],
     placeholder = 'Cari/Pilih...',
     searchLabel = 'Cari data',
-    emptyLabel = 'Belum ada data.',
+    emptyLabel = 'Tidak ditemukan data yang cocok',
     className = 'h-[40px] rounded-[4px] border-slate-400',
     inputClassName = 'text-xs sm:text-sm text-brand-dark',
     ...props

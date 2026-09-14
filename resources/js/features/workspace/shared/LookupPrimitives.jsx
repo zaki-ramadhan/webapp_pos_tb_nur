@@ -70,7 +70,7 @@ export function LookupDropdownSurface({ className = '', children, maxHeightLimit
 }
 
 export function LookupEmptyState({
-    title = 'Data tidak ditemukan',
+    title = 'Tidak ditemukan data yang cocok',
     description = null,
     className = '',
     children = null,
@@ -84,8 +84,8 @@ export function LookupEmptyState({
 
     return (
         <div className={`${defaultPadding} text-center ${className}`.trim()}>
-            <div className="text-xs sm:text-sm font-normal text-text-workspace-dark">{title}</div>
-            {description ? <div className="mt-1 text-xs text-text-workspace-dark">{description}</div> : null}
+            <div className="text-xs sm:text-sm font-normal italic text-text-workspace-dark">{title}</div>
+            {description ? <div className="mt-1 text-xs italic text-text-workspace-dark">{description}</div> : null}
             {children}
         </div>
     );

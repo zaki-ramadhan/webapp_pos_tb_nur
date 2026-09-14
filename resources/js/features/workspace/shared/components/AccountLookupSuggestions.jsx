@@ -75,7 +75,7 @@ export default function AccountLookupSuggestions({
     };
 
     const entityName = entityLabels[resource] ?? 'data';
-    const resolvedEmptyLabel = emptyLabel ?? 'Belum ada data.';
+    const resolvedEmptyLabel = emptyLabel ?? 'Tidak ditemukan data yang cocok';
     const resolvedLoadingLabel = loadingLabel ?? `Memuat ${entityName}...`;
 
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
@@ -97,7 +97,7 @@ export default function AccountLookupSuggestions({
     }, [rows, resource]);
 
     const emptyMessage = query.trim()
-        ? 'Belum ada data.'
+        ? 'Tidak ditemukan data yang cocok'
         : resolvedEmptyLabel;
 
     if (!open) {

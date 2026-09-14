@@ -32,8 +32,8 @@ export default function ReferenceLookupInput({
     onClear = null,
     onRemove = null,
     onCreateNew = null,
-    emptyTitle = 'Data tidak ditemukan',
-    emptyDescription = 'Coba kata kunci lain.',
+    emptyTitle = 'Tidak ditemukan data yang cocok',
+    emptyDescription = null,
 }) {
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
