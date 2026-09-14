@@ -42,6 +42,7 @@ import {
 import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
 import { buildInitialValues, InquiryControl } from './InventoryInquiryControls';
 import { loadInquiryFilter, saveInquiryFilter } from '@/features/workspace/shared/inquiryFilterPersistence';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 
 function resolveCellAlignClassName(align) {
     if (align === 'right') return 'text-right';
@@ -319,7 +320,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     }, [error, isAccessRestricted, isItemLocation, hasTarget]);
 
     function handleButtonClick(controlId) {
-        if (controlId === 'order' || controlId === 'request') {
+        if (controlId === 'order') {
             if (selectedIds.size === 0) {
                 showSystemErrorModal({
                     title: 'Terjadi Permasalahan pada Pemrosesan',
@@ -331,44 +332,45 @@ export default function InventoryInquiryView({ config, pageId }) {
             }
 
             const selectedRows = tableRows.filter((row) => selectedIds.has(row.id) && !isInactiveRow(row));
-            const targetPageId = controlId === 'order'
-                ? (pageProps.pages?.['purchase-order'] ? 'purchase-order' : 'purchase-invoice')
-                : (pageProps.pages?.['item-request'] ? 'item-request' : 'purchase-invoice');
-
-            const targetLabel = targetPageId === 'purchase-order'
-                ? 'Pesanan Pembelian'
-                : (targetPageId === 'purchase-invoice' ? 'Faktur Pembelian' : 'Permintaan Barang');
+            const targetPageId = 'purchase-invoice';
+            const targetLabel = 'Faktur Pembelian';
 
             const lineItems = selectedRows.map((row) => {
-                const minLimit = parseNumericInput(row.rawMinimumLimit ?? row.minimumLimit ?? row.minimumStock ?? 1);
-                const currentStock = parseNumericInput(row.rawAvailableStock ?? row.availableStock ?? 0);
-                const targetReplenishQty = Math.max(1, minLimit - currentStock);
-                const qtyNeeded = Math.max(minLimit > 0 ? minLimit : 1, targetReplenishQty);
+                const minLimit = parseNumericInput(row.rawMinimumLimit ?? row.minimumLimit ?? row.minimumStock ?? 0);
+                const currentStock = parseNumericInput(row.rawAvailableStock ?? row.availableStock ?? row.rawCurrentStock ?? row.currentStock ?? 0);
+                const deficit = minLimit - currentStock;
+                const calculatedNeeded = deficit > 0 ? deficit : (minLimit > 0 ? minLimit : 1);
+                const qtyNeeded = Math.max(1, parseNumericInput(row.suggestedReorderQty || calculatedNeeded));
+
+                const itemId = String(row.productId || row.itemId || row.id);
+                const matchingProduct = products.find((p) => String(p.id) === itemId);
 
                 const price = parseNumericInput(
-                    row.default_purchase_price ??
                     row.defaultPurchasePrice ??
+                    row.default_purchase_price ??
                     row.raw_cost_price ??
                     row.costPrice ??
                     row.price ??
-                    (products.find((p) => String(p.id) === String(row.productId || row.itemId || row.id))?.default_purchase_price) ??
+                    matchingProduct?.default_purchase_price ??
+                    matchingProduct?.cost_price ??
                     0
                 );
-                const name = row.itemName || row.productName || row.name || '';
-                const code = row.itemCode || row.productCode || row.code || '';
-                const unit = row.unit || row.baseUnit || '';
-                const itemId = String(row.productId || row.itemId || row.id);
+                const name = row.itemName || row.productName || row.name || matchingProduct?.name || '';
+                const code = row.itemCode || row.productCode || row.code || matchingProduct?.code || '';
+                const unit = row.unit || row.baseUnit || matchingProduct?.purchase_unit?.name || matchingProduct?.base_unit?.name || '';
+                const unitId = row.unitId || row.unit_id || matchingProduct?.purchase_unit_id || matchingProduct?.base_unit_id || null;
                 const parsedProdId = !isNaN(Number(itemId)) ? Number(itemId) : null;
+
                 return {
                     id: itemId,
                     productId: itemId,
                     __productId: parsedProdId,
-                    __unitId: row.unitId || row.unit_id || null,
+                    __unitId: unitId,
                     name: name,
                     item: name,
                     code: code,
                     itemCode: code,
-                    quantity: qtyNeeded,
+                    quantity: Number.isInteger(qtyNeeded) ? qtyNeeded : Number(qtyNeeded.toFixed(2)),
                     unit: unit,
                     price: price,
                     discount: 0,
@@ -382,27 +384,30 @@ export default function InventoryInquiryView({ config, pageId }) {
                 .filter(Boolean);
 
             const uniqueSupplierNames = [...new Set(supplierNames)];
-            const isSameSupplier = uniqueSupplierNames.length === 1 && supplierNames.length === selectedRows.length;
 
             let resolvedSupplierName = '';
             let resolvedSupplierId = null;
 
-            if (isSameSupplier) {
+            if (uniqueSupplierNames.length === 1) {
                 const targetSupplierName = uniqueSupplierNames[0];
-                const targetSupplierId = selectedRows.find((r) => r.supplierId || r.supplier_id)?.supplierId || null;
                 const matchingSupplier = suppliers.find((s) =>
-                    (targetSupplierId && Number(s.id) === Number(targetSupplierId)) ||
                     (targetSupplierName && s.name?.toLowerCase() === targetSupplierName.toLowerCase()) ||
                     (targetSupplierName && s.full_name?.toLowerCase() === targetSupplierName.toLowerCase())
                 );
+                const rowSupplierId = selectedRows.find((r) => r.supplierId || r.supplier_id)?.supplierId || null;
+
                 resolvedSupplierName = matchingSupplier ? (matchingSupplier.name || matchingSupplier.full_name) : targetSupplierName;
-                resolvedSupplierId = matchingSupplier ? matchingSupplier.id : targetSupplierId;
+                resolvedSupplierId = matchingSupplier ? matchingSupplier.id : (rowSupplierId ? Number(rowSupplierId) : null);
             }
+
+            const today = buildTodayDisplayDate();
 
             const initialValues = {
                 customer: resolvedSupplierName ? [resolvedSupplierName] : [],
                 supplier: resolvedSupplierName ? [resolvedSupplierName] : [],
-                __partnerId: resolvedSupplierId,
+                __partnerId: resolvedSupplierId ? Number(resolvedSupplierId) : null,
+                entryDate: today,
+                shippingDate: today,
                 items: lineItems,
             };
 

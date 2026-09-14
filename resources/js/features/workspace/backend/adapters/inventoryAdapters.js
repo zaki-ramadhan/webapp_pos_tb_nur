@@ -64,15 +64,16 @@ export function mapInventoryRows(pageId, records) {
         itemName: record.item_name ?? '',
         itemCode: record.item_code ?? '',
         unit: record.unit ?? '',
+        unitId: record.unit_id ?? null,
         costPrice: Number(record.cost_price ?? record.default_purchase_price ?? record.price ?? 0),
+        defaultPurchasePrice: Number(record.default_purchase_price ?? record.price ?? record.cost_price ?? 0),
         availableStock: record.available_stock ?? '',
         rawAvailableStock: Number(record.raw_available_stock ?? 0),
         ordered: record.ordered ?? record.ordered_quantity ?? '0',
         rawOrdered: Number(record.raw_ordered ?? record.raw_ordered_quantity ?? 0),
-        requested: record.requested ?? record.requested_quantity ?? '0',
-        rawRequested: Number(record.raw_requested ?? record.raw_requested_quantity ?? 0),
         minimumLimit: record.minimum_limit ?? '',
         rawMinimumLimit: Number(record.raw_minimum_limit ?? 0),
+        suggestedReorderQty: Number(record.raw_suggested_reorder_qty ?? record.suggested_reorder_qty ?? 0),
     }));
 }
 
