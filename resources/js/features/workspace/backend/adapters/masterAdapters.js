@@ -112,43 +112,6 @@ export const SIMPLE_MASTER_BACKEND_CONFIG = {
             };
         },
     },
-    'supplier-category': {
-        resource: 'supplier-categories',
-        labelField: 'name',
-        validate(values) {
-            if (values.isSubCategory) {
-                return 'Sub kategori pemasok belum bisa disimpan karena parent kategori belum tersedia di form ini.';
-            }
-
-            return '';
-        },
-        toRow(record) {
-            return {
-                id: record.id,
-                name: record.name ?? '',
-                defaultLabel: record.is_default ? 'Ya' : 'Tidak',
-                isDefault: Boolean(record.is_default),
-                isSubCategory: Boolean(record.parent_id),
-                isSubCategoryText: record.parent_id ? 'Ya' : 'Tidak',
-                tabLabel: record.name ?? '',
-                isActiveText: record.is_active !== false ? 'Tidak' : 'Ya',
-            };
-        },
-        toForm(record) {
-            return {
-                name: record.name ?? '',
-                isDefault: Boolean(record.is_default),
-                isSubCategory: Boolean(record.parent_id),
-            };
-        },
-        toPayload(values) {
-            return {
-                name: values.name?.trim() ?? '',
-                is_default: Boolean(values.isDefault),
-                is_active: true,
-            };
-        },
-    },
     'fob-master': {
         resource: 'fob-terms',
         labelField: 'name',

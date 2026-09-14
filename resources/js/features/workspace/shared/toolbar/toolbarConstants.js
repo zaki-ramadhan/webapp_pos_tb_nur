@@ -31,7 +31,6 @@ export const PAGE_ID_TO_RESOURCE_MAP = {
     'item-brand': 'brands',
     'item-category': 'product-categories',
     'customer-category': 'customer-categories',
-    'supplier-category': 'supplier-categories',
     'sales-category': 'sales-categories',
     'company-tax': 'taxes',
     'group-access': 'access-groups',

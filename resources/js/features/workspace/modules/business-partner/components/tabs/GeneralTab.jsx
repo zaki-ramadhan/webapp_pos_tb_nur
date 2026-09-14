@@ -43,24 +43,6 @@ export default function GeneralTab({ config, values, isDetail, onChange }) {
                         </FormFieldRow>
                     )}
 
-                    {(config.type ?? config.partnerType) !== 'customer' && (
-                        <FormFieldRow label={config.labels.category}>
-                            <BackendLookupField
-                                resource="supplier-categories"
-                                value={values.category?.[0]?.name ?? (typeof values.category?.[0] === 'string' ? values.category[0] : (values.categoryName ?? ''))}
-                                placeholder={config.lookupPlaceholders?.category}
-                                searchLabel="Cari kategori"
-                                onSelect={(option) => {
-                                    onChange('categoryId', option.id);
-                                    onChange('category', [option.name]);
-                                }}
-                                onClear={() => {
-                                    onChange('categoryId', null);
-                                    onChange('category', []);
-                                }}
-                            />
-                        </FormFieldRow>
-                    )}
 
                     <FormFieldRow label={config.labels.mobilePhone}>
                         <TextInput

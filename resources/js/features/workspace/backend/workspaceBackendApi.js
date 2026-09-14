@@ -26,7 +26,6 @@ const STATIC_RESOURCES = new Set([
     'brands',
     'product-categories',
     'customer-categories',
-    'supplier-categories',
     'payment-terms',
     'taxes',
     'currencies',

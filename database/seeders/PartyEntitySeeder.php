@@ -117,11 +117,9 @@ class PartyEntitySeeder extends Seeder
             ['employee_id' => $emp4Id, 'bank_name' => 'Bank BRI', 'account_name' => 'Diki Dermawan', 'account_number' => '2049018273645', 'is_primary' => true, 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        // Seed customer & supplier categories
+        // Seed customer categories
         $custCatRetail = DB::table('customer_categories')->insertGetId(['code' => 'RET', 'name' => 'Pelanggan Eceran', 'is_default' => true, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
         $custCatProject = DB::table('customer_categories')->insertGetId(['code' => 'PRJ', 'name' => 'Kontraktor & Proyek', 'is_default' => false, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
-
-        $suppCatMat = DB::table('supplier_categories')->insertGetId(['code' => 'MAT', 'name' => 'Produsen Material Utama', 'is_default' => true, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
 
         // Seed customers (real local buyers in Cirebon area)
         DB::table('customers')->insert([
@@ -134,14 +132,14 @@ class PartyEntitySeeder extends Seeder
 
         // Seed suppliers (real distributors & suppliers in Cirebon region)
         DB::table('suppliers')->insert([
-            ['category_id' => $suppCatMat, 'code' => 'SUPP-001', 'name' => 'PT Niaga Manunggal Perkasa', 'mobile_phone' => '085224744480', 'email' => 'sales@niagamanunggal.co.id', 'billing_address' => 'Jl. Raya Cirebon - Bandung KM 20, Palimanan, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $suppCatMat, 'code' => 'SUPP-002', 'name' => 'PT Solusi Inti Bersama', 'mobile_phone' => '081299887722', 'email' => 'cirebon@solusiintibersama.com', 'billing_address' => 'Jl. Raya Plered - Cirebon No. 45, Plered, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $suppCatMat, 'code' => 'SUPP-003', 'name' => 'PT Central Utama Indowarna', 'mobile_phone' => '081399887733', 'email' => 'depocirebon@cui.co.id', 'billing_address' => 'Jl. Ir. H. Juanda No. 88, Pilangsari, Kedawung, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $suppCatMat, 'code' => 'SUPP-004', 'name' => 'PT Mega Baja Palimanan', 'mobile_phone' => '081333388474', 'email' => 'palimanan@megabaja.co.id', 'billing_address' => 'Jl. DR. Setiabudi No. 319, Lungbenda, Palimanan, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $suppCatMat, 'code' => 'SUPP-005', 'name' => 'CV Grahaprana Irasentosa', 'mobile_phone' => '081799887755', 'email' => 'cirebon@gias.co.id', 'billing_address' => 'Komplek Pergudangan Royal Techno Park Blok B-12, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $suppCatMat, 'code' => 'SUPP-006', 'name' => 'CV Pasir Berkah Arjawinangun', 'mobile_phone' => '087712345678', 'email' => 'pasirberkah.arjawinangun@gmail.com', 'billing_address' => 'Jl. By Pass Arjawinangun No. 15, Arjawinangun, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $suppCatMat, 'code' => 'SUPP-007', 'name' => 'PT Propan Raya ICC Cirebon', 'mobile_phone' => '081234567890', 'email' => 'psc.cirebon@propanraya.com', 'billing_address' => 'Jl. Brigjen Dharsono No. 12, Sunyaragi, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['category_id' => $suppCatMat, 'code' => 'SUPP-008', 'name' => 'Toko RKM Plered Cirebon', 'mobile_phone' => '081987654321', 'email' => 'rkm.plered@rkm.co.id', 'billing_address' => 'Jl. Otto Iskandardinata No. 77, Tegalsari, Plered, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'SUPP-001', 'name' => 'PT Niaga Manunggal Perkasa', 'mobile_phone' => '085224744480', 'email' => 'sales@niagamanunggal.co.id', 'billing_address' => 'Jl. Raya Cirebon - Bandung KM 20, Palimanan, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'SUPP-002', 'name' => 'PT Solusi Inti Bersama', 'mobile_phone' => '081299887722', 'email' => 'cirebon@solusiintibersama.com', 'billing_address' => 'Jl. Raya Plered - Cirebon No. 45, Plered, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'SUPP-003', 'name' => 'PT Central Utama Indowarna', 'mobile_phone' => '081399887733', 'email' => 'depocirebon@cui.co.id', 'billing_address' => 'Jl. Ir. H. Juanda No. 88, Pilangsari, Kedawung, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'SUPP-004', 'name' => 'PT Mega Baja Palimanan', 'mobile_phone' => '081333388474', 'email' => 'palimanan@megabaja.co.id', 'billing_address' => 'Jl. DR. Setiabudi No. 319, Lungbenda, Palimanan, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'SUPP-005', 'name' => 'CV Grahaprana Irasentosa', 'mobile_phone' => '081799887755', 'email' => 'cirebon@gias.co.id', 'billing_address' => 'Komplek Pergudangan Royal Techno Park Blok B-12, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'SUPP-006', 'name' => 'CV Pasir Berkah Arjawinangun', 'mobile_phone' => '087712345678', 'email' => 'pasirberkah.arjawinangun@gmail.com', 'billing_address' => 'Jl. By Pass Arjawinangun No. 15, Arjawinangun, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'SUPP-007', 'name' => 'PT Propan Raya ICC Cirebon', 'mobile_phone' => '081234567890', 'email' => 'psc.cirebon@propanraya.com', 'billing_address' => 'Jl. Brigjen Dharsono No. 12, Sunyaragi, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'SUPP-008', 'name' => 'Toko RKM Plered Cirebon', 'mobile_phone' => '081987654321', 'email' => 'rkm.plered@rkm.co.id', 'billing_address' => 'Jl. Otto Iskandardinata No. 77, Tegalsari, Plered, Cirebon', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

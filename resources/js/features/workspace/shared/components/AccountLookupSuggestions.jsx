@@ -57,6 +57,9 @@ export default function AccountLookupSuggestions({
     anchorRef = null,
     showType = false,
     resource = 'accounts',
+    allowQuickCreate = false,
+    isCreating = false,
+    onCreateNew = null,
 }) {
     const entityLabels = {
         accounts: 'akun perkiraan',
@@ -209,7 +212,42 @@ export default function AccountLookupSuggestions({
                 ) : (
                     <LookupEmptyState
                         title={emptyMessage}
-                    />
+                    >
+                        {allowQuickCreate && onCreateNew && query.trim() && !loading ? (
+                            <div
+                                className="mt-2.5 flex justify-center w-full"
+                                onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                }}
+                            >
+                                <button
+                                    type="button"
+                                    disabled={isCreating}
+                                    onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        onCreateNew(query.trim());
+                                    }}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        onCreateNew(query.trim());
+                                    }}
+                                    className="w-full inline-flex items-center justify-center px-2 py-1.5 min-h-[30px] text-xs font-medium text-white bg-brand-blue hover:bg-brand-blue-hover active:scale-[0.98] rounded-[4px] shadow-button-primary transition-all cursor-pointer text-center leading-snug break-words disabled:opacity-50"
+                                >
+                                    {isCreating ? (
+                                        <span className="inline-flex items-center gap-1.5">
+                                            <LoadingIcon className="h-3.5 w-3.5 animate-spin" />
+                                            Menyimpan...
+                                        </span>
+                                    ) : (
+                                        `Simpan "${query.trim()}" sebagai data baru?`
+                                    )}
+                                </button>
+                            </div>
+                        ) : null}
+                    </LookupEmptyState>
                 )}
             </div>
         </LookupDropdownSurface>

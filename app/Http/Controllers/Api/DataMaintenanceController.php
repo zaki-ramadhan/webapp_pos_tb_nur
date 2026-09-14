@@ -142,7 +142,9 @@ class DataMaintenanceController extends Controller
                 DB::table('customers')->truncate();
                 DB::table('suppliers')->truncate();
                 DB::table('customer_categories')->truncate();
-                DB::table('supplier_categories')->truncate();
+                if (Schema::hasTable('supplier_categories')) {
+                    DB::table('supplier_categories')->truncate();
+                }
 
                 // 4. Bersihkan user dummy kasir, lindungi akun Admin & Owner
                 $developerEmails = User::getDeveloperEmails();

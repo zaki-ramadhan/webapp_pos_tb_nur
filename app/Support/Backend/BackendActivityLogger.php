@@ -291,7 +291,6 @@ class BackendActivityLogger
             'suppliers' => 'Pemasok',
             'supplier' => 'Pemasok',
             'customer-categories' => 'Kategori Pelanggan',
-            'supplier-categories' => 'Kategori Pemasok',
             'taxes' => 'Pajak',
             'tax' => 'Pajak',
             'branches' => 'Cabang',
