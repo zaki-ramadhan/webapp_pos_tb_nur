@@ -1,7 +1,7 @@
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { ExportIcon, ExternalLinkIcon, LinkIcon, RefreshIcon, DownloadIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { ExportIcon, ExternalLinkIcon, LinkIcon, RefreshIcon, DownloadIcon, SearchIcon, LoadingIcon } from '@/features/workspace/shared/Icons';
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ToolbarIconButton from '@/features/workspace/shared/toolbar/ToolbarIconButton';
@@ -125,6 +125,7 @@ export function InquiryControl({
                     placeholder={control.placeholder ?? 'Cari/Pilih Pemasok...'}
                     searchLabel="Cari pemasok"
                     heightClassName="h-[40px]"
+                    loading={loading || searching}
                     onChange={(e) => {
                         onChange?.('supplierSearch', e?.target?.value ?? '');
                     }}
@@ -152,7 +153,7 @@ export function InquiryControl({
                 value={value}
                 placeholder={control.placeholder ?? 'Cari/Pilih...'}
                 items={lookupItems}
-                searching={searching}
+                searching={searching || loading}
                 getOptionLabel={(option) => option?.name ?? option?.label ?? ''}
                 onSelect={(option) => onLookupSelect(control.id, option)}
                 onClear={() => onLookupClear(control.id)}
@@ -170,6 +171,7 @@ export function InquiryControl({
             className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
             inputClassName="text-xs sm:text-sm text-brand-dark"
             leadingIcon={<SearchIcon className="h-4 w-4 text-brand-gray-muted" />}
+            trailing={loading ? <LoadingIcon className="h-4 w-4 animate-spin text-brand-dark" /> : null}
         />
     );
 }
