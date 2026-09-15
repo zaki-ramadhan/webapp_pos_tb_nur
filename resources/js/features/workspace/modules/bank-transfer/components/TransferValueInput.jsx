@@ -8,6 +8,7 @@ export default function TransferValueInput({
     onChange = null,
     onBlur = null,
     readOnly = false,
+    maxLength = 15,
     maxWidthClassName = 'max-w-[320px]',
 }) {
     return (
@@ -20,7 +21,7 @@ export default function TransferValueInput({
                 onBlur={onBlur}
                 readOnly={readOnly}
                 prefix={prefix}
-                maxLength={18}
+                maxLength={maxLength}
                 className="h-[40px] rounded-[4px] border-ui-border"
                 prefixClassName="min-w-[32px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text"
                 inputClassName="text-right text-xs sm:text-sm text-brand-dark font-normal"
