@@ -24,7 +24,7 @@ export function AccountsFormFieldRow({ label, required = false, className = '', 
 }
 
 export function AccountsReadonlyTrailingIcon() {
-    return <CloseIcon className="h-4 w-4 text-text-darkest" strokeWidth={2.4} />;
+    return <CloseIcon className="h-4 w-4 text-text-darkest" />;
 }
 
 function renderDockIcon(icon) {
