@@ -15,10 +15,10 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
                         value={values.openingBalanceValue}
                         onChange={(event) => onChange('openingBalanceValue', sanitizeNumericInput(event.target.value))}
                         prefix="Rp"
-                        maxLength={15}
+                        maxLength={18}
                         className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[200px]"
                         prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-table-row-text"
-                        inputClassName="text-xs sm:text-sm text-brand-dark"
+                        inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                     />
                 </AccountsFormFieldRow>
 

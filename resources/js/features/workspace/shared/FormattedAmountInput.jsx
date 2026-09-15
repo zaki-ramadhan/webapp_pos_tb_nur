@@ -40,14 +40,20 @@ export default function FormattedAmountInput({
         event.preventDefault();
     }
 
+    const hasExplicitAlign = /(?:^|\s)text-(?:left|right|center|justify)(?:\s|$)/.test(props.inputClassName || '');
+    const resolvedInputClassName = `${hasExplicitAlign ? '' : 'text-right'} ${props.inputClassName ?? ''}`.trim();
+
     return (
         <TextInput
             {...props}
+            isCurrency={props.isCurrency ?? true}
+            maxLength={props.maxLength ?? 18}
             value={formattedValue}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             inputMode={inputMode}
             containerClassName={containerClassName ?? 'w-full max-w-[240px]'}
+            inputClassName={resolvedInputClassName}
         />
     );
 }

@@ -194,9 +194,10 @@ export default function MoneyMovementLineItemModal({
                                     onChange={(e) => setAmount(e.target.value)}
                                     prefix="Rp"
                                     placeholder="0"
+                                    maxLength={18}
                                     className="h-[36px] rounded-[4px] border-ui-border"
                                     prefixClassName="min-w-0 px-3 justify-center text-table-row-text font-normal bg-ui-bg-hover text-sm"
-                                    inputClassName="text-slate-700 text-sm"
+                                    inputClassName="text-slate-700 text-right text-sm"
                                 />
                             </div>
                         </div>

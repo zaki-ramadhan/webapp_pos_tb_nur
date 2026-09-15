@@ -152,7 +152,10 @@ export function SimpleTextField({
     maxLength = undefined,
     ...props
 }) {
+    const isCurrencyLike = formatAsAmount || (typeof prefix === 'string' && prefix.toLowerCase() === 'rp');
     const InputComponent = formatAsAmount ? FormattedAmountInput : TextInput;
+    const hasExplicitAlign = /(?:^|\s)text-(?:left|right|center|justify)(?:\s|$)/.test(inputClassName);
+    const alignClass = isCurrencyLike && !hasExplicitAlign ? 'text-right' : '';
 
     return (
         <InputComponent
@@ -161,11 +164,11 @@ export function SimpleTextField({
             placeholder={placeholder}
             prefix={prefix}
             trailing={trailing}
-            maxLength={maxLength}
+            maxLength={maxLength ?? (isCurrencyLike ? 18 : undefined)}
             className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
             containerClassName={containerClassName || undefined}
             prefixClassName={prefix ? 'min-w-[32px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text' : ''}
-            inputClassName={`text-xs sm:text-sm text-brand-dark ${inputClassName}`.trim()}
+            inputClassName={`text-xs sm:text-sm text-brand-dark ${alignClass} ${inputClassName}`.trim()}
             trailingClassName={trailing ? 'px-3' : ''}
             {...props}
         />

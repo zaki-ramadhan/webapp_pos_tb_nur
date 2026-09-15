@@ -44,6 +44,7 @@ export function ItemSalesInfoSection({ config, values, onChange, isLoading }) {
                                 <SimpleTextField
                                     value={values.sellPriceLevel1}
                                     onChange={(event) => onChange('sellPriceLevel1', event.target.value)}
+                                    prefix="Rp"
                                     className="max-w-[280px]"
                                     formatAsAmount
                                     isLoading={isLoading}
@@ -57,6 +58,7 @@ export function ItemSalesInfoSection({ config, values, onChange, isLoading }) {
                         <SimpleTextField
                             value={values.sellPriceLevel1}
                             onChange={(event) => onChange('sellPriceLevel1', event.target.value)}
+                            prefix="Rp"
                             className="max-w-[280px]"
                             formatAsAmount
                             isLoading={isLoading}
@@ -75,6 +77,7 @@ export function ItemSalesInfoSection({ config, values, onChange, isLoading }) {
                             <SimpleTextField
                                 value={conv.price ?? ''}
                                 onChange={(event) => handleConversionPriceChange(idx, event.target.value)}
+                                prefix="Rp"
                                 className="max-w-[280px]"
                                 formatAsAmount
                                 isLoading={isLoading}
@@ -147,7 +150,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                                 onChange={(event) => onChange('purchasePrice', event.target.value)}
                                 prefix="Rp"
                                 formatAsAmount
-                                maxLength={11}
+                                maxLength={18}
                                 className="w-full"
                                 containerClassName="w-full"
                                 isLoading={isLoading}
@@ -168,7 +171,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                                     containerClassName="w-full"
                                     formatAsAmount
                                     allowDecimal={false}
-                                    maxLength={11}
+                                    maxLength={18}
                                     isLoading={isLoading}
                                 />
                             </div>

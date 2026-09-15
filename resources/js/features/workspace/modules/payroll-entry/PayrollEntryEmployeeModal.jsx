@@ -340,7 +340,7 @@ function InputRow({ label, value, onChange, id, indent = false, disabled = false
                         prefix="Rp"
                         value={value}
                         onChange={onChange}
-                        maxLength={11}
+                        maxLength={18}
                         allowNegative={false}
                         placeholder="0"
                         disabled={disabled}
