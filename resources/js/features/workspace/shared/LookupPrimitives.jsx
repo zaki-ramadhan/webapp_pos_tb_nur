@@ -13,7 +13,7 @@ export function LookupChip({
 }) {
     return (
         <span
-            className={`inline-flex items-center gap-1.5 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-xs sm:text-sm text-text-chip-blue-dark cursor-default ${maxWidthClassName} ${className}`.trim()}
+            className={`inline-flex items-center gap-1.5 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-xs sm:text-sm text-table-row-text font-normal cursor-default ${maxWidthClassName} ${className}`.trim()}
         >
             <span className={`truncate ${labelClassName}`.trim()}>{label}</span>
             {!disabled && onClear ? (
@@ -32,7 +32,7 @@ export function LookupChip({
                     className={`inline-flex h-4 w-4 shrink-0 items-center justify-center transition-colors ${
                         clearDisabled
                             ? 'text-slate-300 pointer-events-none cursor-default'
-                            : 'text-text-chip-blue-dark hover:text-red-600 active:text-red-800 cursor-pointer'
+                            : 'text-table-row-text hover:text-red-600 active:text-red-800 cursor-pointer'
                     }`}
                 >
                     <CloseIcon className="h-3.5 w-3.5" />

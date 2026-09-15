@@ -31,12 +31,12 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
     if (value) {
         return (
             <div className="flex h-[36px] w-full max-w-[480px] items-center gap-2 rounded-[3px] border border-ui-border-medium bg-ui-bg-panel-lighter px-2.5 shadow-inset-light">
-                <span className="inline-flex items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2.5 py-1 text-sm font-medium text-text-chip-blue-dark">
+                <span className="inline-flex items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2.5 py-1 text-sm font-medium text-table-row-text">
                     <span>{value}</span>
                     <button
                         type="button"
                         onClick={handleClear}
-                        className="inline-flex h-4 w-4 items-center justify-center text-text-chip-blue-dark hover:text-blue-900"
+                        className="inline-flex h-4 w-4 items-center justify-center text-table-row-text hover:text-blue-900"
                         aria-label={`Hapus ${value}`}
                     >
                         <CloseIcon className="h-3 w-3" />
