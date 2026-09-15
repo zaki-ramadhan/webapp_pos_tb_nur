@@ -24,6 +24,7 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
 
     const canClick = tabsCount > 1;
     const cursorClass = canClick ? 'cursor-pointer' : 'cursor-default';
+    const maxWidthClassName = isViewTab ? '' : 'max-w-[200px] sm:max-w-[240px] md:max-w-[280px]';
 
     return (
         <div
@@ -41,11 +42,11 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
                     onSelect(tab.id);
                 }
             }}
-            className={`relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] text-xs leading-normal whitespace-nowrap select-none sm:h-8 sm:text-sm md:h-8.75 md:text-base ${spacingClassName} ${cursorClass} ${className}`.trim()}
+            className={`relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] text-xs leading-normal select-none sm:h-8 sm:text-sm md:h-8.75 md:text-base ${maxWidthClassName} ${spacingClassName} ${cursorClass} ${className}`.trim()}
             aria-label={tab.ariaLabel ?? tab.label}
         >
-            <span className="inline-flex h-full items-center min-w-0">
-                {isViewTab ? <ViewModeIcon /> : <span className="block w-full py-1">{renderTabLabel(tab.label, active, false)}</span>}
+            <span className="inline-flex h-full min-w-0 flex-1 items-center">
+                {isViewTab ? <ViewModeIcon /> : <span className="block w-full min-w-0 truncate py-1">{renderTabLabel(tab.label, active, false)}</span>}
             </span>
 
             {tab.closable ? (
@@ -56,7 +57,7 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
                         event.preventDefault();
                         onClose?.(tab.id);
                     }}
-                    className={`inline-flex h-6 w-6 items-center justify-center rounded-[3px] ${closeButtonClassName}`.trim()}
+                    className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[3px] ${closeButtonClassName}`.trim()}
                     aria-label={`Tutup sub tab ${tab.label}`}
                 >
                     <CloseIcon className="h-4 w-4" strokeWidth={4.5} />
