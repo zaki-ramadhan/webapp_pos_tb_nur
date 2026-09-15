@@ -508,11 +508,22 @@ class InventoryInquiryQueryService
                 $onHandStock = (float) $totals['stock_on_hand'];
                 $availableStock = (float) ($totals['stock_available'] ?? max(0.0, $onHandStock));
                 $minimumStock = (float) ($product->minimum_stock ?? 0);
-                if ($onHandStock > $minimumStock) {
+                $displayAvailableStock = max(0.0, $availableStock);
+                $displayCurrentStock = max(0.0, $onHandStock);
+                $orderedQty = (float) ($orderedTotals[$product->id] ?? 0.0);
+
+                if ($displayAvailableStock > $minimumStock && $displayCurrentStock > $minimumStock) {
                     return null;
                 }
 
-                $deficit = max(0.0, $minimumStock - $onHandStock);
+                $netNeeded = $minimumStock - ($displayAvailableStock + $orderedQty);
+                if ($netNeeded > 0) {
+                    $suggestedQty = $netNeeded;
+                } else {
+                    $stockDeficit = $minimumStock - $displayAvailableStock;
+                    $suggestedQty = $stockDeficit > 0 ? $stockDeficit : 1.0;
+                }
+                $deficit = $suggestedQty;
                 $purchasePrice = (float) ($product->default_purchase_price ?? 0);
 
                 $resolvedSupplier = $supplierMap->get($product->id);
@@ -541,11 +552,6 @@ class InventoryInquiryQueryService
                         return null;
                     }
                 }
-
-                $displayAvailableStock = max(0.0, $availableStock);
-                $displayCurrentStock = max(0.0, $onHandStock);
-                $orderedQty = (float) ($orderedTotals[$product->id] ?? 0.0);
-                $suggestedQty = $deficit > 0 ? $deficit : ($minimumStock > 0 ? $minimumStock : 1.0);
 
                 return [
                     'id' => $product->id,

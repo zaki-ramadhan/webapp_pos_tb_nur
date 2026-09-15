@@ -362,16 +362,21 @@ export default function InventoryInquiryView({ config, pageId }) {
                 return;
             }
 
-            const selectedRows = tableRows.filter((row) => selectedIds.has(row.id) && !isInactiveRow(row));
+            const selectedRows = displayRows.filter((row) => selectedIds.has(row.id) && !isInactiveRow(row));
             const targetPageId = 'purchase-invoice';
             const targetLabel = 'Faktur Pembelian';
 
             const lineItems = selectedRows.map((row) => {
                 const minLimit = parseNumericInput(row.rawMinimumLimit ?? row.minimumLimit ?? row.minimumStock ?? 0);
                 const currentStock = parseNumericInput(row.rawAvailableStock ?? row.availableStock ?? row.rawCurrentStock ?? row.currentStock ?? 0);
-                const deficit = minLimit - currentStock;
-                const calculatedNeeded = deficit > 0 ? deficit : (minLimit > 0 ? minLimit : 1);
-                const qtyNeeded = Math.max(1, parseNumericInput(row.suggestedReorderQty || calculatedNeeded));
+                const ordered = parseNumericInput(row.rawOrdered ?? row.ordered ?? 0);
+
+                const netNeeded = minLimit - (currentStock + ordered);
+                const calculatedNeeded = netNeeded > 0
+                    ? netNeeded
+                    : (minLimit - currentStock > 0 ? minLimit - currentStock : 1);
+
+                const qtyNeeded = Math.max(1, parseNumericInput(calculatedNeeded));
 
                 const itemId = String(row.productId || row.itemId || row.id);
                 const matchingProduct = products.find((p) => String(p.id) === itemId);
