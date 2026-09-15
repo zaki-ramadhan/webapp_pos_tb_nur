@@ -38,7 +38,7 @@ const PrimaryTab = forwardRef(function PrimaryTab({ tab, active, onSelect, onClo
                     }`.trim()}
                     aria-label={`Tutup tab ${tab.label}`}
                 >
-                    <CloseIcon className="h-4 w-4" strokeWidth={2.6} />
+                    <CloseIcon className="h-4 w-4" strokeWidth={3} />
                 </button>
             ) : null}
         </div>
@@ -130,7 +130,7 @@ function OverflowTabList({ tabs, activePage, onSelect, onClose }) {
                                 }`}
                                 aria-label={`Tutup tab ${tab.label}`}
                             >
-                                <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.6} />
+                                <CloseIcon className="h-3.5 w-3.5" strokeWidth={3} />
                             </button>
                         ) : null}
                     </div>
