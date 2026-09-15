@@ -72,11 +72,11 @@
     --color-danger-border: #f7c6d2;
     --color-danger-bg: #fff1f5;
     --color-danger-text: #A20025;
-    --color-table-border: #cbd5e1;
+    --color-table-border: #AAAAAA;
     --color-table-header-bg: #5B6F85;
-    --color-table-row-border: rgba(170, 170, 170, 0.1);
+    --color-table-row-border: #AAAAAA;
     --color-table-row-text: #1b2436;
-    --color-table-cell-border: rgba(170, 170, 170, 0.1);
+    --color-table-cell-border: #AAAAAA;
     --color-layout-bg: #9ab8ea;
     --color-layout-text: #4f5679;
     --color-tab-active-border-x: #bcc3cf;
@@ -383,7 +383,7 @@
     --color-status-warning-badge-border: #ffd08c;
     --color-status-warning-badge-text: #ff8d08;
     --color-table-row-number: #646d83;
-    --color-table-wrapper-border: #d1d8e4;
+    --color-table-wrapper-border: #AAAAAA;
     --color-text-badge-blue-dark: #355784;
     --color-text-badge-neutral: #b8bac3;
     --color-text-badge-success-alt: #2db757;
@@ -407,7 +407,7 @@
     --color-text-workspace-muted: #5f6779;
     --color-text-workspace-tab-inactive: #7d8698;
     --color-workspace-hover-bg: #EEEEEE;
-    --color-ui-border-row: #dde1e8;
+    --color-ui-border-row: #AAAAAA;
     --color-warning-badge-text: #8b6511;
     --color-warning-label-text: #9a7b35;
     --color-white: #ffffff;
