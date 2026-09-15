@@ -500,12 +500,10 @@ export default function InventoryInquiryView({ config, pageId }) {
         if (loading) return 'Memuat data...';
         if (error) return error;
         if (isItemLocation && !hasTarget) {
-            return isWarehouseMode
-                ? 'Silakan cari dan pilih gudang untuk melihat daftar stok barang di gudang tersebut.'
-                : 'Silakan cari dan pilih barang untuk melihat sebaran stok di setiap gudang.';
+            return 'Belum ada data';
         }
         return config.table.emptyLabel || 'Belum ada data';
-    }, [loading, error, isItemLocation, hasTarget, isWarehouseMode, config.table.emptyLabel]);
+    }, [loading, error, isItemLocation, hasTarget, config.table.emptyLabel]);
 
     const isSearching = isDebouncing || loading;
 
