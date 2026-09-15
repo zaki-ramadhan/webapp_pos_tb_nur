@@ -9,7 +9,7 @@ export default function InventoryAdjustmentInfoSection({ pageId, config = {}, va
     const labels = config.labels ?? {};
 
     return (
-        <div className="min-h-[520px]">
+        <div className="w-full flex-1 min-h-0">
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.additionalInfoTitle || 'Info Lainnya'} icon="info" />
 
