@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { RotateCw, GripVertical } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
+import RotateCw from '@/components/shared/RotateCw';
 
 import Panel from '@/components/ui/Panel';
 import WidgetLoadingOverlay from './components/WidgetLoadingOverlay';

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { AlertTriangle, ArrowLeft, Compass, Home, LifeBuoy, LogIn, RotateCw, ShieldAlert, TimerReset, TrafficCone, TriangleAlert } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Compass, Home, LifeBuoy, LogIn, ShieldAlert, TimerReset, TrafficCone, TriangleAlert } from 'lucide-react';
+import RotateCw from '@/components/shared/RotateCw';
 
 const STATE_BY_STATUS = {
     400: {
