@@ -47,7 +47,7 @@ export function SearchIcon({ className = 'h-5 w-5 text-text-light' }) {
     return <AppIcon icon={Search} className={className} />;
 }
 
-export function PlusIcon({ className = 'h-5 w-5', strokeWidth = 2.8 }) {
+export function PlusIcon({ className = 'h-5 w-5', strokeWidth = 4.5 }) {
     return <AppIcon icon={Plus} className={className} strokeWidth={strokeWidth} />;
 }
 
