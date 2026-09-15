@@ -13,13 +13,13 @@ export default function PreferenceAddressTokenField({ field, tokens = [], onClea
                 {tokens.map((token) => (
                     <span
                         key={token.id}
-                        className="inline-flex items-center gap-1.5 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2 py-0.5 text-sm md:text-sm text-text-chip-blue"
+                        className="inline-flex items-center gap-1.5 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2 py-0.5 text-sm md:text-sm text-table-row-text"
                     >
                         <span>{token.label}</span>
                         <button
                             type="button"
                             onClick={onClear}
-                            className="text-text-chip-blue hover:text-text-danger-hover-alt transition-colors focus:outline-none"
+                            className="text-table-row-text hover:text-text-danger-hover-alt transition-colors focus:outline-none"
                             aria-label={`Hapus ${token.label}`}
                         >
                             <CloseIcon className="h-3.5 w-3.5" />
