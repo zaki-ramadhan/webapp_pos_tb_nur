@@ -7,7 +7,7 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
-import { RefreshIcon } from '@/features/workspace/shared/Icons';
+import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { extractBackendRows, listBackendResource, clearBackendCache } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
@@ -45,24 +45,24 @@ export default function ItemWarehouseTab({ productId }) {
 
     return (
         <div className="space-y-2">
-            <div className="flex items-center gap-2">
-                <TransactionDateInput
-                    value={asOfDate}
-                    onChange={(e) => {
-                        const nextDate = typeof e === 'string' ? e : e?.target?.value;
-                        if (nextDate) setAsOfDate(nextDate);
-                    }}
-                    className="w-[140px]"
-                />
-                <button
-                    type="button"
+            <div className="flex items-center gap-2 py-1">
+                <div className="w-[135px] sm:w-[155px] shrink-0">
+                    <TransactionDateInput
+                        value={asOfDate}
+                        onChange={(nextVal) => {
+                            const val = typeof nextVal === 'string' ? nextVal : nextVal?.target?.value;
+                            if (val) setAsOfDate(val);
+                        }}
+                        className="h-[40px] rounded-[4px] border-ui-border w-full"
+                        inputClassName="text-sm text-brand-dark py-1 h-full"
+                        trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
+                    />
+                </div>
+                <RefreshButton
+                    label="Muat ulang"
                     onClick={() => fetchWarehouses(true)}
-                    disabled={loading}
-                    aria-label="Muat ulang"
-                    className="inline-flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition cursor-pointer disabled:opacity-60"
-                >
-                    <RefreshIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                </button>
+                    loading={loading}
+                />
             </div>
 
             <DataTable wrapperClassName="border-table-wrapper-border">
