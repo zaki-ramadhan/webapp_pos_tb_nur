@@ -108,7 +108,7 @@ export default function AttachmentUploadField({
                             <button
                                 type="button"
                                 onClick={() => removeAttachment(item.id)}
-                                className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-red-600/90 text-white shadow-md transition hover:bg-red-700 active:scale-95 z-20"
+                                className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-red-600 text-white shadow-md transition hover:bg-red-700 active:scale-95 z-20"
                                 aria-label="Hapus lampiran"
                             >
                                 <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.6} />
