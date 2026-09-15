@@ -44,6 +44,7 @@ import { parseNumericInput } from '@/features/workspace/backend/operationDocumen
 import { buildInitialValues, InquiryControl } from './InventoryInquiryControls';
 import { loadInquiryFilter, saveInquiryFilter } from '@/features/workspace/shared/inquiryFilterPersistence';
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+import { formatAmountInput, formatMultiUnitQuantity } from '@/features/workspace/shared/amountFormatting';
 
 function resolveCellAlignClassName(align) {
     if (align === 'right') return 'text-right';
@@ -61,11 +62,15 @@ export default function InventoryInquiryView({ config, pageId }) {
     const isItemLocation = pageId === 'item-location';
     const initialValues = useMemo(() => {
         const base = buildInitialValues(config);
+        const today = buildTodayDisplayDate();
         if (isItemLocation) {
             const saved = loadInquiryFilter(pageId);
-            if (saved) {
-                return { ...base, ...saved };
-            }
+            return {
+                ...base,
+                ...(saved || {}),
+                asOfDate: saved?.asOfDate || today,
+                unitMode: saved?.unitMode || 'multi',
+            };
         }
         return base;
     }, [config, isItemLocation, pageId]);
@@ -110,25 +115,71 @@ export default function InventoryInquiryView({ config, pageId }) {
 
     const tableRows = useMemo(() => {
         if (isItemLocation && !hasTarget) return [];
-        return mapInventoryRows(pageId, rawRows);
-    }, [isItemLocation, hasTarget, pageId, rawRows]);
+        const rows = mapInventoryRows(pageId, rawRows);
+        if (!isItemLocation) return rows;
+
+        const unitMode = values.unitMode || 'multi';
+        return rows.map((row) => {
+            const rawQty = row.rawQuantity ?? 0;
+            const baseUnitName = row.baseUnit?.name || row.unitName || row.unit || 'PCS';
+            const conversions = row.conversions || [];
+
+            let multiUnitQty = row.multiUnitQuantity;
+            let saleableStock = row.saleableStock;
+
+            if (unitMode === 'multi') {
+                multiUnitQty = formatMultiUnitQuantity(rawQty, baseUnitName, conversions);
+                saleableStock = multiUnitQty;
+            } else if (unitMode === 'base' || unitMode === baseUnitName) {
+                const formatted = `${formatAmountInput(rawQty)} ${baseUnitName}`;
+                multiUnitQty = formatted;
+                saleableStock = formatted;
+            } else {
+                const conv = conversions.find(
+                    (c) => (c.unit_name || c.unitName) === unitMode || String(c.unit_id) === String(unitMode)
+                );
+                if (conv && Number(conv.quantity) > 0) {
+                    const ratio = Number(conv.quantity);
+                    const convertedQty = rawQty / ratio;
+                    const formattedQty = Number.isInteger(convertedQty)
+                        ? formatAmountInput(convertedQty)
+                        : formatAmountInput(Number(convertedQty.toFixed(2)));
+                    const unitLabel = conv.unit_name || conv.unitName || unitMode;
+                    const formatted = `${formattedQty} ${unitLabel}`;
+                    multiUnitQty = formatted;
+                    saleableStock = formatted;
+                }
+            }
+
+            return {
+                ...row,
+                multiUnitQuantity: multiUnitQty,
+                saleableStock: saleableStock,
+            };
+        });
+    }, [isItemLocation, hasTarget, pageId, rawRows, values.unitMode]);
 
     const cleanedColumns = useMemo(() => {
         if (isItemLocation && values.itemType === 'warehouse') {
+            const isBase = values.unitMode === 'base';
             return [
                 { id: 'productName', label: 'Nama Barang', align: 'left', widthClassName: 'w-[280px]' },
                 { id: 'productCode', label: 'Kode Barang', align: 'left', widthClassName: 'w-[160px]' },
-                { id: 'multiUnitQuantity', label: 'Multi Satuan', align: 'center', widthClassName: 'w-[200px]' },
-                { id: 'saleableStock', label: 'Stok dapat dijual', align: 'center', widthClassName: 'w-[200px]' },
+                { id: 'multiUnitQuantity', label: isBase ? 'Satuan Dasar' : 'Multi Satuan', align: 'left', widthClassName: 'w-[200px]' },
+                { id: 'saleableStock', label: 'Stok dapat dijual', align: 'left', widthClassName: 'w-[200px]' },
             ];
         }
 
         const columns = config.table.columns ?? [];
         return columns.map((col) => {
             if (col.id === 'multiUnitQuantity') {
+                let label = 'Kts dalam Multi Satuan';
+                if (isItemLocation && values.unitMode && values.unitMode !== 'multi') {
+                    label = `Kts (${values.unitMode === 'base' ? (tableRows[0]?.unitName || tableRows[0]?.unit || 'Satuan Dasar') : values.unitMode})`;
+                }
                 return {
                     ...col,
-                    label: 'KTS dalam multi satuan',
+                    label,
                 };
             }
             return {
@@ -136,7 +187,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                 label: cleanHeaderLabel(col.label),
             };
         });
-    }, [config.table.columns, values.itemType, isItemLocation]);
+    }, [config.table.columns, values.itemType, values.unitMode, isItemLocation, tableRows]);
 
   // Pisahkan kolom checkbox dari kolom data
 
@@ -253,9 +304,78 @@ export default function InventoryInquiryView({ config, pageId }) {
     const allSelected = selectableRows.length > 0 && selectableRows.every((r) => selectedIds.has(r.id));
     const someSelected = !allSelected && selectableRows.some((r) => selectedIds.has(r.id));
 
+    const hasSelectedProduct = Boolean(values.itemSearchId || (values.itemSearch && values.itemSearch.trim()));
+    const shouldShowUnitDropdown = !isItemLocation || values.itemType === 'warehouse' || hasSelectedProduct;
+
+    const currentProductUnitOptions = useMemo(() => {
+        if (!isItemLocation || values.itemType === 'warehouse') {
+            return [
+                { value: 'multi', label: 'Multi Satuan' },
+                { value: 'base', label: 'Satuan Dasar' },
+            ];
+        }
+
+        const selectedProduct = products.find(
+            (p) => String(p.id) === String(values.itemSearchId) || p.name === values.itemSearch
+        );
+        const firstRow = rawRows?.[0];
+
+        const baseUnitName =
+            selectedProduct?.base_unit?.name ||
+            selectedProduct?.purchase_unit?.name ||
+            firstRow?.unit_name ||
+            firstRow?.unit ||
+            'PCS';
+
+        const rawConversions =
+            selectedProduct?.unit_conversions ||
+            selectedProduct?.conversions ||
+            firstRow?.conversions ||
+            [];
+
+        const conversionOptions = (Array.isArray(rawConversions) ? rawConversions : [])
+            .map((c) => {
+                const name = c.unit?.name || c.unit_name || c.unitName || '';
+                return { value: name, label: name };
+            })
+            .filter((opt) => opt.value && opt.value !== baseUnitName);
+
+        const uniqueConversions = [];
+        const seen = new Set([baseUnitName, 'multi']);
+        for (const conv of conversionOptions) {
+            if (!seen.has(conv.value)) {
+                seen.add(conv.value);
+                uniqueConversions.push(conv);
+            }
+        }
+
+        return [
+            { value: 'multi', label: 'Multi Satuan' },
+            { value: baseUnitName, label: baseUnitName },
+            ...uniqueConversions,
+        ];
+    }, [isItemLocation, values.itemType, values.itemSearchId, values.itemSearch, products, rawRows]);
+
+    useEffect(() => {
+        if (isItemLocation && values.unitMode && values.unitMode !== 'multi') {
+            const validValues = currentProductUnitOptions.map((o) => o.value);
+            if (!validValues.includes(values.unitMode)) {
+                setValues((prev) => {
+                    const updated = { ...prev, unitMode: 'multi' };
+                    saveInquiryFilter(pageId, updated);
+                    return updated;
+                });
+            }
+        }
+    }, [isItemLocation, values.unitMode, currentProductUnitOptions, pageId]);
+
     const resolvedControls = useMemo(() => {
         return (config.controls ?? [])
-            .filter((control) => control.id !== 'request')
+            .filter((control) => {
+                if (control.id === 'request') return false;
+                if (control.id === 'unitMode' && !shouldShowUnitDropdown) return false;
+                return true;
+            })
             .map((control) => {
                 if (control.id === 'itemSearch') {
                     const isWarehouseMode = values.itemType === 'warehouse';
@@ -265,9 +385,15 @@ export default function InventoryInquiryView({ config, pageId }) {
                         placeholder: isWarehouseMode ? 'Cari/Pilih Gudang' : 'Cari/Pilih Barang',
                     };
                 }
+                if (control.id === 'unitMode') {
+                    return {
+                        ...control,
+                        options: currentProductUnitOptions,
+                    };
+                }
                 return control;
             });
-    }, [config.controls, values.itemType]);
+    }, [config.controls, shouldShowUnitDropdown, values.itemType, currentProductUnitOptions]);
 
     function toggleAll() {
         setSelectedIds(allSelected ? new Set() : new Set(selectableRows.map((r) => r.id)));
@@ -294,12 +420,14 @@ export default function InventoryInquiryView({ config, pageId }) {
         }
         if (controlId === 'itemSearch' && !nextValue) {
             nextValues.itemSearchId = null;
+            nextValues.unitMode = 'multi';
         }
         if (controlId === 'itemType') {
             nextValues.itemSearch = '';
             nextValues.itemSearchId = null;
             nextValues.warehouseSearch = '';
             nextValues.warehouseSearchId = null;
+            nextValues.unitMode = 'multi';
             const newFilters = buildInventoryFilters(pageId, { ...nextValues, keyword });
             lastFiltersRef.current = newFilters;
             setFilters(newFilters);
@@ -472,6 +600,9 @@ export default function InventoryInquiryView({ config, pageId }) {
             [controlId]: optionLabel,
             [controlId + 'Id']: option.id,
         };
+        if (controlId === 'itemSearch') {
+            nextValues.unitMode = 'multi';
+        }
         setValues(nextValues);
         const nextFilters = buildInventoryFilters(pageId, { ...nextValues, keyword });
         lastFiltersRef.current = nextFilters;
@@ -487,6 +618,9 @@ export default function InventoryInquiryView({ config, pageId }) {
             [controlId]: '',
             [controlId + 'Id']: null,
         };
+        if (controlId === 'itemSearch' || controlId === 'warehouseSearch') {
+            nextValues.unitMode = 'multi';
+        }
         setValues(nextValues);
         const nextFilters = buildInventoryFilters(pageId, { ...nextValues, keyword });
         lastFiltersRef.current = nextFilters;

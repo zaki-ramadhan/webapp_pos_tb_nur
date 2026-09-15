@@ -257,7 +257,7 @@ export function formatMultiUnitQuantity(qty, baseUnitName = 'PCS', conversions =
 
     const validConversions = (Array.isArray(conversions) ? conversions : [])
         .map((conv) => {
-            const unitName = conv.unitName ?? conv.unit?.[0]?.name ?? conv.name;
+            const unitName = conv.unitName ?? conv.unit_name ?? conv.unit?.name ?? conv.unit?.[0]?.name ?? conv.name;
             const ratio = Number(conv.quantity || 0);
             return { unitName, ratio };
         })
