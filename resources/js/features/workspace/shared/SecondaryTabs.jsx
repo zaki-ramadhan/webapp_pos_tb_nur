@@ -59,7 +59,7 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
                     className={`inline-flex h-6 w-6 items-center justify-center rounded-[3px] ${closeButtonClassName}`.trim()}
                     aria-label={`Tutup sub tab ${tab.label}`}
                 >
-                    <CloseIcon className="h-4 w-4" strokeWidth={5} />
+                    <CloseIcon className="h-4 w-4" strokeWidth={4.5} />
                 </button>
             ) : null}
         </div>
