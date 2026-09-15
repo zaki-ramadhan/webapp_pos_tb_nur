@@ -59,7 +59,7 @@ export function CogIcon({ className = 'h-5 w-5 text-current' }) {
     return <AppIcon icon={Settings} className={className} />;
 }
 
-export function CloseIcon({ className = 'h-4 w-4', strokeWidth = 2.8 }) {
+export function CloseIcon({ className = 'h-4 w-4', strokeWidth = 3.5 }) {
     return <AppIcon icon={X} className={className} strokeWidth={strokeWidth} />;
 }
 

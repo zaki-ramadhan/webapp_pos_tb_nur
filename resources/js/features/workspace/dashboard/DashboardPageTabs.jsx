@@ -188,7 +188,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCl
                             }}
                             className="flex w-full items-center justify-center gap-1.5 rounded-[4px] px-3 py-2 text-xs sm:text-sm text-slate-700 hover:text-red-600 hover:bg-slate-100 font-normal transition cursor-pointer"
                         >
-                            <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.2} />
+                            <CloseIcon className="h-3.5 w-3.5" strokeWidth={3} />
                             <span className="font-normal">Tutup Semua Halaman</span>
                         </button>
                     </div>

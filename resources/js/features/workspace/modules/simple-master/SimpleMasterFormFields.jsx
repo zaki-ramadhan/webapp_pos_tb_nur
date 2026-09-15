@@ -116,7 +116,7 @@ export function MasterFieldRow({ field, value, onChange, isDetailMode = false })
                                 className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-text-darkest transition hover:bg-bg-workspace-light"
                                 aria-label={`Kosongkan ${field.label}`}
                             >
-                                <CloseIcon className="h-4 w-4" strokeWidth={2.4} />
+                                <CloseIcon className="h-4 w-4" />
                             </button>
                         ) : null
                     }

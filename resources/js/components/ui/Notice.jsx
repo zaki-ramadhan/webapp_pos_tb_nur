@@ -35,7 +35,7 @@ export default function Notice({ children, tone = 'info', className = '', onClos
                 className="absolute right-3 top-3 text-current transition-colors cursor-pointer focus:outline-none"
                 aria-label="Tutup"
             >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" strokeWidth={2.8} />
             </button>
         </div>
     );
