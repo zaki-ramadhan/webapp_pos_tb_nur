@@ -677,12 +677,31 @@ th {
     background-color: #F8F8F8 !important;
 }
 
-/* Enforce global table row hover background color #EEEEEE (excluding empty state rows) */
-tbody tr:not(.table-row-empty):not([data-empty-row]):not(:has(> td[colspan])):hover,
-tbody tr:not(.table-row-empty):not([data-empty-row]):not(:has(> td[colspan])):hover > td,
-tr.hover\:bg-workspace-hover-bg:not(.table-row-empty):not([data-empty-row]):not(:has(> td[colspan])):hover,
+/* Enforce global table row hover background color #EEEEEE (excluding empty state rows and selected rows) */
+tbody tr:not(.table-row-empty):not([data-empty-row]):not([aria-selected="true"]):not([data-selected="true"]):not(.table-row-selected):not(:has(> td[colspan])):hover,
+tbody tr:not(.table-row-empty):not([data-empty-row]):not([aria-selected="true"]):not([data-selected="true"]):not(.table-row-selected):not(:has(> td[colspan])):hover > td,
+tr.hover\:bg-workspace-hover-bg:not(.table-row-empty):not([data-empty-row]):not([aria-selected="true"]):not([data-selected="true"]):not(.table-row-selected):not(:has(> td[colspan])):hover,
 div.hover\:bg-workspace-hover-bg:hover {
     background-color: #EEEEEE !important;
+}
+
+/* Enforce selected table row background and hover states (preserve blue tone on hover) */
+tbody tr[aria-selected="true"],
+tbody tr[aria-selected="true"] > td,
+tbody tr[data-selected="true"],
+tbody tr[data-selected="true"] > td,
+tbody tr.table-row-selected,
+tbody tr.table-row-selected > td {
+    background-color: #e8f2ff !important;
+}
+
+tbody tr[aria-selected="true"]:hover,
+tbody tr[aria-selected="true"]:hover > td,
+tbody tr[data-selected="true"]:hover,
+tbody tr[data-selected="true"]:hover > td,
+tbody tr.table-row-selected:hover,
+tbody tr.table-row-selected:hover > td {
+    background-color: #d6e8fe !important;
 }
 
 /* Explicitly disable hover effect and pointer cursor on empty table rows globally */

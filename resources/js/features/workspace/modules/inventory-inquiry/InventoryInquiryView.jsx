@@ -565,13 +565,16 @@ export default function InventoryInquiryView({ config, pageId }) {
                         {displayRows.length ? (
                             displayRows.map((row, index) => {
                                 const isInactive = isInactiveRow(row);
+                                const isSelected = selectedIds.has(row.id);
                                 return (
                                 <DataTableRow
                                     key={row.id}
+                                    aria-selected={isSelected ? 'true' : undefined}
+                                    data-selected={isSelected ? 'true' : undefined}
                                     onClick={firstColumnIsCheckbox && !isInactive ? () => toggleRow(row) : undefined}
                                     className={`border-ui-border-row ${
-                                        selectedIds.has(row.id)
-                                            ? 'bg-blue-50/60 hover:bg-blue-50'
+                                        isSelected
+                                            ? 'table-row-selected bg-[#e8f2ff] hover:bg-[#d6e8fe]'
                                             : index % 2 === 1
                                             ? 'bg-ui-bg-hover hover:bg-workspace-hover-bg'
                                             : 'bg-white hover:bg-workspace-hover-bg'
