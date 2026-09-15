@@ -1,26 +1,26 @@
 export function sanitizeAmountInput(value, { allowDecimal = true, allowNegative = false, isInput = false } = {}) {
     let strValue = String(value ?? '').trim();
 
-  // Strip empty decimal suffixes (,00, ,0) so they are not shown to lay users
-
+    // Strip empty decimal suffixes (,00, ,0) so they are not shown to lay users
     if (!isInput) {
-        strValue = strValue.replace(/,00?$/, '');
+        strValue = strValue.replace(/,0+$/, '');
     }
 
-  // Convert database standard decimal string (e.g. 125000.50) to Indonesian standard (125000,50)
-
-  // Only convert if the dot is a true database decimal dot (not an Indonesian thousand separator)
-
+    // Convert database standard decimal string (e.g. 125000.50, 50.0000, 50.00) to Indonesian standard (125000,50, 50)
+    // Only convert if the dot is a true database decimal dot (not an Indonesian thousand separator)
     if (!isInput && /^-?\d+\.\d+$/.test(strValue)) {
         const parts = strValue.split('.');
         if (parts.length === 2) {
             const [integerPart, fractionPart] = parts;
             const cleanInteger = integerPart.replace(/^-/, '');
-            if (fractionPart.length < 3 || cleanInteger.length > 3) {
-                strValue = strValue.replace('.', ',');
-              // Strip empty decimal suffixes that were converted from database decimals
-
-                strValue = strValue.replace(/,00?$/, '');
+            const isDecimalDot = fractionPart.length !== 3 || cleanInteger.length > 3;
+            if (isDecimalDot) {
+                if (/^0+$/.test(fractionPart)) {
+                    strValue = integerPart;
+                } else {
+                    const cleanFraction = fractionPart.replace(/0+$/, '');
+                    strValue = `${integerPart},${cleanFraction}`;
+                }
             }
         }
     }
