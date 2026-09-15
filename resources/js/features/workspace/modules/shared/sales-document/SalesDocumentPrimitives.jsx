@@ -114,8 +114,8 @@ export function SearchableTableSection({
     const hasRows = rows.length > 0;
 
     return (
-        <div className={`flex flex-col ${hasRows ? 'min-h-[540px] sm:min-h-[620px]' : 'min-h-[240px] sm:min-h-[260px]'}`.trim()}>
-            <div className="flex flex-col gap-3 pb-1 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col flex-1 min-h-0">
+            <div className="shrink-0 flex flex-col gap-3 pb-1 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     {leadingAction ? (
                         <button
