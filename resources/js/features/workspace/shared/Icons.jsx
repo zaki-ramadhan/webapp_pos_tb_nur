@@ -23,7 +23,6 @@ import {
     Plus,
     Printer,
     Loader2,
-    RotateCw,
     Rows3,
     Save,
     Search,
@@ -38,6 +37,7 @@ import {
     X,
 } from 'lucide-react';
 import SquareArrowOutUpRight from '@/components/shared/SquareArrowOutUpRight';
+import RotateCw from '@/components/shared/RotateCw';
 
 function AppIcon({ icon: Icon, className, strokeWidth = 1.9 }) {
     return <Icon aria-hidden="true" className={className} strokeWidth={strokeWidth} absoluteStrokeWidth />;
