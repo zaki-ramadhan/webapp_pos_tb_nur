@@ -12,9 +12,16 @@ import { TransactionDateInput } from '@/features/workspace/modules/shared/Transa
 import { extractBackendRows, listBackendResource, clearBackendCache } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
+function getTodayDate() {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 export default function ItemWarehouseTab({ productId }) {
-    const today = new Date().toISOString().split('T')[0];
-    const [asOfDate, setAsOfDate] = useState(today);
+    const [asOfDate, setAsOfDate] = useState(getTodayDate);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -49,8 +56,8 @@ export default function ItemWarehouseTab({ productId }) {
                 <div className="w-[135px] sm:w-[155px] shrink-0">
                     <TransactionDateInput
                         value={asOfDate}
-                        onChange={(nextVal) => {
-                            const val = typeof nextVal === 'string' ? nextVal : nextVal?.target?.value;
+                        onChange={(displayVal, nativeVal) => {
+                            const val = nativeVal || (typeof displayVal === 'string' ? displayVal : displayVal?.target?.value);
                             if (val) setAsOfDate(val);
                         }}
                         className="h-[40px] rounded-[4px] border-ui-border w-full"
