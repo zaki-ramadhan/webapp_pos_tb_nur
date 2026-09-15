@@ -24,7 +24,7 @@ export const SecondaryTab = forwardRef(function SecondaryTab({ tab, active, onSe
 
     const canClick = tabsCount > 1;
     const cursorClass = canClick ? 'cursor-pointer' : 'cursor-default';
-    const maxWidthClassName = isViewTab ? '' : 'max-w-[200px] sm:max-w-[240px] md:max-w-[280px]';
+    const maxWidthClassName = isViewTab ? '' : 'max-w-[130px] sm:max-w-[160px] md:max-w-[180px]';
 
     return (
         <div
