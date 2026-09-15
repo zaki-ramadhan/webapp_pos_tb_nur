@@ -32,7 +32,7 @@ export default function TransferMoneySection({ config, values, setValues, handle
 
                     <div className="grid grid-cols-[130px_minmax(0,1fr)] lg:grid-cols-[160px_minmax(0,1fr)] items-center gap-x-4">
                         <TransactionFieldLabel label={config.labels.transferValue} required htmlFor="transferValue" />
-                        <div className="max-w-[320px] w-full">
+                        <div className="w-full sm:w-1/2">
                             <TransferValueInput
                                 id="transferValue"
                                 prefix={values.transferPrefix}
