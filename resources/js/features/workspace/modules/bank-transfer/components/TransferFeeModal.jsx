@@ -149,7 +149,7 @@ export default function TransferFeeModal({
                                     value={feeAmount}
                                     onChange={(e) => setFeeAmount(e.target.value)}
                                     prefix="Rp"
-                                    maxLength={18}
+                                    maxLength={15}
                                     className="h-[34px] rounded-[4px] border-ui-border"
                                     prefixClassName="min-w-[32px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text"
                                     inputClassName="text-right text-xs sm:text-sm text-brand-dark"
