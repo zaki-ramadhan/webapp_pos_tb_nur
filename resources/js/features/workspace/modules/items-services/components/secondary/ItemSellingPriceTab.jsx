@@ -46,61 +46,48 @@ export default function ItemSellingPriceTab({ values = {}, detailRow = null }) {
     const hasPrices = priceRows.length > 0;
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            {/* Kolom Kiri: Harga Berlaku Saat Ini */}
-            <div className="space-y-3">
-                <SectionHeading title="Harga Berlaku Saat Ini" />
-                {hasPrices ? (
-                    <div className="rounded-[4px] border border-ui-border bg-white">
-                        <div className="py-1">
-                            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-ui-border-lightest px-4 py-2.5">
-                                <span className="text-xs sm:text-sm text-brand-dark font-normal">
-                                    Kategori Penjualan
-                                </span>
-                                <span className="text-right text-xs sm:text-sm font-semibold text-text-darkest">
-                                    [Semua]
-                                </span>
-                            </div>
-                            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-ui-border-lightest px-4 py-2.5">
-                                <span className="text-xs sm:text-sm text-brand-dark font-normal">
-                                    Harga
-                                </span>
-                                <div className="text-right text-xs sm:text-sm font-semibold text-text-darkest space-y-1">
-                                    {priceRows.map((row) => (
-                                        <div key={row.id}>
-                                            Rp. {formatAmountInput(row.price)} /{row.unitName}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5">
-                                <span className="text-xs sm:text-sm text-brand-dark font-normal">
-                                    Berlaku di Cabang
-                                </span>
-                                <span className="text-right text-xs sm:text-sm font-semibold text-text-darkest">
-                                    Semua Cabang
-                                </span>
+        <div className="w-full max-w-2xl space-y-3">
+            <SectionHeading title="Harga Berlaku Saat Ini" />
+            {hasPrices ? (
+                <div className="rounded-[4px] border border-ui-border bg-white">
+                    <div className="py-1">
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-ui-border-lightest px-4 py-2.5">
+                            <span className="text-xs sm:text-sm text-brand-dark font-normal">
+                                Kategori Penjualan
+                            </span>
+                            <span className="text-right text-xs sm:text-sm font-semibold text-text-darkest">
+                                [Semua]
+                            </span>
+                        </div>
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-ui-border-lightest px-4 py-2.5">
+                            <span className="text-xs sm:text-sm text-brand-dark font-normal">
+                                Harga
+                            </span>
+                            <div className="text-right text-xs sm:text-sm font-semibold text-text-darkest space-y-1">
+                                {priceRows.map((row) => (
+                                    <div key={row.id}>
+                                        Rp. {formatAmountInput(row.price)} /{row.unitName}
+                                    </div>
+                                ))}
                             </div>
                         </div>
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5">
+                            <span className="text-xs sm:text-sm text-brand-dark font-normal">
+                                Berlaku di Cabang
+                            </span>
+                            <span className="text-right text-xs sm:text-sm font-semibold text-text-darkest">
+                                Semua Cabang
+                            </span>
+                        </div>
                     </div>
-                ) : (
-                    <div className="rounded-[4px] border border-ui-border bg-white py-4 px-3 flex items-center justify-center">
-                        <span className="text-xs sm:text-sm font-normal text-brand-dark">
-                            Belum ada harga berlaku
-                        </span>
-                    </div>
-                )}
-            </div>
-
-            {/* Kolom Kanan: Harga Jual Mendatang */}
-            <div className="space-y-3">
-                <SectionHeading title="Harga Jual Mendatang" />
+                </div>
+            ) : (
                 <div className="rounded-[4px] border border-ui-border bg-white py-4 px-3 flex items-center justify-center">
                     <span className="text-xs sm:text-sm font-normal text-brand-dark">
-                        Belum ada harga mendatang
+                        Belum ada harga berlaku
                     </span>
                 </div>
-            </div>
+            )}
         </div>
     );
 }
