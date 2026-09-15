@@ -1,25 +1,28 @@
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 
 export default function TransferValueInput({
+    id,
+    name,
     prefix,
     value,
     onChange = null,
     onBlur = null,
     readOnly = false,
-    maxWidthClassName = 'max-w-[276px]',
+    maxWidthClassName = 'max-w-[320px]',
 }) {
     return (
         <div className={maxWidthClassName}>
             <FormattedAmountInput
+                id={id}
+                name={name}
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}
                 readOnly={readOnly}
                 prefix={prefix}
-                maxLength={15}
-                className="h-[34px] rounded-[4px] border-ui-border"
-                prefixClassName="min-w-[42px] justify-center bg-ui-bg-hover px-2 text-xs sm:text-sm text-table-row-text"
-                inputClassName="text-right text-xs sm:text-sm text-brand-dark"
+                maxLength={18}
+                className="h-[40px] rounded-[4px] border-ui-border"
+                inputClassName="text-right text-xs sm:text-sm text-brand-dark font-normal"
                 containerClassName="w-full !max-w-none"
             />
         </div>

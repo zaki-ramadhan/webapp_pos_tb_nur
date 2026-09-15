@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
 import TextInput from '@/components/ui/TextInput';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import SelectField from '@/components/ui/SelectField';
 import TextareaField from '@/components/ui/TextareaField';
 import { PencilFilledIcon } from '@/features/workspace/shared/Icons';
@@ -144,15 +145,14 @@ export default function TransferFeeModal({
                                 Nilai <span className="text-red-500">*</span>
                             </label>
                             <div className="max-w-[276px]">
-                                <TextInput
-                                    type="text"
+                                <FormattedAmountInput
                                     value={feeAmount}
                                     onChange={(e) => setFeeAmount(e.target.value)}
                                     prefix="Rp"
                                     maxLength={18}
                                     className="h-[34px] rounded-[4px] border-ui-border"
-                                    prefixClassName="min-w-[42px] justify-center bg-ui-bg-hover px-2 text-xs sm:text-sm text-table-row-text"
                                     inputClassName="text-right text-xs sm:text-sm text-brand-dark"
+                                    containerClassName="w-full !max-w-none"
                                 />
                             </div>
                         </div>
