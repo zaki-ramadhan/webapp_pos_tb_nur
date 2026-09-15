@@ -107,15 +107,18 @@ class InventoryInquiryQueryService
             return $this->paginateRows(collect(), $filters);
         }
 
+        $asOfDate = $this->resolveDateFilter($filters['as_of_date'] ?? null);
         $stockMap = $this->buildStockMap($filters);
         $warehouses = Warehouse::query()->with('branch')
             ->when(filled($filters['warehouse_id'] ?? null), fn ($q) => $q->where('id', (int) $filters['warehouse_id']))
             ->get()->keyBy('id');
         $products = $this->queryProducts($filters)->keyBy('id');
+        $unitMode = trim((string) ($filters['unit'] ?? $filters['unit_mode'] ?? 'multi'));
         $rows = collect();
 
         $docDates = InventoryDocumentLine::query()
             ->join('inventory_documents', 'inventory_documents.id', '=', 'inventory_document_lines.inventory_document_id')
+            ->when($asOfDate !== null, fn ($q) => $q->whereDate('inventory_documents.document_date', '<=', $asOfDate->toDateString()))
             ->selectRaw('inventory_document_lines.product_id, inventory_documents.warehouse_id, MAX(inventory_documents.document_date) as max_date')
             ->groupBy('inventory_document_lines.product_id', 'inventory_documents.warehouse_id')
             ->get()
@@ -139,6 +142,23 @@ class InventoryInquiryQueryService
             ->get();
 
         foreach ($products as $product) {
+            $conversions = $product->relationLoaded('unitConversions')
+                ? $product->unitConversions
+                : $product->unitConversions()->with('unit')->get();
+
+            $validConversions = $conversions
+                ->filter(fn ($conv) => $conv->unit && (float) $conv->quantity > 0)
+                ->sortByDesc(fn ($conv) => (float) $conv->quantity)
+                ->values();
+
+            $conversionsArray = $validConversions->map(fn ($conv) => [
+                'unit_id' => $conv->unit_id,
+                'unit_name' => $conv->unit?->name ?? '',
+                'quantity' => (float) $conv->quantity,
+            ])->all();
+
+            $baseUnitName = $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '';
+
             foreach ($warehouses as $warehouse) {
                 $compositeKey = sprintf('%d:%d', $product->id, $warehouse->id);
                 $quantity = (float) ($stockMap[$compositeKey] ?? 0);
@@ -159,6 +179,31 @@ class InventoryInquiryQueryService
                     $cost = (float) ($product->default_purchase_price ?: $product->default_sale_price ?: 0);
                 }
 
+                if ($unitMode === 'multi' || $unitMode === '') {
+                    $multiUnitDisplay = $this->formatMultiUnitQuantity((float) $quantity, $product);
+                    $saleableStockDisplay = $multiUnitDisplay;
+                } elseif ($unitMode === 'base' || mb_strtolower($unitMode) === mb_strtolower($baseUnitName)) {
+                    $baseFormatted = sprintf('%s %s', $this->formatNumber($quantity), $baseUnitName);
+                    $multiUnitDisplay = $baseFormatted;
+                    $saleableStockDisplay = $baseFormatted;
+                } else {
+                    $matchingConv = $validConversions->first(fn ($c) =>
+                        mb_strtolower((string) ($c->unit?->name ?? '')) === mb_strtolower($unitMode) ||
+                        (string) $c->unit_id === (string) $unitMode
+                    );
+                    if ($matchingConv && (float) $matchingConv->quantity > 0) {
+                        $ratio = (float) $matchingConv->quantity;
+                        $convertedQty = $quantity / $ratio;
+                        $unitName = $matchingConv->unit?->name ?? $unitMode;
+                        $convFormatted = sprintf('%s %s', $this->formatNumber($convertedQty), $unitName);
+                        $multiUnitDisplay = $convFormatted;
+                        $saleableStockDisplay = $convFormatted;
+                    } else {
+                        $multiUnitDisplay = $this->formatMultiUnitQuantity((float) $quantity, $product);
+                        $saleableStockDisplay = $multiUnitDisplay;
+                    }
+                }
+
                 $rows->push([
                     'id' => $compositeKey,
                     'product_id' => $product->id,
@@ -166,10 +211,15 @@ class InventoryInquiryQueryService
                     'product_name' => $product->name,
                     'warehouse_id' => $warehouse->id,
                     'warehouse' => $warehouse->name,
-                    'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
-                    'unit_name' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? '',
-                    'multi_unit_quantity' => $this->formatMultiUnitQuantity((float) $quantity, $product),
-                    'saleable_stock' => $this->formatNumber($quantity),
+                    'unit' => $baseUnitName,
+                    'unit_name' => $baseUnitName,
+                    'multi_unit_quantity' => $multiUnitDisplay,
+                    'saleable_stock' => $saleableStockDisplay,
+                    'conversions' => $conversionsArray,
+                    'base_unit' => [
+                        'id' => $product->base_unit_id,
+                        'name' => $baseUnitName,
+                    ],
                     'quantity' => (float) $quantity,
                     'raw_quantity' => (float) $quantity,
                     'unit_cost' => $this->formatNumber($cost),

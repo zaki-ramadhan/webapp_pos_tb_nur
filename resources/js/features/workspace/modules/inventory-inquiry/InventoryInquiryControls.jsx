@@ -91,7 +91,10 @@ export function InquiryControl({
         return (
             <TransactionDateInput
                 value={value}
-                onChange={(nextValue) => onChange(control.id, nextValue)}
+                onChange={(nextValue) => {
+                    const val = typeof nextValue === 'string' ? nextValue : nextValue?.target?.value;
+                    onChange(control.id, val ?? '');
+                }}
                 className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
                 inputClassName="text-xs sm:text-sm text-brand-dark"
                 trailingClassName="w-[42px] shrink-0 justify-center px-0"

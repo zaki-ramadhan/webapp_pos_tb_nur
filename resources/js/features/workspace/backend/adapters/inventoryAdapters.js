@@ -15,6 +15,8 @@ export function buildInventoryFilters(pageId, values) {
         if (!hasTarget) {
             return {
                 require_target: 1,
+                unit: values.unitMode || 'multi',
+                unit_mode: values.unitMode || 'multi',
                 as_of_date: normalizeDisplayDate(values.asOfDate),
                 per_page: 100,
             };
@@ -24,6 +26,8 @@ export function buildInventoryFilters(pageId, values) {
             product_id: isWarehouseMode ? null : (values.itemSearchId ?? null),
             warehouse_id: isWarehouseMode ? (values.warehouseSearchId ?? null) : null,
             search: (isWarehouseMode ? values.warehouseSearch : values.itemSearch)?.trim() ?? '',
+            unit: values.unitMode || 'multi',
+            unit_mode: values.unitMode || 'multi',
             as_of_date: normalizeDisplayDate(values.asOfDate),
             per_page: 100,
         };
@@ -51,7 +55,14 @@ export function mapInventoryRows(pageId, records) {
             productCode: record.product_code ?? '',
             multiUnitQuantity: record.multi_unit_quantity ?? '',
             saleableStock: record.saleable_stock ?? '',
+            rawQuantity: Number(record.raw_quantity ?? record.quantity ?? 0),
+            quantity: record.quantity ?? 0,
+            unit: record.unit ?? '',
+            unitName: record.unit_name ?? record.unit ?? '',
             address: record.address ?? '',
+            date: record.date ?? '',
+            conversions: record.conversions ?? [],
+            baseUnit: record.base_unit ?? null,
         }));
     }
 
