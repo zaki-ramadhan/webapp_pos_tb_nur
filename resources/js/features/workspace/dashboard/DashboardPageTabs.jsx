@@ -34,7 +34,7 @@ const PrimaryTab = forwardRef(function PrimaryTab({ tab, active, onSelect, onClo
                     type="button"
                     onClick={(e) => { e.stopPropagation(); onClose(tab.id); }}
                     className={`inline-flex h-5 w-5 items-center justify-center rounded-[3px] sm:h-6 sm:w-6 transition-colors ${
-                        active ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-slate-700'
+                        active ? 'text-white' : 'text-slate-400 hover:text-slate-700'
                     }`.trim()}
                     aria-label={`Tutup tab ${tab.label}`}
                 >

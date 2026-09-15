@@ -32,7 +32,7 @@ export default function Notice({ children, tone = 'info', className = '', onClos
                     setVisible(false);
                     if (onClose) onClose();
                 }}
-                className="absolute right-3 top-3 text-current opacity-50 hover:opacity-90 transition-opacity cursor-pointer focus:outline-none"
+                className="absolute right-3 top-3 text-current transition-colors cursor-pointer focus:outline-none"
                 aria-label="Tutup"
             >
                 <X className="h-4 w-4" />
