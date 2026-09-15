@@ -66,7 +66,7 @@ export default function SalesDepositPaymentSection({
                                 prefixClassName="min-w-0 px-3 justify-center text-table-row-text font-normal bg-ui-bg-hover text-sm"
                                 containerClassName="!max-w-[320px] w-full"
                                 className="h-[40px] rounded-[4px] border-ui-border bg-slate-50"
-                                inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
+                                inputClassName="text-right text-xs sm:text-sm text-brand-dark bg-transparent"
                             />
                         </div>
                     </div>

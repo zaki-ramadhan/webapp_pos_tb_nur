@@ -185,7 +185,7 @@ export default function SalesReceiptFormView({
                                                     };
                                                 });
                                             }}
-                                            maxLength={11}
+                                            maxLength={18}
                                             prefix="Rp"
                                             className="h-[40px] rounded-[4px] border-ui-border w-full"
                                             inputClassName="text-right text-xs sm:text-sm text-brand-dark"

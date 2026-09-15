@@ -72,7 +72,7 @@ export default function TextInput({
         : className;
 
     const resolvedType = type === 'number' ? 'text' : type;
-    const resolvedInputMode = props.inputMode ?? (type === 'number' ? 'decimal' : undefined);
+    const resolvedInputMode = props.inputMode ?? ((type === 'number' || state.isCurrency) ? 'decimal' : undefined);
     const resolvedMin = type === 'number' ? 0 : undefined;
 
     function focusInputFromWrapper(event) {
@@ -102,6 +102,8 @@ export default function TextInput({
     const cleanPrefixClassName = prefixClassName.replace(/(?:^|\s)(?:[^\s]*:)?border\S*/g, ' ').trim();
 
     const hasTrailingPx = trailingClassName.includes('px-') || trailingClassName.includes('pl-') || trailingClassName.includes('pr-');
+    const hasExplicitAlign = /(?:^|\s)text-(?:left|right|center|justify)(?:\s|$)/.test(inputClassName);
+    const currencyAlignClass = state.isCurrency && !hasExplicitAlign ? 'text-right' : '';
 
     const isClearOrClose = isClearOrCloseElement(trailing);
     const showTrailing = trailing
@@ -144,10 +146,16 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(state.resolvedError)}
-                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:${state.resolvedError ? 'text-red-400' : 'text-slate-600'} ${state.isNonInteractive ? 'cursor-not-allowed bg-transparent text-brand-dark font-normal pointer-events-none select-none' : state.resolvedError ? 'bg-transparent text-red-700' : 'text-black bg-white'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:${state.resolvedError ? 'text-red-400' : 'text-slate-600'} ${state.isNonInteractive ? 'cursor-not-allowed bg-transparent text-brand-dark font-normal pointer-events-none select-none' : state.resolvedError ? 'bg-transparent text-red-700' : 'text-black bg-white'} ${currencyAlignClass} ${inputClassName}`.trim()}
                     onChange={state.handleWrappedChange}
                     onFocus={(e) => {
                         state.isFocusedRef.current = true;
+                        if (state.isCurrency || type === 'number') {
+                            const el = e.target;
+                            requestAnimationFrame(() => {
+                                el?.select?.();
+                            });
+                        }
                         props.onFocus?.(e);
                     }}
                     onBlur={state.handleWrappedBlur}

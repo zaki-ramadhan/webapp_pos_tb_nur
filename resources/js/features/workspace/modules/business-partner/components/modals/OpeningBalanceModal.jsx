@@ -139,7 +139,9 @@ export function OpeningBalanceModal({
                             onChange={(val) => setAmount(val)}
                             prefix="Rp"
                             placeholder="0"
+                            maxLength={18}
                             className="h-[38px] rounded-[4px]"
+                            inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
 

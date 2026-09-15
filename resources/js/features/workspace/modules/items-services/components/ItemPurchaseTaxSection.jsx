@@ -53,7 +53,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                         onChange={(event) => onChange('purchasePrice', event.target.value)}
                         prefix="Rp"
                         formatAsAmount
-                        maxLength={11}
+                        maxLength={18}
                         className="max-w-[420px]"
                         isLoading={isLoading}
                     />
@@ -67,7 +67,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                             className="max-w-[420px]"
                             formatAsAmount
                             allowDecimal={false}
-                            maxLength={11}
+                            maxLength={18}
                             isLoading={isLoading}
                         />
                     </FormRow>

@@ -6,6 +6,8 @@ import TextareaField from '@/components/ui/TextareaField';
 import Button from '@/components/ui/Button';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { PencilFilledIcon } from '@/features/workspace/shared/Icons';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
+import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 function AccountDetailModalContainer({
     accountCode,
@@ -23,8 +25,7 @@ function AccountDetailModalContainer({
     const [side, setSide] = useState(defaultSide || 'debit');
 
     const [amount, setAmount] = useState(() => {
-        const val = parseInt(String(defaultAmount || '').replace(/\D/g, ''), 10);
-        return isNaN(val) || val === 0 ? '0' : val.toLocaleString('id-ID');
+        return formatAmountInput(defaultAmount || '0');
     });
 
     const [notes, setNotes] = useState(defaultNotes || '');
@@ -47,20 +48,12 @@ function AccountDetailModalContainer({
     }
 
     function handleAmountChange(e) {
-        const rawVal = e.target.value;
-        const cleanVal = rawVal.replace(/\D/g, '');
-        if (!cleanVal) {
-            setAmount('0');
-            return;
-        }
-        const num = parseInt(cleanVal, 10);
-        const formatted = num.toLocaleString('id-ID');
-        setAmount(formatted);
+        setAmount(e.target.value);
         setError('');
     }
 
     function handleSave() {
-        const cleanAmount = parseInt(amount.replace(/\D/g, ''), 10) || 0;
+        const cleanAmount = parseAmountInput(amount) || 0;
         if (cleanAmount <= 0) {
             setError('Nilai harus lebih besar dari 0.');
             return;
@@ -185,12 +178,12 @@ function AccountDetailModalContainer({
                             </div>
 
                             <div className="w-full max-w-[240px]">
-                                <TextInput
-                                    type="number"
+                                <FormattedAmountInput
                                     prefix="Rp"
                                     value={amount}
                                     onChange={handleAmountChange}
                                     error={error}
+                                    maxLength={18}
                                     className="h-[38px] rounded-[4px]"
                                     prefixClassName="min-w-0 px-3 justify-center text-table-row-text font-normal bg-ui-bg-hover text-sm"
                                     inputClassName="text-slate-700 text-right text-sm"

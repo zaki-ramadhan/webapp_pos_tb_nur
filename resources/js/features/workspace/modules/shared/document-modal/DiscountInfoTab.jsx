@@ -65,7 +65,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                                 discountAmount: event.target.value,
                             }))
                         }
-                        maxLength={11}
+                        maxLength={18}
                         prefix="Rp"
                         className="h-[36px] rounded-[4px] border-ui-border"
                         inputClassName="text-right text-xs sm:text-sm text-text-darkest"

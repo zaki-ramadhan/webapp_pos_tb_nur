@@ -176,7 +176,7 @@ export default function ExpenseEntryLineItemModal({
                                         amount: e.target.value,
                                     }))
                                 }
-                                maxLength={11}
+                                maxLength={18}
                                 placeholder="0"
                                 className="h-[36px] rounded-[4px] border-ui-border"
                                 prefixClassName="min-w-0 px-3 justify-center text-table-row-text font-normal bg-ui-bg-hover text-sm"

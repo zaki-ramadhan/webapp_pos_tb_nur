@@ -2,6 +2,7 @@ import { showErrorToast } from '@/components/feedback/toast';
 import CheckboxField from '@/components/ui/CheckboxField';
 import TextareaField from '@/components/ui/TextareaField';
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import {
     FormFieldRow,
     PartnerInlineTableSection,
@@ -46,18 +47,16 @@ export default function SupplierPurchaseTab({ config, values, onChange }) {
                         </FormFieldRow>
 
                         <FormFieldRow label="Batas Saldo Utang">
-                            <TextInput
+                            <FormattedAmountInput
                                 id="creditLimit"
                                 name="creditLimit"
                                 value={values.creditLimit || ''}
-                                onChange={(event) => {
-                                    const sanitized = event.target.value.replace(/[^0-9]/g, '');
-                                    onChange('creditLimit', sanitized);
-                                }}
+                                onChange={(event) => onChange('creditLimit', event.target.value)}
                                 prefix="Rp"
+                                maxLength={18}
                                 className="h-[40px] rounded-[4px] border-ui-border"
                                 prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-table-row-text"
-                                inputClassName="text-xs sm:text-sm text-brand-dark"
+                                inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                             />
                         </FormFieldRow>
                     </div>

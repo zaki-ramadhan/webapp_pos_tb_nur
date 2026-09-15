@@ -1,4 +1,5 @@
 import CheckboxField from '@/components/ui/CheckboxField';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import {
     AddressStack,
     FormFieldRow,
@@ -13,18 +14,16 @@ export default function SalesTab({ config, values, onChange }) {
             <SectionHeading title={config.headingLabels.salesLeft} />
 
             <FormFieldRow label="Batas Saldo Piutang">
-                <TextInput
+                <FormattedAmountInput
                     id="creditLimit"
                     name="creditLimit"
                     value={values.creditLimit}
-                    onChange={(event) => {
-                        const sanitized = event.target.value.replace(/[^0-9]/g, '');
-                        onChange('creditLimit', sanitized);
-                    }}
+                    onChange={(event) => onChange('creditLimit', event.target.value)}
                     prefix="Rp"
+                    maxLength={18}
                     className="h-[40px] rounded-[4px] border-ui-border"
                     prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-table-row-text"
-                    inputClassName="text-xs sm:text-sm text-brand-dark"
+                    inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                 />
             </FormFieldRow>
         </div>

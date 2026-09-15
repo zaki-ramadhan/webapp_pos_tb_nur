@@ -17,7 +17,7 @@ export function DocumentModalCurrencyField({
             onChange={onChange}
             readOnly={readOnly}
             prefix={prefix}
-            maxLength={11}
+            maxLength={18}
             className={`h-[38px] rounded-[4px] border-ui-border ${className}`.trim()}
             prefixClassName="min-w-0 px-2 justify-center bg-input-prefix-bg-compact text-xs text-table-row-text"
             inputClassName={`text-right text-xs sm:text-sm text-text-darkest ${inputClassName}`.trim()}
