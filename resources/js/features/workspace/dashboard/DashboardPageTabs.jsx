@@ -22,7 +22,7 @@ const PrimaryTab = forwardRef(function PrimaryTab({ tab, active, onSelect, onClo
             onClick={() => onSelect(tab.id)}
             className={`relative -mb-[2px] inline-flex h-7.5 items-center rounded-t-[5px] text-xs leading-normal cursor-pointer select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base ${spacingClassName} ${
                 active
-                    ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-normal text-white'
+                    ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-semibold text-white'
                     : 'border-x border-t border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
             } shrink-0 whitespace-nowrap`.trim()}
         >
