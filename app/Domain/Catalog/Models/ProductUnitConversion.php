@@ -22,6 +22,20 @@ class ProductUnitConversion extends DomainModel
         ];
     }
 
+    public function getQuantityAttribute($value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $formatted = (string) $value;
+        if (str_contains($formatted, '.')) {
+            $formatted = rtrim(rtrim($formatted, '0'), '.');
+        }
+
+        return $formatted;
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
