@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { CircleX } from 'lucide-react';
 import { isOwnerUser } from '@/features/workspace/backend/adapters/generalAdapters';
@@ -21,6 +21,7 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import {
     ExternalLinkIcon,
     LinkIcon,
+    LoadingIcon,
     SearchIcon,
     RefreshIcon,
     DownloadIcon,
@@ -71,7 +72,18 @@ export default function InventoryInquiryView({ config, pageId }) {
 
     const [values, setValues] = useState(initialValues);
     const [keyword, setKeyword] = useState(config.search?.value ?? '');
-    const [filters, setFilters] = useState(() => buildInventoryFilters(pageId, initialValues));
+    const [debouncedKeyword, setDebouncedKeyword] = useState(config.search?.value ?? '');
+    const [isDebouncing, setIsDebouncing] = useState(false);
+    const lastFiltersRef = useRef(null);
+
+    const [filters, setFilters] = useState(() => {
+        const initFilters = buildInventoryFilters(pageId, {
+            ...initialValues,
+            keyword: config.search?.value ?? '',
+        });
+        lastFiltersRef.current = initFilters;
+        return initFilters;
+    });
     const [selectedIds, setSelectedIds] = useState(() => new Set());
 
     const isWarehouseMode = values.itemType === 'warehouse';
@@ -195,7 +207,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     }, [isAccessRestricted, authUser, isSuperAdmin, resource, resourceAbility]);
 
     const filteredRows = useMemo(() => {
-        const normalizedKeyword = keyword.trim().toLowerCase();
+        const normalizedKeyword = debouncedKeyword.trim().toLowerCase();
         const supplierSearch = (values.supplierSearch ?? '').trim().toLowerCase();
 
         return tableRows.filter((row) => {
@@ -216,7 +228,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                 String(row[key] ?? '').toLowerCase().includes(normalizedKeyword),
             );
         });
-    }, [config.table.searchKeys, dataColumns, keyword, tableRows, values.supplierSearch]);
+    }, [config.table.searchKeys, dataColumns, debouncedKeyword, tableRows, values.supplierSearch]);
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
     const { handleResizeStart, getCellStyle } = useColumnResize('inventory-inquiry');
@@ -288,7 +300,9 @@ export default function InventoryInquiryView({ config, pageId }) {
             nextValues.itemSearchId = null;
             nextValues.warehouseSearch = '';
             nextValues.warehouseSearchId = null;
-            setFilters(buildInventoryFilters(pageId, nextValues));
+            const newFilters = buildInventoryFilters(pageId, { ...nextValues, keyword });
+            lastFiltersRef.current = newFilters;
+            setFilters(newFilters);
         }
         setValues(nextValues);
         if (isItemLocation) {
@@ -297,16 +311,33 @@ export default function InventoryInquiryView({ config, pageId }) {
     }
 
     useEffect(() => {
+        const targetFilters = buildInventoryFilters(pageId, {
+            ...values,
+            keyword,
+        });
+        const isFiltersChanged = JSON.stringify(targetFilters) !== JSON.stringify(lastFiltersRef.current);
+        const isKeywordChanged = keyword !== debouncedKeyword;
+
+        if (!isFiltersChanged && !isKeywordChanged) {
+            setIsDebouncing(false);
+            return undefined;
+        }
+
+        setIsDebouncing(true);
         const timer = setTimeout(() => {
-            const nextFilters = buildInventoryFilters(pageId, values);
+            setDebouncedKeyword(keyword);
             setFilters((prev) => {
                 const prevJson = JSON.stringify(prev);
-                const nextJson = JSON.stringify(nextFilters);
-                return prevJson === nextJson ? prev : nextFilters;
+                const targetJson = JSON.stringify(targetFilters);
+                if (prevJson === targetJson) return prev;
+                lastFiltersRef.current = targetFilters;
+                return targetFilters;
             });
+            setIsDebouncing(false);
         }, 300);
+
         return () => clearTimeout(timer);
-    }, [pageId, values]);
+    }, [keyword, values, pageId, debouncedKeyword]);
 
     useEffect(() => {
         if (error && !isAccessRestricted && (!isItemLocation || hasTarget)) {
@@ -437,7 +468,9 @@ export default function InventoryInquiryView({ config, pageId }) {
             [controlId + 'Id']: option.id,
         };
         setValues(nextValues);
-        setFilters(buildInventoryFilters(pageId, nextValues));
+        const nextFilters = buildInventoryFilters(pageId, { ...nextValues, keyword });
+        lastFiltersRef.current = nextFilters;
+        setFilters(nextFilters);
         if (isItemLocation) {
             saveInquiryFilter(pageId, nextValues);
         }
@@ -450,7 +483,9 @@ export default function InventoryInquiryView({ config, pageId }) {
             [controlId + 'Id']: null,
         };
         setValues(nextValues);
-        setFilters(buildInventoryFilters(pageId, nextValues));
+        const nextFilters = buildInventoryFilters(pageId, { ...nextValues, keyword });
+        lastFiltersRef.current = nextFilters;
+        setFilters(nextFilters);
         if (isItemLocation) {
             saveInquiryFilter(pageId, nextValues);
         }
@@ -466,6 +501,8 @@ export default function InventoryInquiryView({ config, pageId }) {
         }
         return config.table.emptyLabel || 'Belum ada data';
     }, [loading, error, isItemLocation, hasTarget, isWarehouseMode, config.table.emptyLabel]);
+
+    const isSearching = isDebouncing || loading;
 
     return (
         <div className="flex flex-col flex-1 min-h-0 h-full overflow-hidden">
@@ -491,8 +528,8 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     products={products}
                                     onLookupSelect={handleLookupSelect}
                                     onLookupClear={handleLookupClear}
-                                    searching={loadingLookups}
-                                    loading={loading}
+                                    searching={loadingLookups || isSearching}
+                                    loading={isSearching}
                                     onButtonClick={handleButtonClick}
                                 />
                             </div>
@@ -505,7 +542,13 @@ export default function InventoryInquiryView({ config, pageId }) {
                                 value={keyword}
                                 onChange={(event) => setKeyword(event.target.value)}
                                 placeholder={config.search.placeholder ?? 'Cari...'}
-                                trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
+                                trailing={
+                                    isSearching ? (
+                                        <LoadingIcon className="h-5 w-5 animate-spin text-brand-dark" />
+                                    ) : (
+                                        <SearchIcon className="h-5 w-5 text-text-darkest" />
+                                    )
+                                }
                                 className={`h-[40px] rounded-[4px] border-ui-border ${config.search.className ?? ''}`.trim()}
                                 inputClassName="text-xs sm:text-sm text-brand-dark"
                                 trailingClassName="px-3"
