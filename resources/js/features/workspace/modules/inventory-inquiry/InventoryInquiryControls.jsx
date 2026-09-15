@@ -90,6 +90,7 @@ export function InquiryControl({
     if (control.type === 'date') {
         return (
             <TransactionDateInput
+                commitOnClose
                 value={value}
                 onChange={(nextValue) => {
                     const val = typeof nextValue === 'string' ? nextValue : nextValue?.target?.value;

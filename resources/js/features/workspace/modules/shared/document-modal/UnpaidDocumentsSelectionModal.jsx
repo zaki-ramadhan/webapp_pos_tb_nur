@@ -244,6 +244,7 @@ export default function UnpaidDocumentsSelectionModal({
                     <div className="flex items-center gap-2">
                         <div className="w-[145px] sm:w-[155px]">
                             <TransactionDateInput
+                                commitOnClose
                                 value={normalizeDisplayDate(startDate)}
                                 onChange={(val) => setStartDate(formatIsoDate(val))}
                                 className="h-[36px] text-xs sm:text-sm"
@@ -252,6 +253,7 @@ export default function UnpaidDocumentsSelectionModal({
                         <span className="text-xs sm:text-sm text-zinc-500 font-normal">s/d</span>
                         <div className="w-[145px] sm:w-[155px]">
                             <TransactionDateInput
+                                commitOnClose
                                 value={normalizeDisplayDate(endDate)}
                                 onChange={(val) => setEndDate(formatIsoDate(val))}
                                 className="h-[36px] text-xs sm:text-sm"

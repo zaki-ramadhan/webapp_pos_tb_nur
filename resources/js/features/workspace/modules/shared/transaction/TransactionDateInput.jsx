@@ -48,6 +48,7 @@ export default function TransactionDateInput({
     disabled = false,
     ariaLabel = 'Pilih tanggal',
     disableAutoInit = false,
+    commitOnClose = false,
     ...props
 }) {
     const parsedMinDate = minDate instanceof Date ? minDate : (minDate ? parseDate(minDate) : null);
@@ -98,9 +99,19 @@ export default function TransactionDateInput({
     const autoInitializedRef = useRef(false);
     const selectedDate = parseDate(nativeValue);
 
+    const pendingChangeRef = useRef(null);
+    const committedValueRef = useRef({
+        display: formatDateValue(value, format),
+        native: normalizeDateValue(value),
+    });
+
     useEffect(() => {
-        setDisplayValue(formatDateValue(value, format));
-        setNativeValue(normalizeDateValue(value));
+        const nextDisplay = formatDateValue(value, format);
+        const nextNative = normalizeDateValue(value);
+        setDisplayValue(nextDisplay);
+        setNativeValue(nextNative);
+        committedValueRef.current = { display: nextDisplay, native: nextNative };
+        pendingChangeRef.current = null;
     }, [value, format]);
 
     useEffect(() => {
@@ -135,10 +146,32 @@ export default function TransactionDateInput({
 
         autoInitializedRef.current = true;
         const defaultInitDate = parsedMinDate && buildTodayDate() < parsedMinDate ? parsedMinDate : buildTodayDate();
-        applyDate(defaultInitDate);
+        applyDate(defaultInitDate, true);
     }, [disabled, onChange, value, disableAutoInit, parsedMinDate]);
 
-    function applyDate(nextDate) {
+    function openCalendar() {
+        if (disabled) return;
+        pendingChangeRef.current = null;
+        setCalendarOpen(true);
+    }
+
+    function closeCalendar() {
+        setCalendarOpen(false);
+        if (commitOnClose && pendingChangeRef.current !== null) {
+            const { display, native } = pendingChangeRef.current;
+            const hasChanged =
+                display !== committedValueRef.current.display ||
+                native !== committedValueRef.current.native;
+
+            if (hasChanged) {
+                committedValueRef.current = { display, native };
+                onChange?.(display, native);
+            }
+            pendingChangeRef.current = null;
+        }
+    }
+
+    function applyDate(nextDate, forceImmediate = false) {
         if (!nextDate) {
             return;
         }
@@ -156,7 +189,13 @@ export default function TransactionDateInput({
 
         setDisplayValue(nextDisplayValue);
         setNativeValue(nextNativeValue);
-        onChange?.(nextDisplayValue, nextNativeValue);
+
+        if (commitOnClose && !forceImmediate) {
+            pendingChangeRef.current = { display: nextDisplayValue, native: nextNativeValue };
+        } else {
+            committedValueRef.current = { display: nextDisplayValue, native: nextNativeValue };
+            onChange?.(nextDisplayValue, nextNativeValue);
+        }
     }
 
     function handleDateSelect(ymd) {
@@ -164,15 +203,22 @@ export default function TransactionDateInput({
         if (!nextDate) return;
         applyDate(nextDate);
         if (closeOnSelect) {
-            setCalendarOpen(false);
+            closeCalendar();
         }
     }
 
     function handleClear() {
         setDisplayValue('');
         setNativeValue('');
-        onChange?.('', '');
-        setCalendarOpen(false);
+        if (commitOnClose) {
+            pendingChangeRef.current = { display: '', native: '' };
+        } else {
+            committedValueRef.current = { display: '', native: '' };
+            onChange?.('', '');
+        }
+        if (closeOnSelect) {
+            closeCalendar();
+        }
     }
 
     return (
@@ -192,7 +238,13 @@ export default function TransactionDateInput({
                 <button
                     id={id}
                     type="button"
-                    onClick={() => !disabled && setCalendarOpen((prev) => !prev)}
+                    onClick={() => {
+                        if (calendarOpen) {
+                            closeCalendar();
+                        } else {
+                            openCalendar();
+                        }
+                    }}
                     disabled={disabled}
                     aria-label={ariaLabel}
                     aria-expanded={calendarOpen}
@@ -204,7 +256,7 @@ export default function TransactionDateInput({
 
             <PortalDropdown
                 open={calendarOpen}
-                onClose={() => setCalendarOpen(false)}
+                onClose={closeCalendar}
                 anchorRef={wrapperRef}
                 align={align}
                 side="auto"
@@ -216,7 +268,7 @@ export default function TransactionDateInput({
                 <DatePickerPopover
                     selectedDate={selectedDate}
                     onSelect={handleDateSelect}
-                    onClose={() => setCalendarOpen(false)}
+                    onClose={closeCalendar}
                     minDate={parsedMinDate}
                     maxDate={parsedMaxDate}
                     presets={presets}

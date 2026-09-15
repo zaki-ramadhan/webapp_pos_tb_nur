@@ -176,6 +176,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                 <div className="flex items-center gap-1.5 text-xs sm:text-sm text-brand-dark font-normal">
                     <span>Jatuh Tempo:</span>
                     <TransactionDateInput
+                        commitOnClose
                         value={startDate}
                         onChange={(_, nativeVal) => setStartDate(nativeVal)}
                         className="max-w-[155px]"
@@ -183,6 +184,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                     />
                     <span>s/d</span>
                     <TransactionDateInput
+                        commitOnClose
                         value={endDate}
                         onChange={(_, nativeVal) => setEndDate(nativeVal)}
                         minDate={startDate}

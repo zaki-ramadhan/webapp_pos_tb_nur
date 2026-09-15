@@ -145,6 +145,7 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                 <div className="flex items-center gap-2">
                     <div className="w-[135px] sm:w-[155px] shrink-0">
                         <TransactionDateInput
+                            commitOnClose
                             value={dateFrom}
                             onChange={(nextVal) => {
                                 const val = typeof nextVal === 'string' ? nextVal : nextVal?.target?.value;
@@ -164,6 +165,7 @@ export default function ItemMutationTab({ productId, product = null, values = nu
                     <span className="text-sm text-text-darkest font-normal shrink-0">s/d</span>
                     <div className="w-[135px] sm:w-[155px] shrink-0">
                         <TransactionDateInput
+                            commitOnClose
                             value={dateTo}
                             minDate={dateFrom}
                             onChange={(nextVal) => {

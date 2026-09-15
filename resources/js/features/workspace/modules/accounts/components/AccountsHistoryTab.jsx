@@ -70,6 +70,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0 }) {
             <div className="flex flex-wrap items-center gap-2.5">
                 <div className="w-[160px]">
                     <TransactionDateInput
+                        commitOnClose
                         value={startDate}
                         onChange={(val) => setStartDate(val)}
                         className="w-full"
@@ -78,6 +79,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0 }) {
                 <span className="text-xs text-slate-500 font-normal">s/d</span>
                 <div className="w-[160px]">
                     <TransactionDateInput
+                        commitOnClose
                         value={endDate}
                         onChange={(val) => setEndDate(val)}
                         className="w-full"

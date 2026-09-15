@@ -55,6 +55,7 @@ export default function ItemWarehouseTab({ productId }) {
             <div className="flex items-center gap-2 py-1">
                 <div className="w-[135px] sm:w-[155px] shrink-0">
                     <TransactionDateInput
+                        commitOnClose
                         value={asOfDate}
                         onChange={(displayVal, nativeVal) => {
                             const val = nativeVal || (typeof displayVal === 'string' ? displayVal : displayVal?.target?.value);
