@@ -245,6 +245,7 @@ export default function BankReconciliationWorkspace({
                     <div className="flex items-center gap-1 shrink-0">
                         <div className="w-[140px] sm:w-[155px] shrink-0">
                             <TransactionDateInput
+                                commitOnClose
                                 value={startDate}
                                 onChange={(val) => {
                                     setStartDate(val);
@@ -258,6 +259,7 @@ export default function BankReconciliationWorkspace({
                         <span className="text-slate-900 text-sm px-0.5 shrink-0">s/d</span>
                         <div className="w-[140px] sm:w-[155px] shrink-0">
                             <TransactionDateInput
+                                commitOnClose
                                 value={endDate}
                                 onChange={(val) => {
                                     setEndDate(val);

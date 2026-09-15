@@ -96,6 +96,7 @@ export function InquiryControl({ control, value, onChange }) {
     if (control.type === 'date') {
         return (
             <TransactionDateInput
+                commitOnClose
                 value={value}
                 onChange={(nextValue) => onChange(control.id, nextValue)}
                 className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
