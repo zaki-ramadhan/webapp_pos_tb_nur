@@ -267,7 +267,7 @@ export default function UnpaidDocumentsSelectionModal({
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-[#5a738e] text-white text-xs sm:text-sm font-normal sticky top-0 z-10">
-                            <th className="py-2.5 px-3 w-[44px] text-center border-r border-table-cell-border">
+                            <th className="py-2.5 px-3 w-[44px] text-center border-r border-table-header-cell-border">
                                 <input
                                     type="checkbox"
                                     checked={isAllSelected}
@@ -281,9 +281,9 @@ export default function UnpaidDocumentsSelectionModal({
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-normal text-white cursor-pointer hover:bg-slate-600/50 border-r border-table-cell-border"
+                                className="py-2.5 px-3 font-normal text-white cursor-pointer hover:bg-slate-600/50 border-r border-table-header-cell-border"
                             />
-                            <th className="py-2.5 px-3 font-normal text-white text-center border-r border-table-cell-border w-[110px]">
+                            <th className="py-2.5 px-3 font-normal text-white text-center border-r border-table-header-cell-border w-[110px]">
                                 Keterangan
                             </th>
                             <SortableTableHeaderCell
@@ -292,7 +292,7 @@ export default function UnpaidDocumentsSelectionModal({
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-table-cell-border"
+                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-table-header-cell-border"
                             />
                             <SortableTableHeaderCell
                                 label="Jatuh Tempo"
@@ -300,7 +300,7 @@ export default function UnpaidDocumentsSelectionModal({
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-table-cell-border"
+                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-table-header-cell-border"
                             />
                             <SortableTableHeaderCell
                                 label="Terhutang"
