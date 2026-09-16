@@ -1,36 +1,34 @@
-import { lazy } from 'react';
-
-const AccountsView = lazy(() => import('@/features/workspace/modules/accounts/AccountsView'));
-const ActivityLogView = lazy(() => import('@/features/workspace/modules/activity-log/ActivityLogView'));
-const BankInquiryView = lazy(() => import('@/features/workspace/modules/bank-inquiry/BankInquiryView'));
-const BankTransferView = lazy(() => import('@/features/workspace/modules/bank-transfer/BankTransferView'));
-const CashPaymentView = lazy(() => import('@/features/workspace/modules/cash-payment/CashPaymentView'));
-const CashReceiptView = lazy(() => import('@/features/workspace/modules/cash-receipt/CashReceiptView'));
-const EmployeeView = lazy(() => import('@/features/workspace/modules/employee/EmployeeView'));
-const ExpenseEntryView = lazy(() => import('@/features/workspace/modules/expense-entry/ExpenseEntryView'));
-const GeneralJournalView = lazy(() => import('@/features/workspace/modules/general-journal/GeneralJournalView'));
-const GroupAccessView = lazy(() => import('@/features/workspace/modules/group-access/GroupAccessView'));
-const InventoryAdjustmentView = lazy(() => import('@/features/workspace/modules/inventory-adjustment/InventoryAdjustmentView'));
-const InventoryInquiryView = lazy(() => import('@/features/workspace/modules/inventory-inquiry/InventoryInquiryView'));
-const ItemCategoryView = lazy(() => import('@/features/workspace/modules/item-category/ItemCategoryView'));
-const ItemsServicesView = lazy(() => import('@/features/workspace/modules/items-services/ItemsServicesView'));
-const PayrollEntryView = lazy(() => import('@/features/workspace/modules/payroll-entry/PayrollEntryView'));
-const PreferencesView = lazy(() => import('@/features/workspace/preferences/PreferencesView'));
-const PurchaseInvoiceView = lazy(() => import('@/features/workspace/modules/sales-document/PurchaseInvoiceView'));
-const PurchasePaymentView = lazy(() => import('@/features/workspace/modules/purchase-payment/PurchasePaymentView'));
-const PurchaseReturnView = lazy(() => import('@/features/workspace/modules/sales-document/PurchaseReturnView'));
-const SalaryAllowanceView = lazy(() => import('@/features/workspace/modules/salary-allowance/SalaryAllowanceView'));
-const SalesDepositView = lazy(() => import('@/features/workspace/modules/sales-deposit/SalesDepositView'));
-const SalesInvoiceView = lazy(() => import('@/features/workspace/modules/sales-document/SalesInvoiceView'));
-const SalesReceiptView = lazy(() => import('@/features/workspace/modules/sales-receipt/SalesReceiptView'));
-const SalesReturnView = lazy(() => import('@/features/workspace/modules/sales-document/SalesReturnView'));
-const SimpleMasterView = lazy(() => import('@/features/workspace/modules/SimpleMasterView'));
-const UsersManagementView = lazy(() => import('@/features/workspace/modules/users-management/UsersManagementView'));
-const WarehouseView = lazy(() => import('@/features/workspace/modules/warehouse/WarehouseView'));
-const BusinessPartnerView = lazy(() => import('@/features/workspace/modules/business-partner/BusinessPartnerView'));
-const JournalActivityLogView = lazy(() => import('@/features/workspace/modules/journal-activity-log/JournalActivityLogView'));
-const SmartlinkEbankingView = lazy(() => import('@/features/workspace/modules/smartlink-ebanking/SmartlinkEbankingView'));
-const PurchaseDepositView = lazy(() => import('@/features/workspace/modules/purchase-deposit/PurchaseDepositView'));
+import AccountsView from '@/features/workspace/modules/accounts/AccountsView';
+import ActivityLogView from '@/features/workspace/modules/activity-log/ActivityLogView';
+import BankInquiryView from '@/features/workspace/modules/bank-inquiry/BankInquiryView';
+import BankTransferView from '@/features/workspace/modules/bank-transfer/BankTransferView';
+import CashPaymentView from '@/features/workspace/modules/cash-payment/CashPaymentView';
+import CashReceiptView from '@/features/workspace/modules/cash-receipt/CashReceiptView';
+import EmployeeView from '@/features/workspace/modules/employee/EmployeeView';
+import ExpenseEntryView from '@/features/workspace/modules/expense-entry/ExpenseEntryView';
+import GeneralJournalView from '@/features/workspace/modules/general-journal/GeneralJournalView';
+import GroupAccessView from '@/features/workspace/modules/group-access/GroupAccessView';
+import InventoryAdjustmentView from '@/features/workspace/modules/inventory-adjustment/InventoryAdjustmentView';
+import InventoryInquiryView from '@/features/workspace/modules/inventory-inquiry/InventoryInquiryView';
+import ItemCategoryView from '@/features/workspace/modules/item-category/ItemCategoryView';
+import ItemsServicesView from '@/features/workspace/modules/items-services/ItemsServicesView';
+import PayrollEntryView from '@/features/workspace/modules/payroll-entry/PayrollEntryView';
+import PreferencesView from '@/features/workspace/preferences/PreferencesView';
+import PurchaseInvoiceView from '@/features/workspace/modules/sales-document/PurchaseInvoiceView';
+import PurchasePaymentView from '@/features/workspace/modules/purchase-payment/PurchasePaymentView';
+import PurchaseReturnView from '@/features/workspace/modules/sales-document/PurchaseReturnView';
+import SalaryAllowanceView from '@/features/workspace/modules/salary-allowance/SalaryAllowanceView';
+import SalesDepositView from '@/features/workspace/modules/sales-deposit/SalesDepositView';
+import SalesInvoiceView from '@/features/workspace/modules/sales-document/SalesInvoiceView';
+import SalesReceiptView from '@/features/workspace/modules/sales-receipt/SalesReceiptView';
+import SalesReturnView from '@/features/workspace/modules/sales-document/SalesReturnView';
+import SimpleMasterView from '@/features/workspace/modules/SimpleMasterView';
+import UsersManagementView from '@/features/workspace/modules/users-management/UsersManagementView';
+import WarehouseView from '@/features/workspace/modules/warehouse/WarehouseView';
+import BusinessPartnerView from '@/features/workspace/modules/business-partner/BusinessPartnerView';
+import JournalActivityLogView from '@/features/workspace/modules/journal-activity-log/JournalActivityLogView';
+import SmartlinkEbankingView from '@/features/workspace/modules/smartlink-ebanking/SmartlinkEbankingView';
+import PurchaseDepositView from '@/features/workspace/modules/purchase-deposit/PurchaseDepositView';
 
 export const STATIC_PAGE_RENDERERS = {
     preferences: (page) => <PreferencesView page={page} />,
@@ -87,4 +85,4 @@ export const BANK_INQUIRY_PAGE_IDS = new Set([
     'bank-reconciliation',
 ]);
 
-export { BankInquiryView, BusinessPartnerView };
+export { BankInquiryView };
