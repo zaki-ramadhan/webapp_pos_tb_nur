@@ -1,73 +1,88 @@
 <?php
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+namespace Tests\Feature\Security;
 
-test('authenticated user can load all sales pages via dashboard', function () {
-    $user = testAdmin();
-    $pages = [
-        'sales-invoice',
-        'sales-deposit',
-        'sales-receipt',
-        'sales-return',
-    ];
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
-    foreach ($pages as $pageId) {
-        $response = $this->actingAs($user)->get("/dashboard/{$pageId}");
-        $response->assertOk();
-        $response->assertInertia(fn ($page) => $page->component('DashboardPage'));
+class SalesSecurityTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_authenticated_user_can_load_all_sales_pages_via_dashboard(): void
+    {
+        $user = $this->createAuthorizedUser();
+        $pages = [
+            'sales-invoice',
+            'sales-deposit',
+            'sales-receipt',
+            'sales-return',
+        ];
+
+        foreach ($pages as $pageId) {
+            $response = $this->actingAs($user)->get("/dashboard/{$pageId}");
+            $response->assertOk();
+            $response->assertInertia(fn (Assert $page) => $page->component('DashboardPage'));
+        }
     }
-});
 
-test('sales invoice rejects empty customer and empty items payload', function () {
-    $user = testAdmin();
+    public function test_sales_invoice_rejects_empty_customer_and_empty_items_payload(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $response = $this->actingAs($user)->postJson('/api/backend/sales-invoices', []);
-    expect($response->status())->toBeIn([422, 400]);
+        $response = $this->actingAs($user)->postJson('/api/backend/sales-invoices', []);
+        $this->assertContains($response->status(), [422, 400]);
 
-    $noItemsResponse = $this->actingAs($user)->postJson('/api/backend/sales-invoices', [
-        'customer_id' => 1,
-        'transaction_date' => now()->toDateString(),
-        'items' => [],
-    ]);
-    expect($noItemsResponse->status())->toBeIn([422, 400]);
-});
+        $noItemsResponse = $this->actingAs($user)->postJson('/api/backend/sales-invoices', [
+            'customer_id' => 1,
+            'transaction_date' => now()->toDateString(),
+            'items' => [],
+        ]);
+        $this->assertContains($noItemsResponse->status(), [422, 400]);
+    }
 
-test('sales transactions reject negative unit price and negative quantity', function () {
-    $user = testAdmin();
+    public function test_sales_transactions_reject_negative_unit_price_and_negative_quantity(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $response = $this->actingAs($user)->postJson('/api/backend/sales-invoices', [
-        'customer_id' => 1,
-        'transaction_date' => now()->toDateString(),
-        'items' => [
-            [
-                'product_id' => 1,
-                'quantity' => -5,
-                'unit_price' => -10000,
+        $response = $this->actingAs($user)->postJson('/api/backend/sales-invoices', [
+            'customer_id' => 1,
+            'transaction_date' => now()->toDateString(),
+            'items' => [
+                [
+                    'product_id' => 1,
+                    'quantity' => -5,
+                    'unit_price' => -10000,
+                ],
             ],
-        ],
-    ]);
-    expect($response->status())->toBeIn([422, 400]);
-});
+        ]);
+        $this->assertContains($response->status(), [422, 400]);
+    }
 
-test('sales return validates target invoice or items properly', function () {
-    $user = testAdmin();
+    public function test_sales_return_validates_target_invoice_or_items_properly(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $response = $this->actingAs($user)->postJson('/api/backend/sales-returns', [
-        'customer_id' => 1,
-        'transaction_date' => now()->toDateString(),
-        'items' => [],
-    ]);
-    expect($response->status())->toBeIn([422, 400]);
-});
+        $response = $this->actingAs($user)->postJson('/api/backend/sales-returns', [
+            'customer_id' => 1,
+            'transaction_date' => now()->toDateString(),
+            'items' => [],
+        ]);
+        $this->assertContains($response->status(), [422, 400]);
+    }
 
-test('sales receipt rejects negative payment amount', function () {
-    $user = testAdmin();
+    public function test_sales_receipt_rejects_negative_payment_amount(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $response = $this->actingAs($user)->postJson('/api/backend/sales-receipts', [
-        'customer_id' => 1,
-        'payment_amount' => -250000,
-        'transaction_date' => now()->toDateString(),
-    ]);
-    expect($response->status())->toBeIn([422, 400]);
-});
+        $response = $this->actingAs($user)->postJson('/api/backend/sales-receipts', [
+            'customer_id' => 1,
+            'payment_amount' => -250000,
+            'transaction_date' => now()->toDateString(),
+        ]);
+        $this->assertContains($response->status(), [422, 400]);
+    }
+}
+
 

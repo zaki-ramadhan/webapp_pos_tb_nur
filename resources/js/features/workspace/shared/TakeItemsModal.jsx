@@ -131,6 +131,7 @@ export default function TakeItemsModal({ open, onClose, onApply, mode = 'purchas
         >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <TextInput
+                    autoFocus
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
                     placeholder="Filter Kategori..."

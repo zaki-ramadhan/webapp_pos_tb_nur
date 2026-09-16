@@ -1,61 +1,76 @@
 <?php
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+namespace Tests\Feature\Security;
 
-test('authenticated user can load all master data pages via dashboard', function () {
-    $user = testAdmin();
-    $pages = [
-        'customers',
-        'suppliers',
-        'warehouse-master',
-        'accounts',
-        'users',
-    ];
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
-    foreach ($pages as $pageId) {
-        $response = $this->actingAs($user)->get("/dashboard/{$pageId}");
-        $response->assertOk();
-        $response->assertInertia(fn ($page) => $page->component('DashboardPage'));
+class MasterDataSecurityTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_authenticated_user_can_load_all_master_data_pages_via_dashboard(): void
+    {
+        $user = $this->createAuthorizedUser();
+        $pages = [
+            'customers',
+            'suppliers',
+            'warehouse-master',
+            'accounts',
+            'users',
+        ];
+
+        foreach ($pages as $pageId) {
+            $response = $this->actingAs($user)->get("/dashboard/{$pageId}");
+            $response->assertOk();
+            $response->assertInertia(fn (Assert $page) => $page->component('DashboardPage'));
+        }
     }
-});
 
-test('customer and supplier creation require valid name', function () {
-    $user = testAdmin();
+    public function test_customer_and_supplier_creation_require_valid_name(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $customerRes = $this->actingAs($user)->postJson('/api/backend/customers', []);
-    expect($customerRes->status())->toBeIn([422, 400]);
+        $customerRes = $this->actingAs($user)->postJson('/api/backend/customers', []);
+        $this->assertContains($customerRes->status(), [422, 400]);
 
-    $supplierRes = $this->actingAs($user)->postJson('/api/backend/suppliers', []);
-    expect($supplierRes->status())->toBeIn([422, 400]);
-});
+        $supplierRes = $this->actingAs($user)->postJson('/api/backend/suppliers', []);
+        $this->assertContains($supplierRes->status(), [422, 400]);
+    }
 
-test('warehouse rejects empty name', function () {
-    $user = testAdmin();
+    public function test_warehouse_rejects_empty_name(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $response = $this->actingAs($user)->postJson('/api/backend/warehouses', [
-        'name' => '',
-    ]);
-    expect($response->status())->toBeIn([422, 400]);
-});
+        $response = $this->actingAs($user)->postJson('/api/backend/warehouses', [
+            'name' => '',
+        ]);
+        $this->assertContains($response->status(), [422, 400]);
+    }
 
-test('chart of accounts requires code and valid name', function () {
-    $user = testAdmin();
+    public function test_chart_of_accounts_requires_code_and_valid_name(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $response = $this->actingAs($user)->postJson('/api/backend/accounts', [
-        'code' => '',
-        'name' => '',
-    ]);
-    expect($response->status())->toBeIn([422, 400]);
-});
+        $response = $this->actingAs($user)->postJson('/api/backend/accounts', [
+            'code' => '',
+            'name' => '',
+        ]);
+        $this->assertContains($response->status(), [422, 400]);
+    }
 
-test('currency rejects negative or zero exchange rate', function () {
-    $user = testAdmin();
+    public function test_currency_rejects_negative_or_zero_exchange_rate(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $response = $this->actingAs($user)->postJson('/api/backend/currencies', [
-        'code' => 'USD',
-        'name' => 'US Dollar',
-        'exchange_rate' => -15000,
-    ]);
-    expect($response->status())->toBeIn([422, 400]);
-});
+        $response = $this->actingAs($user)->postJson('/api/backend/currencies', [
+            'code' => 'USD',
+            'name' => 'US Dollar',
+            'exchange_rate' => -15000,
+        ]);
+        $this->assertContains($response->status(), [422, 400]);
+    }
+}
+
 

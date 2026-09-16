@@ -1,22 +1,21 @@
-import BusinessPartnerView from '@/features/workspace/modules/business-partner/BusinessPartnerView';
+import { Suspense } from 'react';
+import LoadingState from '@/components/ui/LoadingState';
 import ModulePageView from '@/features/workspace/modules/ModulePageView';
 import {
     BANK_INQUIRY_PAGE_IDS,
     BankInquiryView,
+    BusinessPartnerView,
     CONTENT_PAGE_COMPONENTS,
     LEVEL2_CONTENT_PAGE_COMPONENTS,
     LEVEL2_DETAIL_PAGE_COMPONENTS,
     STATIC_PAGE_RENDERERS,
 } from '@/features/workspace/dashboard/workspacePageRegistry';
 
-/**
- * Render komponen halaman workspace.
- */
 function renderPage(Component, props) {
     return <Component {...props} />;
 }
 
-export default function renderWorkspaceActivePage({
+function renderContent({
     activePage,
     activePageMode,
     activeLevel2Tab,
@@ -86,3 +85,18 @@ export default function renderWorkspaceActivePage({
             return <ModulePageView page={activePage} />;
     }
 }
+
+export default function renderWorkspaceActivePage(props) {
+    return (
+        <Suspense
+            fallback={
+                <div className="flex h-full min-h-[300px] w-full items-center justify-center p-6">
+                    <LoadingState title="Memuat modul" description="Sedang menyiapkan tampilan..." />
+                </div>
+            }
+        >
+            {renderContent(props)}
+        </Suspense>
+    );
+}
+

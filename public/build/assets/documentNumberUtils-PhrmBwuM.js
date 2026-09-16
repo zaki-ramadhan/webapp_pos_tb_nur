@@ -1,0 +1,1 @@
+function s(e){const t=new Date,n=t.getFullYear(),o=String(t.getMonth()+1).padStart(2,"0"),r=[t.getHours(),t.getMinutes(),t.getSeconds()].map(a=>String(a).padStart(2,"0")).join("");return e?`${e}.${n}.${o}.${r}`:`${n}.${o}.${r}`}export{s as b};
