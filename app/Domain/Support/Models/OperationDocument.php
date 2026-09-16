@@ -8,7 +8,6 @@ use App\Domain\Finance\Models\Account;
 use App\Domain\Finance\Models\Currency;
 use App\Domain\Finance\Models\Tax;
 use App\Domain\Organization\Models\Branch;
-use App\Domain\Organization\Models\Department;
 use App\Domain\Partner\Models\Customer;
 use App\Domain\Partner\Models\Supplier;
 use App\Models\User;
@@ -78,11 +77,6 @@ class OperationDocument extends DomainModel
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
-    }
-
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
     }
 
     public function warehouse(): BelongsTo

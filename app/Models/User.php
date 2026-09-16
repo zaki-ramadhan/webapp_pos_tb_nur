@@ -8,7 +8,6 @@ use App\Domain\Identity\Models\NumberingSequence;
 use App\Domain\Identity\Models\Role;
 use App\Domain\Identity\Models\TransactionApprovalRuleStep;
 use App\Domain\Organization\Models\Branch;
-use App\Domain\Organization\Models\Department;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -79,11 +78,6 @@ class User extends Authenticatable
     public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class);
-    }
-
-    public function departments(): BelongsToMany
-    {
-        return $this->belongsToMany(Department::class);
     }
 
     public function numberingSequences(): BelongsToMany

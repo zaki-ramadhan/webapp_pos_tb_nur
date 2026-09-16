@@ -32,8 +32,6 @@ class ActiveWorkspaceBackendCoverageTest extends TestCase
             ->all();
 
         $manualAliases = [
-            'department' => 'departments',
-            'currency-master' => 'currencies',
             'company-tax' => 'taxes',
             'salary-allowance' => 'salary-allowances',
             'warehouse-master' => 'warehouses',
@@ -43,9 +41,7 @@ class ActiveWorkspaceBackendCoverageTest extends TestCase
             'item-category' => 'product-categories',
             'supplier-price' => 'supplier-prices',
             'group-access' => 'access-groups',
-            'transaction-approval' => 'transaction-approval-rules',
             'smartlink-bank' => 'bank-statements',
-            'sales-checkin' => 'activity-logs',
         ];
 
         $missing = array_values(array_filter(

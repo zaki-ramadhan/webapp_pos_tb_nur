@@ -44,7 +44,6 @@ class InventoryBackendResources
                 modelClass: StockOpnameOrder::class,
                 with: [
                     'branch',
-                    'department',
                     'warehouse',
                     'productCategory',
                     'brand',

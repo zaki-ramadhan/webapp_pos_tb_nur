@@ -147,7 +147,6 @@ class OperationBackendResources
             modelClass: $modelClass,
             with: [
                 'branch',
-                'department',
                 'warehouse',
                 'counterpartWarehouse',
                 'customer',
@@ -167,7 +166,6 @@ class OperationBackendResources
                 'lines.account',
                 'lines.unit',
                 'lines.warehouse',
-                'lines.department',
                 'lines.customer',
                 'lines.supplier',
             ],

@@ -42,13 +42,11 @@ class DashboardBlueprintProvider
                     'topItemIds' => [
                         'group-access',
                         'preferences',
-                        'recurring-transactions',
                         'employees',
-                        'fob-master',
                         'salary-allowance',
-                        'department',
-                        'contacts',
                         'activity-log',
+                        'sales-invoice',
+                        'items-services',
                     ],
                 ],
             'sidebar' => [

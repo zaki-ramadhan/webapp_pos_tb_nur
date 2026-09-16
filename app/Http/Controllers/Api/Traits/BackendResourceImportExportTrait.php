@@ -269,9 +269,7 @@ trait BackendResourceImportExportTrait
 
             'multi-branch', 'multi-currency', 'tax-feature', 'approval-feature',
             'asset-feature', 'budget-feature',
-          // Metode & pusat biaya
-
-            'inventory-average', 'inventory-fifo', 'department-center',
+            'inventory-average', 'inventory-fifo',
           // Penjualan & Pembelian
 
             'sales-quote-order', 'sales-return', 'price-adjustment', 'salesman',

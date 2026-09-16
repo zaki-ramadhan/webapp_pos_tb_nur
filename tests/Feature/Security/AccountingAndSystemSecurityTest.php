@@ -19,7 +19,7 @@ class AccountingAndSystemSecurityTest extends TestCase
             'journal-activity-log',
             'activity-log',
             'expense-entry',
-            'delivery-order',
+            'sales-delivery',
             'preferences',
             'group-access',
             'users',

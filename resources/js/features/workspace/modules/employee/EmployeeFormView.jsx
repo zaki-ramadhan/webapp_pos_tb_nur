@@ -134,17 +134,6 @@ export default function EmployeeFormView({
             return;
         }
 
-        if (field === 'department') {
-            const selectedDepartment = (form.lookupOptions?.departments ?? []).find((option) => option.label === nextValue);
-
-            setValues((currentValues) => ({
-                ...currentValues,
-                department: nextValue,
-                __departmentId: selectedDepartment?.id ?? null,
-            }));
-            return;
-        }
-
         if (field === 'autoEmployeeId') {
             setValues((currentValues) => ({
                 ...currentValues,

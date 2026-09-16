@@ -24,7 +24,6 @@ export const SIZE_STYLES = {
 };
 
 export const PAGE_ID_TO_RESOURCE_MAP = {
-    'currency-master': 'currencies',
     'warehouse-master': 'warehouses',
     'items-services': 'products',
     'item-unit': 'units',
@@ -35,7 +34,6 @@ export const PAGE_ID_TO_RESOURCE_MAP = {
     'company-tax': 'taxes',
     'group-access': 'access-groups',
     'branch': 'branches',
-    'department': 'departments',
     'shipping-master': 'shipping-methods',
     'supplier-price': 'supplier-prices',
     'numbering': 'numbering-sequences',
@@ -55,7 +53,6 @@ export const PAGE_ID_TO_RESOURCE_MAP = {
     'period-end': 'period-ends',
     'purchase-payment': 'purchase-payments',
     'salary-allowance': 'salary-allowances',
-    'sales-checkin': 'sales-checkins',
     'sales-commission': 'sales-commissions',
     'sales-deposit': 'sales-deposits',
     'sales-receipt': 'sales-receipts',

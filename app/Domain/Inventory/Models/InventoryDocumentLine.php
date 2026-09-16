@@ -4,7 +4,6 @@ namespace App\Domain\Inventory\Models;
 
 use App\Domain\Catalog\Models\Product;
 use App\Domain\Catalog\Models\Unit;
-use App\Domain\Organization\Models\Department;
 use App\Domain\Support\Models\DomainModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -48,11 +47,6 @@ class InventoryDocumentLine extends DomainModel
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
-    }
-
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
     }
 
     public function warehouse(): BelongsTo

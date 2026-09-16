@@ -20,7 +20,7 @@ class DashboardPageTest extends TestCase
 
     public function test_the_dashboard_page_renders_when_auth_middleware_is_bypassed(): void
     {
-        $this->withoutMiddleware(Authenticate::class)
+        $this->withoutMiddleware([Authenticate::class, \App\Http\Middleware\EnsureUserHasStoreAccess::class])
             ->get('/dashboard')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page

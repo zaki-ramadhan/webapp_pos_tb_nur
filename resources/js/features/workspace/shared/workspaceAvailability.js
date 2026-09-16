@@ -1,5 +1,4 @@
 const inactiveWorkspacePageIds = new Set([
-    'transaction-approval',
     'price-adjustment',
     'purchase-order',
     'sales-commission',
@@ -21,7 +20,6 @@ const inactivePreferenceChecklistItemIds = new Set([
     'multi-unit',
     'simple-production',
     'sales-quote-order',
-    'department-center',
 ]);
 
 const inactiveWorkspaceControlIds = new Set([]);
@@ -30,10 +28,7 @@ const pageToFeatureMap = {
   // Fitur dasar
 
     'branch': 'multi-branch',
-    'currency-master': 'multi-currency',
     'company-tax': 'tax-feature',
-    'transaction-approval': 'approval-feature',
-    'department': 'department-center',
     
   // Seed anggaran
 
@@ -78,10 +73,8 @@ const featureDefaults = {
     'multi-branch': false,
     'multi-currency': true,
     'tax-feature': false,
-    'approval-feature': false,
     'asset-feature': false,
     'budget-feature': false,
-    'department-center': false,
     'sales-quote-order': false,
     'sales-return': true,
     'price-adjustment': true,

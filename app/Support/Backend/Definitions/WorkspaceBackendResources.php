@@ -2,7 +2,6 @@
 
 namespace App\Support\Backend\Definitions;
 
-use App\Domain\Sales\Models\SalesCheckin;
 use App\Domain\Support\Models\ActivityLog;
 use App\Domain\Support\Models\PreferenceSetting;
 use App\Domain\Support\Models\ReportCatalog;

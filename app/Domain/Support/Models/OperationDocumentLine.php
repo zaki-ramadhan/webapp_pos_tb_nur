@@ -7,7 +7,6 @@ use App\Domain\Catalog\Models\Product;
 use App\Domain\Catalog\Models\Unit;
 use App\Domain\Catalog\Models\Warehouse;
 use App\Domain\Finance\Models\Account;
-use App\Domain\Organization\Models\Department;
 use App\Domain\Partner\Models\Customer;
 use App\Domain\Partner\Models\Supplier;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -84,11 +83,6 @@ class OperationDocumentLine extends DomainModel
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
-    }
-
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
     }
 
     public function customer(): BelongsTo

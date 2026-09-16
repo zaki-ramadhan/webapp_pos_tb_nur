@@ -14,7 +14,6 @@ import { AccountLookupField } from '@/features/workspace/shared/AccountLookupCon
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { PlusIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
-import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 
 export default function DiscountInfoTab({ values, setValues }) {
     const discountColumns = useMemo(
@@ -25,8 +24,6 @@ export default function DiscountInfoTab({ values, setValues }) {
         ],
         [],
     );
-
-    const hideDepartment = isWorkspacePageInactive('department');
 
     return (
         <div className="space-y-3">
@@ -85,34 +82,6 @@ export default function DiscountInfoTab({ values, setValues }) {
                     className="border-ui-border"
                     textareaClassName="min-h-[56px] text-xs sm:text-sm text-brand-dark"
                 />
-
-                {!hideDepartment ? (
-                    <>
-                        <TransactionFieldLabel label="Departemen" />
-                        <AccountLookupField
-                            resource="departments"
-                            values={values.department}
-                            placeholder="Cari/Pilih..."
-                            onRemove={() =>
-                                setValues((current) => ({
-                                    ...current,
-                                    __departmentId: null,
-                                    department: [],
-                                }))
-                            }
-                            searchLabel="Cari departemen"
-                            dialogTitle="Pilih Departemen"
-                            onSelectAccount={(record, label) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    __departmentId: record ? record.id : null,
-                                    department: label ? [label] : [],
-                                }))
-                            }
-                            heightClassName="h-[36px]"
-                        />
-                    </>
-                ) : null}
             </div>
 
             <div>

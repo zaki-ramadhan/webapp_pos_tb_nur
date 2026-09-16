@@ -4,8 +4,6 @@ import BankInquiryView from '@/features/workspace/modules/bank-inquiry/BankInqui
 import BankTransferView from '@/features/workspace/modules/bank-transfer/BankTransferView';
 import CashPaymentView from '@/features/workspace/modules/cash-payment/CashPaymentView';
 import CashReceiptView from '@/features/workspace/modules/cash-receipt/CashReceiptView';
-import CurrencyView from '@/features/workspace/modules/currency/CurrencyView';
-import DepartmentView from '@/features/workspace/modules/department/DepartmentView';
 import EmployeeView from '@/features/workspace/modules/employee/EmployeeView';
 import ExpenseEntryView from '@/features/workspace/modules/expense-entry/ExpenseEntryView';
 import GeneralJournalView from '@/features/workspace/modules/general-journal/GeneralJournalView';
@@ -20,7 +18,6 @@ import PurchaseInvoiceView from '@/features/workspace/modules/sales-document/Pur
 import PurchasePaymentView from '@/features/workspace/modules/purchase-payment/PurchasePaymentView';
 import PurchaseReturnView from '@/features/workspace/modules/sales-document/PurchaseReturnView';
 import SalaryAllowanceView from '@/features/workspace/modules/salary-allowance/SalaryAllowanceView';
-import SalesCheckinView from '@/features/workspace/modules/sales-checkin/SalesCheckinView';
 import SalesDepositView from '@/features/workspace/modules/sales-deposit/SalesDepositView';
 import SalesInvoiceView from '@/features/workspace/modules/sales-document/SalesInvoiceView';
 import SalesReceiptView from '@/features/workspace/modules/sales-receipt/SalesReceiptView';
@@ -42,7 +39,6 @@ export const STATIC_PAGE_RENDERERS = {
 };
 
 export const CONTENT_PAGE_COMPONENTS = {
-    department: DepartmentView,
     employees: EmployeeView,
     'payroll-entry': PayrollEntryView,
     users: UsersManagementView,
@@ -67,7 +63,6 @@ export const LEVEL2_DETAIL_PAGE_COMPONENTS = {
     'purchase-payment': PurchasePaymentView,
     'purchase-return': PurchaseReturnView,
     'stock-transfer': BankTransferView,
-    'currency-master': CurrencyView,
     'warehouse-master': WarehouseView,
     'items-services': ItemsServicesView,
     'item-unit': SimpleMasterView,

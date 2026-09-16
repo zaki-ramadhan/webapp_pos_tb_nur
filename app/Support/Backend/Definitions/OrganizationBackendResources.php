@@ -3,7 +3,6 @@
 namespace App\Support\Backend\Definitions;
 
 use App\Domain\Organization\Models\Branch;
-use App\Domain\Organization\Models\Department;
 use App\Domain\Organization\Models\Employee;
 use App\Support\Backend\BackendRelationSync;
 use App\Support\Backend\BackendResourceBlueprint;
@@ -48,39 +47,6 @@ class OrganizationBackendResources
                     'postal_code' => ['nullable', 'string', 'max:20'],
                     'province' => ['nullable', 'string', 'max:120'],
                     'country' => ['nullable', 'string', 'max:120'],
-                    'is_active' => ['sometimes', 'boolean'],
-                    'user_ids' => ['sometimes', 'array'],
-                    'user_ids.*' => ['integer', 'exists:users,id'],
-                ],
-                syncUsing: function (Model $record, array $payload): void {
-                    if (array_key_exists('user_ids', $payload)) {
-                        BackendRelationSync::syncBelongsToMany($record, 'users', $payload['user_ids']);
-                    }
-                },
-            ),
-            'departments' => new BackendResourceBlueprint(
-                key: 'departments',
-                label: 'Departments',
-                searchColumns: ['code', 'name', 'notes'],
-                modelClass: Department::class,
-                with: array_merge(
-                    ['parentDepartment'],
-                    \Illuminate\Support\Facades\Schema::hasTable('department_user') ? ['users'] : []
-                ),
-                storeRules: [
-                    'code' => ['required', 'string', 'max:50', 'unique:departments,code'],
-                    'name' => ['required', 'string', 'max:120'],
-                    'notes' => ['nullable', 'string'],
-                    'parent_department_id' => ['nullable', 'integer', 'exists:departments,id'],
-                    'is_active' => ['sometimes', 'boolean'],
-                    'user_ids' => ['sometimes', 'array'],
-                    'user_ids.*' => ['integer', 'exists:users,id'],
-                ],
-                updateRules: fn (Model $record) => [
-                    'code' => ['required', 'string', 'max:50', Rule::unique('departments', 'code')->ignore($record)],
-                    'name' => ['required', 'string', 'max:120'],
-                    'notes' => ['nullable', 'string'],
-                    'parent_department_id' => ['nullable', 'integer', 'exists:departments,id', Rule::notIn([$record->getKey()])],
                     'is_active' => ['sometimes', 'boolean'],
                     'user_ids' => ['sometimes', 'array'],
                     'user_ids.*' => ['integer', 'exists:users,id'],

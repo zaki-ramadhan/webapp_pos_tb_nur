@@ -47,7 +47,6 @@ class AssetBackendResources
                     'category',
                     'taxCategory',
                     'branch',
-                    'department',
                     'assetAccount',
                     'accumulatedDepreciationAccount',
                     'depreciationExpenseAccount',

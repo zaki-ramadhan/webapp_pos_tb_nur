@@ -68,8 +68,6 @@ class DashboardActivityQueryService
             'item-service' => 'Data Barang',
             'warehouse-master' => 'Gudang',
             'warehouse-masters' => 'Gudang',
-            'currency-master' => 'Mata Uang',
-            'currency-masters' => 'Mata Uang',
             'shipping-master' => 'Pengiriman',
             'shipping-masters' => 'Pengiriman',
             'fob-master' => 'Syarat Pengiriman',
@@ -143,14 +141,10 @@ class DashboardActivityQueryService
             'fixed-assets' => 'Aset Tetap',
             'employee' => 'Karyawan',
             'employees' => 'Karyawan',
-            'department' => 'Departemen',
-            'departments' => 'Departemen',
             'user' => 'Pengguna',
             'users' => 'Pengguna',
             'group-access' => 'Grup Hak Akses',
             'access-groups' => 'Grup Hak Akses',
-            'sales-checkin' => 'Check-in Penjualan',
-            'sales-checkins' => 'Check-in Penjualan',
         ];
 
         $englishReplacements = [

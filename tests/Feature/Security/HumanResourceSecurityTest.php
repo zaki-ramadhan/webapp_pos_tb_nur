@@ -6,7 +6,6 @@ test('authenticated user can load all hr and payroll pages via dashboard', funct
     $user = testAdmin();
     $pages = [
         'employees',
-        'department',
         'payroll-entry',
         'salary-allowance',
     ];
