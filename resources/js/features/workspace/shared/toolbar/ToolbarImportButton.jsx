@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import ToolbarIconButton from './ToolbarIconButton';
 import { LoadingIcon, DownloadIcon, AlertTriangleIcon, UploadIcon } from '@/features/workspace/shared/Icons';
-import { importFromFile } from '../exportUtils';
+import { importFromFile, writeStyledXLSX } from '../exportUtils';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
 
@@ -95,12 +95,14 @@ export default function ToolbarImportButton({ importConfig, sizeStyle, resource 
         const headers = activeCols.map(col => col.label);
 
         const ws = XLSX.utils.aoa_to_sheet([headers]);
+        ws['!cols'] = activeCols.map(col => ({ wch: Math.max(15, String(col.label || '').length + 4) }));
+
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Template Impor');
 
         const title = importConfig.label ?? 'Template';
         const cleanTitle = String(title).replace(/\s+/g, '-').toLowerCase();
-        XLSX.writeFile(wb, `${cleanTitle}_template.xlsx`);
+        writeStyledXLSX(wb, `${cleanTitle}_template.xlsx`);
     }
 
     const guide = DEPENDENCY_GUIDES[resource] ?? null;

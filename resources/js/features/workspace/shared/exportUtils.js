@@ -150,7 +150,54 @@ export function exportToExcelXML(columns, rows, filename = 'export') {
     ws['!cols'] = colWidths;
 
     XLSX.utils.book_append_sheet(wb, ws, 'Data');
-    XLSX.writeFile(wb, `${formattedFilename}.xlsx`);
+    writeStyledXLSX(wb, `${formattedFilename}.xlsx`);
+}
+
+/**
+ * Menyimpan workbook Excel (.xlsx) dengan baris header bercetak tebal (bold).
+ */
+export function writeStyledXLSX(wb, filename) {
+    try {
+        const rawData = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+        const cfb = XLSX.CFB.read(new Uint8Array(rawData), { type: 'buffer' });
+        const decoder = new TextDecoder('utf-8');
+        const encoder = new TextEncoder();
+
+        const stylesEntry = XLSX.CFB.find(cfb, '/xl/styles.xml');
+        if (stylesEntry) {
+            let xml = decoder.decode(stylesEntry.content);
+            xml = xml.replace('<fonts count="1"><font>', '<fonts count="2"><font>');
+            xml = xml.replace('</fonts>', '<font><b/><sz val="11"/><color theme="1"/><name val="Calibri"/><family val="2"/><scheme val="minor"/></font></fonts>');
+            xml = xml.replace('<cellXfs count="1">', '<cellXfs count="2">');
+            xml = xml.replace('</cellXfs>', '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs>');
+            stylesEntry.content = encoder.encode(xml);
+            stylesEntry.size = stylesEntry.content.length;
+        }
+
+        cfb.FullPaths.forEach((path) => {
+            if (path.includes('xl/worksheets/sheet')) {
+                const sheetEntry = XLSX.CFB.find(cfb, path.replace(/^Root Entry/, ''));
+                if (sheetEntry) {
+                    let xml = decoder.decode(sheetEntry.content);
+                    xml = xml.replace(/<row ([^>]*\br="1"[^>]*)>([\s\S]*?)<\/row>/, (match, p1, cells) => {
+                        const styledCells = cells.replace(/<c r="([A-Z]+1)"([^>]*)>/g, (m, cellRef, attrs) => {
+                            const cleanAttrs = attrs.replace(/\s*s="[^"]*"/g, '');
+                            return `<c r="${cellRef}" s="1"${cleanAttrs}>`;
+                        });
+                        return `<row ${p1}>${styledCells}</row>`;
+                    });
+                    sheetEntry.content = encoder.encode(xml);
+                    sheetEntry.size = sheetEntry.content.length;
+                }
+            }
+        });
+
+        const outZip = XLSX.CFB.write(cfb, { fileType: 'zip', type: 'array' });
+        const bytes = new Uint8Array(outZip);
+        triggerDownload(bytes, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename);
+    } catch {
+        XLSX.writeFile(wb, filename);
+    }
 }
 
 // Impor
