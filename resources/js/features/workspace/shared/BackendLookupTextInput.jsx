@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import { useState, useEffect, useMemo } from 'react';
 import AccountLookupSearchInput from './components/AccountLookupSearchInput';
-import { HighlightText, LookupDropdownSurface, LookupEmptyState, LookupLoadingState } from './LookupPrimitives';
+import { HighlightText, LookupDropdownSurface, LookupEmptyState } from './LookupPrimitives';
 
 function useBackendLookupController({ value = '', disabled = false, resource, queryParams = {} }) {
     const rootRef = useRef(null);
@@ -184,12 +184,10 @@ export default function BackendLookupTextInput({
                 onClear={() => ctrl.handleClear(onClear)}
             />
 
-            {!disabled && ctrl.open && (
+            {!disabled && ctrl.open && !ctrl.loading && (
                 <LookupDropdownSurface anchorRef={inputWrapperRef}>
                     <div className="max-h-[260px] overflow-y-auto flex-1 min-h-0 bg-white">
-                        {ctrl.loading ? (
-                            <LookupLoadingState />
-                        ) : filteredRows.length ? (
+                        {filteredRows.length ? (
                             filteredRows.map((item) => (
                                 <button
                                     key={item.id ?? getOptionLabel(item)}
