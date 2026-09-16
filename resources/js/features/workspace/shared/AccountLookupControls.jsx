@@ -111,7 +111,7 @@ export function AccountLookupField({
 
             <AccountLookupSuggestions
                 anchorRef={inputWrapperRef}
-                open={controller.open}
+                open={controller.open && !controller.loading}
                 query={controller.query}
                 loading={controller.loading}
                 error={controller.error}
@@ -225,7 +225,7 @@ export function AccountLookupTextInput({
 
             <AccountLookupSuggestions
                 anchorRef={inputWrapperRef}
-                open={controller.open}
+                open={controller.open && !controller.loading}
                 searchLabel={searchLabel}
                 query={controller.query}
                 loading={controller.loading}

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { HighlightText, LookupChip, LookupDropdownSurface, LookupEmptyState, LookupLoadingState } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupChip, LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { useFormError } from '@/components/ui/FormErrorContext';
 import { sanitizeTextValue } from '@/utils/textSanitizer';
 
@@ -352,11 +352,9 @@ export default function ReferenceLookupInput({
                 )}
             </div>
 
-            {showMenu ? (
+            {showMenu && !searching ? (
                 <LookupDropdownSurface className={menuClassName} anchorRef={rootRef}>
-                    {searching ? (
-                        <LookupLoadingState />
-                    ) : filteredItems.length ? (
+                    {filteredItems.length ? (
                         <div className="max-h-[260px] overflow-y-auto flex-1 min-h-0">
                             {filteredItems.map((item, index) => (
                                 <button

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { HighlightText, LookupDropdownSurface, LookupEmptyState, LookupLoadingState } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { buildAccountLookupLabel, buildAccountLookupMeta, translateAccountType } from '@/features/workspace/shared/hooks/useAccountLookupController';
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
@@ -102,16 +102,14 @@ export default function AccountLookupSuggestions({
         ? 'Tidak ditemukan data yang cocok'
         : resolvedEmptyLabel;
 
-    if (!open) {
+    if (!open || loading) {
         return null;
     }
 
     return (
         <LookupDropdownSurface className={className} anchorRef={anchorRef}>
             <div className="max-h-[280px] overflow-y-auto bg-white flex-1 min-h-0">
-                {loading ? (
-                    <LookupLoadingState label={resolvedLoadingLabel} className="px-4 py-5 text-sm" />
-                ) : error ? (
+                {error ? (
                     <div className="px-4 py-5 text-center text-sm text-red-850">{error}</div>
                 ) : visibleRows.length ? (
                     visibleRows.map((record) => {

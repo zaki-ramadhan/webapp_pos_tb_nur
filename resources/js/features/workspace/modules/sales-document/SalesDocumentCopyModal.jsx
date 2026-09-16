@@ -460,7 +460,7 @@ export default function SalesDocumentCopyModal({
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
 
-                    {showSuggestions && (
+                    {showSuggestions && !loadingSuggestions && (
                         <LookupDropdownSurface
                             anchorRef={suggestionsRef}
                             onClose={() => setShowSuggestions(false)}
@@ -495,7 +495,7 @@ export default function SalesDocumentCopyModal({
                                     })
                                 ) : (
                                     <LookupEmptyState
-                                        title={loadingSuggestions ? 'Mencari...' : 'Tidak ditemukan data yang cocok'}
+                                        title="Tidak ditemukan data yang cocok"
                                     />
                                 )}
                             </div>
