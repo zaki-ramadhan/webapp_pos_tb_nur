@@ -17,6 +17,7 @@ import {
 } from '@/features/workspace/dashboard/workspacePagePersistence';
 import mergeWorkspacePageConfigs from '@/features/workspace/dashboard/mergeWorkspacePageConfigs';
 import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
+import { buildDefaultLevel2ContentTabs } from '@/features/workspace/dashboard/dashboardLevel2Tabs';
 import useWorkspaceDirtyState from './useWorkspaceDirtyState';
 import useWorkspaceURLSync from './useWorkspaceURLSync';
 import useWorkspaceTabs from './useWorkspaceTabs';
@@ -258,11 +259,22 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
         const pageAlreadyOpen = openPages.some((page) => page.id === nextPage.id);
 
+        if (!pageAlreadyOpen && nextPage.subtab) {
+            setPageLevel2ContentTabs((currentTabs) => ({
+                ...currentTabs,
+                [nextPage.id]: buildDefaultLevel2ContentTabs(nextPage),
+            }));
+            setActiveLevel2Tabs((currentTabs) => ({
+                ...currentTabs,
+                [nextPage.id]: nextPage.subtab.id,
+            }));
+        }
+
         setOpenPages((currentPages) => (pageAlreadyOpen ? currentPages : [...currentPages, nextPage]));
         setActivePageId(nextPage.id);
         setActivePanelId(null);
         onCloseMobileWorkspaceMenu?.();
-    }, [dashboardPage.id, pages, openPages, onCloseMobileWorkspaceMenu, preferences]);
+    }, [dashboardPage.id, pages, openPages, onCloseMobileWorkspaceMenu, preferences, setPageLevel2ContentTabs, setActiveLevel2Tabs]);
 
     function handleSelectPanelItem(item) {
         openPageById(item.id);
