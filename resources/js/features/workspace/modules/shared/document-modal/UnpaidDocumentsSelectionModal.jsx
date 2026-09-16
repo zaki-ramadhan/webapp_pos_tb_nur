@@ -206,7 +206,7 @@ export default function UnpaidDocumentsSelectionModal({
                         type="text"
                         readOnly
                         value={formatCurrencyValue(totalSelectedAmount)}
-                        className="h-[36px] w-[140px] rounded-[4px] border border-gray-300 bg-slate-100 text-right px-3 text-xs sm:text-sm font-normal text-zinc-700 focus:outline-none"
+                        className="h-[36px] w-[140px] rounded-[4px] border border-[#BBBBBB] bg-slate-100 text-right px-3 text-xs sm:text-sm font-normal text-zinc-700 focus:outline-none"
                     />
                     <Button
                         variant="brand-blue"
@@ -226,7 +226,7 @@ export default function UnpaidDocumentsSelectionModal({
                             value={keyword}
                             onChange={(e) => setKeyword(e.target.value)}
                             placeholder="No Faktur / No Form"
-                            className="h-[36px] rounded-[4px] border-gray-300 bg-white"
+                            className="h-[36px] rounded-[4px] border-[#BBBBBB] bg-white"
                             inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
@@ -234,7 +234,7 @@ export default function UnpaidDocumentsSelectionModal({
                         <SelectField
                             value={filterType}
                             onChange={(e) => handleFilterTypeChange(e.target.value)}
-                            className="h-[36px] rounded-[4px] border-gray-300 bg-white"
+                            className="h-[36px] rounded-[4px] border-[#BBBBBB] bg-white"
                             selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             <option value="entry_date">Filter Tgl Faktur</option>
@@ -272,7 +272,7 @@ export default function UnpaidDocumentsSelectionModal({
                                     type="checkbox"
                                     checked={isAllSelected}
                                     onChange={handleToggleAll}
-                                    className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
+                                    className="h-4 w-4 rounded border-[#BBBBBB] text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
                                 />
                             </th>
                             <SortableTableHeaderCell
@@ -344,7 +344,7 @@ export default function UnpaidDocumentsSelectionModal({
                                                 type="checkbox"
                                                 checked={isChecked}
                                                 onChange={() => handleToggleRow(rec.id)}
-                                                className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
+                                                className="h-4 w-4 rounded border-[#BBBBBB] text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
                                             />
                                         </td>
                                         <td className="py-2.5 px-3 font-normal text-zinc-700 border-r border-table-cell-border">

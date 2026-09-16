@@ -19,7 +19,7 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                 readOnly={readOnly}
                 rows={4}
                 prefix={prefixValue}
-                className="rounded-[4px] border-slate-400"
+                className="rounded-[4px] border-[#BBBBBB]"
                 prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-table-row-text"
                 textareaClassName="min-h-[112px] text-xs sm:text-sm text-brand-dark"
             />
@@ -40,7 +40,7 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                 maxLength={10}
                 readOnly={readOnly}
                 prefix="Kode Pos"
-                className="h-[40px] rounded-[4px] border-slate-400 w-full"
+                className="h-[40px] rounded-[4px] border-[#BBBBBB] w-full"
                 prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-table-row-text"
                 inputClassName="text-xs sm:text-sm text-brand-dark"
             />
@@ -50,7 +50,7 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                 onChange={(event) => onChange?.('province', event.target.value)}
                 readOnly={readOnly}
                 prefix="Provinsi"
-                className="h-[40px] rounded-[4px] border-slate-400"
+                className="h-[40px] rounded-[4px] border-[#BBBBBB]"
                 prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-table-row-text"
                 inputClassName="text-xs sm:text-sm text-brand-dark"
             />
@@ -60,7 +60,7 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                 onChange={(event) => onChange?.('country', event.target.value)}
                 readOnly={readOnly}
                 prefix="Negara"
-                className="h-[40px] rounded-[4px] border-slate-400"
+                className="h-[40px] rounded-[4px] border-[#BBBBBB]"
                 prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-table-row-text"
                 inputClassName="text-xs sm:text-sm text-brand-dark"
             />

@@ -160,7 +160,7 @@ function AccountDetailModalContainer({
                                         value="debit"
                                         checked={side === 'debit'}
                                         onChange={() => setSide('debit')}
-                                        className="h-3.5 w-3.5 border-slate-300 text-control-active focus:ring-control-active"
+                                        className="h-3.5 w-3.5 border-[#BBBBBB] text-control-active focus:ring-control-active"
                                     />
                                     Debit
                                 </label>
@@ -171,7 +171,7 @@ function AccountDetailModalContainer({
                                         value="credit"
                                         checked={side === 'credit'}
                                         onChange={() => setSide('credit')}
-                                        className="h-3.5 w-3.5 border-slate-300 text-control-active focus:ring-control-active"
+                                        className="h-3.5 w-3.5 border-[#BBBBBB] text-control-active focus:ring-control-active"
                                     />
                                     Kredit
                                 </label>

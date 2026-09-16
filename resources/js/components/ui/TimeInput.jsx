@@ -34,7 +34,7 @@ export default function TimeInput({
                     interactiveReadOnly
                     disabled={disabled}
                     trailing={<Clock className="h-3.5 w-3.5 text-slate-500" />}
-                    className="h-[38px] rounded-[4px] border-ui-border bg-white shadow-2xs"
+                    className="h-[38px] rounded-[4px] border-[#BBBBBB] bg-white shadow-2xs"
                     inputClassName={`cursor-pointer ${inputClassName}`.trim()}
                     trailingClassName="pointer-events-none w-[30px] shrink-0 justify-center px-0"
                     {...props}
@@ -60,7 +60,7 @@ export default function TimeInput({
                 side="auto"
                 minHeightNeeded={250}
                 maxHeightLimit={340}
-                className="border border-slate-300 rounded-[8px] shadow-md bg-white overflow-hidden p-3 w-[285px]"
+                className="border border-[#BBBBBB] rounded-[8px] shadow-md bg-white overflow-hidden p-3 w-[285px]"
             >
                 <div className="flex flex-col gap-2.5">
                     <div className="px-1 pb-1.5 border-b border-slate-200">

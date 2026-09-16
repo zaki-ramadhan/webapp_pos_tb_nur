@@ -66,8 +66,8 @@ export default function AccountLookupSearchInput({
     const toneClassName = error
         ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
         : isLocked
-            ? 'border-slate-400'
-            : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+            ? 'border-[#BBBBBB]'
+            : 'border-[#BBBBBB] focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     // Kalau ada chip, wrapper non-interaktif (kursor pointer biasa) — harus clear dulu
     const wrapperCursor = disabled ? 'cursor-default' : isSelected ? 'cursor-default' : 'cursor-text';

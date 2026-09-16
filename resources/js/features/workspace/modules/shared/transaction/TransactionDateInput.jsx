@@ -88,7 +88,7 @@ export default function TransactionDateInput({
     const finalStyleClasses = [...new Set([
         hasHeight ? '' : 'h-[40px]',
         'rounded-[4px]',
-        'border-ui-border',
+        'border-[#BBBBBB]',
         ...styleClasses,
     ])].filter(Boolean).join(' ');
 

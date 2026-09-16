@@ -19,7 +19,7 @@ export default function PurchaseDepositInfoSection({ config, values, setValues, 
                                 id="bankAccount"
                                 resource="accounts"
                                 value={values.bankAccounts?.[0] ?? ''}
-                                placeholder="Rekening Bank"
+                                placeholder="Cari/Pilih Rekening Bank..."
                                 searchLabel="Cari rekening bank"
                                 queryParams={{ account_type: 'Cash/Bank' }}
                                 disabled={isDetail}
