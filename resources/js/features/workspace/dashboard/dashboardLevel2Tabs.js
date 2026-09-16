@@ -52,11 +52,27 @@ export const PAGE_LEVEL2_ACTION_KEYS = [
 ];
 
 export function buildDefaultLevel2ContentTabs(page) {
-    return [];
+    if (!page?.subtab) {
+        return [];
+    }
+
+    return [
+        {
+            id: page.subtab.id,
+            kind: 'content',
+            label: page.subtab.label || 'Data Baru',
+            closable: true,
+            tabType: 'create',
+        },
+    ];
 }
 
 export function getDefaultLevel2TabId(page) {
-    if (page?.subtab?.id || page?.detailTabsOnly || page?.showViewIndicator) {
+    if (page?.subtab?.id) {
+        return page.subtab.id;
+    }
+
+    if (page?.detailTabsOnly || page?.showViewIndicator) {
         return `${page.id}-view`;
     }
 

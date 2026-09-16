@@ -75,7 +75,7 @@ export function buildInitialLevel2TabsState(pages) {
 export function buildInitialLevel2ContentTabsState(pages) {
     return Object.values(pages).reduce((items, page) => {
         if (page.subtab) {
-            items[page.id] = [];
+            items[page.id] = buildDefaultLevel2ContentTabs(page);
         }
 
         return items;
@@ -98,7 +98,7 @@ export function resolveActivePageContentTabs(activePage, pageLevel2ContentTabs) 
 }
 
 export function resolveLevel2State(activePage, activePageContentTabs = [], activeLevel2Tabs = {}) {
-    const contentTabs = (activePageContentTabs && activePageContentTabs.length)
+    const contentTabs = Array.isArray(activePageContentTabs)
         ? activePageContentTabs
         : buildDefaultLevel2ContentTabs(activePage);
 

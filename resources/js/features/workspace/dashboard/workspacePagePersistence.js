@@ -44,13 +44,9 @@ function normalizeContentTabs(pageLevel2ContentTabs, initialLevel2ContentTabs, p
     return Object.keys(pages).reduce((result, pageId) => {
         const persistedTabs = pageLevel2ContentTabs?.[pageId];
 
-        let resolved = Array.isArray(persistedTabs)
+        const resolved = Array.isArray(persistedTabs)
             ? clonePlainData(persistedTabs)
             : initialLevel2ContentTabs[pageId] ?? [];
-
-        if (Array.isArray(resolved)) {
-            resolved = resolved.filter((tab) => tab?.tabType !== 'create');
-        }
 
         result[pageId] = resolved;
         return result;
