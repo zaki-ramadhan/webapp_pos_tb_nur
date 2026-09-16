@@ -229,20 +229,20 @@ export default function TableToolbar({
 
                     if (errorList.length > 1) {
                         showSystemErrorModal({
-                            title: 'Impor Gagal',
-                            description: 'Daftar kesalahan pada file:',
+                            title: 'Terjadi Permasalahan pada Pemrosesan',
+                            description: 'Silakan perbaiki permasalahan berikut ini:',
                             messages: errorList,
                         });
                     } else if (errorList.length === 1) {
                         showSystemErrorModal({
-                            title: 'Impor Gagal',
-                            description: 'Kesalahan format data pada file:',
+                            title: 'Terjadi Permasalahan pada Pemrosesan',
+                            description: 'Silakan perbaiki permasalahan berikut ini:',
                             message: errorList[0],
                         });
                     } else {
                         showSystemErrorModal({
-                            title: 'Impor Gagal',
-                            description: 'Gagal memproses data:',
+                            title: 'Terjadi Permasalahan pada Pemrosesan',
+                            description: 'Silakan perbaiki permasalahan berikut ini:',
                             message: msg,
                         });
                     }

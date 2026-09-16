@@ -44,6 +44,41 @@ function normalizeMessages(messages = [], message = '', isInfo = false) {
     }).filter(Boolean);
 }
 
+export function resolveModalMaxWidth({
+    messages = [],
+    message = '',
+    description = '',
+    maxWidthClassName,
+    size = 'auto',
+    isInfo = false,
+}) {
+    if (maxWidthClassName && maxWidthClassName !== 'max-w-[720px]') {
+        return maxWidthClassName;
+    }
+
+    if (size === 'sm' || size === 'compact') return 'max-w-[460px]';
+    if (size === 'md' || size === 'medium') return 'max-w-[580px]';
+    if (size === 'lg' || size === 'wide') return 'max-w-[720px]';
+
+    const normalized = normalizeMessages(messages, message, isInfo);
+    const count = normalized.length;
+    const maxItemLength = normalized.reduce((max, str) => Math.max(max, String(str).length), 0);
+    const totalChars = normalized.reduce((sum, str) => sum + String(str).length, 0);
+
+    // Tier 1 (Compact): 1 pesan singkat (<= 75 karakter) -> 460px
+    if (count <= 1 && maxItemLength <= 75 && totalChars <= 90) {
+        return 'max-w-[460px]';
+    }
+
+    // Tier 2 (Medium): 2-3 pesan atau 1 pesan agak panjang (<= 140 karakter) -> 580px
+    if (count <= 3 && maxItemLength <= 140 && totalChars <= 250) {
+        return 'max-w-[580px]';
+    }
+
+    // Tier 3 (Wide): >= 4 pesan atau pesan teknis panjang (> 140 karakter) -> 720px
+    return 'max-w-[720px]';
+}
+
 export default function SystemErrorModal({
     open,
     type = 'error',
@@ -62,15 +97,47 @@ export default function SystemErrorModal({
     onCancel,
     onCopy,
     dismissible = true,
-    maxWidthClassName = 'max-w-[720px]',
+    size = 'auto',
+    maxWidthClassName,
 }) {
     const isInfo = type === 'info' || title === 'Informasi';
     const isConfirmationTitle = type === 'confirmation' || title === 'Konfirmasi';
-    const defaultTitle = isInfo ? 'Informasi' : 'Terjadi Permasalahan pada Pemrosesan';
-    const activeTitle = title ?? defaultTitle;
+    // Modal error WAJIB selalu bertajuk "Terjadi Permasalahan pada Pemrosesan"
+    const activeTitle = isInfo
+        ? (title ?? 'Informasi')
+        : isConfirmationTitle
+            ? (title ?? 'Konfirmasi')
+            : 'Terjadi Permasalahan pada Pemrosesan';
 
     const [copyState, setCopyState] = useState('idle');
     const normalizedMessages = useMemo(() => normalizeMessages(messages, message, isInfo), [isInfo, message, messages]);
+
+    // Template error WAJIB selalu menampilkan "Silakan perbaiki permasalahan berikut ini:"
+    const finalDescription = isInfo
+        ? (description ?? '')
+        : 'Silakan perbaiki permasalahan berikut ini:';
+
+    const finalMessages = useMemo(() => {
+        let list = [...normalizedMessages];
+        if (!isInfo && list.length === 0 && description && description !== 'Silakan perbaiki permasalahan berikut ini:') {
+            list = [description];
+        }
+        if (!isInfo && list.length === 0) {
+            list = ['Terjadi kesalahan saat memproses permintaan Anda.'];
+        }
+        return list;
+    }, [isInfo, normalizedMessages, description]);
+
+    const effectiveMaxWidth = useMemo(() => {
+        return resolveModalMaxWidth({
+            messages: finalMessages,
+            message: '',
+            description: finalDescription,
+            maxWidthClassName,
+            size,
+            isInfo,
+        });
+    }, [finalMessages, finalDescription, maxWidthClassName, size, isInfo]);
 
     useEffect(() => {
         if (!open || !dismissible) {
@@ -125,19 +192,6 @@ export default function SystemErrorModal({
         }
     }
 
-    const defaultDescription = isInfo ? '' : 'Silakan perbaiki permasalahan berikut ini:';
-    const activeDescription = description !== undefined ? description : defaultDescription;
-
-    const finalDescription = (activeDescription === '' || activeDescription === null)
-        ? ''
-        : ((normalizedMessages.length === 0 && activeDescription !== 'Silakan perbaiki permasalahan berikut ini:')
-            ? (isInfo ? '' : 'Silakan perbaiki permasalahan berikut ini:')
-            : activeDescription);
-
-    const finalMessages = (normalizedMessages.length === 0 && activeDescription !== '' && activeDescription !== 'Silakan perbaiki permasalahan berikut ini:')
-        ? (activeDescription ? [activeDescription] : [])
-        : normalizedMessages;
-
     const hasMessages = finalMessages.length > 0;
 
     return (
@@ -145,7 +199,7 @@ export default function SystemErrorModal({
             open={open}
             onBackdropClick={dismissible ? handleClose : undefined}
             className="bg-modal-overlay-bg px-3 py-4 sm:px-4 sm:py-6"
-            panelClassName={`${maxWidthClassName} overflow-hidden rounded-[4px] sm:rounded-[4px] px-0 py-0 shadow-dialog-large`.trim()}
+            panelClassName={`${effectiveMaxWidth} overflow-hidden rounded-[4px] sm:rounded-[4px] px-0 py-0 shadow-dialog-large`.trim()}
         >
             <div data-modal-header="true" className="border-b border-[#081f3b] bg-[#0A2A55] px-4 py-2 text-white sm:px-5">
                 <div className="flex items-center justify-between gap-4">
@@ -183,26 +237,26 @@ export default function SystemErrorModal({
 
                     <div className={`min-w-0 flex-1 flex flex-col ${hasMessages && finalDescription ? 'justify-between py-0.5' : 'justify-center'}`}>
                         {finalDescription ? (
-                            <p className="text-sm sm:text-[15px] font-normal leading-5 text-black">{finalDescription}</p>
+                            <p className="text-sm sm:text-[15px] font-normal leading-5 text-black break-words">{finalDescription}</p>
                         ) : null}
 
                         {hasMessages && (
                             <div className={finalDescription ? 'mt-2.5' : ''}>
                                 {isInfo ? (
-                                    <div className="space-y-1 text-sm sm:text-[15px] font-normal leading-relaxed text-black">
+                                    <div className="space-y-1 text-sm sm:text-[15px] font-normal leading-relaxed text-black break-words">
                                         {finalMessages.map((item, index) => (
                                             <p key={`${item}-${index}`}>{item}</p>
                                         ))}
                                     </div>
                                 ) : (
                                     finalMessages.length === 1 ? (
-                                        <p className="text-sm sm:text-[15px] font-normal leading-5 text-[#A20025]">
+                                        <p className="text-sm sm:text-[15px] font-normal leading-5 text-[#A20025] break-words">
                                             {finalMessages[0]}
                                         </p>
                                     ) : (
                                         <ul className="list-disc pl-5 space-y-1 marker:text-black">
                                             {finalMessages.map((item, index) => (
-                                                <li key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-6 text-[#A20025]">
+                                                <li key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-6 text-[#A20025] break-words">
                                                     {item}
                                                 </li>
                                             ))}
@@ -251,6 +305,7 @@ function SystemErrorModalContainer({
     cancelLabel,
     copyLabel,
     copiedLabel,
+    size = 'auto',
     maxWidthClassName,
     resolve,
     onDestroy,
@@ -280,6 +335,7 @@ function SystemErrorModalContainer({
             cancelLabel={cancelLabel}
             copyLabel={copyLabel}
             copiedLabel={copiedLabel}
+            size={size}
             maxWidthClassName={maxWidthClassName}
             onClose={() => cleanup(false)}
             onConfirm={() => cleanup(true)}
@@ -310,7 +366,8 @@ export function showSystemErrorModal(options = {}) {
                 cancelLabel={options.cancelLabel}
                 copyLabel={options.copyLabel}
                 copiedLabel={options.copiedLabel}
-                maxWidthClassName={options.maxWidthClassName || 'max-w-[720px]'}
+                size={options.size || 'auto'}
+                maxWidthClassName={options.maxWidthClassName}
                 resolve={resolve}
                 onDestroy={onDestroy}
             />

@@ -473,7 +473,6 @@ export default function InventoryInquiryView({ config, pageId }) {
                 title: 'Terjadi Permasalahan pada Pemrosesan',
                 description: 'Silakan perbaiki permasalahan berikut ini:',
                 message: typeof error === 'string' ? error : (error.message || 'Terjadi kesalahan saat memuat data.'),
-                maxWidthClassName: 'max-w-[480px]',
             });
         }
     }, [error, isAccessRestricted, isItemLocation, hasTarget]);
@@ -485,7 +484,6 @@ export default function InventoryInquiryView({ config, pageId }) {
                     title: 'Terjadi Permasalahan pada Pemrosesan',
                     description: 'Silakan perbaiki permasalahan berikut ini:',
                     message: 'Barang belum ada yang dicentang',
-                    maxWidthClassName: 'max-w-[480px]',
                 });
                 return;
             }
