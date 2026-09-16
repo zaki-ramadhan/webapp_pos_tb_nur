@@ -165,6 +165,10 @@ export default function AccountLookupSuggestions({
                             if (phone) contactParts.push(formatPhoneDisplay(phone));
                             subtitleLeft = contactParts.join(', ');
                             subtitleRight = null;
+                        } else if (resource === 'products') {
+                            subtitleLeft = code || '-';
+                            const barcode = record.barcode ?? record.upc ?? '';
+                            subtitleRight = barcode;
                         } else if (resource === 'accounts') {
                             subtitleLeft = code;
                             subtitleRight = translateAccountType(record.account_type);
@@ -184,12 +188,12 @@ export default function AccountLookupSuggestions({
                                 style={{ paddingLeft: catLevel > 0 ? `${16 + catLevel * 16}px` : undefined }}
                                 className={`flex w-full flex-col gap-1 border-t border-slate-200 px-4 py-2 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#F8F8F8] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
                             >
-                                <span className="flex w-full items-center justify-between gap-4">
-                                    <span className="truncate text-xs sm:text-sm font-normal text-black flex items-center gap-2">
+                                <span className="flex w-full items-start justify-between gap-4">
+                                    <span className="line-clamp-2 break-words min-w-0 flex-1 text-xs sm:text-sm font-normal text-black leading-snug">
                                         <HighlightText text={title} search={query} />
                                     </span>
                                     {titleRight ? (
-                                        <span className="shrink-0 text-xs sm:text-sm font-normal text-black">
+                                        <span className="shrink-0 text-xs sm:text-sm font-normal text-black pt-0.5">
                                             <HighlightText text={titleRight} search={query} />
                                         </span>
                                     ) : null}
@@ -200,8 +204,8 @@ export default function AccountLookupSuggestions({
                                             <HighlightText text={subtitleLeft} search={query} />
                                         </span>
                                         {subtitleRight ? (
-                                            <span className={`shrink-0 text-black font-normal ${resource === 'accounts' ? 'italic' : ''}`.trim()}>
-                                                {subtitleRight}
+                                            <span className={`shrink-0 text-black font-normal ${resource === 'accounts' || resource === 'products' ? 'italic' : ''}`.trim()}>
+                                                <HighlightText text={subtitleRight} search={query} />
                                             </span>
                                         ) : null}
                                     </span>
