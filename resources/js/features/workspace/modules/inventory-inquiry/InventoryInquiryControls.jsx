@@ -198,8 +198,7 @@ export function InquiryControl({
                 renderOption={isProductSearch ? renderProductOption : null}
                 onSelect={(option) => onLookupSelect(control.id, option)}
                 onClear={() => onLookupClear(control.id)}
-                className={control.className ?? (isProductSearch ? 'w-full sm:w-[360px] md:w-[400px]' : 'w-full sm:w-[240px]')}
-                menuClassName={isProductSearch ? 'min-w-full sm:min-w-[400px] md:min-w-[460px]' : ''}
+                className={control.className ?? (isProductSearch ? 'w-full sm:w-[400px] md:w-[460px]' : 'w-full sm:w-[240px]')}
             />
         );
     }
