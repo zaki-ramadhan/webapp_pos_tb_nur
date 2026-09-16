@@ -584,14 +584,6 @@ class BackendResourceIndexQuery
             }
         }
 
-        // Relasi relasional untuk tabel employees
-        if ($tableName === 'employees' && in_array($sortBy, ['department', 'departmentName', 'department_name'], true)) {
-            $query->leftJoin('departments', 'employees.department_id', '=', 'departments.id')
-                  ->orderBy('departments.name', $sortDir)
-                  ->select("{$tableName}.*");
-            return;
-        }
-
         // Kolom langsung pada tabel
         if (Schema::hasColumn($tableName, $snakeKey)) {
             $query->orderBy("{$tableName}.{$snakeKey}", $sortDir);

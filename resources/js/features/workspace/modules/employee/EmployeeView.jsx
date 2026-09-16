@@ -4,7 +4,6 @@ import useBackendIndexResource from '@/features/workspace/backend/useBackendInde
 import EmployeeFormView from '@/features/workspace/modules/employee/EmployeeFormView';
 import EmployeeTableView from '@/features/workspace/modules/employee/EmployeeTableView';
 import { buildEmployeeFilters, buildEmployeeRow } from '@/features/workspace/modules/employee/employeeViewShared';
-import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 
 export default function EmployeeView({
     page,
@@ -20,11 +19,6 @@ export default function EmployeeView({
     });
     const branchResource = useBackendIndexResource({
         resource: 'branches',
-        initialPerPage: 25,
-        enabled: true,
-    });
-    const departmentResource = useBackendIndexResource({
-        resource: 'departments',
         initialPerPage: 25,
         enabled: true,
     });
@@ -44,18 +38,10 @@ export default function EmployeeView({
                 branchOptions: branchResource.rows.length
                     ? branchResource.rows.map((record) => record.name ?? record.code ?? `Cabang ${record.id}`)
                     : (page.form?.branchOptions ?? []),
-                departmentOptions: departmentResource.rows.length
-                    ? departmentResource.rows.map((record) => record.name ?? record.code ?? `Departemen ${record.id}`)
-                    : (page.form?.departmentOptions ?? []),
                 lookupOptions: {
                     branches: branchResource.rows.map((record) => ({
                         id: record.id,
                         label: record.name ?? record.code ?? `Cabang ${record.id}`,
-                        code: record.code ?? '',
-                    })),
-                    departments: departmentResource.rows.map((record) => ({
-                        id: record.id,
-                        label: record.name ?? record.code ?? `Departemen ${record.id}`,
                         code: record.code ?? '',
                     })),
                     users: userResource.rows.map((record) => ({
@@ -90,8 +76,7 @@ export default function EmployeeView({
                     return [...baseCols, ...filteredExtra];
                 })(),
                 rows: mappedRows,
-                filters: buildEmployeeFilters(page.table?.filters ?? [], mappedRows)
-                    .filter((filter) => !(filter.id === 'department' && isWorkspacePageInactive('department'))),
+                filters: buildEmployeeFilters(page.table?.filters ?? [], mappedRows),
                 pageValue: employeeResource.total.toLocaleString('id-ID'),
                 loading: employeeResource.loading,
                 error: employeeResource.error,
@@ -101,7 +86,7 @@ export default function EmployeeView({
                 ...employeeResource.serverTableProps,
             },
         };
-    }, [branchResource.rows, departmentResource.rows, userResource.rows, employeeResource, page]);
+    }, [branchResource.rows, userResource.rows, employeeResource, page]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

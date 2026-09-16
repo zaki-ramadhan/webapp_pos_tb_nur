@@ -128,7 +128,6 @@ class BackendResourceAccessService
      * @var array<string, list<string>>
      */
     protected array $permissionAliases = [
-        'departments' => ['departments', 'department'],
         'employees' => ['employees'],
         'salary-allowances' => ['salary-allowances', 'salary-allowance'],
         'activity-log' => ['activity-log'],
@@ -136,7 +135,7 @@ class BackendResourceAccessService
         'accounts' => ['accounts', 'account-list'],
         'customers' => ['customers'],
         'sales-commissions' => ['sales-commissions', 'sales-commission'],
-        'sales-checkins' => ['sales-checkins', 'sales-checkin', 'sales-deposits', 'sales-deposit'],
+        'sales-deposits' => ['sales-deposits', 'sales-deposit'],
         'supplier-prices' => ['supplier-prices'],
         'suppliers' => ['suppliers'],
         'item-requests' => ['item-requests', 'item-request'],

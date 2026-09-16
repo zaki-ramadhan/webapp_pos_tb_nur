@@ -72,7 +72,6 @@ export default function AccountLookupSuggestions({
         vendors: 'pemasok',
         suppliers: 'pemasok',
         warehouses: 'gudang',
-        departments: 'departemen',
         branches: 'cabang',
         users: 'pengguna',
     };

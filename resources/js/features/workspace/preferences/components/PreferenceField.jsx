@@ -2,7 +2,7 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TransactionDateInput from '@/features/workspace/modules/shared/transaction/TransactionDateInput';
 import PreferenceLookupAutocomplete from './PreferenceLookupAutocomplete';
-import { CloseIcon, PencilIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon } from '@/features/workspace/shared/Icons';
 
 const PREFERENCE_FIELD_RENDERERS = {
     select(field, value, onChange) {
@@ -36,35 +36,7 @@ const PREFERENCE_FIELD_RENDERERS = {
             />
         );
     },
-    'readonly-edit'(field, value, onChange) {
-        const handleCurrencyEdit = async () => {
-            if (field.disabled) return;
-            try {
-                const response = await window.axios.get('/api/backend/currencies');
-                const currencies = response?.data?.data ?? [];
-                const idr = currencies.find(c => c.code === 'IDR');
-                if (idr) {
-                    window.dispatchEvent(new CustomEvent('workspace:open-page', {
-                        detail: {
-                            pageId: 'currency-master',
-                            recordId: idr.id,
-                            tabLabel: idr.name || 'Rupiah',
-                            label: idr.name || 'Rupiah'
-                        }
-                    }));
-                } else {
-                    window.dispatchEvent(new CustomEvent('workspace:open-page', {
-                        detail: { pageId: 'currency-master' }
-                    }));
-                }
-            } catch (e) {
-                console.error(e);
-                window.dispatchEvent(new CustomEvent('workspace:open-page', {
-                    detail: { pageId: 'currency-master' }
-                }));
-            }
-        };
-
+    'readonly-edit'(field, value) {
         return (
             <div className="flex max-w-[480px] items-center gap-4">
                 <TextInput
@@ -77,15 +49,6 @@ const PREFERENCE_FIELD_RENDERERS = {
                     className="h-[34px] flex-1 rounded-[3px] border-ui-border bg-ui-bg-panel-lighter"
                     inputClassName="text-xs sm:text-sm text-text-readonly-input"
                 />
-                <button
-                    type="button"
-                    disabled={field.disabled}
-                    onClick={handleCurrencyEdit}
-                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-tab-view-active-border-t text-abc-label-dark disabled:cursor-default disabled:bg-slate-100 disabled:text-slate-400 disabled:pointer-events-none enabled:hover:bg-tab-inactive-hover-bg transition"
-                    aria-label={`Edit ${field.label}`}
-                >
-                    <PencilIcon />
-                </button>
             </div>
         );
     },

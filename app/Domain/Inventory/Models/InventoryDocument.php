@@ -6,7 +6,6 @@ use App\Domain\Catalog\Models\Brand;
 use App\Domain\Catalog\Models\ProductCategory;
 use App\Domain\Catalog\Models\Warehouse;
 use App\Domain\Organization\Models\Branch;
-use App\Domain\Organization\Models\Department;
 use App\Domain\Partner\Models\Supplier;
 use App\Domain\Support\Models\DomainModel;
 use App\Models\User;
@@ -63,11 +62,6 @@ class InventoryDocument extends DomainModel
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
-    }
-
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
     }
 
     public function warehouse(): BelongsTo

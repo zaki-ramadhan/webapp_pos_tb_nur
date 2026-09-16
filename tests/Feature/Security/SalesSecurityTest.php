@@ -9,7 +9,6 @@ test('authenticated user can load all sales pages via dashboard', function () {
         'sales-deposit',
         'sales-receipt',
         'sales-return',
-        'sales-checkin',
     ];
 
     foreach ($pages as $pageId) {

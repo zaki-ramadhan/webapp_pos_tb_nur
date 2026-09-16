@@ -10,7 +10,6 @@ export function buildEmployeeFormValues(form, detailRow = null) {
         ...defaults,
         __backendRecordId: detailRow?.id ?? null,
         __branchId: detailRow?.branchId ?? 1,
-        __departmentId: detailRow?.departmentId ?? null,
         __userId: detailRow?.userId ?? defaults.__userId ?? null,
         user: detailRow?.user ?? defaults.user ?? '',
         salutation: detailRow?.salutation ?? defaults.salutation ?? '',
@@ -29,7 +28,6 @@ export function buildEmployeeFormValues(form, detailRow = null) {
         joinDate: detailRow?.joinDate ?? defaults.joinDate ?? '',
         identityNumber: detailRow?.identityNumber ?? defaults.identityNumber ?? '',
         branch: detailRow?.branch ?? defaults.branch ?? '',
-        department: detailRow?.department ?? defaults.department ?? '',
         isSalesperson: detailRow?.isSalesperson ?? defaults.isSalesperson ?? false,
         note: detailRow?.note ?? defaults.note ?? '',
         street: detailRow?.street ?? defaults.street ?? '',
@@ -60,7 +58,6 @@ export function buildEmployeeFormValues(form, detailRow = null) {
 
 export function buildEmployeeRow(record) {
     const branchName = record.branch?.name ?? '';
-    const departmentName = record.department?.name ?? '';
     const taxStatus = record.tax_allowance_status ?? record.tax_status ?? '';
     const bankAccountsList = record.bankAccounts ?? record.bank_accounts ?? [];
     const primaryBankAccount = bankAccountsList.find((account) => account.is_primary) ?? bankAccountsList[0] ?? null;
@@ -71,7 +68,6 @@ export function buildEmployeeRow(record) {
         id: record.id,
         __backendRecord: record,
         branchId: record.branch_id ?? record.branch?.id ?? null,
-        departmentId: record.department_id ?? record.department?.id ?? null,
         salutation: record.salutation ?? '',
         fullName: record.full_name ?? '',
         name: record.full_name ?? '',
@@ -89,7 +85,6 @@ export function buildEmployeeRow(record) {
         joinDate: formatIsoDate(record.joined_at),
         identityNumber: record.identity_number ?? '',
         branch: branchName,
-        department: departmentName,
         isSalesperson: Boolean(record.is_salesperson),
         userId: record.user_id ?? record.user?.id ?? null,
         user: record.user ? (record.user.name && record.user.email ? `${record.user.name} (${record.user.email})` : (record.user.name ?? '')) : '',
@@ -120,8 +115,6 @@ export function buildEmployeeRow(record) {
         bankAccounts: bankAccountsList,
         inactiveValue: record.is_active === false ? 'yes' : 'no',
         employmentStatusValue: String(record.employment_status ?? '').toLowerCase().includes('kontrak') ? 'contract' : 'permanent',
-        departmentValue: departmentName.trim().toLowerCase().replace(/\s+/g, '-'),
-        departmentLabel: departmentName,
         branchValue: branchName.trim().toLowerCase().replace(/\s+/g, '-'),
         branchLabel: branchName,
         sellerValue: record.is_salesperson ? 'yes' : 'no',
@@ -137,13 +130,6 @@ export function buildEmployeeRow(record) {
 
 export function buildEmployeeFilters(baseFilters = [], rows = []) {
     return baseFilters.map((filter) => {
-        if (filter.id === 'department') {
-            return {
-                ...filter,
-                rowKey: 'departmentValue',
-                options: buildFilterOptions('Departemen', rows, 'departmentValue', 'departmentLabel'),
-            };
-        }
 
         if (filter.id === 'employment-status') {
             return {
@@ -194,7 +180,6 @@ export function buildEmployeeSnapshot(values) {
         joinDate: values.joinDate ?? '',
         identityNumber: values.identityNumber ?? '',
         branch: values.branch ?? '',
-        department: values.department ?? '',
         isSalesperson: Boolean(values.isSalesperson),
         autoEmployeeId: Boolean(values.autoEmployeeId),
         note: values.note ?? '',
@@ -216,7 +201,6 @@ export function buildEmployeeSnapshot(values) {
         bankAccountNumber: values.bankAccountNumber ?? '',
         bankAccountHolder: values.bankAccountHolder ?? '',
         __branchId: values.__branchId ?? null,
-        __departmentId: values.__departmentId ?? null,
         __userId: values.__userId ?? null,
         user: values.user ?? '',
         __bankAccountId: values.__bankAccountId ?? null,

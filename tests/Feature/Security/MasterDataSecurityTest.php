@@ -9,7 +9,7 @@ test('authenticated user can load all master data pages via dashboard', function
         'suppliers',
         'warehouse-master',
         'accounts',
-        'currency-master',
+        'users',
     ];
 
     foreach ($pages as $pageId) {

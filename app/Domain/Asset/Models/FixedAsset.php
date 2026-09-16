@@ -4,7 +4,6 @@ namespace App\Domain\Asset\Models;
 
 use App\Domain\Finance\Models\Account;
 use App\Domain\Organization\Models\Branch;
-use App\Domain\Organization\Models\Department;
 use App\Domain\Support\Models\DomainModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -72,11 +71,6 @@ class FixedAsset extends DomainModel
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
-    }
-
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
     }
 
     public function assetAccount(): BelongsTo

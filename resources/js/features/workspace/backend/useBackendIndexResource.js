@@ -456,7 +456,6 @@ function isResourceMatchingPageId(resource, pageId) {
         'inventory-adjustments': 'inventory-adjustment',
         'inventory-inquiries': 'inventory-inquiry',
         'items-services': 'items-services',
-        'departments': 'department',
         'accounts': 'accounts',
         'employees': 'employee',
         'business-partners': 'customers',

@@ -46,16 +46,6 @@ class EmployeesPage
                                 ],
                             ],
                             [
-                                'id' => 'department',
-                                'rowKey' => 'departmentValue',
-                                'options' => [
-                                    ['value' => 'all', 'label' => 'Departemen: Semua'],
-                                    ['value' => 'consulting', 'label' => 'Departemen: Consulting'],
-                                    ['value' => 'accounting', 'label' => 'Departemen: Accounting'],
-                                    ['value' => 'management', 'label' => 'Departemen: Management'],
-                                ],
-                            ],
-                            [
                                 'id' => 'seller',
                                 'rowKey' => 'sellerValue',
                                 'options' => [
@@ -229,7 +219,6 @@ class EmployeesPage
                             'joinDate' => '24/04/2026',
                             'identityNumber' => '',
                             'branch' => 'TOKO UTAMA',
-                            'department' => '',
                             'isSalesperson' => false,
                             'note' => '',
                             'street' => '',
