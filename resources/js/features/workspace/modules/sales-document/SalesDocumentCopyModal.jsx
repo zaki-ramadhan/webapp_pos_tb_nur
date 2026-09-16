@@ -149,8 +149,9 @@ export default function SalesDocumentCopyModal({
     useEffect(() => {
         if (!open || mode !== 'document' || !showSuggestions) return;
 
+        setLoadingSuggestions(true);
+
         const delayDebounce = setTimeout(async () => {
-            setLoadingSuggestions(true);
             try {
                 const params = { search: query.trim(), per_page: 15 };
                 if (partnerId) params[partnerField] = partnerId;
@@ -437,14 +438,23 @@ export default function SalesDocumentCopyModal({
                             const val = e.target.value;
                             setQuery(val);
                             if (val.length > 0) {
+                                setLoadingSuggestions(true);
                                 setShowSuggestions(true);
                             } else {
                                 handleClearSelection();
                             }
                         }}
-                        onFocus={() => setShowSuggestions(true)}
+                        onFocus={() => {
+                            if (suggestions.length === 0) {
+                                setLoadingSuggestions(true);
+                            }
+                            setShowSuggestions(true);
+                        }}
                         onKeyDown={(e) => {
                             if (e.key === ' ' && !showSuggestions) {
+                                if (suggestions.length === 0) {
+                                    setLoadingSuggestions(true);
+                                }
                                 setShowSuggestions(true);
                             }
                         }}

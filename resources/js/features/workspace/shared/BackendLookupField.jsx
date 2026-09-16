@@ -100,6 +100,9 @@ export default function BackendLookupField({
 
     const handleActivate = () => {
         if (!hasActivated && !disabled) {
+            if (items.length === 0) {
+                setSearching(true);
+            }
             setHasActivated(true);
         }
     };

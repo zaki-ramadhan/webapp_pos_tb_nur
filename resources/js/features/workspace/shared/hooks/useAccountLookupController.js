@@ -154,16 +154,16 @@ export default function useAccountLookupController({
         const fetchParamsKey = `${fetchKey}_${queryParamsStr}`;
 
         if (lastFetchKeyRef.current === fetchParamsKey && rows.length > 0) {
+            setLoading(false);
             return;
         }
+
+        setLoading(true);
+        setError('');
 
         let ignore = false;
         const delay = fetchKey ? 250 : 50;
         const timeoutId = window.setTimeout(async () => {
-            if (!ignore) {
-                setLoading(true);
-                setError('');
-            }
             try {
                 const payload = await listBackendResource(resource, {
                     search: fetchKey,
@@ -206,8 +206,15 @@ export default function useAccountLookupController({
             return;
         }
 
+        const fetchKey = String(nextQuery ?? '').trim();
+        const fetchParamsKey = `${fetchKey}_${queryParamsStr}`;
+        const hasCachedRows = lastFetchKeyRef.current === fetchParamsKey && rows.length > 0;
+
         setQuery(nextQuery);
         setError('');
+        if (!hasCachedRows) {
+            setLoading(true);
+        }
         setOpen(true);
     }
 
@@ -216,6 +223,7 @@ export default function useAccountLookupController({
         setQuery('');
         setError('');
         setDraftValue('');
+        setLoading(false);
     }
 
     function handleInputFocus() {
@@ -235,6 +243,7 @@ export default function useAccountLookupController({
         setOpen(false);
         setQuery('');
         setError('');
+        setLoading(false);
         setRows([]);
     }
 

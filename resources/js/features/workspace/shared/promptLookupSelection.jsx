@@ -13,7 +13,7 @@ import {
 function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve, onDestroy, queryParams = {} }) {
     const [open, setOpen] = useState(true);
     const [query, setQuery] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [rows, setRows] = useState([]);
     const inputRef = useRef(null);
@@ -37,12 +37,12 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
     const queryParamsStr = JSON.stringify(queryParams);
 
     useEffect(() => {
+        setLoading(true);
         let ignore = false;
         const trimmed = query.trim();
         const delay = trimmed ? 250 : 50;
         const timeoutId = setTimeout(async () => {
             if (!ignore) {
-                setLoading(true);
                 setError('');
             }
             try {
