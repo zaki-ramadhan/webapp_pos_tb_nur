@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Security;
 
+use App\Domain\Identity\Models\AccessGroup;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -62,6 +63,17 @@ class AccountingAndSystemSecurityTest extends TestCase
 
     public function test_unauthorized_non_admin_user_cannot_modify_access_groups_or_preferences(): void
     {
+        $group = AccessGroup::query()->create([
+            'code' => 'TEST_GROUP',
+            'name' => 'Test Group',
+            'is_active' => true,
+        ]);
+        $group->permissions()->create([
+            'menu_key' => 'general-journal',
+            'can_access' => true,
+            'can_view' => true,
+        ]);
+
         $regularUser = User::factory()->create(['is_active' => true]);
 
         $groupResponse = $this->actingAs($regularUser)->postJson('/api/backend/access-groups', [

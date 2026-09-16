@@ -1,27 +1,641 @@
 {
-  "_AuthLayout-BqT_N2Cs.js": {
-    "file": "assets/AuthLayout-BqT_N2Cs.js",
+  "_AccountLookupControls-Lx8lV4YQ.js": {
+    "file": "assets/AccountLookupControls-Lx8lV4YQ.js",
+    "name": "AccountLookupControls",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "resources/js/app/App.jsx",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_TextInput-AjrJaOGl.js",
+      "_itemCategoryShared-CyKZnwpF.js"
+    ]
+  },
+  "_AddressStack-DxbRFS2L.js": {
+    "file": "assets/AddressStack-DxbRFS2L.js",
+    "name": "AddressStack",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_TextInput-AjrJaOGl.js",
+      "_TextareaField-43ePRPxw.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_LookupPrimitives-D0AYv-oC.js"
+    ]
+  },
+  "_AuthLayout-DjWWg9MS.js": {
+    "file": "assets/AuthLayout-DjWWg9MS.js",
     "name": "AuthLayout",
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_GlobalBackgroundArt-BT7RhLvi.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
       "resources/js/app/App.jsx"
     ]
   },
-  "_GlobalBackgroundArt-BT7RhLvi.js": {
-    "file": "assets/GlobalBackgroundArt-BT7RhLvi.js",
-    "name": "GlobalBackgroundArt",
+  "_BackendLookupField-BM65XDyO.js": {
+    "file": "assets/BackendLookupField-BM65XDyO.js",
+    "name": "BackendLookupField",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_ReferenceLookupInput-CZmjxrqo.js"
+    ]
+  },
+  "_BankLedgerTable-C3wrBdc9.js": {
+    "file": "assets/BankLedgerTable-C3wrBdc9.js",
+    "name": "BankLedgerTable",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_bankAdapters-RrN0JiWt.js",
+      "_TextInput-AjrJaOGl.js",
+      "_Pagination-DDtayp5N.js"
+    ]
+  },
+  "_Checkbox-BxYzWIFw.js": {
+    "file": "assets/Checkbox-BxYzWIFw.js",
+    "name": "Checkbox",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js"
+    ]
+  },
+  "_CheckboxField-j5qE0fk-.js": {
+    "file": "assets/CheckboxField-j5qE0fk-.js",
+    "name": "CheckboxField",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js"
+    ]
+  },
+  "_DashboardPage-D-WLCU4V.js": {
+    "file": "assets/DashboardPage-D-WLCU4V.js",
+    "name": "DashboardPage",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js"
+    ],
+    "dynamicImports": [
+      "resources/js/features/workspace/modules/accounts/AccountsView.jsx",
+      "resources/js/features/workspace/modules/activity-log/ActivityLogView.jsx",
+      "resources/js/features/workspace/modules/bank-inquiry/BankInquiryView.jsx",
+      "resources/js/features/workspace/modules/bank-transfer/BankTransferView.jsx",
+      "resources/js/features/workspace/modules/cash-payment/CashPaymentView.jsx",
+      "resources/js/features/workspace/modules/cash-receipt/CashReceiptView.jsx",
+      "resources/js/features/workspace/modules/employee/EmployeeView.jsx",
+      "resources/js/features/workspace/modules/expense-entry/ExpenseEntryView.jsx",
+      "resources/js/features/workspace/modules/general-journal/GeneralJournalView.jsx",
+      "resources/js/features/workspace/modules/group-access/GroupAccessView.jsx",
+      "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentView.jsx",
+      "resources/js/features/workspace/modules/inventory-inquiry/InventoryInquiryView.jsx",
+      "resources/js/features/workspace/modules/item-category/ItemCategoryView.jsx",
+      "resources/js/features/workspace/modules/items-services/ItemsServicesView.jsx",
+      "resources/js/features/workspace/modules/payroll-entry/PayrollEntryView.jsx",
+      "resources/js/features/workspace/preferences/PreferencesView.jsx",
+      "resources/js/features/workspace/modules/sales-document/PurchaseInvoiceView.jsx",
+      "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentView.jsx",
+      "resources/js/features/workspace/modules/sales-document/PurchaseReturnView.jsx",
+      "resources/js/features/workspace/modules/salary-allowance/SalaryAllowanceView.jsx",
+      "resources/js/features/workspace/modules/sales-deposit/SalesDepositView.jsx",
+      "resources/js/features/workspace/modules/sales-document/SalesInvoiceView.jsx",
+      "resources/js/features/workspace/modules/sales-receipt/SalesReceiptView.jsx",
+      "resources/js/features/workspace/modules/sales-document/SalesReturnView.jsx",
+      "resources/js/features/workspace/modules/SimpleMasterView.jsx",
+      "resources/js/features/workspace/modules/users-management/UsersManagementView.jsx",
+      "resources/js/features/workspace/modules/warehouse/WarehouseView.jsx",
+      "resources/js/features/workspace/modules/business-partner/BusinessPartnerView.jsx",
+      "resources/js/features/workspace/modules/journal-activity-log/JournalActivityLogView.jsx",
+      "resources/js/features/workspace/modules/smartlink-ebanking/SmartlinkEbankingView.jsx",
+      "resources/js/features/workspace/modules/purchase-deposit/PurchaseDepositView.jsx"
+    ]
+  },
+  "_DepositWorkspacePrimitives-1aGQZ1-W.js": {
+    "file": "assets/DepositWorkspacePrimitives-1aGQZ1-W.js",
+    "name": "DepositWorkspacePrimitives",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DocumentStamp-QCbdpXxN.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_TransactionDualTotalCard-Ye_8uMsS.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js"
+    ]
+  },
+  "_DocumentModalFields-D6_tsH43.js": {
+    "file": "assets/DocumentModalFields-D6_tsH43.js",
+    "name": "DocumentModalFields",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx",
+      "_FormattedAmountInput-CGKfS8-h.js"
+    ]
+  },
+  "_DocumentModalLayout-CSl-nDAp.js": {
+    "file": "assets/DocumentModalLayout-CSl-nDAp.js",
+    "name": "DocumentModalLayout",
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
       "resources/js/app/App.jsx"
     ]
   },
-  "_Notice-DraZxvYI.js": {
-    "file": "assets/Notice-DraZxvYI.js",
+  "_DocumentStamp-QCbdpXxN.js": {
+    "file": "assets/DocumentStamp-QCbdpXxN.js",
+    "name": "DocumentStamp",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js"
+    ]
+  },
+  "_FormattedAmountInput-CGKfS8-h.js": {
+    "file": "assets/FormattedAmountInput-CGKfS8-h.js",
+    "name": "FormattedAmountInput",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_TextInput-AjrJaOGl.js"
+    ]
+  },
+  "_GlobalBackgroundArt-gBBjz8CD.js": {
+    "file": "assets/GlobalBackgroundArt-gBBjz8CD.js",
+    "name": "GlobalBackgroundArt",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js"
+    ]
+  },
+  "_LookupPrimitives-D0AYv-oC.js": {
+    "file": "assets/LookupPrimitives-D0AYv-oC.js",
+    "name": "LookupPrimitives",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "resources/js/app/App.jsx"
+    ]
+  },
+  "_ModuleFormTemplate-p9viLcE0.js": {
+    "file": "assets/ModuleFormTemplate-p9viLcE0.js",
+    "name": "ModuleFormTemplate",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_PreferencesTabs-Czytng84.js",
+      "resources/js/app/App.jsx",
+      "_useFormSaveShortcut-I7plsIdQ.js"
+    ]
+  },
+  "_ModuleTableTemplate-BNa39Sc3.js": {
+    "file": "assets/ModuleTableTemplate-BNa39Sc3.js",
+    "name": "ModuleTableTemplate",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_Pagination-DDtayp5N.js",
+      "resources/js/app/App.jsx",
+      "_TableToolbar-BABjNkGR.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js"
+    ]
+  },
+  "_Notice-tPTUNyrb.js": {
+    "file": "assets/Notice-tPTUNyrb.js",
     "name": "Notice",
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_vendor-icons-BRYlXfYj.js"
+      "_vendor-icons-wSZDd18a.js"
+    ]
+  },
+  "_Pagination-DDtayp5N.js": {
+    "file": "assets/Pagination-DDtayp5N.js",
+    "name": "Pagination",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_TextInput-AjrJaOGl.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_vendor-icons-wSZDd18a.js"
+    ]
+  },
+  "_PreferencesAccountsView-ni1LsdMA.js": {
+    "file": "assets/PreferencesAccountsView-ni1LsdMA.js",
+    "name": "PreferencesAccountsView",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_BackendLookupField-BM65XDyO.js",
+      "resources/js/app/App.jsx",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_useAccountLookupController-BJZ8w5cA.js"
+    ]
+  },
+  "_PreferencesTabs-Czytng84.js": {
+    "file": "assets/PreferencesTabs-Czytng84.js",
+    "name": "PreferencesTabs",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js"
+    ]
+  },
+  "_RadioField-Bpp4uUOA.js": {
+    "file": "assets/RadioField-Bpp4uUOA.js",
+    "name": "RadioField",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js"
+    ]
+  },
+  "_ReferenceLookupInput-CZmjxrqo.js": {
+    "file": "assets/ReferenceLookupInput-CZmjxrqo.js",
+    "name": "ReferenceLookupInput",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "resources/js/app/App.jsx",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js"
+    ]
+  },
+  "_RefreshButton-DgAkPWHI.js": {
+    "file": "assets/RefreshButton-DgAkPWHI.js",
+    "name": "RefreshButton",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "resources/js/app/App.jsx"
+    ]
+  },
+  "_SalesDocumentView-CPTKsxKd.js": {
+    "file": "assets/SalesDocumentView-CPTKsxKd.js",
+    "name": "SalesDocumentView",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_operationDocumentBackend-CdLThuT1.js",
+      "resources/js/app/App.jsx",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_Pagination-DDtayp5N.js",
+      "_TextInput-AjrJaOGl.js",
+      "_DocumentModalLayout-CSl-nDAp.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_DocumentModalFields-D6_tsH43.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TextareaField-43ePRPxw.js",
+      "_formValidation-DLjb9c5R.js",
+      "_DocumentStamp-QCbdpXxN.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_TransactionTable-Ddj59ucs.js"
+    ]
+  },
+  "_SelectField-CLrrRK6z.js": {
+    "file": "assets/SelectField-CLrrRK6z.js",
+    "name": "SelectField",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_vendor-icons-wSZDd18a.js"
+    ]
+  },
+  "_SortableTableHeaderCell-Bq7jWmOC.js": {
+    "file": "assets/SortableTableHeaderCell-Bq7jWmOC.js",
+    "name": "SortableTableHeaderCell",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-icons-wSZDd18a.js"
+    ]
+  },
+  "_TableListView-BLl2osn6.js": {
+    "file": "assets/TableListView-BLl2osn6.js",
+    "name": "TableListView",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_Pagination-DDtayp5N.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_TableToolbar-BABjNkGR.js",
+      "resources/js/app/App.jsx"
+    ]
+  },
+  "_TableToolbar-BABjNkGR.js": {
+    "file": "assets/TableToolbar-BABjNkGR.js",
+    "name": "TableToolbar",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_TextInput-AjrJaOGl.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "resources/js/app/App.jsx",
+      "_Pagination-DDtayp5N.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_vendor-export-excel-DR-znTQw.js"
+    ]
+  },
+  "_TextInput-AjrJaOGl.js": {
+    "file": "assets/TextInput-AjrJaOGl.js",
+    "name": "TextInput",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "resources/js/app/App.jsx",
+      "_GlobalBackgroundArt-gBBjz8CD.js"
+    ]
+  },
+  "_TextareaField-43ePRPxw.js": {
+    "file": "assets/TextareaField-43ePRPxw.js",
+    "name": "TextareaField",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx"
+    ]
+  },
+  "_ToolbarExportSplitButton-C7OgYZLI.js": {
+    "file": "assets/ToolbarExportSplitButton-C7OgYZLI.js",
+    "name": "ToolbarExportSplitButton",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "resources/js/app/App.jsx",
+      "_Pagination-DDtayp5N.js"
+    ]
+  },
+  "_TransactionAccountLineItemsSection-KcDqQCmj.js": {
+    "file": "assets/TransactionAccountLineItemsSection-KcDqQCmj.js",
+    "name": "TransactionAccountLineItemsSection",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_vendor-export-pdf-BMPVRhhE.js"
+    ]
+  },
+  "_TransactionDateInput-Bb1oGzaV.js": {
+    "file": "assets/TransactionDateInput-Bb1oGzaV.js",
+    "name": "TransactionDateInput",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx"
+    ]
+  },
+  "_TransactionDualTotalCard-Ye_8uMsS.js": {
+    "file": "assets/TransactionDualTotalCard-Ye_8uMsS.js",
+    "name": "TransactionDualTotalCard",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_TextInput-AjrJaOGl.js"
+    ]
+  },
+  "_TransactionPrimitives-B6PvFjan.js": {
+    "file": "assets/TransactionPrimitives-B6PvFjan.js",
+    "name": "TransactionPrimitives",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx"
+    ]
+  },
+  "_TransactionTable-Ddj59ucs.js": {
+    "file": "assets/TransactionTable-Ddj59ucs.js",
+    "name": "TransactionTable",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_Pagination-DDtayp5N.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-icons-wSZDd18a.js"
+    ]
+  },
+  "_TransactionToolbar-Dn4EXae9.js": {
+    "file": "assets/TransactionToolbar-Dn4EXae9.js",
+    "name": "TransactionToolbar",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "resources/js/app/App.jsx",
+      "_Pagination-DDtayp5N.js"
+    ]
+  },
+  "_TransactionTotalCard-D0Xwvt3Z.js": {
+    "file": "assets/TransactionTotalCard-D0Xwvt3Z.js",
+    "name": "TransactionTotalCard",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_TextInput-AjrJaOGl.js"
+    ]
+  },
+  "_UnpaidDocumentsSelectionModal-CNVsKN3I.js": {
+    "file": "assets/UnpaidDocumentsSelectionModal-CNVsKN3I.js",
+    "name": "UnpaidDocumentsSelectionModal",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_Pagination-DDtayp5N.js",
+      "resources/js/app/App.jsx",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TextareaField-43ePRPxw.js",
+      "_TextInput-AjrJaOGl.js",
+      "_SelectField-CLrrRK6z.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js"
+    ]
+  },
+  "_bankAdapters-RrN0JiWt.js": {
+    "file": "assets/bankAdapters-RrN0JiWt.js",
+    "name": "bankAdapters",
+    "imports": [
+      "_DashboardPage-D-WLCU4V.js"
+    ]
+  },
+  "_crudFeedback-D-q2b9LK.js": {
+    "file": "assets/crudFeedback-D-q2b9LK.js",
+    "name": "crudFeedback",
+    "imports": [
+      "resources/js/app/App.jsx",
+      "_DashboardPage-D-WLCU4V.js"
+    ]
+  },
+  "_crudFormActions-CkTcJ5EY.js": {
+    "file": "assets/crudFormActions-CkTcJ5EY.js",
+    "name": "crudFormActions",
+    "imports": [
+      "_crudFeedback-D-q2b9LK.js"
+    ]
+  },
+  "_documentNumberUtils-PhrmBwuM.js": {
+    "file": "assets/documentNumberUtils-PhrmBwuM.js",
+    "name": "documentNumberUtils"
+  },
+  "_formValidation-DLjb9c5R.js": {
+    "file": "assets/formValidation-DLjb9c5R.js",
+    "name": "formValidation"
+  },
+  "_itemCategoryShared-CyKZnwpF.js": {
+    "file": "assets/itemCategoryShared-CyKZnwpF.js",
+    "name": "itemCategoryShared"
+  },
+  "_operationDocumentBackend-CdLThuT1.js": {
+    "file": "assets/operationDocumentBackend-CdLThuT1.js",
+    "name": "operationDocumentBackend",
+    "imports": [
+      "_DashboardPage-D-WLCU4V.js",
+      "_TextInput-AjrJaOGl.js"
+    ]
+  },
+  "_promptLookupSelection-Cu_Ouv4e.js": {
+    "file": "assets/promptLookupSelection-Cu_Ouv4e.js",
+    "name": "promptLookupSelection",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "resources/js/app/App.jsx",
+      "_TextInput-AjrJaOGl.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useBackendIndexResource-ByXgEMGC.js"
+    ]
+  },
+  "_salesAdapters-uDNFzNmF.js": {
+    "file": "assets/salesAdapters-uDNFzNmF.js",
+    "name": "salesAdapters",
+    "imports": [
+      "_TextInput-AjrJaOGl.js"
+    ]
+  },
+  "_smartlinkStore-DzYgLSpP.js": {
+    "file": "assets/smartlinkStore-DzYgLSpP.js",
+    "name": "smartlinkStore",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js"
+    ]
+  },
+  "_useAccountLookupController-BJZ8w5cA.js": {
+    "file": "assets/useAccountLookupController-BJZ8w5cA.js",
+    "name": "useAccountLookupController",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_crudFeedback-D-q2b9LK.js"
+    ]
+  },
+  "_useBackendIndexResource-ByXgEMGC.js": {
+    "file": "assets/useBackendIndexResource-ByXgEMGC.js",
+    "name": "useBackendIndexResource",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js"
+    ]
+  },
+  "_useBackendResource-BJdUdbuR.js": {
+    "file": "assets/useBackendResource-BJdUdbuR.js",
+    "name": "useBackendResource",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js"
+    ]
+  },
+  "_useFormDraftState-BwIze6Vs.js": {
+    "file": "assets/useFormDraftState-BwIze6Vs.js",
+    "name": "useFormDraftState",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_formValidation-DLjb9c5R.js"
+    ]
+  },
+  "_useFormLineItems-CvjPNh4z.js": {
+    "file": "assets/useFormLineItems-CvjPNh4z.js",
+    "name": "useFormLineItems",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "resources/js/app/App.jsx",
+      "_TextInput-AjrJaOGl.js",
+      "_TextareaField-43ePRPxw.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_useAccountLookupController-BJZ8w5cA.js"
+    ]
+  },
+  "_useFormSaveShortcut-I7plsIdQ.js": {
+    "file": "assets/useFormSaveShortcut-I7plsIdQ.js",
+    "name": "useFormSaveShortcut",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js"
+    ]
+  },
+  "_useFormValuesSync-D1YQAz22.js": {
+    "file": "assets/useFormValuesSync-D1YQAz22.js",
+    "name": "useFormValuesSync",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_formValidation-DLjb9c5R.js"
+    ]
+  },
+  "_useTransactionDetailLoader-Ba07OMSw.js": {
+    "file": "assets/useTransactionDetailLoader-Ba07OMSw.js",
+    "name": "useTransactionDetailLoader",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "resources/js/app/App.jsx",
+      "_vendor-icons-wSZDd18a.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_useBackendIndexResource-ByXgEMGC.js"
+    ]
+  },
+  "_useTransactionForm-D6GzULuY.js": {
+    "file": "assets/useTransactionForm-D6GzULuY.js",
+    "name": "useTransactionForm",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_TextInput-AjrJaOGl.js"
+    ]
+  },
+  "_useWorkspaceFormDraftState-DeOO2WL3.js": {
+    "file": "assets/useWorkspaceFormDraftState-DeOO2WL3.js",
+    "name": "useWorkspaceFormDraftState",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js"
+    ]
+  },
+  "_useWorkspaceResource-S2ovEEIm.js": {
+    "file": "assets/useWorkspaceResource-S2ovEEIm.js",
+    "name": "useWorkspaceResource",
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js"
     ]
   },
   "_vendor-charts-D5ETVXE2.js": {
@@ -52,15 +666,15 @@
       "_vendor-core-B1K7g7Gz.js"
     ]
   },
-  "_vendor-icons-BRYlXfYj.js": {
-    "file": "assets/vendor-icons-BRYlXfYj.js",
+  "_vendor-icons-wSZDd18a.js": {
+    "file": "assets/vendor-icons-wSZDd18a.js",
     "name": "vendor-icons",
     "imports": [
       "_vendor-core-B1K7g7Gz.js"
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-CkwbNacI.css",
+    "file": "assets/app-B0KyXKgE.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -69,20 +683,162 @@
     ]
   },
   "resources/js/app/App.jsx": {
-    "file": "assets/App-BCvJzmkJ.js",
+    "file": "assets/App-Beejttfk.js",
     "name": "App",
     "src": "resources/js/app/App.jsx",
     "isEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_vendor-icons-BRYlXfYj.js"
+      "_vendor-icons-wSZDd18a.js"
     ],
     "dynamicImports": [
-      "resources/js/pages/DashboardPage.jsx",
+      "_DashboardPage-D-WLCU4V.js",
       "resources/js/pages/ErrorPage.jsx",
       "resources/js/pages/HomePage.jsx",
       "resources/js/pages/RegisterPage.jsx",
       "resources/js/pages/ResetPasswordPage.jsx"
+    ]
+  },
+  "resources/js/features/workspace/modules/SimpleMasterView.jsx": {
+    "file": "assets/SimpleMasterView-2OmkBRGc.js",
+    "name": "SimpleMasterView",
+    "src": "resources/js/features/workspace/modules/SimpleMasterView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_useFormValuesSync-D1YQAz22.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "resources/js/app/App.jsx",
+      "_crudFeedback-D-q2b9LK.js",
+      "_formValidation-DLjb9c5R.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_TextInput-AjrJaOGl.js",
+      "_TextareaField-43ePRPxw.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/accounts/AccountsView.jsx": {
+    "file": "assets/AccountsView-CRZ5aEiI.js",
+    "name": "AccountsView",
+    "src": "resources/js/features/workspace/modules/accounts/AccountsView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useWorkspaceResource-S2ovEEIm.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_useWorkspaceFormDraftState-DeOO2WL3.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_formValidation-DLjb9c5R.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TextInput-AjrJaOGl.js",
+      "_BackendLookupField-BM65XDyO.js",
+      "resources/js/app/App.jsx",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TextareaField-43ePRPxw.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_BankLedgerTable-C3wrBdc9.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_Pagination-DDtayp5N.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_bankAdapters-RrN0JiWt.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/activity-log/ActivityLogView.jsx": {
+    "file": "assets/ActivityLogView-BB5vscnO.js",
+    "name": "ActivityLogView",
+    "src": "resources/js/features/workspace/modules/activity-log/ActivityLogView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_Pagination-DDtayp5N.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_TableToolbar-BABjNkGR.js",
+      "resources/js/app/App.jsx",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_TextInput-AjrJaOGl.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/bank-inquiry/BankInquiryView.jsx": {
+    "file": "assets/BankInquiryView-Cc62S7lU.js",
+    "name": "BankInquiryView",
+    "src": "resources/js/features/workspace/modules/bank-inquiry/BankInquiryView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_bankAdapters-RrN0JiWt.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_BankLedgerTable-C3wrBdc9.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_Pagination-DDtayp5N.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_smartlinkStore-DzYgLSpP.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_SelectField-CLrrRK6z.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_itemCategoryShared-CyKZnwpF.js"
+    ],
+    "assets": [
+      "assets/rekonsiliasi_starter_state-RPFKvlKu.webp",
+      "assets/rekonsiliasi_empty_state-BEHg0R9F.png"
     ]
   },
   "resources/js/features/workspace/modules/bank-inquiry/assets/rekonsiliasi_empty_state.png": {
@@ -93,75 +849,1181 @@
     "file": "assets/rekonsiliasi_starter_state-RPFKvlKu.webp",
     "src": "resources/js/features/workspace/modules/bank-inquiry/assets/rekonsiliasi_starter_state.webp"
   },
-  "resources/js/pages/DashboardPage.jsx": {
-    "file": "assets/DashboardPage-B5VTUJ01.js",
-    "name": "DashboardPage",
-    "src": "resources/js/pages/DashboardPage.jsx",
+  "resources/js/features/workspace/modules/bank-transfer/BankTransferView.jsx": {
+    "file": "assets/BankTransferView-Dm4Pxh7K.js",
+    "name": "BankTransferView",
+    "src": "resources/js/features/workspace/modules/bank-transfer/BankTransferView.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_GlobalBackgroundArt-BT7RhLvi.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_TextInput-AjrJaOGl.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
       "resources/js/app/App.jsx",
-      "_vendor-icons-BRYlXfYj.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_TextareaField-43ePRPxw.js",
+      "_TransactionDualTotalCard-Ye_8uMsS.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_formValidation-DLjb9c5R.js",
+      "_documentNumberUtils-PhrmBwuM.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_Pagination-DDtayp5N.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/business-partner/BusinessPartnerView.jsx": {
+    "file": "assets/BusinessPartnerView-CV7l3I5J.js",
+    "name": "BusinessPartnerView",
+    "src": "resources/js/features/workspace/modules/business-partner/BusinessPartnerView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "resources/js/app/App.jsx",
+      "_DashboardPage-D-WLCU4V.js",
+      "_Pagination-DDtayp5N.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
+      "_TableListView-BLl2osn6.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_TextareaField-43ePRPxw.js",
+      "_AddressStack-DxbRFS2L.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_formValidation-DLjb9c5R.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_RadioField-Bpp4uUOA.js",
+      "_BackendLookupField-BM65XDyO.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_bankAdapters-RrN0JiWt.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_useBackendResource-BJdUdbuR.js",
+      "_salesAdapters-uDNFzNmF.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_useWorkspaceResource-S2ovEEIm.js",
+      "_vendor-icons-wSZDd18a.js",
       "_vendor-charts-D5ETVXE2.js",
       "_vendor-export-excel-DR-znTQw.js",
-      "_vendor-export-pdf-BMPVRhhE.js"
-    ],
-    "assets": [
-      "assets/rekonsiliasi_starter_state-RPFKvlKu.webp",
-      "assets/rekonsiliasi_empty_state-BEHg0R9F.png"
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/cash-payment/CashPaymentView.jsx": {
+    "file": "assets/CashPaymentView-DAeRTj6W.js",
+    "name": "CashPaymentView",
+    "src": "resources/js/features/workspace/modules/cash-payment/CashPaymentView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useWorkspaceResource-S2ovEEIm.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx",
+      "_CheckboxField-j5qE0fk-.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_SelectField-CLrrRK6z.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_TransactionTotalCard-D0Xwvt3Z.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_TransactionAccountLineItemsSection-KcDqQCmj.js",
+      "_formValidation-DLjb9c5R.js",
+      "_documentNumberUtils-PhrmBwuM.js",
+      "_useFormLineItems-CvjPNh4z.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_Pagination-DDtayp5N.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_TextareaField-43ePRPxw.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/cash-receipt/CashReceiptView.jsx": {
+    "file": "assets/CashReceiptView-D8zxT57d.js",
+    "name": "CashReceiptView",
+    "src": "resources/js/features/workspace/modules/cash-receipt/CashReceiptView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useWorkspaceResource-S2ovEEIm.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_useFormLineItems-CvjPNh4z.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_documentNumberUtils-PhrmBwuM.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_TransactionTotalCard-D0Xwvt3Z.js",
+      "_SelectField-CLrrRK6z.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_TransactionAccountLineItemsSection-KcDqQCmj.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_Pagination-DDtayp5N.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_TextareaField-43ePRPxw.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_formValidation-DLjb9c5R.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/employee/EmployeeView.jsx": {
+    "file": "assets/EmployeeView-294L1c0K.js",
+    "name": "EmployeeView",
+    "src": "resources/js/features/workspace/modules/employee/EmployeeView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_useFormValuesSync-D1YQAz22.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "resources/js/app/App.jsx",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
+      "_TextareaField-43ePRPxw.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_AddressStack-DxbRFS2L.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_SelectField-CLrrRK6z.js",
+      "_formValidation-DLjb9c5R.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/expense-entry/ExpenseEntryView.jsx": {
+    "file": "assets/ExpenseEntryView-SHism-ii.js",
+    "name": "ExpenseEntryView",
+    "src": "resources/js/features/workspace/modules/expense-entry/ExpenseEntryView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "resources/js/app/App.jsx",
+      "_TextInput-AjrJaOGl.js",
+      "_TextareaField-43ePRPxw.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TransactionTotalCard-D0Xwvt3Z.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_SelectField-CLrrRK6z.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_TransactionAccountLineItemsSection-KcDqQCmj.js",
+      "_formValidation-DLjb9c5R.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_Pagination-DDtayp5N.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/general-journal/GeneralJournalView.jsx": {
+    "file": "assets/GeneralJournalView-BgXtINz3.js",
+    "name": "GeneralJournalView",
+    "src": "resources/js/features/workspace/modules/general-journal/GeneralJournalView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "resources/js/app/App.jsx",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
+      "_TransactionDualTotalCard-Ye_8uMsS.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_TextareaField-43ePRPxw.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_documentNumberUtils-PhrmBwuM.js",
+      "_formValidation-DLjb9c5R.js",
+      "_Pagination-DDtayp5N.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/group-access/GroupAccessView.jsx": {
+    "file": "assets/GroupAccessView-Bfd-fHeh.js",
+    "name": "GroupAccessView",
+    "src": "resources/js/features/workspace/modules/group-access/GroupAccessView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useWorkspaceResource-S2ovEEIm.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_TextInput-AjrJaOGl.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_BackendLookupField-BM65XDyO.js",
+      "_RadioField-Bpp4uUOA.js",
+      "_SelectField-CLrrRK6z.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentView.jsx": {
+    "file": "assets/InventoryAdjustmentView-iOU2cukM.js",
+    "name": "InventoryAdjustmentView",
+    "src": "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_TextInput-AjrJaOGl.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_TableListView-BLl2osn6.js",
+      "resources/js/app/App.jsx",
+      "_DocumentModalLayout-CSl-nDAp.js",
+      "_RadioField-Bpp4uUOA.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_BackendLookupField-BM65XDyO.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_TextareaField-43ePRPxw.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_TransactionTotalCard-D0Xwvt3Z.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_formValidation-DLjb9c5R.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_promptLookupSelection-Cu_Ouv4e.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/inventory-inquiry/InventoryInquiryView.jsx": {
+    "file": "assets/InventoryInquiryView-BLPshkcr.js",
+    "name": "InventoryInquiryView",
+    "src": "resources/js/features/workspace/modules/inventory-inquiry/InventoryInquiryView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_Pagination-DDtayp5N.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx",
+      "_Checkbox-BxYzWIFw.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_operationDocumentBackend-CdLThuT1.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_itemCategoryShared-CyKZnwpF.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/item-category/ItemCategoryView.jsx": {
+    "file": "assets/ItemCategoryView-BDPewIRU.js",
+    "name": "ItemCategoryView",
+    "src": "resources/js/features/workspace/modules/item-category/ItemCategoryView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_useWorkspaceFormDraftState-DeOO2WL3.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "resources/js/app/App.jsx",
+      "_CheckboxField-j5qE0fk-.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_TextInput-AjrJaOGl.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/items-services/ItemsServicesView.jsx": {
+    "file": "assets/ItemsServicesView-WOdVMPol.js",
+    "name": "ItemsServicesView",
+    "src": "resources/js/features/workspace/modules/items-services/ItemsServicesView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "resources/js/app/App.jsx",
+      "_TextInput-AjrJaOGl.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_BackendLookupField-BM65XDyO.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_Pagination-DDtayp5N.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_PreferencesAccountsView-ni1LsdMA.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_TextareaField-43ePRPxw.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_salesAdapters-uDNFzNmF.js",
+      "_useWorkspaceFormDraftState-DeOO2WL3.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_TableListView-BLl2osn6.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/journal-activity-log/JournalActivityLogView.jsx": {
+    "file": "assets/JournalActivityLogView-D3S5ItU8.js",
+    "name": "JournalActivityLogView",
+    "src": "resources/js/features/workspace/modules/journal-activity-log/JournalActivityLogView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_Pagination-DDtayp5N.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TableToolbar-BABjNkGR.js",
+      "resources/js/app/App.jsx",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_TextInput-AjrJaOGl.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/payroll-entry/PayrollEntryView.jsx": {
+    "file": "assets/PayrollEntryView-b8tO7LV3.js",
+    "name": "PayrollEntryView",
+    "src": "resources/js/features/workspace/modules/payroll-entry/PayrollEntryView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "resources/js/app/App.jsx",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TextInput-AjrJaOGl.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_TransactionDualTotalCard-Ye_8uMsS.js",
+      "_formValidation-DLjb9c5R.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_Pagination-DDtayp5N.js",
+      "_TextareaField-43ePRPxw.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/purchase-deposit/PurchaseDepositView.jsx": {
+    "file": "assets/PurchaseDepositView-BJKwE0Nl.js",
+    "name": "PurchaseDepositView",
+    "src": "resources/js/features/workspace/modules/purchase-deposit/PurchaseDepositView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_TextInput-AjrJaOGl.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_formValidation-DLjb9c5R.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_SelectField-CLrrRK6z.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TextareaField-43ePRPxw.js",
+      "_DepositWorkspacePrimitives-1aGQZ1-W.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_DocumentStamp-QCbdpXxN.js",
+      "_TransactionDualTotalCard-Ye_8uMsS.js",
+      "_promptLookupSelection-Cu_Ouv4e.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentView.jsx": {
+    "file": "assets/PurchasePaymentView-BvUW7uaK.js",
+    "name": "PurchasePaymentView",
+    "src": "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_DocumentModalLayout-CSl-nDAp.js",
+      "_TextInput-AjrJaOGl.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_DocumentModalFields-D6_tsH43.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_UnpaidDocumentsSelectionModal-CNVsKN3I.js",
+      "_TransactionDualTotalCard-Ye_8uMsS.js",
+      "_SelectField-CLrrRK6z.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_formValidation-DLjb9c5R.js",
+      "_documentNumberUtils-PhrmBwuM.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_Pagination-DDtayp5N.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_TextareaField-43ePRPxw.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/salary-allowance/SalaryAllowanceView.jsx": {
+    "file": "assets/SalaryAllowanceView-ChCp59jn.js",
+    "name": "SalaryAllowanceView",
+    "src": "resources/js/features/workspace/modules/salary-allowance/SalaryAllowanceView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useWorkspaceResource-S2ovEEIm.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TextInput-AjrJaOGl.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_formValidation-DLjb9c5R.js",
+      "resources/js/app/App.jsx",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/sales-deposit/SalesDepositView.jsx": {
+    "file": "assets/SalesDepositView-Ixu5Qpp3.js",
+    "name": "SalesDepositView",
+    "src": "resources/js/features/workspace/modules/sales-deposit/SalesDepositView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_TextInput-AjrJaOGl.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_formValidation-DLjb9c5R.js",
+      "_DepositWorkspacePrimitives-1aGQZ1-W.js",
+      "_TextareaField-43ePRPxw.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_DocumentStamp-QCbdpXxN.js",
+      "_TransactionDualTotalCard-Ye_8uMsS.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_promptLookupSelection-Cu_Ouv4e.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/sales-document/PurchaseInvoiceView.jsx": {
+    "file": "assets/PurchaseInvoiceView-Gggzc-h5.js",
+    "name": "PurchaseInvoiceView",
+    "src": "resources/js/features/workspace/modules/sales-document/PurchaseInvoiceView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_operationDocumentBackend-CdLThuT1.js",
+      "_SalesDocumentView-CPTKsxKd.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_TextInput-AjrJaOGl.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_DocumentModalLayout-CSl-nDAp.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_DocumentModalFields-D6_tsH43.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TextareaField-43ePRPxw.js",
+      "_formValidation-DLjb9c5R.js",
+      "_DocumentStamp-QCbdpXxN.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_TransactionTable-Ddj59ucs.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/sales-document/PurchaseReturnView.jsx": {
+    "file": "assets/PurchaseReturnView-p7UjZ-Jo.js",
+    "name": "PurchaseReturnView",
+    "src": "resources/js/features/workspace/modules/sales-document/PurchaseReturnView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_SalesDocumentView-CPTKsxKd.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_operationDocumentBackend-CdLThuT1.js",
+      "_TextInput-AjrJaOGl.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_DocumentModalLayout-CSl-nDAp.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_DocumentModalFields-D6_tsH43.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TextareaField-43ePRPxw.js",
+      "_formValidation-DLjb9c5R.js",
+      "_DocumentStamp-QCbdpXxN.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_TransactionTable-Ddj59ucs.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/sales-document/SalesInvoiceView.jsx": {
+    "file": "assets/SalesInvoiceView-BWxz8xYX.js",
+    "name": "SalesInvoiceView",
+    "src": "resources/js/features/workspace/modules/sales-document/SalesInvoiceView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_SalesDocumentView-CPTKsxKd.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_operationDocumentBackend-CdLThuT1.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "resources/js/app/App.jsx",
+      "_vendor-icons-wSZDd18a.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_TextInput-AjrJaOGl.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_DocumentModalLayout-CSl-nDAp.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_DocumentModalFields-D6_tsH43.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TextareaField-43ePRPxw.js",
+      "_formValidation-DLjb9c5R.js",
+      "_DocumentStamp-QCbdpXxN.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_vendor-charts-D5ETVXE2.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/sales-document/SalesReturnView.jsx": {
+    "file": "assets/SalesReturnView-D4xarvpe.js",
+    "name": "SalesReturnView",
+    "src": "resources/js/features/workspace/modules/sales-document/SalesReturnView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_SalesDocumentView-CPTKsxKd.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_operationDocumentBackend-CdLThuT1.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx",
+      "_vendor-icons-wSZDd18a.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_useTransactionForm-D6GzULuY.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_DocumentModalLayout-CSl-nDAp.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_DocumentModalFields-D6_tsH43.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_TextareaField-43ePRPxw.js",
+      "_formValidation-DLjb9c5R.js",
+      "_DocumentStamp-QCbdpXxN.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_vendor-charts-D5ETVXE2.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/sales-receipt/SalesReceiptView.jsx": {
+    "file": "assets/SalesReceiptView-DYYpUxq7.js",
+    "name": "SalesReceiptView",
+    "src": "resources/js/features/workspace/modules/sales-receipt/SalesReceiptView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_SelectField-CLrrRK6z.js",
+      "_TextInput-AjrJaOGl.js",
+      "_FormattedAmountInput-CGKfS8-h.js",
+      "_DocumentModalLayout-CSl-nDAp.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "resources/js/app/App.jsx",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_DocumentModalFields-D6_tsH43.js",
+      "_UnpaidDocumentsSelectionModal-CNVsKN3I.js",
+      "_Pagination-DDtayp5N.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_TransactionToolbar-Dn4EXae9.js",
+      "_TransactionDualTotalCard-Ye_8uMsS.js",
+      "_useTransactionDetailLoader-Ba07OMSw.js",
+      "_useFormDraftState-BwIze6Vs.js",
+      "_documentNumberUtils-PhrmBwuM.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_promptLookupSelection-Cu_Ouv4e.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_TransactionTable-Ddj59ucs.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_TextareaField-43ePRPxw.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_formValidation-DLjb9c5R.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/smartlink-ebanking/SmartlinkEbankingView.jsx": {
+    "file": "assets/SmartlinkEbankingView-C1c_3qOA.js",
+    "name": "SmartlinkEbankingView",
+    "src": "resources/js/features/workspace/modules/smartlink-ebanking/SmartlinkEbankingView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "resources/js/app/App.jsx",
+      "_TextInput-AjrJaOGl.js",
+      "_SelectField-CLrrRK6z.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_AccountLookupControls-Lx8lV4YQ.js",
+      "_smartlinkStore-DzYgLSpP.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_itemCategoryShared-CyKZnwpF.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/users-management/UsersManagementView.jsx": {
+    "file": "assets/UsersManagementView-uFwEuFsS.js",
+    "name": "UsersManagementView",
+    "src": "resources/js/features/workspace/modules/users-management/UsersManagementView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_useFormValuesSync-D1YQAz22.js",
+      "_RadioField-Bpp4uUOA.js",
+      "_TextInput-AjrJaOGl.js",
+      "resources/js/app/App.jsx",
+      "_crudFormActions-CkTcJ5EY.js",
+      "_useBackendResource-BJdUdbuR.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_formValidation-DLjb9c5R.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js"
+    ]
+  },
+  "resources/js/features/workspace/modules/warehouse/WarehouseView.jsx": {
+    "file": "assets/WarehouseView-HWgzL0vN.js",
+    "name": "WarehouseView",
+    "src": "resources/js/features/workspace/modules/warehouse/WarehouseView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_ModuleFormTemplate-p9viLcE0.js",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_crudFormActions-CkTcJ5EY.js",
+      "resources/js/app/App.jsx",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TransactionPrimitives-B6PvFjan.js",
+      "_vendor-export-pdf-BMPVRhhE.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_TextareaField-43ePRPxw.js",
+      "_TextInput-AjrJaOGl.js",
+      "_AddressStack-DxbRFS2L.js",
+      "_BackendLookupField-BM65XDyO.js",
+      "_ModuleTableTemplate-BNa39Sc3.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_vendor-charts-D5ETVXE2.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_Pagination-DDtayp5N.js",
+      "_vendor-export-excel-DR-znTQw.js",
+      "_TableToolbar-BABjNkGR.js",
+      "_RefreshButton-DgAkPWHI.js",
+      "_ToolbarExportSplitButton-C7OgYZLI.js",
+      "_SortableTableHeaderCell-Bq7jWmOC.js"
+    ]
+  },
+  "resources/js/features/workspace/preferences/PreferencesView.jsx": {
+    "file": "assets/PreferencesView-DoYiemKb.js",
+    "name": "PreferencesView",
+    "src": "resources/js/features/workspace/preferences/PreferencesView.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js",
+      "resources/js/app/App.jsx",
+      "_useBackendIndexResource-ByXgEMGC.js",
+      "_TextInput-AjrJaOGl.js",
+      "_CheckboxField-j5qE0fk-.js",
+      "_RadioField-Bpp4uUOA.js",
+      "_PreferencesAccountsView-ni1LsdMA.js",
+      "_SelectField-CLrrRK6z.js",
+      "_LookupPrimitives-D0AYv-oC.js",
+      "_DashboardPage-D-WLCU4V.js",
+      "_TextareaField-43ePRPxw.js",
+      "_TransactionDateInput-Bb1oGzaV.js",
+      "_AddressStack-DxbRFS2L.js",
+      "_useFormSaveShortcut-I7plsIdQ.js",
+      "_vendor-icons-wSZDd18a.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_Checkbox-BxYzWIFw.js",
+      "_PreferencesTabs-Czytng84.js",
+      "_BackendLookupField-BM65XDyO.js",
+      "_itemCategoryShared-CyKZnwpF.js",
+      "_crudFeedback-D-q2b9LK.js",
+      "_useAccountLookupController-BJZ8w5cA.js",
+      "_ReferenceLookupInput-CZmjxrqo.js",
+      "_vendor-charts-D5ETVXE2.js"
     ]
   },
   "resources/js/pages/ErrorPage.jsx": {
-    "file": "assets/ErrorPage-x7TtFGen.js",
+    "file": "assets/ErrorPage-Dq-uS7F0.js",
     "name": "ErrorPage",
     "src": "resources/js/pages/ErrorPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
       "resources/js/app/App.jsx",
-      "_vendor-icons-BRYlXfYj.js"
+      "_vendor-icons-wSZDd18a.js"
     ]
   },
   "resources/js/pages/HomePage.jsx": {
-    "file": "assets/HomePage-BBXiSUDY.js",
+    "file": "assets/HomePage-DvR5R57m.js",
     "name": "HomePage",
     "src": "resources/js/pages/HomePage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_AuthLayout-BqT_N2Cs.js",
+      "_AuthLayout-DjWWg9MS.js",
       "resources/js/app/App.jsx",
-      "_Notice-DraZxvYI.js",
-      "_GlobalBackgroundArt-BT7RhLvi.js",
-      "_vendor-icons-BRYlXfYj.js"
+      "_Notice-tPTUNyrb.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
+      "_vendor-icons-wSZDd18a.js"
     ]
   },
   "resources/js/pages/RegisterPage.jsx": {
-    "file": "assets/RegisterPage-CccnfOm0.js",
+    "file": "assets/RegisterPage-DSk4q96e.js",
     "name": "RegisterPage",
     "src": "resources/js/pages/RegisterPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_AuthLayout-BqT_N2Cs.js",
+      "_AuthLayout-DjWWg9MS.js",
       "resources/js/app/App.jsx",
-      "_GlobalBackgroundArt-BT7RhLvi.js",
-      "_vendor-icons-BRYlXfYj.js"
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
+      "_vendor-icons-wSZDd18a.js"
     ]
   },
   "resources/js/pages/ResetPasswordPage.jsx": {
-    "file": "assets/ResetPasswordPage-DmBFCg7H.js",
+    "file": "assets/ResetPasswordPage-iTx09nXy.js",
     "name": "ResetPasswordPage",
     "src": "resources/js/pages/ResetPasswordPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_AuthLayout-BqT_N2Cs.js",
+      "_AuthLayout-DjWWg9MS.js",
       "resources/js/app/App.jsx",
-      "_Notice-DraZxvYI.js",
-      "_GlobalBackgroundArt-BT7RhLvi.js",
-      "_vendor-icons-BRYlXfYj.js"
+      "_Notice-tPTUNyrb.js",
+      "_GlobalBackgroundArt-gBBjz8CD.js",
+      "_TextInput-AjrJaOGl.js",
+      "_vendor-icons-wSZDd18a.js"
     ]
   }
 }

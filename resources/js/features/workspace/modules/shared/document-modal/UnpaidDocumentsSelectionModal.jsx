@@ -223,6 +223,7 @@ export default function UnpaidDocumentsSelectionModal({
                 <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
                     <div className="flex-1 min-w-[170px]">
                         <TextInput
+                            autoFocus
                             value={keyword}
                             onChange={(e) => setKeyword(e.target.value)}
                             placeholder="No Faktur / No Form"

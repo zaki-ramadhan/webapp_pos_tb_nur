@@ -1,84 +1,98 @@
 <?php
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+namespace Tests\Feature\Security;
 
-test('authenticated user can load all cash and bank pages via dashboard', function () {
-    $user = testAdmin();
-    $pages = [
-        'smartlink-bank',
-        'bank-statement',
-        'bank-reconciliation',
-        'bank-history',
-        'bank-transfer',
-        'cash-payment',
-        'cash-receipt',
-    ];
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
-    foreach ($pages as $pageId) {
-        $response = $this->actingAs($user)->get("/dashboard/{$pageId}");
-        $response->assertOk();
-        $response->assertInertia(fn ($page) => $page->component('DashboardPage'));
+class CashAndBankSecurityTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_authenticated_user_can_load_all_cash_and_bank_pages_via_dashboard(): void
+    {
+        $user = $this->createAuthorizedUser();
+        $pages = [
+            'smartlink-bank',
+            'bank-statement',
+            'bank-reconciliation',
+            'bank-history',
+            'bank-transfer',
+            'cash-payment',
+            'cash-receipt',
+        ];
+
+        foreach ($pages as $pageId) {
+            $response = $this->actingAs($user)->get("/dashboard/{$pageId}");
+            $response->assertOk();
+            $response->assertInertia(fn (Assert $page) => $page->component('DashboardPage'));
+        }
     }
-});
 
-test('bank transfer rejects zero, negative amounts, and same-account transfer', function () {
-    $user = testAdmin();
+    public function test_bank_transfer_rejects_zero_negative_amounts_and_same_account_transfer(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    // 1. Negative amount
-    $response = $this->actingAs($user)->postJson('/api/backend/bank-transfers', [
-        'from_account_id' => 1,
-        'to_account_id' => 2,
-        'amount' => -50000,
-        'transaction_date' => now()->toDateString(),
-    ]);
-    expect($response->status())->toBeIn([422, 400]);
+        // 1. Negative amount
+        $response = $this->actingAs($user)->postJson('/api/backend/bank-transfers', [
+            'from_account_id' => 1,
+            'to_account_id' => 2,
+            'amount' => -50000,
+            'transaction_date' => now()->toDateString(),
+        ]);
+        $this->assertContains($response->status(), [422, 400]);
 
-    // 2. Same account transfer
-    $sameAccountResponse = $this->actingAs($user)->postJson('/api/backend/bank-transfers', [
-        'from_account_id' => 1,
-        'to_account_id' => 1,
-        'amount' => 50000,
-        'transaction_date' => now()->toDateString(),
-    ]);
-    expect($sameAccountResponse->status())->toBeIn([422, 400]);
-});
-
-test('cash payment and receipt reject empty payload', function () {
-    $user = testAdmin();
-
-    $paymentResponse = $this->actingAs($user)->postJson('/api/backend/cash-payments', []);
-    expect($paymentResponse->status())->toBeIn([422, 400]);
-
-    $receiptResponse = $this->actingAs($user)->postJson('/api/backend/cash-receipts', []);
-    expect($receiptResponse->status())->toBeIn([422, 400]);
-});
-
-test('cash transaction payload with xss is sanitized upon saving', function () {
-    $user = testAdmin();
-    $xssNote = '<script>alert("hack")</script>Pembayaran Material';
-
-    $response = $this->actingAs($user)->postJson('/api/backend/cash-payments', [
-        'account_id' => 1,
-        'amount' => 100000,
-        'transaction_date' => now()->toDateString(),
-        'notes' => $xssNote,
-        'recipient' => 'Toko Sebelah <img src=x onerror=alert(1)>',
-    ]);
-
-    if ($response->isSuccessful()) {
-        $data = $response->json('data') ?? $response->json();
-        $notes = $data['notes'] ?? '';
-        expect($notes)->not->toContain('<script>');
-    } else {
-        expect($response->status())->toBeIn([422, 400]);
+        // 2. Same account transfer
+        $sameAccountResponse = $this->actingAs($user)->postJson('/api/backend/bank-transfers', [
+            'from_account_id' => 1,
+            'to_account_id' => 1,
+            'amount' => 50000,
+            'transaction_date' => now()->toDateString(),
+        ]);
+        $this->assertContains($sameAccountResponse->status(), [422, 400]);
     }
-});
 
-test('bank statements endpoint requires valid date filter bounds', function () {
-    $user = testAdmin();
+    public function test_cash_payment_and_receipt_reject_empty_payload(): void
+    {
+        $user = $this->createAuthorizedUser();
 
-    $response = $this->actingAs($user)->getJson('/api/backend/bank-statements?start_date=2026-12-31&end_date=2026-01-01');
-    // Start date after end date should either be rejected or return empty list safely without 500 crash
-    expect($response->status())->toBeIn([200, 422]);
-});
+        $paymentResponse = $this->actingAs($user)->postJson('/api/backend/cash-payments', []);
+        $this->assertContains($paymentResponse->status(), [422, 400]);
+
+        $receiptResponse = $this->actingAs($user)->postJson('/api/backend/cash-receipts', []);
+        $this->assertContains($receiptResponse->status(), [422, 400]);
+    }
+
+    public function test_cash_transaction_payload_with_xss_is_sanitized_upon_saving(): void
+    {
+        $user = $this->createAuthorizedUser();
+        $xssNote = '<script>alert("hack")</script>Pembayaran Material';
+
+        $response = $this->actingAs($user)->postJson('/api/backend/cash-payments', [
+            'account_id' => 1,
+            'amount' => 100000,
+            'transaction_date' => now()->toDateString(),
+            'notes' => $xssNote,
+            'recipient' => 'Toko Sebelah <img src=x onerror=alert(1)>',
+        ]);
+
+        if ($response->isSuccessful()) {
+            $data = $response->json('data') ?? $response->json();
+            $notes = $data['notes'] ?? '';
+            $this->assertStringNotContainsString('<script>', $notes);
+        } else {
+            $this->assertContains($response->status(), [422, 400]);
+        }
+    }
+
+    public function test_bank_statements_endpoint_requires_valid_date_filter_bounds(): void
+    {
+        $user = $this->createAuthorizedUser();
+
+        $response = $this->actingAs($user)->getJson('/api/backend/bank-statements?start_date=2026-12-31&end_date=2026-01-01');
+        $this->assertContains($response->status(), [200, 422]);
+    }
+}
+
 
