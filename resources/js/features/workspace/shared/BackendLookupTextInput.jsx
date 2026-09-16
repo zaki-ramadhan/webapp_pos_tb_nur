@@ -30,14 +30,16 @@ function useBackendLookupController({ value = '', disabled = false, resource, qu
 
         const fetchKey = query.trim();
         const fetchParamsKey = `${fetchKey}_${queryParamsStr}`;
-        if (lastFetchKeyRef.current === fetchParamsKey && rows.length > 0) return;
+        if (lastFetchKeyRef.current === fetchParamsKey && rows.length > 0) {
+            setLoading(false);
+            return;
+        }
+
+        setLoading(true);
 
         let ignore = false;
         const delay = fetchKey ? 250 : 50;
         const timeoutId = window.setTimeout(async () => {
-            if (!ignore) {
-                setLoading(true);
-            }
             try {
                 const payload = await listBackendResource(resource, {
                     search: fetchKey,
@@ -75,6 +77,7 @@ function useBackendLookupController({ value = '', disabled = false, resource, qu
             setOpen(false);
             setQuery('');
             setDraftValue('');
+            setLoading(false);
         }
 
         function handleKeyDown(event) {
@@ -82,6 +85,7 @@ function useBackendLookupController({ value = '', disabled = false, resource, qu
                 setOpen(false);
                 setQuery('');
                 setDraftValue('');
+                setLoading(false);
             }
         }
 
@@ -95,6 +99,12 @@ function useBackendLookupController({ value = '', disabled = false, resource, qu
 
     function handleInputFocus() {
         if (!disabled) {
+            const fetchKey = draftValue.trim();
+            const fetchParamsKey = `${fetchKey}_${queryParamsStr}`;
+            const hasCachedRows = lastFetchKeyRef.current === fetchParamsKey && rows.length > 0;
+            if (!hasCachedRows) {
+                setLoading(true);
+            }
             setQuery(draftValue);
             setOpen(true);
         }
@@ -103,11 +113,18 @@ function useBackendLookupController({ value = '', disabled = false, resource, qu
     function handleInputChange(nextValue) {
         setDraftValue(nextValue);
         if (typeof nextValue === 'string' ? nextValue.length > 0 : Boolean(nextValue)) {
+            const fetchKey = String(nextValue).trim();
+            const fetchParamsKey = `${fetchKey}_${queryParamsStr}`;
+            const hasCachedRows = lastFetchKeyRef.current === fetchParamsKey && rows.length > 0;
+            if (!hasCachedRows) {
+                setLoading(true);
+            }
             setQuery(nextValue);
             setOpen(true);
         } else {
             setOpen(false);
             setQuery('');
+            setLoading(false);
             setRows([]);
         }
     }
