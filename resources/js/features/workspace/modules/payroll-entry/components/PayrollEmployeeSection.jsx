@@ -30,10 +30,10 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake, hand
                             }
                             renderOption={(record) => (
                                 <div className="min-w-0 flex-1">
-                                    <span className="block line-clamp-2 break-words text-sm font-normal text-brand-dark leading-snug">
+                                    <span className="block line-clamp-2 break-words text-xs sm:text-sm font-normal text-brand-dark leading-snug">
                                         {record?.full_name ?? record?.name ?? ''}
                                     </span>
-                                    <span className="mt-1 block w-full text-xs sm:text-[13px]">
+                                    <span className="mt-1 block w-full text-xs sm:text-[13px] leading-snug">
                                         <span className="break-words whitespace-normal text-brand-dark font-normal">
                                             {record?.employee_code ?? record?.code ?? String(record?.id ?? '')}
                                         </span>

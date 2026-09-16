@@ -164,7 +164,7 @@ export function InquiryControl({
                     <div className="line-clamp-2 break-words text-xs sm:text-sm font-normal leading-snug">
                         <HighlightText text={name} search={query} />
                     </div>
-                    <div className="flex items-center justify-between gap-4 w-full text-xs sm:text-[13px]">
+                    <div className="flex items-start justify-between gap-4 w-full text-xs sm:text-[13px] leading-snug">
                         <span className="truncate min-w-0 font-normal not-italic">
                             {code ? <HighlightText text={code} search={query} /> : '-'}
                         </span>

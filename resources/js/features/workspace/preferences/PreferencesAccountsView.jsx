@@ -112,12 +112,12 @@ function AccountFieldRow({
                                 <div className="line-clamp-2 break-words text-xs sm:text-sm font-normal text-text-workspace-dark leading-snug">
                                     <HighlightText text={`${prefix}${name}`} search={query} />
                                 </div>
-                                <div className={`w-full text-xs sm:text-[13px] text-text-workspace-dark ${typeLabel ? 'flex items-center justify-between gap-4' : 'block'}`}>
-                                    <span className={`${typeLabel ? 'truncate min-w-0' : 'break-words whitespace-normal'} font-normal not-italic`}>
+                                <div className={`w-full text-xs sm:text-[13px] text-text-workspace-dark ${typeLabel ? 'flex items-start justify-between gap-4' : 'block'}`}>
+                                    <span className={`${typeLabel ? 'truncate min-w-0' : 'break-words whitespace-normal'} font-normal not-italic leading-snug`}>
                                         <HighlightText text={code} search={query} />
                                     </span>
                                     {typeLabel ? (
-                                        <span className="shrink-0 italic font-normal">
+                                        <span className="shrink-0 italic font-normal leading-snug">
                                             {typeLabel}
                                         </span>
                                     ) : null}

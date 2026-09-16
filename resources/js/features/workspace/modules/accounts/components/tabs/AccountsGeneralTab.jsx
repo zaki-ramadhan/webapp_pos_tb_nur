@@ -109,7 +109,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                                         <span className="line-clamp-2 break-words text-xs sm:text-sm font-normal text-brand-dark leading-snug">
                                              {prefix}{option.name}
                                         </span>
-                                        <div className="flex justify-end text-[11px] sm:text-xs font-normal text-brand-dark">
+                                        <div className="flex justify-end text-xs sm:text-[13px] font-normal text-brand-dark leading-snug">
                                             <span>{option.code || option.id}</span>
                                         </div>
                                     </div>
