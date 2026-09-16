@@ -481,14 +481,14 @@ export default function SalesDocumentCopyModal({
                                                 onClick={() => handleSelectDoc(doc)}
                                                 className="flex w-full flex-col gap-2 px-4 py-3 text-left transition hover:bg-slate-50 border-t border-slate-100 first:border-t-0"
                                             >
-                                                <span className="flex w-full items-center justify-between gap-4">
-                                                    <span className="truncate text-xs sm:text-sm font-normal text-brand-dark">
+                                                <span className="flex w-full items-start justify-between gap-4">
+                                                    <span className="truncate text-xs sm:text-sm font-normal text-brand-dark leading-snug">
                                                         <HighlightText text={doc.document_number} search={query} />
                                                     </span>
                                                 </span>
-                                                <span className="flex w-full items-center justify-between gap-4 text-xs sm:text-[13px] text-black">
-                                                    <span className="truncate">{formatIsoDate(doc.entry_date ?? doc.document_date ?? doc.created_at)}</span>
-                                                    <span className="shrink-0 italic capitalize">{branchName}</span>
+                                                <span className="flex w-full items-start justify-between gap-4 text-xs sm:text-[13px] text-black leading-snug">
+                                                    <span className="truncate min-w-0 font-normal leading-snug">{formatIsoDate(doc.entry_date ?? doc.document_date ?? doc.created_at)}</span>
+                                                    <span className="shrink-0 italic capitalize font-normal leading-snug">{branchName}</span>
                                                 </span>
                                             </button>
                                         );

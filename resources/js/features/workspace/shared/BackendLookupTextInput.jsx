@@ -204,7 +204,7 @@ export default function BackendLookupTextInput({
                                         renderOption(item)
                                     ) : (
                                         <div className="min-w-0 flex-1">
-                                            <span className="block line-clamp-2 break-words text-sm font-normal text-brand-dark leading-snug">
+                                            <span className="block line-clamp-2 break-words text-xs sm:text-sm font-normal text-text-workspace-dark leading-snug">
                                                 <HighlightText text={getOptionLabel(item)} search={ctrl.query} />
                                             </span>
                                         </div>

@@ -33,7 +33,7 @@ export default function EmployeeBankTab({ form, values, onChange }) {
                     renderOption={(option) => (
                         <div className="min-w-0 flex-1">
                             <div className="line-clamp-2 break-words text-xs sm:text-sm font-normal uppercase text-text-workspace-dark leading-snug">{option.name}</div>
-                            <div className="mt-0.5 break-words whitespace-normal text-[13px] font-normal text-black">{option.code}</div>
+                            <div className="mt-0.5 break-words whitespace-normal text-xs sm:text-[13px] font-normal text-black leading-snug">{option.code}</div>
                         </div>
                     )}
                 />

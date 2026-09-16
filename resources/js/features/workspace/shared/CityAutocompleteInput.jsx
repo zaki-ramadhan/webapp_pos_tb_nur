@@ -197,10 +197,10 @@ export default function CityAutocompleteInput({
                                     onClick={() => handleSelect(item)}
                                     className="flex w-full flex-col px-4 py-2 text-left hover:bg-info-bg border-b border-border-row-subtle last:border-b-0"
                                 >
-                                    <span className="text-xs sm:text-sm font-normal text-text-workspace-dark">
+                                    <span className="text-xs sm:text-sm font-normal text-text-workspace-dark leading-snug">
                                         <HighlightText text={item.city} search={searchVal} />
                                     </span>
-                                    <span className="text-[10px] sm:text-xs font-normal text-text-workspace-dark">
+                                    <span className="text-xs sm:text-[13px] font-normal text-text-workspace-dark leading-snug">
                                         <HighlightText text={item.province} search={searchVal} />
                                     </span>
                                 </button>
