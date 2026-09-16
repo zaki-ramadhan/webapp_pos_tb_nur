@@ -42,7 +42,7 @@ export function ClearableTextInput({ id, name, value, onChange, placeholder = ''
 
 export function PrefixedTextArea({ prefix, value, onChange }) {
     return (
-        <div className="flex overflow-hidden rounded-[4px] border border-slate-400 bg-white">
+        <div className="flex overflow-hidden rounded-[4px] border border-[#BBBBBB] bg-white">
             <div className="flex min-w-[92px] items-start justify-start bg-input-prefix-bg px-3 py-3 text-xs sm:text-sm text-table-row-text">
                 {prefix}
             </div>
@@ -63,7 +63,7 @@ export function PrefixedInput({ prefix, value, onChange, className = '', prefixC
             value={value}
             onChange={onChange}
             prefix={prefix}
-            className={`h-[40px] rounded-[4px] border-slate-400 ${className}`.trim()}
+            className={`h-[40px] rounded-[4px] border-[#BBBBBB] ${className}`.trim()}
             prefixClassName={prefixClassName || "min-w-[92px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text"}
             inputClassName="text-xs sm:text-sm text-brand-dark"
             {...props}

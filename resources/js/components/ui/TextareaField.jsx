@@ -85,16 +85,19 @@ export default function TextareaField({
             ? 'border-red-500'
             : 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
         : isNonInteractive
-            ? 'border-slate-400'
-            : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+            ? 'border-[#BBBBBB]'
+            : 'border-[#BBBBBB] focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     const cleanPrefixClassName = prefixClassName.replace(/(?:^|\s)(?:[^\s]*:)?border\S*/g, ' ').trim();
+    const cleanedClassName = resolvedError
+        ? className.replace(/\bborder-[^\s]+\b/g, '')
+        : className.replace(/\bborder-slate-400\b/g, 'border-[#BBBBBB]').replace(/\bborder-ui-border\b/g, 'border-[#BBBBBB]');
 
     return (
         <div className={`w-full ${containerClassName}`.trim()}>
             <span
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex w-full items-stretch overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : resolvedError ? 'bg-red-500/5' : 'bg-white'} ${isNonInteractive ? 'cursor-default' : 'cursor-text'} ${className}`.trim()}
+                className={`group flex w-full items-stretch overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : resolvedError ? 'bg-red-500/5' : 'bg-white'} ${isNonInteractive ? 'cursor-default' : 'cursor-text'} ${cleanedClassName}`.trim()}
             >
                 {prefix ? (
                     <span

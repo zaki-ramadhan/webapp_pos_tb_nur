@@ -34,11 +34,11 @@ export default function SelectField({
     
     const toneClassName = resolvedError
         ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
-        : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+        : 'border-[#BBBBBB] focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     const cleanedClassName = resolvedError
         ? className.replace(/\bborder-[^\s]+\b/g, '')
-        : className;
+        : className.replace(/\bborder-slate-400\b/g, 'border-[#BBBBBB]').replace(/\bborder-ui-border\b/g, 'border-[#BBBBBB]');
 
     const triggerRef = useRef(null);
     const listRef = useRef(null);

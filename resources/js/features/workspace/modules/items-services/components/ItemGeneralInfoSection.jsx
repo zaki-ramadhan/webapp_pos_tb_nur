@@ -222,7 +222,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                                     maxLength={10}
                                     value={conv.quantity ?? ''}
                                     onChange={(e) => handleConversionChange(index, 'quantity', formatQuantityInput(e.target.value))}
-                                    className="min-w-[76px] w-20 sm:w-24 h-[38px] text-right px-2.5 text-xs sm:text-sm border border-slate-400 rounded-md bg-white text-brand-dark transition-[border-color,box-shadow] duration-150 outline-none focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] shrink-0"
+                                    className="min-w-[76px] w-20 sm:w-24 h-[38px] text-right px-2.5 text-xs sm:text-sm border border-[#BBBBBB] rounded-md bg-white text-brand-dark transition-[border-color,box-shadow] duration-150 outline-none focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] shrink-0"
                                     aria-label={`Rasio satuan ${currentUnitName || index + 2} terhadap ${baseUnitName}`}
                                 />
                                 <span className="text-xs sm:text-sm font-normal text-brand-dark select-none shrink-0 max-w-[120px] truncate">
@@ -253,7 +253,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isL
                                 maxLength={10}
                                 value={trailingQty}
                                 onChange={(e) => setTrailingQty(formatQuantityInput(e.target.value))}
-                                className="min-w-[76px] w-20 sm:w-24 h-[38px] text-right px-2.5 text-xs sm:text-sm border border-slate-400 rounded-md bg-white text-brand-dark transition-[border-color,box-shadow] duration-150 outline-none focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] shrink-0"
+                                className="min-w-[76px] w-20 sm:w-24 h-[38px] text-right px-2.5 text-xs sm:text-sm border border-[#BBBBBB] rounded-md bg-white text-brand-dark transition-[border-color,box-shadow] duration-150 outline-none focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] shrink-0"
                                 aria-label={`Rasio satuan baru terhadap ${baseUnitName}`}
                             />
                             <span className="text-xs sm:text-sm font-normal text-brand-dark select-none shrink-0 max-w-[120px] truncate">

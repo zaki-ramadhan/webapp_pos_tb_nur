@@ -58,8 +58,8 @@ export default function TextInput({
             ? 'border-red-500'
             : 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
         : state.isNonInteractive
-            ? 'border-slate-400'
-            : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+            ? 'border-[#BBBBBB]'
+            : 'border-[#BBBBBB] focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
             
     const disabledClassName = state.isNonInteractive
         ? 'bg-ui-bg-panel text-table-row-text'
@@ -69,7 +69,7 @@ export default function TextInput({
 
     const cleanedClassName = state.resolvedError
         ? className.replace(/\bborder-[^\s]+\b/g, '')
-        : className;
+        : className.replace(/\bborder-slate-400\b/g, 'border-[#BBBBBB]').replace(/\bborder-ui-border\b/g, 'border-[#BBBBBB]');
 
     const resolvedType = type === 'number' ? 'text' : type;
     const resolvedInputMode = props.inputMode ?? ((type === 'number' || state.isCurrency) ? 'decimal' : undefined);

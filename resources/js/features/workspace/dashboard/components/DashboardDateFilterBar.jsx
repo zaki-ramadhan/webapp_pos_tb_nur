@@ -89,7 +89,7 @@ export default function DashboardDateFilterBar({ currentAsOfDate }) {
                         value={selectedDate}
                         onChange={(e) => handleApplyDate(e.target.value)}
                         disabled={isPending}
-                        className="rounded-md border border-slate-300 bg-white px-2 py-0.5 text-xs text-slate-700 font-medium focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue disabled:opacity-50 cursor-pointer"
+                        className="rounded-md border border-[#BBBBBB] bg-white px-2 py-0.5 text-xs text-slate-700 font-medium focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue disabled:opacity-50 cursor-pointer"
                     />
                 </div>
 

@@ -279,7 +279,7 @@ export default function PortalDropdown({
     }
 
     const hasBorder = className.split(' ').some((c) => c.startsWith('border-') || c === 'border' || c === '!border-none');
-    const borderClass = hasBorder ? '' : 'border border-slate-400';
+    const borderClass = hasBorder ? '' : 'border border-[#BBBBBB]';
     const hasShadow = className.split(' ').some((c) => c.startsWith('shadow-') || c === 'shadow' || c === '!shadow-none');
     const shadowClass = hasShadow ? '' : 'shadow-[0_4px_12px_rgba(15,23,42,0.15),0_1px_3px_rgba(15,23,42,0.08)]';
     const hasRounded = className.split(' ').some((c) => c.startsWith('rounded-'));

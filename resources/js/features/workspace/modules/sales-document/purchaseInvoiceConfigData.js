@@ -229,7 +229,7 @@ export const defaultPurchaseInvoiceConfig = {
             type: 'lookup',
             label: 'Rekening Bank',
             valueKey: 'bankAccounts',
-            placeholder: 'Rekening Bank',
+            placeholder: 'Cari/Pilih Rekening Bank...',
             searchLabel: 'Cari rekening bank',
         },
     ],

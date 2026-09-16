@@ -58,7 +58,7 @@ export default function PaymentInfoSection({ config, values, setValues, isDetail
                                                 voided: e.target.checked,
                                             }))
                                         }
-                                        className="h-4.5 w-4.5 rounded-[3px] border-slate-300 text-blue-600 cursor-pointer accent-blue-600"
+                                        className="h-4.5 w-4.5 rounded-[3px] border-[#BBBBBB] text-blue-600 cursor-pointer accent-blue-600"
                                     />
                                     <span className="text-xs sm:text-sm text-brand-dark">Ya</span>
                                 </label>

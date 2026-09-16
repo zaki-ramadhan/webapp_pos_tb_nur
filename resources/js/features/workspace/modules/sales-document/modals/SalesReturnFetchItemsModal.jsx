@@ -129,7 +129,7 @@ export default function SalesReturnFetchItemsModal({
                                     type="checkbox"
                                     checked={allSelected}
                                     onChange={toggleSelectAll}
-                                    className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
+                                    className="h-4 w-4 rounded border-[#BBBBBB] text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
                                 />
                             </th>
                             <th className="py-2.5 px-3 font-semibold border-r border-table-header-cell-border">Nama Barang</th>
@@ -164,7 +164,7 @@ export default function SalesReturnFetchItemsModal({
                                                 type="checkbox"
                                                 checked={isChecked}
                                                 onChange={() => toggleSelectItem(item.id)}
-                                                className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
+                                                className="h-4 w-4 rounded border-[#BBBBBB] text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
                                             />
                                         </td>
                                         <td className="py-3 px-3 font-normal text-zinc-800 border-r border-table-cell-border">

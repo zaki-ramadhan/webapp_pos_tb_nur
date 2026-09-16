@@ -41,7 +41,7 @@ export default function SalesDepositPaymentSection({
                                             salesOrderNumber: label || '',
                                         }));
                                     }}
-                                    className="h-[40px] rounded-[4px] border-slate-400 bg-slate-50"
+                                    className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
                                     inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
                                 />
                             </div>
@@ -142,7 +142,7 @@ export default function SalesDepositPaymentSection({
                                             taxRate: record ? parseFloat(record.rate) : 0,
                                         }));
                                     }}
-                                    className="h-[40px] rounded-[4px] border-slate-400 bg-slate-50"
+                                    className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
                                     inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
                                 />
                             </div>

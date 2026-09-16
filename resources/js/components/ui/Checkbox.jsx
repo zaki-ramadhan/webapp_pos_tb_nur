@@ -71,7 +71,7 @@ export function Checkbox({
                         ? `border-[#15529A] bg-[#15529A] text-white shadow-xs ${ariaInvalid ? 'ring-2 ring-red-500/50' : ''}`
                         : ariaInvalid
                             ? 'border-red-500 bg-red-500/5 group-hover:border-red-600 peer-focus-visible:ring-2 peer-focus-visible:ring-red-500/40'
-                            : 'border-slate-400 bg-white group-hover:border-slate-600 peer-focus-visible:ring-2 peer-focus-visible:ring-[#15529A]/40'
+                            : 'border-[#BBBBBB] bg-white group-hover:border-slate-600 peer-focus-visible:ring-2 peer-focus-visible:ring-[#15529A]/40'
                 } ${inputClassName}`.trim()}
             >
                 {indeterminate ? (

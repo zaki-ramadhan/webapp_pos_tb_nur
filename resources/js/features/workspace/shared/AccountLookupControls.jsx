@@ -89,7 +89,7 @@ export function AccountLookupField({
                     placeholder={resolvedPlaceholder}
                     searchLabel={resolvedSearchLabel}
                     disabled={disabled}
-                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus' : 'border-slate-400'} ${className}`.trim()}
+                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus' : 'border-[#BBBBBB]'} ${className}`.trim()}
                     inputClassName="text-xs sm:text-sm text-brand-dark"
                     trailingClassName="gap-1 pr-2"
                     loading={controller.loading && controller.open}
@@ -152,7 +152,7 @@ export function AccountLookupTextInput({
     disabled = false,
     clearDisabled = false,
     onBeforeClear = null,
-    className = 'h-[40px] rounded-[4px] border-slate-400',
+    className = 'h-[40px] rounded-[4px] border-[#BBBBBB]',
     inputClassName = 'text-xs sm:text-sm text-brand-dark',
     trailingClassName = '',
     onSelectAccount = null,

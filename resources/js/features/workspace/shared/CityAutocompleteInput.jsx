@@ -14,7 +14,7 @@ export default function CityAutocompleteInput({
     disabled = false,
     error,
     message,
-    className = 'h-[40px] rounded-[4px] border-ui-border',
+    className = 'h-[40px] rounded-[4px] border-[#BBBBBB]',
     prefixClassName = 'min-w-[62px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text',
     inputClassName = 'text-xs sm:text-sm text-brand-dark',
     dropdownLeftOffsetClassName = 'left-[62px]',
@@ -47,8 +47,8 @@ export default function CityAutocompleteInput({
             ? 'border-red-500'
             : 'border-red-500 focus-within:border-red-500 focus-within:shadow-input-error-focus'
         : isNonInteractive
-            ? 'border-slate-400'
-            : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+            ? 'border-[#BBBBBB]'
+            : 'border-[#BBBBBB] focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
     const disabledClassName = isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : resolvedError ? 'bg-red-500/5' : 'bg-white';
 
     const filteredOptions = useMemo(() => {

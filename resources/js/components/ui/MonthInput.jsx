@@ -41,7 +41,7 @@ export default function MonthInput({
                     disabled={disabled}
                     aria-label={ariaLabel}
                     aria-expanded={open}
-                    className={`inline-flex h-[36px] items-center justify-between gap-2 rounded-[4px] border border-ui-border bg-white px-2.5 sm:px-3 text-xs sm:text-sm text-brand-dark font-normal shadow-2xs hover:border-slate-400 focus:outline-hidden disabled:cursor-not-allowed disabled:bg-ui-bg-panel cursor-pointer ${buttonClassName}`.trim()}
+                    className={`inline-flex h-[36px] items-center justify-between gap-2 rounded-[4px] border border-[#BBBBBB] bg-white px-2.5 sm:px-3 text-xs sm:text-sm text-brand-dark font-normal shadow-2xs hover:border-slate-400 focus:outline-hidden disabled:cursor-not-allowed disabled:bg-ui-bg-panel cursor-pointer ${buttonClassName}`.trim()}
                     {...props}
                 >
                     <span className="whitespace-nowrap">{displayValue}</span>
@@ -60,7 +60,7 @@ export default function MonthInput({
                 side="auto"
                 minHeightNeeded={260}
                 maxHeightLimit={360}
-                className="border border-slate-300 rounded-[8px] shadow-md bg-white overflow-hidden p-3 w-[290px]"
+                className="border border-[#BBBBBB] rounded-[8px] shadow-md bg-white overflow-hidden p-3 w-[290px]"
             >
                 <div className="flex flex-col gap-2.5">
                     <div className="flex items-center justify-between px-1 pb-1.5 border-b border-slate-200">
