@@ -160,16 +160,16 @@ export function InquiryControl({
             const barcode = option?.barcode ?? option?.upc ?? '';
 
             return (
-                <div className="flex w-full min-w-0 flex-col gap-0.5 select-none">
-                    <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">
+                <div className="flex w-full min-w-0 flex-col gap-0.5 select-none text-text-workspace-dark">
+                    <div className="truncate text-xs sm:text-sm font-normal">
                         <HighlightText text={name} search={query} />
                     </div>
-                    <div className="flex items-center justify-between gap-4 w-full text-xs sm:text-[13px] text-text-workspace-dark">
-                        <span className="truncate min-w-0 font-normal not-italic text-slate-600">
+                    <div className="flex items-center justify-between gap-4 w-full text-xs sm:text-[13px]">
+                        <span className="truncate min-w-0 font-normal not-italic">
                             {code ? <HighlightText text={code} search={query} /> : '-'}
                         </span>
                         {barcode ? (
-                            <span className="shrink-0 italic font-normal text-slate-500">
+                            <span className="shrink-0 italic font-normal">
                                 <HighlightText text={barcode} search={query} />
                             </span>
                         ) : null}
