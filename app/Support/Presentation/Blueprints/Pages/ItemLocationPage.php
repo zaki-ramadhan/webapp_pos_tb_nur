@@ -32,7 +32,7 @@ class ItemLocationPage
                         'type' => 'lookup',
                         'value' => '',
                         'placeholder' => 'Cari/Pilih Barang',
-                        'className' => 'w-full sm:w-[260px]',
+                        'className' => 'w-full sm:w-[360px] md:w-[400px]',
                     ],
                     [
                         'id' => 'unitMode',

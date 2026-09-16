@@ -3,6 +3,7 @@ import TextInput from '@/components/ui/TextInput';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { ExportIcon, ExternalLinkIcon, LinkIcon, RefreshIcon, DownloadIcon, SearchIcon, LoadingIcon } from '@/features/workspace/shared/Icons';
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
+import { HighlightText } from '@/features/workspace/shared/LookupPrimitives';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ToolbarIconButton from '@/features/workspace/shared/toolbar/ToolbarIconButton';
 import ToolbarExportSplitButton from '@/features/workspace/shared/toolbar/ToolbarExportSplitButton';
@@ -145,12 +146,37 @@ export function InquiryControl({
             );
         }
 
+        const isProductSearch = control.id === 'itemSearch';
         const lookupItems =
             control.id === 'warehouseSearch'
                 ? warehouses
-                : control.id === 'itemSearch'
+                : isProductSearch
                 ? products
                 : [];
+
+        const renderProductOption = (option, query) => {
+            const name = option?.name ?? option?.label ?? '';
+            const code = option?.code ?? option?.item_code ?? '';
+            const barcode = option?.barcode ?? option?.upc ?? '';
+
+            return (
+                <div className="flex w-full min-w-0 flex-col gap-0.5 select-none">
+                    <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">
+                        <HighlightText text={name} search={query} />
+                    </div>
+                    <div className="flex items-center justify-between gap-4 w-full text-xs sm:text-[13px] text-text-workspace-dark">
+                        <span className="truncate min-w-0 font-normal not-italic text-slate-600">
+                            {code ? <HighlightText text={code} search={query} /> : '-'}
+                        </span>
+                        {barcode ? (
+                            <span className="shrink-0 italic font-normal text-slate-500">
+                                <HighlightText text={barcode} search={query} />
+                            </span>
+                        ) : null}
+                    </div>
+                </div>
+            );
+        };
 
         return (
             <ReferenceLookupInput
@@ -159,9 +185,21 @@ export function InquiryControl({
                 items={lookupItems}
                 searching={searching || loading}
                 getOptionLabel={(option) => option?.name ?? option?.label ?? ''}
+                getOptionSearchText={
+                    isProductSearch
+                        ? (option) => {
+                              const name = option?.name ?? option?.label ?? '';
+                              const code = option?.code ?? option?.item_code ?? '';
+                              const barcode = option?.barcode ?? option?.upc ?? '';
+                              return `${name} ${code} ${barcode}`.trim();
+                          }
+                        : (option) => option?.name ?? option?.label ?? ''
+                }
+                renderOption={isProductSearch ? renderProductOption : null}
                 onSelect={(option) => onLookupSelect(control.id, option)}
                 onClear={() => onLookupClear(control.id)}
-                className={control.className ?? 'w-full sm:w-[240px]'}
+                className={control.className ?? (isProductSearch ? 'w-full sm:w-[360px] md:w-[400px]' : 'w-full sm:w-[240px]')}
+                menuClassName={isProductSearch ? 'min-w-full sm:min-w-[400px] md:min-w-[460px]' : ''}
             />
         );
     }
