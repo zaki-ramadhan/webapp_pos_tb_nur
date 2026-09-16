@@ -193,18 +193,18 @@ export default function AccountLookupSuggestions({
                                         <HighlightText text={title} search={query} />
                                     </span>
                                     {titleRight ? (
-                                        <span className="shrink-0 text-xs sm:text-sm font-normal text-black pt-0.5">
+                                        <span className="shrink-0 text-xs sm:text-sm font-normal text-black leading-snug">
                                             <HighlightText text={titleRight} search={query} />
                                         </span>
                                     ) : null}
                                 </span>
                                 {(subtitleLeft || subtitleRight) ? (
-                                    <span className={`w-full text-xs sm:text-[13px] text-black ${subtitleRight ? 'flex items-center justify-between gap-4' : 'block'}`}>
-                                        <span className={`${subtitleRight ? 'truncate min-w-0' : 'break-words whitespace-normal'} text-black font-normal`}>
+                                    <span className={`w-full text-xs sm:text-[13px] text-black ${subtitleRight ? 'flex items-start justify-between gap-4' : 'block'}`}>
+                                        <span className={`${subtitleRight ? 'truncate min-w-0' : 'break-words whitespace-normal'} text-black font-normal leading-snug`}>
                                             <HighlightText text={subtitleLeft} search={query} />
                                         </span>
                                         {subtitleRight ? (
-                                            <span className={`shrink-0 text-black font-normal ${resource === 'accounts' || resource === 'products' ? 'italic' : ''}`.trim()}>
+                                            <span className={`shrink-0 text-black font-normal leading-snug ${resource === 'accounts' || resource === 'products' ? 'italic' : ''}`.trim()}>
                                                 <HighlightText text={subtitleRight} search={query} />
                                             </span>
                                         ) : null}
