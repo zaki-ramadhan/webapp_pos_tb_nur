@@ -46,7 +46,7 @@ export default function CurrencyGeneralSection({ config, values, setValues, isDe
                         emptyDescription="Coba cari nama, kode, atau simbol mata uang."
                         renderOption={(option) => (
                             <div className="min-w-0 flex-1">
-                                <div className="truncate text-xs sm:text-sm font-medium text-text-workspace-dark">{option.name}</div>
+                                <div className="line-clamp-2 break-words text-xs sm:text-sm font-medium text-text-workspace-dark leading-snug">{option.name}</div>
                                 <div className="mt-0.5 break-words whitespace-normal text-xs font-normal text-text-workspace-dark">
                                     {option.currencyCode} • {option.symbol}
                                 </div>

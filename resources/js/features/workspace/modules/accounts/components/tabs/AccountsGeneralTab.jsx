@@ -106,7 +106,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                                 const prefix = option.hierarchicalPrefix ?? (option.level > 0 ? `${'- '.repeat(option.level)}` : '');
                                 return (
                                     <div className="flex flex-col gap-0.5 w-full py-0.5 select-none">
-                                        <span className="truncate text-xs sm:text-sm font-normal text-brand-dark">
+                                        <span className="line-clamp-2 break-words text-xs sm:text-sm font-normal text-brand-dark leading-snug">
                                              {prefix}{option.name}
                                         </span>
                                         <div className="flex justify-end text-[11px] sm:text-xs font-normal text-brand-dark">

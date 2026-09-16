@@ -109,7 +109,7 @@ function AccountFieldRow({
                                 className="flex w-full min-w-0 flex-col gap-0.5 select-none"
                                 style={{ paddingLeft: (account?.level ?? 0) > 0 ? `${account.level * 14}px` : undefined }}
                             >
-                                <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">
+                                <div className="line-clamp-2 break-words text-xs sm:text-sm font-normal text-text-workspace-dark leading-snug">
                                     <HighlightText text={`${prefix}${name}`} search={query} />
                                 </div>
                                 <div className={`w-full text-xs sm:text-[13px] text-text-workspace-dark ${typeLabel ? 'flex items-center justify-between gap-4' : 'block'}`}>

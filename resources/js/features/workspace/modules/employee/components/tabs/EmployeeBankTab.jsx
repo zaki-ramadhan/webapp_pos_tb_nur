@@ -32,7 +32,7 @@ export default function EmployeeBankTab({ form, values, onChange }) {
                     getOptionSearchText={(option) => `${option.name} ${option.code}`}
                     renderOption={(option) => (
                         <div className="min-w-0 flex-1">
-                            <div className="truncate text-xs sm:text-sm font-normal uppercase text-text-workspace-dark">{option.name}</div>
+                            <div className="line-clamp-2 break-words text-xs sm:text-sm font-normal uppercase text-text-workspace-dark leading-snug">{option.name}</div>
                             <div className="mt-0.5 break-words whitespace-normal text-[13px] font-normal text-black">{option.code}</div>
                         </div>
                     )}

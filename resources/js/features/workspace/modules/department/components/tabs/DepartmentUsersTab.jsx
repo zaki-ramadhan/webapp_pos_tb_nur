@@ -16,7 +16,7 @@ function DepartmentFieldRow({ label, required = false, children }) {
 function renderReferenceOptionPrimary(item, secondaryText = '') {
     return (
         <div className="min-w-0 flex-1">
-            <div className="truncate text-xs sm:text-sm font-medium text-text-workspace-dark">{item.label}</div>
+            <div className="line-clamp-2 break-words text-xs sm:text-sm font-medium text-text-workspace-dark leading-snug">{item.label}</div>
             {secondaryText ? (
                 <div className="mt-0.5 break-words whitespace-normal text-xs font-normal text-text-workspace-dark">{secondaryText}</div>
             ) : null}

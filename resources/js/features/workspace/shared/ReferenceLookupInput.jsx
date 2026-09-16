@@ -383,7 +383,7 @@ export default function ReferenceLookupInput({
                                             className="min-w-0 flex-1"
                                             style={{ paddingLeft: (item?.level ?? 0) > 0 ? `${item.level * 18}px` : undefined }}
                                         >
-                                            <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">
+                                            <div className="line-clamp-2 break-words text-xs sm:text-sm font-normal text-text-workspace-dark leading-snug">
                                                 <HighlightText
                                                     text={`${item?.hierarchicalPrefix ?? ''}${getOptionLabel(item)}`}
                                                     search={query}
