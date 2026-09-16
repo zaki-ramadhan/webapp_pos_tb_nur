@@ -608,17 +608,25 @@
 .group.border:not(:focus-within):not(.bg-ui-bg-panel):has(select:not(:disabled)):not([aria-invalid="true"]),
 .group.border:not(:focus-within):not(.bg-ui-bg-panel):has(textarea:not(:disabled)):not([aria-invalid="true"]),
 .group.border:not(:focus-within):not(.bg-ui-bg-panel):has(button[aria-haspopup="listbox"]:not(:disabled)):not([aria-invalid="true"]) {
-    border-color: #8b99ab !important;
+    border-color: #BBBBBB !important;
 }
 
 input[type="text"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
 input[type="number"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
 input[type="date"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="password"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="email"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="search"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="tel"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="url"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="time"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="month"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input:not([type]):not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
 select:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
 textarea:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
 input[type="checkbox"]:not(:focus):not(:disabled):not([aria-invalid="true"]),
 input[type="radio"]:not(:focus):not(:disabled):not([aria-invalid="true"]) {
-    border-color: #8b99ab !important;
+    border-color: #BBBBBB !important;
 }
 
 /* Enforce no wrapping and ellipsis on all table cells, headers, and their children */
