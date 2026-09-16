@@ -25,7 +25,7 @@ function handleOpenProduct(item) {
     }
 }
 
-function ProductItem({ item }) {
+function ProductItem({ item, rank }) {
     const [imgError, setImgError] = useState(false);
     const shareNum = parseShareNumber(item.share);
     const imageUrl = item.imageUrl || item.image || null;
@@ -33,7 +33,7 @@ function ProductItem({ item }) {
     return (
         <div
             onClick={() => handleOpenProduct(item)}
-            className="group relative overflow-hidden rounded-[4px] border border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-xs cursor-pointer px-2 py-1"
+            className="group relative overflow-hidden rounded-[4px] border border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-xs cursor-pointer px-2 py-1.5"
         >
             <div
                 className="absolute inset-y-0 left-0 bg-blue-50/55 pointer-events-none transition-all duration-300"
@@ -41,17 +41,26 @@ function ProductItem({ item }) {
             />
 
             <div className="relative z-10 flex items-center justify-between gap-2.5">
-                <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div className="relative h-9.5 w-9.5 sm:h-10 sm:w-10 shrink-0 rounded-[4px] border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
-                        {imageUrl && !imgError ? (
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="relative shrink-0">
+                        <div className="relative h-9.5 w-9.5 sm:h-10 sm:w-10 rounded-[4px] border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+                            {imageUrl && !imgError ? (
+                                <img
+                                    src={imageUrl}
+                                    alt={item.name}
+                                    className="h-full w-full object-cover"
+                                    onError={() => setImgError(true)}
+                                />
+                            ) : (
+                                <ImageIcon className="h-4.5 w-4.5 text-slate-400" />
+                            )}
+                        </div>
+                        {rank >= 1 && rank <= 3 && (
                             <img
-                                src={imageUrl}
-                                alt={item.name}
-                                className="h-full w-full object-cover"
-                                onError={() => setImgError(true)}
+                                src={`/assets/images/dashboard/dashboard-medal${rank}.svg`}
+                                alt={`Peringkat ${rank}`}
+                                className="absolute -top-1.5 -left-1.5 h-5 w-5 sm:h-5.5 sm:w-5.5 pointer-events-none drop-shadow-xs z-20"
                             />
-                        ) : (
-                            <ImageIcon className="h-4.5 w-4.5 text-slate-400" />
                         )}
                     </div>
 
@@ -92,8 +101,8 @@ export function TopProductsWidget({ widget }) {
     return (
         <div className="flex h-full flex-col min-h-0">
             <div className="flex-1 overflow-y-auto pr-0.5 space-y-1.5 [scrollbar-width:thin]">
-                {items.map((item) => (
-                    <ProductItem key={item.id ?? item.name} item={item} />
+                {items.map((item, index) => (
+                    <ProductItem key={item.id ?? item.name} item={item} rank={index + 1} />
                 ))}
             </div>
         </div>
