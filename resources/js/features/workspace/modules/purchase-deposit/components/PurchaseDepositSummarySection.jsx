@@ -140,7 +140,7 @@ export default function PurchaseDepositSummarySection({
                                             >
                                                 {ppnOptions.map((opt) => (
                                                     <option key={opt.id} value={opt.id}>
-                                                        {opt.name} ({opt.rate}%)
+                                                        {opt.name?.includes('%') ? opt.name : `${opt.name} (${opt.rate}%)`}
                                                     </option>
                                                 ))}
                                             </SelectField>
@@ -181,7 +181,7 @@ export default function PurchaseDepositSummarySection({
                                                 <option value="">Tanpa PPh</option>
                                                 {pphOptions.map((opt) => (
                                                     <option key={opt.id} value={opt.id}>
-                                                        {opt.name} ({opt.rate}%)
+                                                        {opt.name?.includes('%') ? opt.name : `${opt.name} (${opt.rate}%)`}
                                                     </option>
                                                 ))}
                                             </SelectField>
