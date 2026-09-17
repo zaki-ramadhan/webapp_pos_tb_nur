@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
@@ -15,6 +17,30 @@ export default function SalesDepositPaymentSection({
     setValues,
     isDetail = false,
 }) {
+    const { items: taxRecords = [] } = useBackendIndexResource('taxes', { per_page: 50 });
+
+    const ppnOptions = useMemo(() => {
+        const fromApi = taxRecords.filter((t) => t.code?.startsWith('PPN'));
+        if (fromApi.length > 0) {
+            return fromApi;
+        }
+        return [
+            { id: 1, code: 'PPN-11', name: 'PPN 11%', rate: 11 },
+            { id: 2, code: 'PPN-12', name: 'PPN 12%', rate: 12 },
+        ];
+    }, [taxRecords]);
+
+    const pphOptions = useMemo(() => {
+        const fromApi = taxRecords.filter((t) => t.code?.startsWith('PPH'));
+        if (fromApi.length > 0) {
+            return fromApi;
+        }
+        return [
+            { id: 4, code: 'PPH-23', name: 'PPh 23', rate: 2 },
+            { id: 3, code: 'PPH-21', name: 'PPh 21', rate: 5 },
+        ];
+    }, [taxRecords]);
+
     return (
         <div className={`w-full ${values.taxEnabled ? 'flex flex-col lg:flex-row gap-x-8 items-start' : 'max-w-[540px]'}`}>
             {/* Left Column: Uang Muka */}
@@ -29,9 +55,8 @@ export default function SalesDepositPaymentSection({
                                     id="salesOrder"
                                     resource="sales-orders"
                                     value={values.salesOrderNumber || ''}
-                                    placeholder="Cari/Pilih Pesanan Penjualan..."
-                                    searchLabel="Cari pesanan penjualan"
-                                    disabled={isDetail}
+                                    placeholder="Cari/Pilih Pesanan..."
+                                    searchLabel="Cari Pesanan Penjualan"
                                     queryParams={{ customer_id: values.__customerId }}
                                     onSelectAccount={(record, label) => {
                                         setValues((current) => ({
@@ -40,7 +65,8 @@ export default function SalesDepositPaymentSection({
                                             salesOrderNumber: label || '',
                                         }));
                                     }}
-                                    className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
+                                    disabled={!values.__customerId}
+                                    className="h-[34px] rounded-[4px] border-ui-border bg-slate-50"
                                     inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
                                 />
                             </div>
@@ -51,20 +77,11 @@ export default function SalesDepositPaymentSection({
                         <TransactionFieldLabel label={config.labels.depositAmount} required />
                         <div className="max-w-[320px] w-full">
                             <FormattedAmountInput
-                                id="depositAmount"
-                                name="depositAmount"
                                 value={values.depositAmount}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        depositAmount: event.target.value,
-                                    }))
-                                }
-                                prefix="Rp"
-                                prefixClassName="min-w-0 px-3 justify-center text-table-row-text font-normal bg-ui-bg-hover text-sm"
-                                containerClassName="!max-w-[320px] w-full"
-                                className="h-[40px] rounded-[4px] border-ui-border bg-slate-50"
-                                inputClassName="text-right text-xs sm:text-sm text-brand-dark bg-transparent"
+                                onChange={(nextValue) => setValues((current) => ({ ...current, depositAmount: nextValue }))}
+                                placeholder="0"
+                                className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
+                                inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                             />
                         </div>
                     </div>
@@ -73,6 +90,8 @@ export default function SalesDepositPaymentSection({
                         <TransactionFieldLabel label={config.labels.purchaseOrderNumber} />
                         <div className="max-w-[320px] w-full">
                             <TextInput
+                                id="purchaseOrderNumber"
+                                name="purchaseOrderNumber"
                                 value={values.purchaseOrderNumber}
                                 onChange={(event) =>
                                     setValues((current) => ({
@@ -95,15 +114,16 @@ export default function SalesDepositPaymentSection({
                                     checked={values.taxEnabled}
                                     onChange={(event) => {
                                         const checked = event.target.checked;
+                                        const defaultTax = ppnOptions[0] || { id: 1, name: 'PPN 11%', rate: 11 };
                                         setValues((current) => ({
                                             ...current,
                                             taxEnabled: checked,
                                             ...(!checked
                                                 ? { __taxId: null, taxName: '', taxRate: 0, dppPercent: 100, dppFactor: 1.0, __pphId: null, pphName: '', pphRate: 0, pphAmount: 0, pphAmountFormatted: 'Rp 0' }
                                                 : {
-                                                    __taxId: current.__taxId || 1,
-                                                    taxName: current.taxName || 'PPN 11%',
-                                                    taxRate: current.taxRate || 11,
+                                                    __taxId: current.__taxId || defaultTax.id,
+                                                    taxName: current.taxName || defaultTax.name,
+                                                    taxRate: current.taxRate || defaultTax.rate,
                                                     dppPercent: current.dppPercent || 100,
                                                     dppFactor: current.dppFactor || 1.0,
                                                     taxTransactionType: current.taxTransactionType || 'Faktur Pajak',
@@ -134,48 +154,69 @@ export default function SalesDepositPaymentSection({
                                     <div className="flex items-center gap-x-3 max-w-[320px] w-full pt-1">
                                         <TransactionFieldLabel label="PPN" required className="w-10 flex-shrink-0" />
                                         <div className="flex-1 min-w-0">
-                                            <AccountLookupTextInput
+                                            <SelectField
                                                 id="tax"
-                                                resource="taxes"
-                                                value={values.taxName || ''}
-                                                placeholder="Cari/Pilih PPN..."
-                                                searchLabel="Cari pajak"
-                                                queryParams={{ code: ['PPN-11', 'PPN-12'] }}
-                                                onSelectAccount={(record, label) => {
+                                                value={values.__taxId || ppnOptions[0]?.id || ''}
+                                                onChange={(event) => {
+                                                    const selectedId = Number(event.target.value);
+                                                    const tax = ppnOptions.find((t) => Number(t.id) === selectedId) || ppnOptions[0];
                                                     setValues((current) => ({
                                                         ...current,
-                                                        __taxId: record ? record.id : null,
-                                                        taxName: label || '',
-                                                        taxRate: record ? parseFloat(record.rate) : 0,
+                                                        __taxId: tax ? tax.id : null,
+                                                        taxName: tax ? tax.name : '',
+                                                        taxRate: tax ? parseFloat(tax.rate) : 0,
                                                     }));
                                                 }}
-                                                className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
-                                                inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
-                                            />
+                                                className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50 w-full"
+                                                selectClassName="text-xs sm:text-sm text-brand-dark"
+                                            >
+                                                {ppnOptions.map((opt) => (
+                                                    <option key={opt.id} value={opt.id}>
+                                                        {opt.name} ({opt.rate}%)
+                                                    </option>
+                                                ))}
+                                            </SelectField>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-x-3 max-w-[320px] w-full pt-0.5">
                                         <TransactionFieldLabel label="PPh" className="w-10 flex-shrink-0" />
                                         <div className="flex-1 min-w-0">
-                                            <AccountLookupTextInput
+                                            <SelectField
                                                 id="pph"
-                                                resource="taxes"
-                                                value={values.pphName || ''}
-                                                placeholder="Cari/Pilih PPh..."
-                                                searchLabel="Cari PPh"
-                                                queryParams={{ code: ['PPH-23', 'PPH-21'] }}
-                                                onSelectAccount={(record, label) => {
-                                                    setValues((current) => ({
-                                                        ...current,
-                                                        __pphId: record ? record.id : null,
-                                                        pphName: label || '',
-                                                        pphRate: record ? parseFloat(record.rate) : 0,
-                                                    }));
+                                                value={values.__pphId || ''}
+                                                onChange={(event) => {
+                                                    const val = event.target.value;
+                                                    if (!val) {
+                                                        setValues((current) => ({
+                                                            ...current,
+                                                            __pphId: null,
+                                                            pphName: '',
+                                                            pphRate: 0,
+                                                            pphAmount: 0,
+                                                            pphAmountFormatted: 'Rp 0',
+                                                        }));
+                                                    } else {
+                                                        const selectedId = Number(val);
+                                                        const pph = pphOptions.find((t) => Number(t.id) === selectedId);
+                                                        setValues((current) => ({
+                                                            ...current,
+                                                            __pphId: pph ? pph.id : null,
+                                                            pphName: pph ? pph.name : '',
+                                                            pphRate: pph ? parseFloat(pph.rate) : 0,
+                                                        }));
+                                                    }
                                                 }}
-                                                className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
-                                                inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
-                                            />
+                                                className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50 w-full"
+                                                selectClassName="text-xs sm:text-sm text-brand-dark"
+                                            >
+                                                <option value="">Tanpa PPh</option>
+                                                {pphOptions.map((opt) => (
+                                                    <option key={opt.id} value={opt.id}>
+                                                        {opt.name} ({opt.rate}%)
+                                                    </option>
+                                                ))}
+                                            </SelectField>
                                         </div>
                                     </div>
                                 </>
