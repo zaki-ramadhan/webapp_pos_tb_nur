@@ -81,13 +81,24 @@ export default function SalesDepositFormView({
 
     useEffect(() => {
         const baseAmount = parseNumericInput(values.depositAmount);
-        const totals = calculateDepositTaxes(baseAmount, values.taxEnabled, values.__taxId, values.taxRate, values.taxIncluded, values.dppFactor);
+        const totals = calculateDepositTaxes(
+            baseAmount,
+            values.taxEnabled,
+            values.__taxId,
+            values.taxRate,
+            values.taxIncluded,
+            values.dppFactor,
+            values.__pphId,
+            values.pphRate
+        );
 
         setValues((current) => {
             if (
                 current.subtotal === totals.subtotal && 
                 current.taxTotalFormatted === totals.taxTotalFormatted &&
-                current.total === totals.total
+                current.total === totals.total &&
+                current.pphAmount === totals.pphTotal &&
+                current.pphAmountFormatted === totals.pphTotalFormatted
             ) {
                 return current;
             }
@@ -96,9 +107,11 @@ export default function SalesDepositFormView({
                 subtotal: totals.subtotal,
                 taxTotalFormatted: totals.taxTotalFormatted,
                 total: totals.total,
+                pphAmount: totals.pphTotal,
+                pphAmountFormatted: totals.pphTotalFormatted,
             };
         });
-    }, [values.depositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId, values.dppFactor]);
+    }, [values.depositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId, values.dppFactor, values.__pphId, values.pphRate]);
 
     useEffect(() => {
         clearValidationErrors();

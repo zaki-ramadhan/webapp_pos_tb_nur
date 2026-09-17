@@ -148,6 +148,11 @@ export function buildPurchaseDepositRecord(record = {}, config = {}) {
         taxRate: record?.tax ? parseFloat(record.tax.rate) : 0,
         dppPercent: Number(record?.metadata?.dpp_percent ?? 100),
         dppFactor: Number(record?.metadata?.dpp_factor ?? 1.0),
+        __pphId: record?.metadata?.pph_tax_id ?? null,
+        pphName: record?.metadata?.pph_name ?? '',
+        pphRate: Number(record?.metadata?.pph_rate ?? 0),
+        pphAmount: Number(record?.metadata?.pph_amount ?? 0),
+        pphAmountFormatted: formatCurrencyLabel(record?.metadata?.pph_amount ?? 0),
         __bankAccountId: record?.primary_account_id ?? null,
         bankAccounts: bankAccount,
         address: record?.metadata?.address ?? record?.supplier?.billing_address ?? record?.supplier?.address ?? '',
@@ -192,6 +197,11 @@ export function buildPurchaseDepositFormState(source = {}, config = {}) {
         taxRate: source.taxRate ?? 0,
         dppPercent: source.dppPercent ?? config.draft?.dppPercent ?? 100,
         dppFactor: source.dppFactor ?? config.draft?.dppFactor ?? 1.0,
+        __pphId: source.__pphId ?? null,
+        pphName: source.pphName ?? '',
+        pphRate: source.pphRate ?? 0,
+        pphAmount: source.pphAmount ?? 0,
+        pphAmountFormatted: source.pphAmountFormatted ?? 'Rp 0',
         address: source.address ?? config.draft?.address ?? '',
         notes: source.notes ?? config.draft?.notes ?? '',
         summary: source.summary ?? buildSummaryRows(totalAmount, status, printStatus),
@@ -220,23 +230,29 @@ export function buildGeneratedPurchaseDepositNumber() {
 export function buildPurchaseDepositPayload(values) {
     const baseAmount = parseNumericInput(values.depositAmount);
     const taxRate = (values.taxEnabled && values.__taxId) ? (values.taxRate ?? 0) / 100 : 0;
-    const dppFactor = Number.isFinite(values.dppFactor) && values.dppFactor > 0 ? values.dppFactor : 1.0;
+    const factor = Number.isFinite(values.dppFactor) && values.dppFactor > 0 ? values.dppFactor : 1.0;
     const dppPercent = values.dppPercent ?? 100;
+    const pphRate = (values.taxEnabled && values.__pphId) ? (values.pphRate ?? 0) / 100 : 0;
 
     let taxTotal = 0;
+    let dpp = baseAmount;
     let totalAmount = baseAmount;
 
     if (taxRate > 0) {
         if (values.taxIncluded) {
-            const dpp = baseAmount / (1 + taxRate * dppFactor);
-            taxTotal = Math.round((dpp * dppFactor) * taxRate);
+            dpp = baseAmount / (1 + taxRate * factor);
+            taxTotal = Math.round((dpp * factor) * taxRate);
             totalAmount = baseAmount;
         } else {
-            const dpp = baseAmount * dppFactor;
+            dpp = baseAmount * factor;
             taxTotal = Math.round(dpp * taxRate);
             totalAmount = baseAmount + taxTotal;
         }
+    } else {
+        dpp = baseAmount * factor;
     }
+
+    const pphTotal = pphRate > 0 ? Math.round(dpp * pphRate) : 0;
 
     return {
         supplier_id: values.__supplierId ?? null,
@@ -260,7 +276,11 @@ export function buildPurchaseDepositPayload(values) {
             tax_transaction_type: values.taxTransactionType ?? null,
             tax_invoice_number: values.taxTransactionType === 'Faktur Pajak' ? (values.taxInvoiceNumber?.trim() || null) : null,
             dpp_percent: dppPercent,
-            dpp_factor: dppFactor,
+            dpp_factor: factor,
+            pph_tax_id: values.taxEnabled ? (values.__pphId ?? null) : null,
+            pph_name: values.taxEnabled && values.__pphId ? (values.pphName ?? null) : null,
+            pph_rate: values.taxEnabled && values.__pphId ? (values.pphRate ?? 0) : 0,
+            pph_amount: pphTotal,
         },
     };
 }

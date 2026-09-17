@@ -1318,6 +1318,11 @@ class BackendResourceWriter
             $taxAmount = (float) ($record->tax_total ?? 0);
             $netAmount = round($totalAmount - $taxAmount, 2);
 
+            $meta = is_array($record->metadata) ? $record->metadata : (json_decode($record->metadata ?? '[]', true) ?: []);
+            $pphAmount = (float) ($meta['pph_amount'] ?? 0);
+            $pphTaxId = $meta['pph_tax_id'] ?? null;
+            $pphName = !empty($meta['pph_name']) ? $meta['pph_name'] : 'PPh 23';
+
             $kasBankAcc = $record->primary_account_id
                 ?? DB::table('accounts')->where('code', '111.101-02')->value('id')
                 ?? DB::table('accounts')->where('code', '111.101-01')->value('id')
@@ -1330,13 +1335,33 @@ class BackendResourceWriter
                 ?? DB::table('accounts')->where('code', '215.000-01')->value('id')
                 ?? DB::table('accounts')->where('code', 'like', '215%')->value('id');
 
-            if ($kasBankAcc && $totalAmount > 0) {
+            $pphPrepaidAcc = null;
+            if ($pphAmount > 0) {
+                $pphPrepaidAcc = ($pphTaxId ? DB::table('taxes')->where('id', $pphTaxId)->value('input_account_id') : null)
+                    ?? DB::table('accounts')->where('code', '117.000-02')->value('id')
+                    ?? DB::table('accounts')->where('code', 'like', '117%')->value('id');
+            }
+
+            $kasBankDebit = $pphAmount > 0 ? round($totalAmount - $pphAmount, 2) : $totalAmount;
+
+            if ($kasBankAcc && $kasBankDebit > 0) {
                 $lines[] = [
                     'account_id' => $kasBankAcc,
                     'description' => 'Penerimaan Kas/Bank - ' . $record->document_number,
-                    'debit_amount' => $totalAmount,
+                    'debit_amount' => $kasBankDebit,
                     'credit_amount' => 0.00,
-                    'total_amount' => $totalAmount,
+                    'total_amount' => $kasBankDebit,
+                    'sort_order' => $sortOrder++,
+                ];
+            }
+
+            if ($pphAmount > 0 && $pphPrepaidAcc) {
+                $lines[] = [
+                    'account_id' => $pphPrepaidAcc,
+                    'description' => $pphName . ' Dibayar Di Muka - ' . $record->document_number,
+                    'debit_amount' => $pphAmount,
+                    'credit_amount' => 0.00,
+                    'total_amount' => $pphAmount,
                     'sort_order' => $sortOrder++,
                 ];
             }
@@ -1368,6 +1393,11 @@ class BackendResourceWriter
             $taxAmount = (float) ($record->tax_total ?? 0);
             $netAmount = round($totalAmount - $taxAmount, 2);
 
+            $meta = is_array($record->metadata) ? $record->metadata : (json_decode($record->metadata ?? '[]', true) ?: []);
+            $pphAmount = (float) ($meta['pph_amount'] ?? 0);
+            $pphTaxId = $meta['pph_tax_id'] ?? null;
+            $pphName = !empty($meta['pph_name']) ? $meta['pph_name'] : 'PPh 23';
+
             $kasBankAcc = $record->primary_account_id
                 ?? DB::table('accounts')->where('code', '111.101-02')->value('id')
                 ?? DB::table('accounts')->where('code', '111.101-01')->value('id')
@@ -1379,6 +1409,13 @@ class BackendResourceWriter
             $ppnMasukanAcc = ($record->tax_id ? DB::table('taxes')->where('id', $record->tax_id)->value('input_account_id') : null)
                 ?? DB::table('accounts')->where('code', '117.000-01')->value('id')
                 ?? DB::table('accounts')->where('code', 'like', '117%')->value('id');
+
+            $pphHutangAcc = null;
+            if ($pphAmount > 0) {
+                $pphHutangAcc = ($pphTaxId ? DB::table('taxes')->where('id', $pphTaxId)->value('output_account_id') : null)
+                    ?? DB::table('accounts')->where('code', '215.000-03')->value('id')
+                    ?? DB::table('accounts')->where('code', 'like', '215%')->value('id');
+            }
 
             if ($umBeliAcc && ($taxAmount > 0 ? $netAmount > 0 : $totalAmount > 0)) {
                 $debitAmt = $taxAmount > 0 ? $netAmount : $totalAmount;
@@ -1403,13 +1440,26 @@ class BackendResourceWriter
                 ];
             }
 
-            if ($kasBankAcc && $totalAmount > 0) {
+            if ($pphAmount > 0 && $pphHutangAcc) {
+                $lines[] = [
+                    'account_id' => $pphHutangAcc,
+                    'description' => 'Hutang ' . $pphName . ' - ' . $record->document_number,
+                    'debit_amount' => 0.00,
+                    'credit_amount' => $pphAmount,
+                    'total_amount' => $pphAmount,
+                    'sort_order' => $sortOrder++,
+                ];
+            }
+
+            $kasBankCredit = $pphAmount > 0 ? round($totalAmount - $pphAmount, 2) : $totalAmount;
+
+            if ($kasBankAcc && $kasBankCredit > 0) {
                 $lines[] = [
                     'account_id' => $kasBankAcc,
                     'description' => 'Pengeluaran Kas/Bank - ' . $record->document_number,
                     'debit_amount' => 0.00,
-                    'credit_amount' => $totalAmount,
-                    'total_amount' => $totalAmount,
+                    'credit_amount' => $kasBankCredit,
+                    'total_amount' => $kasBankCredit,
                     'sort_order' => $sortOrder++,
                 ];
             }

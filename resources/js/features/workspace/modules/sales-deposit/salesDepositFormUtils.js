@@ -21,37 +21,48 @@ export function getComparableTransactionFields(state) {
         taxRate: state.taxRate,
         dppPercent: state.dppPercent,
         dppFactor: state.dppFactor,
+        __pphId: state.__pphId,
+        pphName: state.pphName,
+        pphRate: state.pphRate,
         paymentTermName: state.paymentTermName,
         address: state.address,
         notes: state.notes,
     };
 }
 
-export function calculateDepositTaxes(baseAmount, taxEnabled, taxId, taxRateValue, taxIncluded, dppFactor = 1.0) {
+export function calculateDepositTaxes(baseAmount, taxEnabled, taxId, taxRateValue, taxIncluded, dppFactor = 1.0, pphId = null, pphRateValue = 0) {
     const taxRate = (taxEnabled && taxId) ? (taxRateValue ?? 0) / 100 : 0;
     const factor = Number.isFinite(dppFactor) && dppFactor > 0 ? dppFactor : 1.0;
+    const pphRate = (taxEnabled && pphId) ? (pphRateValue ?? 0) / 100 : 0;
     
     let taxTotal = 0;
+    let dpp = baseAmount;
     let subtotalAmount = baseAmount;
     let totalAmount = baseAmount;
 
     if (taxRate > 0) {
         if (taxIncluded) {
-            const dpp = baseAmount / (1 + taxRate * factor);
+            dpp = baseAmount / (1 + taxRate * factor);
             taxTotal = Math.round((dpp * factor) * taxRate);
             subtotalAmount = baseAmount;
             totalAmount = baseAmount;
         } else {
-            const dpp = baseAmount * factor;
+            dpp = baseAmount * factor;
             taxTotal = Math.round(dpp * taxRate);
             subtotalAmount = baseAmount;
             totalAmount = baseAmount + taxTotal;
         }
+    } else {
+        dpp = baseAmount * factor;
     }
+
+    const pphTotal = pphRate > 0 ? Math.round(dpp * pphRate) : 0;
 
     return {
         subtotal: `Rp ${subtotalAmount.toLocaleString('id-ID')}`,
         taxTotalFormatted: `Rp ${taxTotal.toLocaleString('id-ID')}`,
         total: `Rp ${totalAmount.toLocaleString('id-ID')}`,
+        pphTotal,
+        pphTotalFormatted: `Rp ${pphTotal.toLocaleString('id-ID')}`,
     };
 }

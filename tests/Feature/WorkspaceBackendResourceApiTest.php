@@ -911,6 +911,20 @@ class WorkspaceBackendResourceApiTest extends TestCase
             'is_active' => true,
         ]);
 
+        $pphPrepaidAcc = Account::query()->create([
+            'code' => '117.000-02',
+            'name' => 'PPh 23 Dibayar Dimuka',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+        ]);
+
+        $pphHutangAcc = Account::query()->create([
+            'code' => '215.000-03',
+            'name' => 'Hutang PPh 23',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+        ]);
+
         $tax = \App\Domain\Finance\Models\Tax::query()->create([
             'code' => 'PPN-TEST',
             'name' => 'PPN 11%',
@@ -921,7 +935,17 @@ class WorkspaceBackendResourceApiTest extends TestCase
             'is_active' => true,
         ]);
 
-        // 1. Sales Deposit
+        $pphTax = \App\Domain\Finance\Models\Tax::query()->create([
+            'code' => 'PPH-TEST',
+            'name' => 'PPh 23',
+            'tax_type' => 'Standard',
+            'rate' => 2.0,
+            'input_account_id' => $pphPrepaidAcc->id,
+            'output_account_id' => $pphHutangAcc->id,
+            'is_active' => true,
+        ]);
+
+        // 1. Sales Deposit with PPN & PPh
         $salesDepositRes = $this->actingAs($user)->postJson('/api/backend/sales-deposits', [
             'customer_id' => $customer->id,
             'primary_account_id' => $kasAcc->id,
@@ -933,6 +957,12 @@ class WorkspaceBackendResourceApiTest extends TestCase
             'total_amount' => 1110.00,
             'outstanding_amount' => 1110.00,
             'status' => 'Belum Lunas',
+            'metadata' => [
+                'pph_tax_id' => $pphTax->id,
+                'pph_name' => 'PPh 23',
+                'pph_rate' => 2.0,
+                'pph_amount' => 20.00,
+            ],
         ]);
         $salesDepositRes->assertCreated();
         $salesDepositId = $salesDepositRes->json('data.id');
@@ -946,11 +976,12 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $salesLines = $salesJournal->lines()->get();
         $this->assertEquals(1110.00, (float) $salesLines->sum('debit_amount'));
         $this->assertEquals(1110.00, (float) $salesLines->sum('credit_amount'));
-        $this->assertTrue($salesLines->contains(fn ($l) => $l->account_id == $kasAcc->id && (float) $l->debit_amount == 1110.00));
+        $this->assertTrue($salesLines->contains(fn ($l) => $l->account_id == $kasAcc->id && (float) $l->debit_amount == 1090.00));
+        $this->assertTrue($salesLines->contains(fn ($l) => $l->account_id == $pphPrepaidAcc->id && (float) $l->debit_amount == 20.00));
         $this->assertTrue($salesLines->contains(fn ($l) => $l->account_id == $umJualAcc->id && (float) $l->credit_amount == 1000.00));
         $this->assertTrue($salesLines->contains(fn ($l) => $l->account_id == $ppnKeluaranAcc->id && (float) $l->credit_amount == 110.00));
 
-        // 2. Purchase Deposit
+        // 2. Purchase Deposit with PPN & PPh
         $purchaseDepositRes = $this->actingAs($user)->postJson('/api/backend/purchase-deposits', [
             'supplier_id' => $supplier->id,
             'primary_account_id' => $kasAcc->id,
@@ -962,6 +993,12 @@ class WorkspaceBackendResourceApiTest extends TestCase
             'total_amount' => 1110.00,
             'outstanding_amount' => 1110.00,
             'status' => 'Belum Lunas',
+            'metadata' => [
+                'pph_tax_id' => $pphTax->id,
+                'pph_name' => 'PPh 23',
+                'pph_rate' => 2.0,
+                'pph_amount' => 20.00,
+            ],
         ]);
         $purchaseDepositRes->assertCreated();
         $purchaseDepositId = $purchaseDepositRes->json('data.id');
@@ -977,6 +1014,7 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $this->assertEquals(1110.00, (float) $purchaseLines->sum('credit_amount'));
         $this->assertTrue($purchaseLines->contains(fn ($l) => $l->account_id == $umBeliAcc->id && (float) $l->debit_amount == 1000.00));
         $this->assertTrue($purchaseLines->contains(fn ($l) => $l->account_id == $ppnMasukanAcc->id && (float) $l->debit_amount == 110.00));
-        $this->assertTrue($purchaseLines->contains(fn ($l) => $l->account_id == $kasAcc->id && (float) $l->credit_amount == 1110.00));
+        $this->assertTrue($purchaseLines->contains(fn ($l) => $l->account_id == $pphHutangAcc->id && (float) $l->credit_amount == 20.00));
+        $this->assertTrue($purchaseLines->contains(fn ($l) => $l->account_id == $kasAcc->id && (float) $l->credit_amount == 1090.00));
     }
 }
