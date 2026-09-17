@@ -80,6 +80,7 @@ export default function SalesDepositPaymentSection({
                                 value={values.depositAmount}
                                 onChange={(nextValue) => setValues((current) => ({ ...current, depositAmount: nextValue }))}
                                 prefix="Rp"
+                                prefixClassName="min-w-[32px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text"
                                 placeholder="0"
                                 className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
                                 inputClassName="text-right text-xs sm:text-sm text-brand-dark"
