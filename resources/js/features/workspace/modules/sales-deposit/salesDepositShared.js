@@ -131,6 +131,8 @@ export function buildSalesDepositRecord(record = {}, config) {
         taxTransactionType: record.metadata?.tax_transaction_type ?? 'Faktur Pajak',
         taxInvoiceNumber: record.metadata?.tax_invoice_number ?? '',
         taxRate: record.tax ? parseFloat(record.tax.rate) : 0,
+        dppPercent: Number(record.metadata?.dpp_percent ?? 100),
+        dppFactor: Number(record.metadata?.dpp_factor ?? 1.0),
         address: record.metadata?.address ?? '',
         branches: [],
         notes: record.notes ?? '',
@@ -179,6 +181,8 @@ export function buildSalesDepositFormState(source = {}, config) {
         taxTransactionType: source.taxTransactionType ?? 'Faktur Pajak',
         taxInvoiceNumber: source.taxInvoiceNumber ?? '',
         taxRate: source.taxRate ?? 0,
+        dppPercent: source.dppPercent ?? config.draft?.dppPercent ?? 100,
+        dppFactor: source.dppFactor ?? config.draft?.dppFactor ?? 1.0,
         address: source.address ?? config.draft?.address ?? '',
         branches: [],
         notes: source.notes ?? config.draft?.notes ?? '',
@@ -188,7 +192,7 @@ export function buildSalesDepositFormState(source = {}, config) {
         statusStamp: source.statusStamp ?? config.draft?.statusStamp ?? '',
         statusTone: source.statusTone ?? config.draft?.statusTone ?? 'gray',
         processButtonLabel: source.processButtonLabel ?? config.draft?.processButtonLabel ?? '',
-        dockActions: source.dockActions ?? config.draft?.dockActions ?? [],
+        dockActions: config.detailRecords?.[source.documentNumber]?.dockActions ?? config.draft?.dockActions ?? [],
         subtotal: source.subtotal ?? formatCurrencyLabel(totalAmount),
         taxTotalFormatted: source.taxTotalFormatted ?? 'Rp 0',
         total: source.total ?? formatCurrencyLabel(totalAmount),
@@ -208,16 +212,20 @@ export function buildGeneratedSalesDepositNumber() {
 export function buildSalesDepositPayload(values) {
     const baseAmount = parseNumericInput(values.depositAmount);
     const taxRate = (values.taxEnabled && values.__taxId) ? (values.taxRate ?? 0) / 100 : 0;
+    const dppFactor = Number.isFinite(values.dppFactor) && values.dppFactor > 0 ? values.dppFactor : 1.0;
+    const dppPercent = values.dppPercent ?? 100;
 
     let taxTotal = 0;
     let totalAmount = baseAmount;
 
     if (taxRate > 0) {
         if (values.taxIncluded) {
-            taxTotal = Math.round(baseAmount - (baseAmount / (1 + taxRate)));
+            const dpp = baseAmount / (1 + taxRate * dppFactor);
+            taxTotal = Math.round((dpp * dppFactor) * taxRate);
             totalAmount = baseAmount;
         } else {
-            taxTotal = Math.round(baseAmount * taxRate);
+            const dpp = baseAmount * dppFactor;
+            taxTotal = Math.round(dpp * taxRate);
             totalAmount = baseAmount + taxTotal;
         }
     }
@@ -246,6 +254,8 @@ export function buildSalesDepositPayload(values) {
             tax_invoice_date: normalizeDisplayDate(values.taxInvoiceDate) || null,
             tax_transaction_type: values.taxTransactionType ?? null,
             tax_invoice_number: values.taxTransactionType === 'Faktur Pajak' ? (values.taxInvoiceNumber?.trim() || null) : null,
+            dpp_percent: dppPercent,
+            dpp_factor: dppFactor,
         },
     };
 }

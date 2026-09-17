@@ -854,4 +854,129 @@ class WorkspaceBackendResourceApiTest extends TestCase
                 'email' => 'Format Email tidak valid.',
             ]);
     }
+
+    public function test_sales_and_purchase_deposits_post_balanced_general_journal(): void
+    {
+        $user = User::factory()->create();
+        $branch = Branch::query()->create([
+            'code' => 'BR-01',
+            'name' => 'Cabang Pusat',
+            'is_active' => true,
+        ]);
+        
+        $customer = \App\Domain\Partner\Models\Customer::query()->create([
+            'code' => 'CUST-GL-01',
+            'name' => 'Pelanggan GL',
+            'is_active' => true,
+        ]);
+
+        $supplier = \App\Domain\Partner\Models\Supplier::query()->create([
+            'code' => 'SUP-GL-01',
+            'name' => 'Supplier GL',
+            'is_active' => true,
+        ]);
+
+        $kasAcc = Account::query()->create([
+            'code' => '111.101-02',
+            'name' => 'Kas Besar',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+        ]);
+
+        $umJualAcc = Account::query()->create([
+            'code' => '212.101-00',
+            'name' => 'Uang Muka Penjualan',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+        ]);
+
+        $umBeliAcc = Account::query()->create([
+            'code' => '113.101-00',
+            'name' => 'Uang Muka Pembelian',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+        ]);
+
+        $ppnMasukanAcc = Account::query()->create([
+            'code' => '117.000-01',
+            'name' => 'PPN Masukan',
+            'account_type' => 'Other Current Asset',
+            'is_active' => true,
+        ]);
+
+        $ppnKeluaranAcc = Account::query()->create([
+            'code' => '215.000-01',
+            'name' => 'PPN Keluaran',
+            'account_type' => 'Other Current Liability',
+            'is_active' => true,
+        ]);
+
+        $tax = \App\Domain\Finance\Models\Tax::query()->create([
+            'code' => 'PPN-TEST',
+            'name' => 'PPN 11%',
+            'tax_type' => 'Standard',
+            'rate' => 11.0,
+            'input_account_id' => $ppnMasukanAcc->id,
+            'output_account_id' => $ppnKeluaranAcc->id,
+            'is_active' => true,
+        ]);
+
+        // 1. Sales Deposit
+        $salesDepositRes = $this->actingAs($user)->postJson('/api/backend/sales-deposits', [
+            'customer_id' => $customer->id,
+            'primary_account_id' => $kasAcc->id,
+            'tax_id' => $tax->id,
+            'document_number' => 'UM.2026.07.0001',
+            'entry_date' => '2026-07-07',
+            'subtotal' => 1000.00,
+            'tax_total' => 110.00,
+            'total_amount' => 1110.00,
+            'outstanding_amount' => 1110.00,
+            'status' => 'Belum Lunas',
+        ]);
+        $salesDepositRes->assertCreated();
+        $salesDepositId = $salesDepositRes->json('data.id');
+
+        $salesJournal = \App\Domain\Support\Models\OperationDocument::where('document_type', 'general_journal')
+            ->where('related_document_id', $salesDepositId)
+            ->first();
+        $this->assertNotNull($salesJournal);
+        $this->assertEquals(1110.00, (float) $salesJournal->total_amount);
+
+        $salesLines = $salesJournal->lines()->get();
+        $this->assertEquals(1110.00, (float) $salesLines->sum('debit_amount'));
+        $this->assertEquals(1110.00, (float) $salesLines->sum('credit_amount'));
+        $this->assertTrue($salesLines->contains(fn ($l) => $l->account_id == $kasAcc->id && (float) $l->debit_amount == 1110.00));
+        $this->assertTrue($salesLines->contains(fn ($l) => $l->account_id == $umJualAcc->id && (float) $l->credit_amount == 1000.00));
+        $this->assertTrue($salesLines->contains(fn ($l) => $l->account_id == $ppnKeluaranAcc->id && (float) $l->credit_amount == 110.00));
+
+        // 2. Purchase Deposit
+        $purchaseDepositRes = $this->actingAs($user)->postJson('/api/backend/purchase-deposits', [
+            'supplier_id' => $supplier->id,
+            'primary_account_id' => $kasAcc->id,
+            'tax_id' => $tax->id,
+            'document_number' => 'UMP.2026.07.0001',
+            'entry_date' => '2026-07-07',
+            'subtotal' => 1000.00,
+            'tax_total' => 110.00,
+            'total_amount' => 1110.00,
+            'outstanding_amount' => 1110.00,
+            'status' => 'Belum Lunas',
+        ]);
+        $purchaseDepositRes->assertCreated();
+        $purchaseDepositId = $purchaseDepositRes->json('data.id');
+
+        $purchaseJournal = \App\Domain\Support\Models\OperationDocument::where('document_type', 'general_journal')
+            ->where('related_document_id', $purchaseDepositId)
+            ->first();
+        $this->assertNotNull($purchaseJournal);
+        $this->assertEquals(1110.00, (float) $purchaseJournal->total_amount);
+
+        $purchaseLines = $purchaseJournal->lines()->get();
+        $this->assertEquals(1110.00, (float) $purchaseLines->sum('debit_amount'));
+        $this->assertEquals(1110.00, (float) $purchaseLines->sum('credit_amount'));
+        $this->assertTrue($purchaseLines->contains(fn ($l) => $l->account_id == $umBeliAcc->id && (float) $l->debit_amount == 1000.00));
+        $this->assertTrue($purchaseLines->contains(fn ($l) => $l->account_id == $ppnMasukanAcc->id && (float) $l->debit_amount == 110.00));
+        $this->assertTrue($purchaseLines->contains(fn ($l) => $l->account_id == $kasAcc->id && (float) $l->credit_amount == 1110.00));
+    }
 }

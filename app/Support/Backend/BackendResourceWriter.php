@@ -946,17 +946,17 @@ class BackendResourceWriter
         }
 
         // Format epoch timestamp: PREFIX.YYYY.MM.DD.1786797889961 atau PREFIX.YYYY.MM.1786797889961
-        if (preg_match('/^[A-Z]+(\.[A-Z]+)?\.\d{4}(\.\d{2}){1,2}\.\d{5,}$/', $number)) {
+        if (preg_match('/^[A-Z]+(\.[A-Z]+)?\.\d{4}(\.\d{2}){1,2}\.\d{9,}$/', $number)) {
             return true;
         }
 
         // Format titik lama: PREFIX.YYYY.MM.DD.HHMMSS (dengan DD)
-        if (preg_match('/^[A-Z]+(\.[A-Z]+)?\.\d{4}\.\d{2}\.\d{2}\.\d+$/', $number)) {
+        if (preg_match('/^[A-Z]+(\.[A-Z]+)?\.\d{4}\.\d{2}\.\d{2}\.\d{6,}$/', $number)) {
             return true;
         }
 
         // Format titik frontend: PREFIX.YYYY.MM.HHMMSS (6+ digit waktu/timestamp)
-        if (preg_match('/^[A-Z]+(\.[A-Z]+)?\.\d{4}\.\d{2}\.\d{5,}$/', $number)) {
+        if (preg_match('/^[A-Z]+(\.[A-Z]+)?\.\d{4}\.\d{2}\.\d{6,}$/', $number)) {
             return true;
         }
 
@@ -1112,6 +1112,7 @@ class BackendResourceWriter
             'cash-receipts' => 'cash_receipt',
             'bank-transfers' => 'bank_transfer',
             'sales-deposits' => 'sales_deposit',
+            'purchase-deposits' => 'purchase_deposit',
             'purchase-payments' => 'purchase_payment',
             'sales-receipts' => 'sales_receipt',
             'item-requests' => 'item_request',
@@ -1141,6 +1142,7 @@ class BackendResourceWriter
             'sales_return',
             'purchase_return',
             'sales_deposit',
+            'purchase_deposit',
         ];
         if (!in_array($record->document_type, $postableTypes)) {
             return;
@@ -1169,6 +1171,7 @@ class BackendResourceWriter
             'sales_return'     => 'Retur Penjualan',
             'purchase_return'  => 'Retur Pembelian',
             'sales_deposit'    => 'Uang Muka Penjualan',
+            'purchase_deposit' => 'Uang Muka Pembelian',
         ];
 
         $transactionValues = [
@@ -1184,6 +1187,7 @@ class BackendResourceWriter
             'sales_return'     => 'sales-return',
             'purchase_return'  => 'purchase-return',
             'sales_deposit'    => 'sales-deposit',
+            'purchase_deposit' => 'purchase-deposit',
         ];
 
         $cleanNotes = trim((string) $record->notes);
@@ -1308,6 +1312,106 @@ class BackendResourceWriter
                         $lines[] = ['account_id' => $accId, 'description' => 'Persediaan - ' . (optional($line->product)->name ?? $line->description ?? 'Barang'), 'debit_amount' => $line->total_amount, 'credit_amount' => 0.00, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];
                     }
                 }
+            }
+        } elseif ($docType === 'sales_deposit') {
+            $totalAmount = (float) $record->total_amount;
+            $taxAmount = (float) ($record->tax_total ?? 0);
+            $netAmount = round($totalAmount - $taxAmount, 2);
+
+            $kasBankAcc = $record->primary_account_id
+                ?? DB::table('accounts')->where('code', '111.101-02')->value('id')
+                ?? DB::table('accounts')->where('code', '111.101-01')->value('id')
+                ?? DB::table('accounts')->where('account_type', 'Cash/Bank')->value('id');
+
+            $umJualAcc = DB::table('accounts')->where('code', '212.101-00')->value('id')
+                ?? DB::table('accounts')->where('code', 'like', '212%')->value('id');
+
+            $ppnKeluaranAcc = ($record->tax_id ? DB::table('taxes')->where('id', $record->tax_id)->value('output_account_id') : null)
+                ?? DB::table('accounts')->where('code', '215.000-01')->value('id')
+                ?? DB::table('accounts')->where('code', 'like', '215%')->value('id');
+
+            if ($kasBankAcc && $totalAmount > 0) {
+                $lines[] = [
+                    'account_id' => $kasBankAcc,
+                    'description' => 'Penerimaan Kas/Bank - ' . $record->document_number,
+                    'debit_amount' => $totalAmount,
+                    'credit_amount' => 0.00,
+                    'total_amount' => $totalAmount,
+                    'sort_order' => $sortOrder++,
+                ];
+            }
+
+            if ($umJualAcc && ($taxAmount > 0 ? $netAmount > 0 : $totalAmount > 0)) {
+                $creditAmt = $taxAmount > 0 ? $netAmount : $totalAmount;
+                $lines[] = [
+                    'account_id' => $umJualAcc,
+                    'description' => 'Uang Muka Penjualan - ' . $record->document_number,
+                    'debit_amount' => 0.00,
+                    'credit_amount' => $creditAmt,
+                    'total_amount' => $creditAmt,
+                    'sort_order' => $sortOrder++,
+                ];
+            }
+
+            if ($taxAmount > 0 && $ppnKeluaranAcc) {
+                $lines[] = [
+                    'account_id' => $ppnKeluaranAcc,
+                    'description' => 'PPN Keluaran - ' . $record->document_number,
+                    'debit_amount' => 0.00,
+                    'credit_amount' => $taxAmount,
+                    'total_amount' => $taxAmount,
+                    'sort_order' => $sortOrder++,
+                ];
+            }
+        } elseif ($docType === 'purchase_deposit') {
+            $totalAmount = (float) $record->total_amount;
+            $taxAmount = (float) ($record->tax_total ?? 0);
+            $netAmount = round($totalAmount - $taxAmount, 2);
+
+            $kasBankAcc = $record->primary_account_id
+                ?? DB::table('accounts')->where('code', '111.101-02')->value('id')
+                ?? DB::table('accounts')->where('code', '111.101-01')->value('id')
+                ?? DB::table('accounts')->where('account_type', 'Cash/Bank')->value('id');
+
+            $umBeliAcc = DB::table('accounts')->where('code', '113.101-00')->value('id')
+                ?? DB::table('accounts')->where('code', 'like', '113%')->value('id');
+
+            $ppnMasukanAcc = ($record->tax_id ? DB::table('taxes')->where('id', $record->tax_id)->value('input_account_id') : null)
+                ?? DB::table('accounts')->where('code', '117.000-01')->value('id')
+                ?? DB::table('accounts')->where('code', 'like', '117%')->value('id');
+
+            if ($umBeliAcc && ($taxAmount > 0 ? $netAmount > 0 : $totalAmount > 0)) {
+                $debitAmt = $taxAmount > 0 ? $netAmount : $totalAmount;
+                $lines[] = [
+                    'account_id' => $umBeliAcc,
+                    'description' => 'Uang Muka Pembelian - ' . $record->document_number,
+                    'debit_amount' => $debitAmt,
+                    'credit_amount' => 0.00,
+                    'total_amount' => $debitAmt,
+                    'sort_order' => $sortOrder++,
+                ];
+            }
+
+            if ($taxAmount > 0 && $ppnMasukanAcc) {
+                $lines[] = [
+                    'account_id' => $ppnMasukanAcc,
+                    'description' => 'PPN Masukan - ' . $record->document_number,
+                    'debit_amount' => $taxAmount,
+                    'credit_amount' => 0.00,
+                    'total_amount' => $taxAmount,
+                    'sort_order' => $sortOrder++,
+                ];
+            }
+
+            if ($kasBankAcc && $totalAmount > 0) {
+                $lines[] = [
+                    'account_id' => $kasBankAcc,
+                    'description' => 'Pengeluaran Kas/Bank - ' . $record->document_number,
+                    'debit_amount' => 0.00,
+                    'credit_amount' => $totalAmount,
+                    'total_amount' => $totalAmount,
+                    'sort_order' => $sortOrder++,
+                ];
             }
         }
 

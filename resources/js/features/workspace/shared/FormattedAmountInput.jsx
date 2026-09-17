@@ -28,9 +28,13 @@ export default function FormattedAmountInput({
     }
 
     function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            return;
+        }
         const allowedKeys = [
             'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
-            'Tab', 'Escape', 'Enter', 'Home', 'End',
+            'Tab', 'Escape', 'Home', 'End',
         ];
         if (event.ctrlKey || event.metaKey) return;
         if (allowedKeys.includes(event.key)) return;

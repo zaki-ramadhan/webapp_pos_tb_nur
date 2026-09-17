@@ -146,6 +146,8 @@ export function buildPurchaseDepositRecord(record = {}, config = {}) {
         taxTransactionType: record?.metadata?.tax_transaction_type ?? 'Faktur Pajak',
         taxInvoiceNumber: record?.metadata?.tax_invoice_number ?? '',
         taxRate: record?.tax ? parseFloat(record.tax.rate) : 0,
+        dppPercent: Number(record?.metadata?.dpp_percent ?? 100),
+        dppFactor: Number(record?.metadata?.dpp_factor ?? 1.0),
         __bankAccountId: record?.primary_account_id ?? null,
         bankAccounts: bankAccount,
         address: record?.metadata?.address ?? record?.supplier?.billing_address ?? record?.supplier?.address ?? '',
@@ -183,25 +185,27 @@ export function buildPurchaseDepositFormState(source = {}, config = {}) {
         __taxId: source.__taxId ?? null,
         taxName: source.taxName ?? '',
         taxEnabled: source.taxEnabled ?? config.draft?.taxEnabled ?? false,
-        taxIncluded: source.taxIncluded ?? config.draft?.taxIncluded ?? true,
+        taxIncluded: source.taxIncluded ?? config.draft?.taxIncluded ?? false,
         taxInvoiceDate: source.taxInvoiceDate ?? source.entryDate ?? '',
         taxTransactionType: source.taxTransactionType ?? 'Faktur Pajak',
         taxInvoiceNumber: source.taxInvoiceNumber ?? '',
         taxRate: source.taxRate ?? 0,
-        __bankAccountId: source.__bankAccountId ?? null,
-        bankAccounts: [...(source.bankAccounts ?? config.draft?.bankAccounts ?? [])],
+        dppPercent: source.dppPercent ?? config.draft?.dppPercent ?? 100,
+        dppFactor: source.dppFactor ?? config.draft?.dppFactor ?? 1.0,
         address: source.address ?? config.draft?.address ?? '',
         notes: source.notes ?? config.draft?.notes ?? '',
         summary: source.summary ?? buildSummaryRows(totalAmount, status, printStatus),
         approvalStamp: source.approvalStamp ?? config.draft?.approvalStamp ?? '',
         statusStamp: source.statusStamp ?? config.draft?.statusStamp ?? '',
         statusTone: source.statusTone ?? config.draft?.statusTone ?? 'gray',
-        processButtonLabel: source.processButtonLabel ?? config.draft?.processButtonLabel ?? 'Proses',
-        dockActions: source.dockActions ?? config.draft?.dockActions ?? [],
+        processButtonLabel: source.processButtonLabel ?? config.draft?.processButtonLabel ?? '',
+        dockActions: config.detailRecords?.[source.documentNumber]?.dockActions ?? config.draft?.dockActions ?? [],
         subtotal: source.subtotal ?? formatCurrencyLabel(totalAmount),
         taxTotalFormatted: source.taxTotalFormatted ?? 'Rp 0',
         total: source.total ?? formatCurrencyLabel(totalAmount),
         printStatus,
+        __bankAccountId: source.__bankAccountId ?? null,
+        bankAccounts: [...(source.bankAccounts ?? config.draft?.bankAccounts ?? [])],
     };
 }
 
@@ -216,16 +220,20 @@ export function buildGeneratedPurchaseDepositNumber() {
 export function buildPurchaseDepositPayload(values) {
     const baseAmount = parseNumericInput(values.depositAmount);
     const taxRate = (values.taxEnabled && values.__taxId) ? (values.taxRate ?? 0) / 100 : 0;
+    const dppFactor = Number.isFinite(values.dppFactor) && values.dppFactor > 0 ? values.dppFactor : 1.0;
+    const dppPercent = values.dppPercent ?? 100;
 
     let taxTotal = 0;
     let totalAmount = baseAmount;
 
     if (taxRate > 0) {
         if (values.taxIncluded) {
-            taxTotal = Math.round(baseAmount - (baseAmount / (1 + taxRate)));
+            const dpp = baseAmount / (1 + taxRate * dppFactor);
+            taxTotal = Math.round((dpp * dppFactor) * taxRate);
             totalAmount = baseAmount;
         } else {
-            taxTotal = Math.round(baseAmount * taxRate);
+            const dpp = baseAmount * dppFactor;
+            taxTotal = Math.round(dpp * taxRate);
             totalAmount = baseAmount + taxTotal;
         }
     }
@@ -251,6 +259,8 @@ export function buildPurchaseDepositPayload(values) {
             tax_invoice_date: normalizeDisplayDate(values.taxInvoiceDate) || null,
             tax_transaction_type: values.taxTransactionType ?? null,
             tax_invoice_number: values.taxTransactionType === 'Faktur Pajak' ? (values.taxInvoiceNumber?.trim() || null) : null,
+            dpp_percent: dppPercent,
+            dpp_factor: dppFactor,
         },
     };
 }

@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import DocumentStamp from '@/components/ui/DocumentStamp';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { TransactionDualTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
+import TarifPajakModal from './TarifPajakModal';
 
 export function buildDepositFormState(source = {}) {
     return Object.fromEntries(
@@ -124,21 +127,73 @@ export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], e
     );
 }
 
-export function DepositDualTotalFooter({ values }) {
+export function DepositDualTotalFooter({
+    values,
+    setValues,
+    onUpdateTaxSettings,
+    readOnly = false,
+}) {
+    const [isTaxModalOpen, setIsTaxModalOpen] = useState(false);
+
     const items = [
         { label: 'Sub Total', value: values?.subtotal || '0' },
     ];
 
     if (values?.taxEnabled && values?.__taxId) {
-        const rateLabel = values.taxRate ? ` (${values.taxRate}%)` : '';
+        const rateLabel = values.taxRate !== undefined && values.taxRate !== null ? ` (${values.taxRate}%)` : '';
         items.push({
             label: `PPN${rateLabel}`,
             value: values.taxTotalFormatted || 'Rp 0',
+            action: !readOnly ? (
+                <button
+                    type="button"
+                    aria-label="Ubah tarif pajak"
+                    onClick={() => setIsTaxModalOpen(true)}
+                    className="h-5 w-5 inline-flex items-center justify-center rounded-[3px] border border-brand-blue-accent/30 bg-brand-blue-lightest text-brand-blue-accent hover:bg-brand-blue-accent hover:text-white transition text-xs font-semibold cursor-pointer"
+                >
+                    %
+                </button>
+            ) : null,
+        });
+    }
+
+    if (values?.pphChecked && values?.pphAmount) {
+        items.push({
+            label: values.pphLabel || 'PPh 23',
+            value: values.pphAmount,
         });
     }
 
     items.push({ label: 'Total', value: values?.total || '0' });
 
-    return <TransactionDualTotalCard items={items} />;
+    const handleApplyTaxSettings = ({ dppPercent, dppFactor, taxRate }) => {
+        if (onUpdateTaxSettings) {
+            onUpdateTaxSettings({ dppPercent, dppFactor, taxRate });
+        } else if (setValues) {
+            setValues((current) => ({
+                ...current,
+                dppPercent,
+                dppFactor,
+                taxRate,
+            }));
+        }
+    };
+
+    return (
+        <>
+            <TransactionDualTotalCard items={items} />
+            {values?.taxEnabled && (
+                <TarifPajakModal
+                    open={isTaxModalOpen}
+                    onClose={() => setIsTaxModalOpen(false)}
+                    baseAmount={parseNumericInput(values?.depositAmount || 0)}
+                    taxIncluded={Boolean(values?.taxIncluded)}
+                    currentDppPercent={values?.dppPercent ?? 100}
+                    currentTaxRate={values?.taxRate ?? 11}
+                    onApply={handleApplyTaxSettings}
+                />
+            )}
+        </>
+    );
 }
 
