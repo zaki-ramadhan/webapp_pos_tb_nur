@@ -157,14 +157,14 @@ export function DepositDualTotalFooter({
         });
     }
 
-    if (values?.pphChecked && values?.pphAmount) {
+    items.push({ label: 'Total', value: values?.total || '0' });
+
+    if ((values?.taxEnabled && values?.__pphId && values?.pphAmount) || (values?.pphChecked && values?.pphAmount)) {
         items.push({
-            label: values.pphLabel || 'PPh 23',
-            value: values.pphAmount,
+            label: values.pphName || values.pphLabel || 'PPh 23',
+            value: values.pphAmountFormatted || (typeof values.pphAmount === 'number' ? `Rp ${values.pphAmount.toLocaleString('id-ID')}` : values.pphAmount),
         });
     }
-
-    items.push({ label: 'Total', value: values?.total || '0' });
 
     const handleApplyTaxSettings = ({ dppPercent, dppFactor, taxRate }) => {
         if (onUpdateTaxSettings) {

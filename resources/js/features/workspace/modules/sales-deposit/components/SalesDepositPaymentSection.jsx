@@ -99,7 +99,7 @@ export default function SalesDepositPaymentSection({
                                             ...current,
                                             taxEnabled: checked,
                                             ...(!checked
-                                                ? { __taxId: null, taxName: '', taxRate: 0, dppPercent: 100, dppFactor: 1.0 }
+                                                ? { __taxId: null, taxName: '', taxRate: 0, dppPercent: 100, dppFactor: 1.0, __pphId: null, pphName: '', pphRate: 0, pphAmount: 0, pphAmountFormatted: 'Rp 0' }
                                                 : {
                                                     __taxId: current.__taxId || 1,
                                                     taxName: current.taxName || 'PPN 11%',
@@ -130,29 +130,55 @@ export default function SalesDepositPaymentSection({
                             </div>
 
                             {values.taxEnabled && (
-                                <div className="flex items-center gap-x-3 max-w-[320px] w-full pt-1">
-                                    <TransactionFieldLabel label="PPN" required className="w-10 flex-shrink-0" />
-                                    <div className="flex-1 min-w-0">
-                                        <AccountLookupTextInput
-                                            id="tax"
-                                            resource="taxes"
-                                            value={values.taxName || ''}
-                                            placeholder="Cari/Pilih PPN..."
-                                            searchLabel="Cari pajak"
-                                            queryParams={{ code: ['PPN-11', 'PPN-12'] }}
-                                            onSelectAccount={(record, label) => {
-                                                setValues((current) => ({
-                                                    ...current,
-                                                    __taxId: record ? record.id : null,
-                                                    taxName: label || '',
-                                                    taxRate: record ? parseFloat(record.rate) : 0,
-                                                }));
-                                            }}
-                                            className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
-                                            inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
-                                        />
+                                <>
+                                    <div className="flex items-center gap-x-3 max-w-[320px] w-full pt-1">
+                                        <TransactionFieldLabel label="PPN" required className="w-10 flex-shrink-0" />
+                                        <div className="flex-1 min-w-0">
+                                            <AccountLookupTextInput
+                                                id="tax"
+                                                resource="taxes"
+                                                value={values.taxName || ''}
+                                                placeholder="Cari/Pilih PPN..."
+                                                searchLabel="Cari pajak"
+                                                queryParams={{ code: ['PPN-11', 'PPN-12'] }}
+                                                onSelectAccount={(record, label) => {
+                                                    setValues((current) => ({
+                                                        ...current,
+                                                        __taxId: record ? record.id : null,
+                                                        taxName: label || '',
+                                                        taxRate: record ? parseFloat(record.rate) : 0,
+                                                    }));
+                                                }}
+                                                className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
+                                                inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
+
+                                    <div className="flex items-center gap-x-3 max-w-[320px] w-full pt-0.5">
+                                        <TransactionFieldLabel label="PPh" className="w-10 flex-shrink-0" />
+                                        <div className="flex-1 min-w-0">
+                                            <AccountLookupTextInput
+                                                id="pph"
+                                                resource="taxes"
+                                                value={values.pphName || ''}
+                                                placeholder="Cari/Pilih PPh..."
+                                                searchLabel="Cari PPh"
+                                                queryParams={{ code: ['PPH-23', 'PPH-21'] }}
+                                                onSelectAccount={(record, label) => {
+                                                    setValues((current) => ({
+                                                        ...current,
+                                                        __pphId: record ? record.id : null,
+                                                        pphName: label || '',
+                                                        pphRate: record ? parseFloat(record.rate) : 0,
+                                                    }));
+                                                }}
+                                                className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
+                                                inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
+                                            />
+                                        </div>
+                                    </div>
+                                </>
                             )}
                         </div>
                     </div>
