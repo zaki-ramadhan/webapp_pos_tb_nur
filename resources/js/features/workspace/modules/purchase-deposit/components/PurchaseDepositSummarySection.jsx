@@ -72,7 +72,7 @@ export default function PurchaseDepositSummarySection({
                                             ...current,
                                             taxEnabled: checked,
                                             ...(!checked
-                                                ? { __taxId: null, taxName: '', taxRate: 0, dppPercent: 100, dppFactor: 1.0, __pphId: null, pphName: '', pphRate: 0, pphAmount: 0, pphAmountFormatted: 'Rp 0' }
+                                                ? { taxIncluded: false, __taxId: null, taxName: '', taxRate: 0, dppPercent: 100, dppFactor: 1.0, __pphId: null, pphName: '', pphRate: 0, pphAmount: 0, pphAmountFormatted: 'Rp 0' }
                                                 : {
                                                     __taxId: current.__taxId || defaultTax.id,
                                                     taxName: current.taxName || defaultTax.name,
@@ -90,12 +90,25 @@ export default function PurchaseDepositSummarySection({
                                 <CheckboxField
                                     label={config.labels.taxIncluded || 'Total termasuk Pajak'}
                                     checked={values.taxIncluded}
-                                    onChange={(event) =>
+                                    onChange={(event) => {
+                                        const checked = event.target.checked;
+                                        const defaultTax = ppnOptions[0] || { id: 1, name: 'PPN 11%', rate: 11 };
                                         setValues((current) => ({
                                             ...current,
-                                            taxIncluded: event.target.checked,
-                                        }))
-                                    }
+                                            taxIncluded: checked,
+                                            ...(checked && !current.taxEnabled
+                                                ? {
+                                                    taxEnabled: true,
+                                                    __taxId: current.__taxId || defaultTax.id,
+                                                    taxName: current.taxName || defaultTax.name,
+                                                    taxRate: current.taxRate || defaultTax.rate,
+                                                    dppPercent: current.dppPercent || 100,
+                                                    dppFactor: current.dppFactor || 1.0,
+                                                    taxTransactionType: current.taxTransactionType || 'Faktur Pajak',
+                                                }
+                                                : {}),
+                                        }));
+                                    }}
                                     align="center"
                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
                                     containerClassName="w-auto inline-flex"
