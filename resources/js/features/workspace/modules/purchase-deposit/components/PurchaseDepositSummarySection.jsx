@@ -42,74 +42,76 @@ export default function PurchaseDepositSummarySection({
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
-                        <TransactionFieldLabel label={config.labels.tax} />
-                        <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark">
-                            <CheckboxField
-                                label="Kena Pajak"
-                                checked={values.taxEnabled}
-                                onChange={(event) => {
-                                    const checked = event.target.checked;
-                                    setValues((current) => ({
-                                        ...current,
-                                        taxEnabled: checked,
-                                        ...(!checked
-                                            ? { __taxId: null, taxName: '', taxRate: 0, dppPercent: 100, dppFactor: 1.0 }
-                                            : {
-                                                __taxId: current.__taxId || 1,
-                                                taxName: current.taxName || 'PPN 11%',
-                                                taxRate: current.taxRate || 11,
-                                                dppPercent: current.dppPercent || 100,
-                                                dppFactor: current.dppFactor || 1.0,
-                                                taxTransactionType: current.taxTransactionType || 'Faktur Pajak',
-                                            }),
-                                    }));
-                                }}
-                                align="center"
-                                inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                containerClassName="w-auto inline-flex"
-                            />
-                            <CheckboxField
-                                label={config.labels.taxIncluded || 'Total termasuk Pajak'}
-                                checked={values.taxIncluded}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        taxIncluded: event.target.checked,
-                                    }))
-                                }
-                                align="center"
-                                inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                containerClassName="w-auto inline-flex"
-                            />
-                        </div>
-                    </div>
-
-                    {values.taxEnabled && (
-                        <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
-                            <TransactionFieldLabel label="PPN" required />
-                            <div className="max-w-[320px] w-full">
-                                <AccountLookupTextInput
-                                    id="tax"
-                                    resource="taxes"
-                                    value={values.taxName || ''}
-                                    placeholder="Cari/Pilih PPN..."
-                                    searchLabel="Cari pajak"
-                                    queryParams={{ code: ['PPN-11', 'PPN-12'] }}
-                                    onSelectAccount={(record, label) => {
+                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-start gap-x-4">
+                        <TransactionFieldLabel label={config.labels.tax} className="pt-2" />
+                        <div className="flex flex-col gap-y-2.5">
+                            <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark pt-1.5">
+                                <CheckboxField
+                                    label="Kena Pajak"
+                                    checked={values.taxEnabled}
+                                    onChange={(event) => {
+                                        const checked = event.target.checked;
                                         setValues((current) => ({
                                             ...current,
-                                            __taxId: record ? record.id : null,
-                                            taxName: label || '',
-                                            taxRate: record ? parseFloat(record.rate) : 0,
+                                            taxEnabled: checked,
+                                            ...(!checked
+                                                ? { __taxId: null, taxName: '', taxRate: 0, dppPercent: 100, dppFactor: 1.0 }
+                                                : {
+                                                    __taxId: current.__taxId || 1,
+                                                    taxName: current.taxName || 'PPN 11%',
+                                                    taxRate: current.taxRate || 11,
+                                                    dppPercent: current.dppPercent || 100,
+                                                    dppFactor: current.dppFactor || 1.0,
+                                                    taxTransactionType: current.taxTransactionType || 'Faktur Pajak',
+                                                }),
                                         }));
                                     }}
-                                    className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
-                                    inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
+                                    align="center"
+                                    inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                    containerClassName="w-auto inline-flex"
+                                />
+                                <CheckboxField
+                                    label={config.labels.taxIncluded || 'Total termasuk Pajak'}
+                                    checked={values.taxIncluded}
+                                    onChange={(event) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            taxIncluded: event.target.checked,
+                                        }))
+                                    }
+                                    align="center"
+                                    inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                    containerClassName="w-auto inline-flex"
                                 />
                             </div>
+
+                            {values.taxEnabled && (
+                                <div className="flex items-center gap-x-3 max-w-[320px] w-full pt-1">
+                                    <TransactionFieldLabel label="PPN" required className="w-10 flex-shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                        <AccountLookupTextInput
+                                            id="tax"
+                                            resource="taxes"
+                                            value={values.taxName || ''}
+                                            placeholder="Cari/Pilih PPN..."
+                                            searchLabel="Cari pajak"
+                                            queryParams={{ code: ['PPN-11', 'PPN-12'] }}
+                                            onSelectAccount={(record, label) => {
+                                                setValues((current) => ({
+                                                    ...current,
+                                                    __taxId: record ? record.id : null,
+                                                    taxName: label || '',
+                                                    taxRate: record ? parseFloat(record.rate) : 0,
+                                                }));
+                                            }}
+                                            className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
+                                            inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    )}
+                    </div>
                 </div>
             </section>
 
