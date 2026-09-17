@@ -79,6 +79,7 @@ export default function SalesDepositPaymentSection({
                             <FormattedAmountInput
                                 value={values.depositAmount}
                                 onChange={(nextValue) => setValues((current) => ({ ...current, depositAmount: nextValue }))}
+                                prefix="Rp"
                                 placeholder="0"
                                 className="h-[40px] rounded-[4px] border-[#BBBBBB] bg-slate-50"
                                 inputClassName="text-right text-xs sm:text-sm text-brand-dark"
