@@ -31,8 +31,11 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
                         key={item.id ?? index}
                         className="flex-1 min-w-0 sm:min-w-[180px] xl:min-w-[200px] 2xl:min-w-[220px] px-3.5 sm:px-4 py-2.5 sm:py-3 min-h-[68px] sm:min-h-[76px] flex flex-col justify-between"
                     >
-                        <div className="text-xs sm:text-sm text-brand-dark truncate">
-                            {item.label}
+                        <div className="flex items-center justify-between gap-1.5 min-w-0">
+                            <div className="text-xs sm:text-sm text-brand-dark truncate">
+                                {item.label}
+                            </div>
+                            {item.action ? <div className="shrink-0">{item.action}</div> : null}
                         </div>
                         <div className="mt-1 text-right text-sm sm:text-base font-semibold text-text-darkest whitespace-nowrap tabular-nums">
                             {formattedValue}

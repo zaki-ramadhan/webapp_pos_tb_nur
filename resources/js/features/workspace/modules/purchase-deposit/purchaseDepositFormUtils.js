@@ -16,6 +16,8 @@ export function getComparableTransactionFields(state) {
         taxTransactionType: state.taxTransactionType,
         taxInvoiceNumber: state.taxInvoiceNumber,
         taxRate: state.taxRate,
+        dppPercent: state.dppPercent,
+        dppFactor: state.dppFactor,
         address: state.address,
         notes: state.notes,
         __bankAccountId: state.__bankAccountId,
@@ -23,8 +25,9 @@ export function getComparableTransactionFields(state) {
     };
 }
 
-export function calculateDepositTaxes(baseAmount, taxEnabled, taxId, taxRateValue, taxIncluded) {
+export function calculateDepositTaxes(baseAmount, taxEnabled, taxId, taxRateValue, taxIncluded, dppFactor = 1.0) {
     const taxRate = (taxEnabled && taxId) ? (taxRateValue ?? 0) / 100 : 0;
+    const factor = Number.isFinite(dppFactor) && dppFactor > 0 ? dppFactor : 1.0;
 
     let taxTotal = 0;
     let subtotalAmount = baseAmount;
@@ -32,11 +35,13 @@ export function calculateDepositTaxes(baseAmount, taxEnabled, taxId, taxRateValu
 
     if (taxRate > 0) {
         if (taxIncluded) {
-            taxTotal = Math.round(baseAmount - (baseAmount / (1 + taxRate)));
-            subtotalAmount = baseAmount - taxTotal;
+            const dpp = baseAmount / (1 + taxRate * factor);
+            taxTotal = Math.round((dpp * factor) * taxRate);
+            subtotalAmount = baseAmount;
             totalAmount = baseAmount;
         } else {
-            taxTotal = Math.round(baseAmount * taxRate);
+            const dpp = baseAmount * factor;
+            taxTotal = Math.round(dpp * taxRate);
             subtotalAmount = baseAmount;
             totalAmount = baseAmount + taxTotal;
         }

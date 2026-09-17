@@ -54,7 +54,6 @@ export default function SalesDepositFormView({
         config,
         pageId,
         activeTabId: activeLevel2Tab?.id,
-        onSync: useCallback((nextValues) => setCommittedDepositAmount(nextValues.depositAmount), []),
         isEqual: useCallback(
             (a, b) =>
                 areComparableValuesEqual(
@@ -64,7 +63,6 @@ export default function SalesDepositFormView({
             [],
         ),
     });
-    const [committedDepositAmount, setCommittedDepositAmount] = useState(() => values.depositAmount);
     const isDetail = Boolean(activeRecordId);
 
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'deposit');
@@ -83,7 +81,7 @@ export default function SalesDepositFormView({
 
     useEffect(() => {
         const baseAmount = parseNumericInput(values.depositAmount);
-        const totals = calculateDepositTaxes(baseAmount, values.taxEnabled, values.__taxId, values.taxRate, values.taxIncluded);
+        const totals = calculateDepositTaxes(baseAmount, values.taxEnabled, values.__taxId, values.taxRate, values.taxIncluded, values.dppFactor);
 
         setValues((current) => {
             if (
@@ -100,7 +98,7 @@ export default function SalesDepositFormView({
                 total: totals.total,
             };
         });
-    }, [values.depositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId]);
+    }, [values.depositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId, values.dppFactor]);
 
     useEffect(() => {
         clearValidationErrors();
@@ -224,7 +222,7 @@ export default function SalesDepositFormView({
                 sectionTabs={sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
-                footer={<DepositFooter values={values} />}
+                footer={<DepositFooter values={values} setValues={setValues} readOnly={isDetail} />}
                 dockActions={dockActions}
             >
                 <div className="relative flex-1 flex flex-col min-h-0">
@@ -241,7 +239,6 @@ export default function SalesDepositFormView({
                             values={values}
                             setValues={setValues}
                             isDetail={isDetail}
-                            onDepositAmountBlur={() => setCommittedDepositAmount(values.depositAmount)}
                         />
                     )}
                 </div>

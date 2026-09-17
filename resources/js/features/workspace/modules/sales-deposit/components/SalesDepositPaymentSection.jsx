@@ -14,7 +14,6 @@ export default function SalesDepositPaymentSection({
     values,
     setValues,
     isDetail = false,
-    onDepositAmountBlur,
 }) {
     return (
         <div className={`w-full ${values.taxEnabled ? 'flex flex-col lg:flex-row gap-x-8 items-start' : 'max-w-[540px]'}`}>
@@ -61,7 +60,6 @@ export default function SalesDepositPaymentSection({
                                         depositAmount: event.target.value,
                                     }))
                                 }
-                                onBlur={() => onDepositAmountBlur?.(values.depositAmount)}
                                 prefix="Rp"
                                 prefixClassName="min-w-0 px-3 justify-center text-table-row-text font-normal bg-ui-bg-hover text-sm"
                                 containerClassName="!max-w-[320px] w-full"
@@ -94,15 +92,23 @@ export default function SalesDepositPaymentSection({
                             <CheckboxField
                                 label="Kena Pajak"
                                 checked={values.taxEnabled}
-                                onChange={(event) =>
+                                onChange={(event) => {
+                                    const checked = event.target.checked;
                                     setValues((current) => ({
                                         ...current,
-                                        taxEnabled: event.target.checked,
-                                        ...(!event.target.checked
-                                            ? { __taxId: null, taxName: '', taxRate: 0 }
-                                            : { taxTransactionType: current.taxTransactionType || 'Faktur Pajak' }),
-                                    }))
-                                }
+                                        taxEnabled: checked,
+                                        ...(!checked
+                                            ? { __taxId: null, taxName: '', taxRate: 0, dppPercent: 100, dppFactor: 1.0 }
+                                            : {
+                                                __taxId: current.__taxId || 1,
+                                                taxName: current.taxName || 'PPN 11%',
+                                                taxRate: current.taxRate || 11,
+                                                dppPercent: current.dppPercent || 100,
+                                                dppFactor: current.dppFactor || 1.0,
+                                                taxTransactionType: current.taxTransactionType || 'Faktur Pajak',
+                                            }),
+                                    }));
+                                }}
                                 align="center"
                                 inputClassName="h-3.5 w-3.5 rounded-[3px]"
                                 containerClassName="w-auto inline-flex"
