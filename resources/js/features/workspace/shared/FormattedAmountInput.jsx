@@ -7,6 +7,7 @@ export default function FormattedAmountInput({
     allowDecimal = true,
     allowNegative = false,
     inputMode = 'decimal',
+    prefix = null,
     containerClassName,
     ...props
 }) {
@@ -50,6 +51,7 @@ export default function FormattedAmountInput({
     return (
         <TextInput
             {...props}
+            prefix={prefix}
             isCurrency={props.isCurrency ?? true}
             maxLength={props.maxLength ?? 18}
             value={formattedValue}
