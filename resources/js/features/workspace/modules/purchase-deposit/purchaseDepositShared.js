@@ -330,3 +330,60 @@ export function validatePurchaseDepositValues(values, config = {}) {
     }
     return '';
 }
+
+export function buildPurchasePaymentInitialValuesFromDeposit(formValues = {}, activeRecordId = null) {
+    const recordId = formValues.__backendRecordId || formValues.id || activeRecordId;
+    const supplierName = formValues.supplier?.[0] || formValues.supplierName || '';
+    const supplierId = formValues.__supplierId || formValues.supplier_id || null;
+
+    const invoiceNo = String(
+        formValues.invoiceNumber ||
+        formValues.reference_number ||
+        formValues.documentNumber ||
+        formValues.document_number ||
+        ''
+    ).trim();
+
+    const docNo = String(
+        formValues.documentNumber ||
+        formValues.document_number ||
+        invoiceNo
+    ).trim();
+
+    const invoiceDate = formValues.entryDate || '';
+    const rawTotal = parseNumericInput(formValues.total || formValues.depositAmount || 0);
+    const totalLabel = formatCurrencyLabel(rawTotal);
+
+    const invoiceItem = {
+        id: String(recordId || invoiceNo || docNo || 'deposit-1'),
+        __lineId: null,
+        __relatedDocumentId: recordId || null,
+        number: invoiceNo,
+        formNumber: docNo,
+        date: invoiceDate,
+        total: totalLabel,
+        outstanding: totalLabel,
+        pay: totalLabel,
+        discount: 'Rp 0',
+        payment: totalLabel,
+        pphChecked: Boolean(formValues.__pphId || formValues.pphAmount > 0),
+        pphLabel: formValues.pphName || formValues.pphCode || '',
+        pphAmount: formValues.pphAmountFormatted || (formValues.pphAmount ? formatCurrencyLabel(formValues.pphAmount) : 'Rp 0'),
+        withholdingProof: '',
+        discountAccount: '',
+        discountValue: '',
+        discountNotes: '',
+        department: '',
+    };
+
+    return {
+        recordId,
+        initialValues: {
+            __supplierId: supplierId,
+            payee: supplierName ? [supplierName] : [],
+            invoices: [invoiceItem],
+            depositRecordId: recordId || null,
+            paymentAmountDisplay: formatCurrencyValue(rawTotal),
+        },
+    };
+}

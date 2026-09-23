@@ -63,15 +63,17 @@ export default function PurchasePaymentInvoiceModal({ open, onClose, modal, invo
         setValues(buildModalState(modal, invoice, preferences));
     }, [invoice, modal, open, tabs, preferences]);
 
-    if (!modal || !invoice) {
+    if (!invoice) {
         return null;
     }
+
+    const modalTitle = modal?.title ?? 'Faktur';
 
     return (
         <DocumentModalLayout
             open={open}
             onClose={onClose}
-            title={modal.title ?? 'Faktur'}
+            title={modalTitle}
             tabs={tabs}
             activeTabId={activeTabId}
             onTabChange={setActiveTabId}

@@ -111,6 +111,29 @@ export default function PurchasePaymentFormView({
                 }
             }).catch(() => null);
         }
+
+        if (initVals.depositRecordId) {
+            getBackendResource('purchase-deposits', initVals.depositRecordId).then((res) => {
+                const depositRecord = res?.data;
+                if (depositRecord) {
+                    const supplierName = depositRecord.supplier?.name || depositRecord.customer?.name || depositRecord.contact?.name || depositRecord.supplier_name;
+                    const supplierId = depositRecord.supplier_id || depositRecord.customer_id || depositRecord.contact_id;
+                    setValues((current) => {
+                        const existing = current.invoices ?? [];
+                        const withoutCurrent = existing.filter((inv) => String(inv.id) !== String(depositRecord.id) && String(inv.__relatedDocumentId) !== String(depositRecord.id));
+                        const updated = applyPurchasePaymentInvoices(current, [
+                            ...withoutCurrent,
+                            buildPurchasePaymentInvoiceFromRecord(depositRecord),
+                        ]);
+                        return {
+                            ...updated,
+                            __supplierId: supplierId ?? updated.__supplierId,
+                            payee: supplierName ? [supplierName] : updated.payee,
+                        };
+                    });
+                }
+            }).catch(() => null);
+        }
     }, [isDetail, setValues]);
 
     useEffect(() => {
@@ -156,11 +179,43 @@ export default function PurchasePaymentFormView({
             }).catch(() => null);
         }
 
+        function applyDepositImport(pendingId) {
+            if (!pendingId || isDetail) return;
+            getBackendResource('purchase-deposits', pendingId).then((res) => {
+                const depositRecord = res?.data;
+                if (depositRecord) {
+                    const supplierName = depositRecord.supplier?.name || depositRecord.customer?.name || depositRecord.contact?.name || depositRecord.supplier_name;
+                    const supplierId = depositRecord.supplier_id || depositRecord.customer_id || depositRecord.contact_id;
+                    setValues((current) => {
+                        const existingInvoices = current.invoices ?? [];
+                        const withoutCurrent = existingInvoices.filter((inv) => String(inv.id) !== String(depositRecord.id) && String(inv.__relatedDocumentId) !== String(depositRecord.id));
+                        const updated = applyPurchasePaymentInvoices(current, [
+                            ...withoutCurrent,
+                            buildPurchasePaymentInvoiceFromRecord(depositRecord),
+                        ]);
+                        return {
+                            ...updated,
+                            __supplierId: supplierId ?? updated.__supplierId,
+                            payee: supplierName ? [supplierName] : updated.payee,
+                        };
+                    });
+                }
+            }).catch(() => null);
+        }
+
         if (!isDetail && typeof window !== 'undefined' && window.__pendingImportPurchaseInvoice) {
             const pending = window.__pendingImportPurchaseInvoice;
             window.__pendingImportPurchaseInvoice = null;
             if (pending?.id) {
                 applyInvoiceImport(pending.id);
+            }
+        }
+
+        if (!isDetail && typeof window !== 'undefined' && window.__pendingImportPurchaseDeposit) {
+            const pending = window.__pendingImportPurchaseDeposit;
+            window.__pendingImportPurchaseDeposit = null;
+            if (pending?.id) {
+                applyDepositImport(pending.id);
             }
         }
 
@@ -171,8 +226,19 @@ export default function PurchasePaymentFormView({
             }
         }
 
+        function handleDepositImportEvent(e) {
+            const pendingId = e.detail?.id;
+            if (pendingId) {
+                applyDepositImport(pendingId);
+            }
+        }
+
         window.addEventListener('workspace:import-purchase-invoice', handleImportEvent);
-        return () => window.removeEventListener('workspace:import-purchase-invoice', handleImportEvent);
+        window.addEventListener('workspace:import-purchase-deposit', handleDepositImportEvent);
+        return () => {
+            window.removeEventListener('workspace:import-purchase-invoice', handleImportEvent);
+            window.removeEventListener('workspace:import-purchase-deposit', handleDepositImportEvent);
+        };
     }, [isDetail, setValues, activeLevel2Tab]);
 
     const validationMessage = useMemo(() => validatePurchasePaymentValues(values, config), [config, values]);

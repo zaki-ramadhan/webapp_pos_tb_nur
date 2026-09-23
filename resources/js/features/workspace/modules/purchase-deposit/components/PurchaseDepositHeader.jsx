@@ -11,6 +11,7 @@ import {
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import { buildPurchasePaymentInitialValuesFromDeposit } from '../purchaseDepositShared';
 
 export default function PurchaseDepositHeader({ config, values, setValues, isDetail, handlers }) {
     const processAnchorRef = useRef(null);
@@ -23,27 +24,34 @@ export default function PurchaseDepositHeader({ config, values, setValues, isDet
             return;
         }
 
-        if (!values.__backendRecordId) {
-            toast.warning('Silakan simpan uang muka pembelian terlebih dahulu sebelum memproses pembayaran.');
-            return;
-        }
+        const { recordId, initialValues } = buildPurchasePaymentInitialValuesFromDeposit(values, values.__backendRecordId);
 
-        const supplierName = values.supplier?.[0] || '';
         window.__pendingInitialValues = window.__pendingInitialValues || {};
-        window.__pendingInitialValues['purchase-payment'] = {
-            __supplierId: values.__supplierId,
-            payee: supplierName ? [supplierName] : [],
-            paymentAmountDisplay: values.depositAmount,
-        };
+        window.__pendingInitialValues['purchase-payment'] = initialValues;
+
+        if (recordId) {
+            window.__pendingImportPurchaseDeposit = { id: recordId };
+        }
 
         window.dispatchEvent(
             new CustomEvent('workspace:open-page', {
                 detail: {
                     pageId: 'purchase-payment',
                     targetTabId: 'purchase-payment-create',
+                    mode: 'form',
+                    openForm: true,
+                    initialValues,
                 },
             })
         );
+
+        if (recordId) {
+            window.dispatchEvent(
+                new CustomEvent('workspace:import-purchase-deposit', {
+                    detail: { id: recordId },
+                })
+            );
+        }
     };
 
     return (

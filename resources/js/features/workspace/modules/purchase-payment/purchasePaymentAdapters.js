@@ -153,26 +153,41 @@ export function buildPurchasePaymentRecordFromBackend(record = {}, config) {
 }
 
 export function buildPurchasePaymentInvoiceFromRecord(record) {
-    const totalLabel = formatCurrencyLabel(record?.total_amount ?? record?.paid_amount ?? record?.subtotal ?? 0);
+    const totalAmount = record?.total_amount ?? record?.paid_amount ?? record?.subtotal ?? 0;
+    const totalLabel = formatCurrencyLabel(totalAmount);
+
+    const invoiceNo =
+        (record?.reference_number && String(record.reference_number).trim()) ||
+        (record?.invoice_number && String(record.invoice_number).trim()) ||
+        (record?.invoiceNumber && String(record.invoiceNumber).trim()) ||
+        (record?.bill_number && String(record.bill_number).trim()) ||
+        (record?.billNumber && String(record.billNumber).trim()) ||
+        (record?.document_number && String(record.document_number).trim()) ||
+        (record?.documentNumber && String(record.documentNumber).trim()) ||
+        (record?.number && String(record.number).trim()) ||
+        '';
+
+    const docNo =
+        (record?.document_number && String(record.document_number).trim()) ||
+        (record?.documentNumber && String(record.documentNumber).trim()) ||
+        (record?.number && String(record.number).trim()) ||
+        invoiceNo;
 
     return {
         id: String(record?.id ?? ''),
         __lineId: null,
         __relatedDocumentId: record?.id ?? null,
-        number:
-            (record?.document_number && String(record.document_number).trim()) ||
-            (record?.reference_number && String(record.reference_number).trim()) ||
-            '',
-        formNumber: record?.document_number ?? '',
-        date: formatIsoDate(record?.entry_date),
+        number: invoiceNo,
+        formNumber: docNo,
+        date: formatIsoDate(record?.entry_date ?? record?.date),
         total: totalLabel,
-        outstanding: formatCurrencyLabel(record?.outstanding_amount ?? record?.total_amount ?? 0),
+        outstanding: formatCurrencyLabel(record?.outstanding_amount ?? totalAmount),
         pay: totalLabel,
         discount: 'Rp 0',
         payment: totalLabel,
-        pphChecked: false,
-        pphLabel: '',
-        pphAmount: 'Rp 0',
+        pphChecked: Boolean(record?.metadata?.pph_tax_id || record?.metadata?.pph_amount > 0),
+        pphLabel: record?.metadata?.pph_name || record?.metadata?.pph_code || '',
+        pphAmount: formatCurrencyLabel(record?.metadata?.pph_amount ?? 0),
         withholdingProof: '',
         discountAccount: '',
         discountValue: '',

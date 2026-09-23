@@ -21,6 +21,7 @@ import {
     buildGeneratedPurchaseDepositNumber,
     buildPurchaseDepositFormState,
     buildPurchaseDepositPayload,
+    buildPurchasePaymentInitialValuesFromDeposit,
     parseNumericInput,
     validatePurchaseDepositValues,
 } from './purchaseDepositShared';
@@ -205,6 +206,42 @@ export default function PurchaseDepositFormView({
         });
     }
 
+    const handlers = useMemo(
+        () => ({
+            onProcessPembayaran: (formValues) => {
+                const { recordId, initialValues } = buildPurchasePaymentInitialValuesFromDeposit(formValues, activeRecordId);
+
+                window.__pendingInitialValues = window.__pendingInitialValues || {};
+                window.__pendingInitialValues['purchase-payment'] = initialValues;
+
+                if (recordId) {
+                    window.__pendingImportPurchaseDeposit = { id: recordId };
+                }
+
+                window.dispatchEvent(
+                    new CustomEvent('workspace:open-page', {
+                        detail: {
+                            pageId: 'purchase-payment',
+                            targetTabId: 'purchase-payment-create',
+                            mode: 'form',
+                            openForm: true,
+                            initialValues,
+                        },
+                    })
+                );
+
+                if (recordId) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:import-purchase-deposit', {
+                            detail: { id: recordId },
+                        })
+                    );
+                }
+            },
+        }),
+        [activeRecordId]
+    );
+
     return (
         <>
             <TransactionFormLayout
@@ -216,6 +253,7 @@ export default function PurchaseDepositFormView({
                         values={values}
                         setValues={setValues}
                         isDetail={isDetail}
+                        handlers={handlers}
                     />
                 }
                 sectionTabs={sectionTabs}
