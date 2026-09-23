@@ -528,6 +528,11 @@
         font-family: inherit;
     }
 
+    [data-sonner-toast],
+    [data-sonner-toast] * {
+        font-weight: 400 !important;
+    }
+
     [data-sonner-toast] [data-icon] {
         width: 1.2rem;
         height: 1.2rem;
@@ -535,8 +540,13 @@
     }
 
     [data-sonner-toast] [data-title] {
-        font-size: 0.98rem;
+        font-size: 0.95rem;
         line-height: 1.4;
+        font-weight: 400 !important;
+    }
+
+    [data-sonner-toast] [data-description] {
+        font-weight: 400 !important;
     }
 }
 

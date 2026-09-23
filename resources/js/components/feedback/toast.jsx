@@ -23,7 +23,7 @@ export function renderToastList(items, defaultIntro = 'Bidang berikut wajib diis
 
     return (
         <div className="mt-1 flex flex-col gap-1 text-xs leading-relaxed">
-            <span className="font-medium opacity-95">{intro}</span>
+            <span className="font-normal opacity-95">{intro}</span>
             <ul className="list-disc pl-4 space-y-0.5 opacity-90">
                 {cleanedItems.map((item, idx) => (
                     <li key={idx}>{item}</li>

@@ -44,6 +44,10 @@ createInertiaApp({
                         richColors
                         expand
                         closeButton={false}
+                        toastOptions={{
+                            className: '!font-normal',
+                            style: { fontWeight: 400 },
+                        }}
                     />
                 </AppErrorBoundary>
             </StrictMode>,
