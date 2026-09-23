@@ -134,20 +134,39 @@ export function DepositDualTotalFooter({
         { label: 'Sub Total', value: values?.subtotal || '0' },
     ];
 
-    if (values?.taxEnabled && values?.__taxId) {
-        const rateLabel = values.taxRate !== undefined && values.taxRate !== null ? ` (${values.taxRate}%)` : '';
+    if (values?.taxEnabled && (values?.__taxId || values?.taxRate)) {
+        const rateLabel = values.taxRate !== undefined && values.taxRate !== null && values.taxRate > 0 ? ` ${values.taxRate}%` : '';
         items.push({
             label: `PPN${rateLabel}`,
             value: values.taxTotalFormatted || 'Rp 0',
+            action: (
+                <span className="inline-flex items-center justify-center rounded border border-ui-border px-1 py-0.5 text-[10px] font-medium text-brand-dark hover:bg-slate-100 cursor-pointer">
+                    %
+                </span>
+            ),
         });
     }
 
     items.push({ label: 'Total', value: values?.total || '0' });
 
-    if ((values?.taxEnabled && values?.__pphId && values?.pphAmount) || (values?.pphChecked && values?.pphAmount)) {
+    const hasPph = Boolean((values?.taxEnabled && values?.__pphId) || (values?.pphChecked && values?.__pphId));
+    if (hasPph) {
+        let pphLabel = 'PPh 23';
+        if (values?.pphCode) {
+            pphLabel = values.pphCode.replace(/[-_]/g, ' ').replace(/^pph/i, 'PPh').trim();
+        } else if (values?.pphName) {
+            pphLabel = values.pphName.replace(/\s*\(\d+%\)$/, '').trim();
+        }
+        if (pphLabel.startsWith('PPh 23')) {
+            pphLabel = 'PPh 23';
+        } else if (pphLabel.startsWith('PPh 21')) {
+            pphLabel = 'PPh 21';
+        }
+
+        const pphVal = values?.pphAmountFormatted || (typeof values?.pphAmount === 'number' ? `Rp ${values.pphAmount.toLocaleString('id-ID')}` : (values?.pphAmount || 'Rp 0'));
         items.push({
-            label: values.pphName || values.pphLabel || 'PPh 23',
-            value: values.pphAmountFormatted || (typeof values.pphAmount === 'number' ? `Rp ${values.pphAmount.toLocaleString('id-ID')}` : values.pphAmount),
+            label: pphLabel || 'PPh 23',
+            value: pphVal,
         });
     }
 

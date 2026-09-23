@@ -1,4 +1,7 @@
 export function sanitizeAmountInput(value, { allowDecimal = true, allowNegative = false, isInput = false } = {}) {
+    if (typeof value === 'object' && value !== null) {
+        value = value.target ? value.target.value : (value.value ?? '');
+    }
     let strValue = String(value ?? '').trim();
 
     // Strip empty decimal suffixes (,00, ,0) so they are not shown to lay users
@@ -85,6 +88,9 @@ export function formatAmountInput(value, options = {}) {
 }
 
 export function parseAmountInput(value, { allowDecimal = true, allowNegative = false, emptyValue = null } = {}) {
+    if (typeof value === 'object' && value !== null) {
+        value = value.target ? value.target.value : (value.value ?? '');
+    }
     if (typeof value === 'number') {
         return Number.isFinite(value) ? value : emptyValue;
     }

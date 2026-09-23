@@ -3,6 +3,7 @@ import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import {
@@ -20,25 +21,33 @@ export default function SalesDepositPaymentSection({
     const { items: taxRecords = [] } = useBackendIndexResource('taxes', { per_page: 50 });
 
     const ppnOptions = useMemo(() => {
-        const fromApi = taxRecords.filter((t) => t.code?.startsWith('PPN'));
-        if (fromApi.length > 0) {
-            return fromApi;
-        }
-        return [
+        const fromApi = taxRecords.filter((t) => t.code?.startsWith('PPN') || t.name?.toUpperCase().startsWith('PPN'));
+        const defaults = [
+            { id: 10, code: 'PPN-10', name: 'PPN 10%', rate: 10 },
             { id: 1, code: 'PPN-11', name: 'PPN 11%', rate: 11 },
             { id: 2, code: 'PPN-12', name: 'PPN 12%', rate: 12 },
         ];
+        if (fromApi.length > 0) {
+            const existingCodes = new Set(fromApi.map((t) => t.code));
+            const missing = defaults.filter((d) => !existingCodes.has(d.code));
+            return [...fromApi, ...missing];
+        }
+        return defaults;
     }, [taxRecords]);
 
     const pphOptions = useMemo(() => {
-        const fromApi = taxRecords.filter((t) => t.code?.startsWith('PPH'));
-        if (fromApi.length > 0) {
-            return fromApi;
-        }
-        return [
-            { id: 4, code: 'PPH-23', name: 'PPh 23', rate: 2 },
-            { id: 3, code: 'PPH-21', name: 'PPh 21', rate: 5 },
+        const fromApi = taxRecords.filter((t) => t.code?.startsWith('PPH') || t.name?.toUpperCase().startsWith('PPH'));
+        const defaults = [
+            { id: 4, code: 'PPH-23', name: 'PPh 23 (2%)', rate: 2 },
+            { id: 5, code: 'PPH-23-4', name: 'PPh 23 (4%)', rate: 4 },
+            { id: 3, code: 'PPH-21', name: 'PPh 21 (5%)', rate: 5 },
         ];
+        if (fromApi.length > 0) {
+            const existingCodes = new Set(fromApi.map((t) => t.code));
+            const missing = defaults.filter((d) => !existingCodes.has(d.code));
+            return [...fromApi, ...missing];
+        }
+        return defaults;
     }, [taxRecords]);
 
     return (
@@ -78,7 +87,19 @@ export default function SalesDepositPaymentSection({
                         <div className="max-w-[320px] w-full">
                             <FormattedAmountInput
                                 value={values.depositAmount}
-                                onChange={(nextValue) => setValues((current) => ({ ...current, depositAmount: nextValue }))}
+                                onChange={(eventOrVal) => {
+                                    const nextVal = typeof eventOrVal === 'object' && eventOrVal !== null
+                                        ? (eventOrVal.target ? eventOrVal.target.value : (eventOrVal.value ?? ''))
+                                        : eventOrVal;
+                                    setValues((current) => ({ ...current, depositAmount: nextVal }));
+                                }}
+                                onBlur={(eventOrVal) => {
+                                    const rawVal = typeof eventOrVal === 'object' && eventOrVal !== null
+                                        ? (eventOrVal.target ? eventOrVal.target.value : (eventOrVal.value ?? ''))
+                                        : eventOrVal;
+                                    const formatted = formatAmountInput(rawVal || '0', { allowDecimal: true });
+                                    setValues((current) => ({ ...current, depositAmount: formatted }));
+                                }}
                                 prefix="Rp"
                                 prefixClassName="min-w-[32px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text"
                                 placeholder="0"
@@ -208,6 +229,7 @@ export default function SalesDepositPaymentSection({
                                                         setValues((current) => ({
                                                             ...current,
                                                             __pphId: null,
+                                                            pphCode: '',
                                                             pphName: '',
                                                             pphRate: 0,
                                                             pphAmount: 0,
@@ -219,6 +241,7 @@ export default function SalesDepositPaymentSection({
                                                         setValues((current) => ({
                                                             ...current,
                                                             __pphId: pph ? pph.id : null,
+                                                            pphCode: pph?.code ?? '',
                                                             pphName: pph ? pph.name : '',
                                                             pphRate: pph ? parseFloat(pph.rate) : 0,
                                                         }));

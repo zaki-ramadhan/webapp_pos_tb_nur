@@ -19,6 +19,7 @@ export function getComparableTransactionFields(state) {
         dppPercent: state.dppPercent,
         dppFactor: state.dppFactor,
         __pphId: state.__pphId,
+        pphCode: state.pphCode,
         pphName: state.pphName,
         pphRate: state.pphRate,
         address: state.address,
@@ -29,9 +30,9 @@ export function getComparableTransactionFields(state) {
 }
 
 export function calculateDepositTaxes(baseAmount, taxEnabled, taxId, taxRateValue, taxIncluded, dppFactor = 1.0, pphId = null, pphRateValue = 0) {
-    const taxRate = (taxEnabled && taxId) ? (taxRateValue ?? 0) / 100 : 0;
+    const taxRate = (taxEnabled && (taxId || taxRateValue)) ? (Number(taxRateValue) || 0) / 100 : 0;
     const factor = Number.isFinite(dppFactor) && dppFactor > 0 ? dppFactor : 1.0;
-    const pphRate = (taxEnabled && pphId) ? (pphRateValue ?? 0) / 100 : 0;
+    const pphRate = (taxEnabled && pphId) ? (Number(pphRateValue) || 0) / 100 : 0;
 
     let taxTotal = 0;
     let dpp = baseAmount;

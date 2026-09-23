@@ -11,19 +11,50 @@ export default function FormattedAmountInput({
     containerClassName,
     ...props
 }) {
-    const formattedValue = formatAmountInput(value || '0', { allowDecimal, allowNegative });
+    const rawValue = typeof value === 'object' && value !== null
+        ? (value.target ? value.target.value : (value.value ?? ''))
+        : value;
+    const formattedValue = formatAmountInput(rawValue || '0', { allowDecimal, allowNegative });
 
     function handleChange(event) {
-        const nextValue = formatAmountInput(event.target.value, { allowDecimal, allowNegative, isInput: true });
+        const val = event?.target ? event.target.value : event;
+        const nextValue = formatAmountInput(val, { allowDecimal, allowNegative, isInput: true });
 
         onChange?.({
             target: {
-                name: event.target.name,
+                name: event?.target?.name || props.name,
                 value: nextValue,
             },
             currentTarget: {
-                name: event.target.name,
+                name: event?.target?.name || props.name,
                 value: nextValue,
+            },
+        });
+    }
+
+    function handleBlur(event) {
+        const val = event?.target ? event.target.value : event;
+        const finalValue = formatAmountInput(val || '0', { allowDecimal, allowNegative, isInput: false });
+
+        onChange?.({
+            target: {
+                name: event?.target?.name || props.name,
+                value: finalValue,
+            },
+            currentTarget: {
+                name: event?.target?.name || props.name,
+                value: finalValue,
+            },
+        });
+
+        props.onBlur?.({
+            target: {
+                name: event?.target?.name || props.name,
+                value: finalValue,
+            },
+            currentTarget: {
+                name: event?.target?.name || props.name,
+                value: finalValue,
             },
         });
     }
@@ -56,6 +87,7 @@ export default function FormattedAmountInput({
             maxLength={props.maxLength ?? 18}
             value={formattedValue}
             onChange={handleChange}
+            onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             inputMode={inputMode}
             containerClassName={containerClassName ?? 'w-full max-w-[240px]'}
