@@ -51,7 +51,7 @@ export default function PurchaseDepositInfoSection({ config, values, setValues, 
                                     error={invoiceError}
                                     readOnly={isDetail}
                                     maxLength={120}
-                                    className="h-[34px] rounded-[4px] bg-slate-50 border-ui-border"
+                                    className="h-[40px] rounded-[4px] bg-slate-50 border-ui-border"
                                     inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
                                 />
                             </div>
