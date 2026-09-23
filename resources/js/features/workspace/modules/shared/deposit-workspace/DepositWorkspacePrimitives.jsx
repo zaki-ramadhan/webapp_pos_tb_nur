@@ -139,11 +139,6 @@ export function DepositDualTotalFooter({
         items.push({
             label: `PPN${rateLabel}`,
             value: values.taxTotalFormatted || 'Rp 0',
-            action: (
-                <span className="inline-flex items-center justify-center rounded border border-ui-border px-1 py-0.5 text-[10px] font-medium text-brand-dark hover:bg-slate-100 cursor-pointer">
-                    %
-                </span>
-            ),
         });
     }
 

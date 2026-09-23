@@ -36,17 +36,6 @@ export default function FormattedAmountInput({
         const val = event?.target ? event.target.value : event;
         const finalValue = formatAmountInput(val || '0', { allowDecimal, allowNegative, isInput: false });
 
-        onChange?.({
-            target: {
-                name: event?.target?.name || props.name,
-                value: finalValue,
-            },
-            currentTarget: {
-                name: event?.target?.name || props.name,
-                value: finalValue,
-            },
-        });
-
         props.onBlur?.({
             target: {
                 name: event?.target?.name || props.name,
@@ -62,6 +51,7 @@ export default function FormattedAmountInput({
     function handleKeyDown(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
+            event.target.blur();
             return;
         }
         const allowedKeys = [

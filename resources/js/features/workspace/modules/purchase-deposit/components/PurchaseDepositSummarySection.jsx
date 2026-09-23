@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
@@ -17,6 +17,20 @@ export default function PurchaseDepositSummarySection({
     setValues,
 }) {
     const { items: taxRecords = [] } = useBackendIndexResource('taxes', { per_page: 50 });
+    const [localDepositAmount, setLocalDepositAmount] = useState(values.depositAmount ?? '0');
+
+    useEffect(() => {
+        setLocalDepositAmount(values.depositAmount ?? '0');
+    }, [values.depositAmount]);
+
+    const handleDepositBlur = (eventOrVal) => {
+        const rawVal = typeof eventOrVal === 'object' && eventOrVal !== null
+            ? (eventOrVal.target ? eventOrVal.target.value : (eventOrVal.value ?? ''))
+            : (eventOrVal ?? localDepositAmount);
+        const formatted = formatAmountInput(rawVal || '0', { allowDecimal: true, isInput: false });
+        setLocalDepositAmount(formatted);
+        setValues((current) => ({ ...current, depositAmount: formatted }));
+    };
 
     const ppnOptions = useMemo(() => {
         const fromApi = taxRecords.filter((t) => t.code?.startsWith('PPN') || t.name?.toUpperCase().startsWith('PPN'));
@@ -58,20 +72,14 @@ export default function PurchaseDepositSummarySection({
                         <TransactionFieldLabel label={config.labels.depositAmount} required />
                         <div className="max-w-[320px] w-full">
                             <FormattedAmountInput
-                                value={values.depositAmount}
+                                value={localDepositAmount}
                                 onChange={(eventOrVal) => {
                                     const nextVal = typeof eventOrVal === 'object' && eventOrVal !== null
                                         ? (eventOrVal.target ? eventOrVal.target.value : (eventOrVal.value ?? ''))
                                         : eventOrVal;
-                                    setValues((current) => ({ ...current, depositAmount: nextVal }));
+                                    setLocalDepositAmount(nextVal);
                                 }}
-                                onBlur={(eventOrVal) => {
-                                    const rawVal = typeof eventOrVal === 'object' && eventOrVal !== null
-                                        ? (eventOrVal.target ? eventOrVal.target.value : (eventOrVal.value ?? ''))
-                                        : eventOrVal;
-                                    const formatted = formatAmountInput(rawVal || '0', { allowDecimal: true });
-                                    setValues((current) => ({ ...current, depositAmount: formatted }));
-                                }}
+                                onBlur={handleDepositBlur}
                                 prefix="Rp"
                                 prefixClassName="min-w-[32px] bg-input-prefix-bg px-3 text-xs sm:text-sm text-table-row-text"
                                 placeholder="0"
