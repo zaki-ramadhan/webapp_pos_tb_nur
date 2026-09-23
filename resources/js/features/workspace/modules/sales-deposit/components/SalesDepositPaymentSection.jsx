@@ -110,7 +110,7 @@ export default function SalesDepositPaymentSection({
                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-start gap-x-4">
                         <TransactionFieldLabel label={config.labels.tax} className="pt-2" />
                         <div className="flex flex-col gap-y-2.5">
-                            <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark pt-1.5">
+                            <div className="flex flex-nowrap items-center gap-x-3.5 sm:gap-x-4 text-xs sm:text-sm text-brand-dark pt-1.5 whitespace-nowrap">
                                 <CheckboxField
                                     label="Kena Pajak"
                                     checked={values.taxEnabled}
@@ -134,7 +134,8 @@ export default function SalesDepositPaymentSection({
                                     }}
                                     align="center"
                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                    containerClassName="w-auto inline-flex"
+                                    containerClassName="w-auto inline-flex shrink-0"
+                                    labelClassName="whitespace-nowrap"
                                 />
                                 <CheckboxField
                                     label="Total termasuk Pajak"
@@ -160,7 +161,8 @@ export default function SalesDepositPaymentSection({
                                     }}
                                     align="center"
                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                    containerClassName="w-auto inline-flex"
+                                    containerClassName="w-auto inline-flex shrink-0"
+                                    labelClassName="whitespace-nowrap"
                                 />
                             </div>
 
