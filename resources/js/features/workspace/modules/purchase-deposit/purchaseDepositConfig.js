@@ -77,6 +77,7 @@ const defaultPurchaseDepositConfig = {
         supplier: 'Pemasok',
         entryDate: 'Tanggal',
         documentNumber: 'Nomor Faktur #',
+        invoiceNumber: 'No. Faktur',
         depositAmount: 'Uang Muka',
         tax: 'Pajak',
         taxIncluded: 'Total termasuk Pajak',

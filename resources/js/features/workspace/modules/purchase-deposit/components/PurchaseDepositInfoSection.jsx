@@ -1,3 +1,4 @@
+import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import {
@@ -12,6 +13,32 @@ export default function PurchaseDepositInfoSection({ config, values, setValues, 
                 <TransactionSectionHeading title={config.infoTitle || 'Info lainnya'} icon="info" />
 
                 <div className="mt-4 flex flex-col gap-y-2 pl-3 sm:pl-5">
+                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                        <TransactionFieldLabel label={config.labels.invoiceNumber || 'No. Faktur'} />
+                        <div className="max-w-[320px] w-full">
+                            <TextInput
+                                id="invoiceNumber"
+                                value={values.invoiceNumber || ''}
+                                onChange={isDetail ? undefined : (event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        invoiceNumber: event.target.value,
+                                    }))
+                                }
+                                onBlur={isDetail ? undefined : (event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        invoiceNumber: event.target.value.trim(),
+                                    }))
+                                }
+                                readOnly={isDetail}
+                                maxLength={120}
+                                className="h-[34px] rounded-[4px] border-ui-border bg-slate-50"
+                                inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
+                            />
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                         <TransactionFieldLabel label={config.labels.bankAccount || 'Rekening Bank'} />
                         <div className="max-w-[320px] w-full">
