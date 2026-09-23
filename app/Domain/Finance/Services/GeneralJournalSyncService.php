@@ -101,7 +101,7 @@ class GeneralJournalSyncService
         $branchId = DB::table('branches')->value('id') ?? 1;
         $warehouseId = DB::table('warehouses')->value('id') ?? 1;
         $userAdminId = DB::table('users')->where('email', 'piscokpiscok2610@gmail.com')->value('id')
-            ?? (DB::table('users')->value('id') ?? 1);
+            ?? DB::table('users')->value('id');
 
         $accBebanPenyKendaraan = DB::table('accounts')->where('code', '612.001-02')->value('id') ?? DB::table('accounts')->where('code', '610202')->value('id');
         $accAkmPenyKendaraan   = DB::table('accounts')->where('code', '122.100-02')->value('id') ?? DB::table('accounts')->where('code', '120202')->value('id');
@@ -395,7 +395,7 @@ class GeneralJournalSyncService
     protected function ensureDocumentUsers(): void
     {
         $userAdminId = DB::table('users')->where('email', 'piscokpiscok2610@gmail.com')->value('id')
-            ?? (DB::table('users')->value('id') ?? 1);
+            ?? DB::table('users')->value('id');
 
         $missingUserDocs = DB::table('operation_documents')
             ->where('document_type', 'general_journal')
@@ -408,11 +408,13 @@ class GeneralJournalSyncService
 
         foreach ($missingUserDocs as $doc) {
             $respUserId = $doc->responsible_user_id ?? $userAdminId;
-            DB::table('operation_document_user')->insertOrIgnore([
-                'operation_document_id' => $doc->id,
-                'user_id' => $respUserId,
-            ]);
-            if ($respUserId !== $userAdminId) {
+            if ($respUserId) {
+                DB::table('operation_document_user')->insertOrIgnore([
+                    'operation_document_id' => $doc->id,
+                    'user_id' => $respUserId,
+                ]);
+            }
+            if ($userAdminId && $respUserId !== $userAdminId) {
                 DB::table('operation_document_user')->insertOrIgnore([
                     'operation_document_id' => $doc->id,
                     'user_id' => $userAdminId,

@@ -84,8 +84,9 @@ class TransactionDataSeeder extends Seeder
         $pMortar = $productsMap['MTR-300'] ?? $pBata;
         $pKrm    = $productsMap['KRM-404'] ?? $pBata;
 
-        $userAdminId = $usersMap['piscokpiscok2610@gmail.com'] ?? 1;
-        $userKasirId = $usersMap['ahmad.fauzi.tb@gmail.com'] ?? $userAdminId;
+        $firstUserId = !empty($usersMap) ? reset($usersMap) : (DB::table('users')->value('id') ?: null);
+        $userAdminId = $usersMap['piscokpiscok2610@gmail.com'] ?? $firstUserId;
+        $userKasirId = $usersMap['ahmad.fauzi87@gmail.com'] ?? $usersMap['ahmad.fauzi.tb@gmail.com'] ?? $userAdminId;
 
         // 1. Seed Inventory Batches FIFO for all products (Realistic Proportional Opening Balances)
         DB::table('inventory_batches')->truncate();
@@ -1561,11 +1562,13 @@ class TransactionDataSeeder extends Seeder
         $allDocs = DB::table('operation_documents')->get();
         foreach ($allDocs as $doc) {
             $respUserId = $doc->responsible_user_id ?? $userAdminId;
-            DB::table('operation_document_user')->insertOrIgnore([
-                'operation_document_id' => $doc->id,
-                'user_id' => $respUserId,
-            ]);
-            if ($respUserId !== $userAdminId) {
+            if ($respUserId) {
+                DB::table('operation_document_user')->insertOrIgnore([
+                    'operation_document_id' => $doc->id,
+                    'user_id' => $respUserId,
+                ]);
+            }
+            if ($userAdminId && $respUserId !== $userAdminId) {
                 DB::table('operation_document_user')->insertOrIgnore([
                     'operation_document_id' => $doc->id,
                     'user_id' => $userAdminId,

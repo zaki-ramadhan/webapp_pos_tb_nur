@@ -1528,10 +1528,12 @@ class FinancialEntitySeeder extends Seeder
                 'name' => 'Non Pajak',
                 'tax_type' => 'Standard',
                 'rate' => 0.0,
+                'output_account_id' => null,
+                'input_account_id' => null,
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ]);
 
         // Seed fixed assets

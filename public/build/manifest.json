@@ -1,15 +1,15 @@
 {
-  "_AuthLayout-DU3GTyPA.js": {
-    "file": "assets/AuthLayout-DU3GTyPA.js",
+  "_AuthLayout-xzWMJnKO.js": {
+    "file": "assets/AuthLayout-xzWMJnKO.js",
     "name": "AuthLayout",
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_GlobalBackgroundArt-CFJ6MDIj.js",
+      "_GlobalBackgroundArt-C7dk2HIx.js",
       "resources/js/app/App.jsx"
     ]
   },
-  "_GlobalBackgroundArt-CFJ6MDIj.js": {
-    "file": "assets/GlobalBackgroundArt-CFJ6MDIj.js",
+  "_GlobalBackgroundArt-C7dk2HIx.js": {
+    "file": "assets/GlobalBackgroundArt-C7dk2HIx.js",
     "name": "GlobalBackgroundArt",
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
@@ -60,7 +60,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-CS_bKYYZ.css",
+    "file": "assets/app-D-RdxdNT.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -69,7 +69,7 @@
     ]
   },
   "resources/js/app/App.jsx": {
-    "file": "assets/App-DmXbLudy.js",
+    "file": "assets/App-8_E8LtRN.js",
     "name": "App",
     "src": "resources/js/app/App.jsx",
     "isEntry": true,
@@ -81,8 +81,10 @@
       "resources/js/pages/DashboardPage.jsx",
       "resources/js/pages/ErrorPage.jsx",
       "resources/js/pages/HomePage.jsx",
+      "resources/js/pages/PrivacyPolicyPage.jsx",
       "resources/js/pages/RegisterPage.jsx",
-      "resources/js/pages/ResetPasswordPage.jsx"
+      "resources/js/pages/ResetPasswordPage.jsx",
+      "resources/js/pages/TermsOfServicePage.jsx"
     ]
   },
   "resources/js/features/workspace/modules/bank-inquiry/assets/rekonsiliasi_empty_state.png": {
@@ -94,13 +96,13 @@
     "src": "resources/js/features/workspace/modules/bank-inquiry/assets/rekonsiliasi_starter_state.webp"
   },
   "resources/js/pages/DashboardPage.jsx": {
-    "file": "assets/DashboardPage-RNJsi832.js",
+    "file": "assets/DashboardPage-Cn7R8QWi.js",
     "name": "DashboardPage",
     "src": "resources/js/pages/DashboardPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_GlobalBackgroundArt-CFJ6MDIj.js",
+      "_GlobalBackgroundArt-C7dk2HIx.js",
       "resources/js/app/App.jsx",
       "_vendor-icons-BRYlXfYj.js",
       "_vendor-charts-D5ETVXE2.js",
@@ -113,7 +115,7 @@
     ]
   },
   "resources/js/pages/ErrorPage.jsx": {
-    "file": "assets/ErrorPage-D3HF1xcD.js",
+    "file": "assets/ErrorPage-6tLj2e-q.js",
     "name": "ErrorPage",
     "src": "resources/js/pages/ErrorPage.jsx",
     "isDynamicEntry": true,
@@ -124,44 +126,62 @@
     ]
   },
   "resources/js/pages/HomePage.jsx": {
-    "file": "assets/HomePage-xsDx_uns.js",
+    "file": "assets/HomePage-DmY02r3K.js",
     "name": "HomePage",
     "src": "resources/js/pages/HomePage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_AuthLayout-DU3GTyPA.js",
+      "_AuthLayout-xzWMJnKO.js",
       "resources/js/app/App.jsx",
       "_Notice-DraZxvYI.js",
-      "_GlobalBackgroundArt-CFJ6MDIj.js",
+      "_GlobalBackgroundArt-C7dk2HIx.js",
       "_vendor-icons-BRYlXfYj.js"
     ]
   },
+  "resources/js/pages/PrivacyPolicyPage.jsx": {
+    "file": "assets/PrivacyPolicyPage-C3bUJgSS.js",
+    "name": "PrivacyPolicyPage",
+    "src": "resources/js/pages/PrivacyPolicyPage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js"
+    ]
+  },
   "resources/js/pages/RegisterPage.jsx": {
-    "file": "assets/RegisterPage-CJq2Rmjt.js",
+    "file": "assets/RegisterPage-CxB9o4uG.js",
     "name": "RegisterPage",
     "src": "resources/js/pages/RegisterPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_AuthLayout-DU3GTyPA.js",
+      "_AuthLayout-xzWMJnKO.js",
       "resources/js/app/App.jsx",
-      "_GlobalBackgroundArt-CFJ6MDIj.js",
+      "_GlobalBackgroundArt-C7dk2HIx.js",
       "_vendor-icons-BRYlXfYj.js"
     ]
   },
   "resources/js/pages/ResetPasswordPage.jsx": {
-    "file": "assets/ResetPasswordPage-BJ2kDez8.js",
+    "file": "assets/ResetPasswordPage-BVv9F3FF.js",
     "name": "ResetPasswordPage",
     "src": "resources/js/pages/ResetPasswordPage.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-core-B1K7g7Gz.js",
-      "_AuthLayout-DU3GTyPA.js",
+      "_AuthLayout-xzWMJnKO.js",
       "resources/js/app/App.jsx",
       "_Notice-DraZxvYI.js",
-      "_GlobalBackgroundArt-CFJ6MDIj.js",
+      "_GlobalBackgroundArt-C7dk2HIx.js",
       "_vendor-icons-BRYlXfYj.js"
+    ]
+  },
+  "resources/js/pages/TermsOfServicePage.jsx": {
+    "file": "assets/TermsOfServicePage-ChiBLo9N.js",
+    "name": "TermsOfServicePage",
+    "src": "resources/js/pages/TermsOfServicePage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-core-B1K7g7Gz.js"
     ]
   }
 }
