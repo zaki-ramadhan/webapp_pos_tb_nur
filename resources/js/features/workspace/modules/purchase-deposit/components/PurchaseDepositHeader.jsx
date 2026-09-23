@@ -85,37 +85,52 @@ export default function PurchaseDepositHeader({ config, values, setValues, isDet
                     <TransactionFieldLabel label={config.labels.documentNumber || 'Nomor Faktur #'} required />
 
                     <div className="max-w-[320px] w-full justify-self-end">
-                        <TextInput
-                            value={values.documentNumber}
-                            onChange={(event) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    documentNumber: event.target.value,
-                                    autoNumber: !event.target.value.trim(),
-                                }))
-                            }
-                            onBlur={(event) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    documentNumber: event.target.value.trim(),
-                                }))
-                            }
-                            maxLength={120}
-                            readOnly={isDetail}
-                            placeholder="[Otomatis]"
-                            trailing={isDetail ? null : (values.documentNumber ? (
-                                <button
-                                    type="button"
-                                    onClick={() => setValues((c) => ({ ...c, documentNumber: '', autoNumber: true }))}
-                                    className="text-slate-400 hover:text-slate-600 text-sm font-semibold"
-                                >
-                                    ×
-                                </button>
-                            ) : null)}
-                            className="h-[40px] rounded-[4px] border-ui-border"
-                            inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
-                            trailingClassName="px-3"
-                        />
+                        {!isDetail && values.autoNumber ? (
+                            <SelectField
+                                value={values.numberingType}
+                                onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                selectClassName="text-xs sm:text-sm text-brand-dark"
+                            >
+                                {(config.numberingOptions || ['Uang Muka Pembelian']).map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </SelectField>
+                        ) : (
+                            <TextInput
+                                value={values.documentNumber}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        documentNumber: event.target.value,
+                                        autoNumber: false,
+                                    }))
+                                }
+                                onBlur={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        documentNumber: event.target.value.trim(),
+                                    }))
+                                }
+                                maxLength={120}
+                                readOnly={isDetail}
+                                trailing={isDetail ? null : (
+                                    <button
+                                        type="button"
+                                        onClick={() => setValues((c) => ({ ...c, autoNumber: true, documentNumber: '' }))}
+                                        className="text-slate-400 hover:text-slate-600 text-sm font-semibold"
+                                        aria-label="Kembali ke penomoran otomatis"
+                                    >
+                                        ×
+                                    </button>
+                                )}
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
+                                trailingClassName="px-3"
+                            />
+                        )}
                     </div>
                 </div>
 

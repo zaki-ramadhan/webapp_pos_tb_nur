@@ -104,7 +104,16 @@ export default function SalesDepositHeader({ config, values, setValues, isDetail
                                 }
                                 maxLength={120}
                                 readOnly={isDetail}
-                                trailing={isDetail ? null : <span className="text-lg font-semibold text-brand-dark">x</span>}
+                                trailing={isDetail ? null : (
+                                    <button
+                                        type="button"
+                                        onClick={() => setValues((c) => ({ ...c, autoNumber: true, documentNumber: '' }))}
+                                        className="text-slate-400 hover:text-slate-600 text-sm font-semibold"
+                                        aria-label="Kembali ke penomoran otomatis"
+                                    >
+                                        ×
+                                    </button>
+                                )}
                                 className="h-[40px] rounded-[4px] border-ui-border"
                                 inputClassName="text-xs sm:text-sm text-brand-dark font-normal"
                                 trailingClassName="px-3"

@@ -40,12 +40,12 @@ export default function PurchaseDepositSummarySection({
     }, [taxRecords]);
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* Left Column: Uang Muka & Pajak */}
             <section className="flex-1 w-full lg:max-w-[50%]">
                 <TransactionSectionHeading title={config.depositTitle || 'Uang Muka'} icon="payment" />
                 <div className="mt-4 flex flex-col gap-y-2 pl-3 sm:pl-5">
-                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <div className="grid grid-cols-[130px_minmax(0,1fr)] sm:grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4">
                         <TransactionFieldLabel label={config.labels.depositAmount} required />
                         <div className="max-w-[320px] w-full">
                             <FormattedAmountInput
@@ -60,10 +60,10 @@ export default function PurchaseDepositSummarySection({
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-start gap-x-4">
+                    <div className="grid grid-cols-[130px_minmax(0,1fr)] sm:grid-cols-[140px_minmax(0,1fr)] items-start gap-x-4">
                         <TransactionFieldLabel label={config.labels.tax} className="pt-2" />
                         <div className="flex flex-col gap-y-2.5">
-                            <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark pt-1.5">
+                            <div className="flex flex-nowrap items-center gap-x-3.5 sm:gap-x-4 text-xs sm:text-sm text-brand-dark pt-1.5 whitespace-nowrap">
                                 <CheckboxField
                                     label="Kena Pajak"
                                     checked={values.taxEnabled}
@@ -87,7 +87,8 @@ export default function PurchaseDepositSummarySection({
                                     }}
                                     align="center"
                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                    containerClassName="w-auto inline-flex"
+                                    containerClassName="w-auto inline-flex shrink-0"
+                                    labelClassName="whitespace-nowrap"
                                 />
                                 <CheckboxField
                                     label={config.labels.taxIncluded || 'Total termasuk Pajak'}
@@ -113,7 +114,8 @@ export default function PurchaseDepositSummarySection({
                                     }}
                                     align="center"
                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                    containerClassName="w-auto inline-flex"
+                                    containerClassName="w-auto inline-flex shrink-0"
+                                    labelClassName="whitespace-nowrap"
                                 />
                             </div>
 
@@ -199,7 +201,7 @@ export default function PurchaseDepositSummarySection({
                 <section className="flex-1 w-full lg:max-w-[50%] mt-8 lg:mt-0">
                     <TransactionSectionHeading title="Info Pajak" icon="tax" />
                     <div className="mt-4 flex flex-col gap-y-2 pl-3 sm:pl-5">
-                        <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                        <div className="grid grid-cols-[130px_minmax(0,1fr)] sm:grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4">
                             <TransactionFieldLabel label="Tgl Faktur Pajak" required />
                             <div className="max-w-[160px] w-full">
                                 <TransactionDateInput
@@ -211,7 +213,7 @@ export default function PurchaseDepositSummarySection({
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                        <div className="grid grid-cols-[130px_minmax(0,1fr)] sm:grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4">
                             <TransactionFieldLabel label="Tipe Transaksi" required />
                             <div className="max-w-[320px] w-full">
                                 <SelectField
@@ -227,7 +229,7 @@ export default function PurchaseDepositSummarySection({
                         </div>
 
                         {values.taxTransactionType === 'Faktur Pajak' && (
-                            <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                            <div className="grid grid-cols-[130px_minmax(0,1fr)] sm:grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4">
                                 <TransactionFieldLabel label="No. Faktur Pajak" />
                                 <div className="max-w-[320px] w-full">
                                     <TextInput
