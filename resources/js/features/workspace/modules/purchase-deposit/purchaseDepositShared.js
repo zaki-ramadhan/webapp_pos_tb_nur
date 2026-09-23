@@ -291,12 +291,17 @@ export function buildPurchaseDepositPayload(values) {
 export function validatePurchaseDepositValues(values, config = {}) {
     const labels = config.labels || {};
     const supplierLabel = labels.supplier || 'Pemasok';
+    const invoiceNumberLabel = labels.invoiceNumber || 'No. Faktur';
     const entryDateLabel = labels.entryDate || 'Tanggal';
     const documentNumberLabel = labels.documentNumber || 'No Form #';
     const depositAmountLabel = labels.depositAmount || 'Uang Muka';
 
-    if (!values.supplier || !values.supplier.length || !values.__supplierId) {
+    const hasSupplier = Boolean(values.__supplierId || (values.supplier && values.supplier.length && values.supplier[0]?.trim()));
+    if (!hasSupplier) {
         return `${supplierLabel} wajib dipilih.`;
+    }
+    if (!String(values.invoiceNumber ?? '').trim()) {
+        return `${invoiceNumberLabel} wajib diisi.`;
     }
     if (!String(values.entryDate ?? '').trim()) {
         return `${entryDateLabel} wajib diisi.`;

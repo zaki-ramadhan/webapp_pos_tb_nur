@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
@@ -7,37 +8,55 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 export default function PurchaseDepositInfoSection({ config, values, setValues, isDetail }) {
+    const [isTouched, setIsTouched] = useState(false);
+    const hasSupplier = Boolean(values.__supplierId || (Array.isArray(values.supplier) && values.supplier[0]?.trim()));
+    const invoiceLabel = config.labels?.invoiceNumber || 'No. Faktur';
+    const invoiceError = hasSupplier && !isDetail && isTouched && !String(values.invoiceNumber ?? '').trim()
+        ? `${invoiceLabel} wajib diisi.`
+        : undefined;
+
     return (
         <section>
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.infoTitle || 'Info lainnya'} icon="info" />
 
                 <div className="mt-4 flex flex-col gap-y-2 pl-3 sm:pl-5">
-                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
-                        <TransactionFieldLabel label={config.labels.invoiceNumber || 'No. Faktur'} />
-                        <div className="max-w-[320px] w-full">
-                            <TextInput
-                                id="invoiceNumber"
-                                value={values.invoiceNumber || ''}
-                                onChange={isDetail ? undefined : (event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        invoiceNumber: event.target.value,
-                                    }))
-                                }
-                                onBlur={isDetail ? undefined : (event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        invoiceNumber: event.target.value.trim(),
-                                    }))
-                                }
-                                readOnly={isDetail}
-                                maxLength={120}
-                                className="h-[34px] rounded-[4px] border-ui-border bg-slate-50"
-                                inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
+                    {hasSupplier && (
+                        <div className="grid grid-cols-[150px_minmax(0,1fr)] items-start gap-x-4">
+                            <TransactionFieldLabel
+                                label={invoiceLabel}
+                                required
+                                htmlFor="invoiceNumber"
+                                className="pt-2"
                             />
+                            <div className="max-w-[320px] w-full">
+                                <TextInput
+                                    id="invoiceNumber"
+                                    name="invoiceNumber"
+                                    value={values.invoiceNumber || ''}
+                                    placeholder="Masukkan No. Faktur..."
+                                    onChange={isDetail ? undefined : (event) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            invoiceNumber: event.target.value,
+                                        }))
+                                    }
+                                    onBlur={isDetail ? undefined : (event) => {
+                                        setIsTouched(true);
+                                        setValues((current) => ({
+                                            ...current,
+                                            invoiceNumber: event.target.value.trim(),
+                                        }));
+                                    }}
+                                    error={invoiceError}
+                                    readOnly={isDetail}
+                                    maxLength={120}
+                                    className="h-[34px] rounded-[4px] bg-slate-50 border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                         <TransactionFieldLabel label={config.labels.bankAccount || 'Rekening Bank'} />

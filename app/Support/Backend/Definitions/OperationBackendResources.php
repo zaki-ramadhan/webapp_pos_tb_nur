@@ -79,7 +79,7 @@ class OperationBackendResources
     {
         return [
             'goods-receipts' => self::documentResource('goods-receipts', 'Goods Receipts', 'goods-receipt', GoodsReceipt::class, self::purchaseRules()),
-            'purchase-deposits' => self::documentResource('purchase-deposits', 'Purchase Deposits', 'purchase-deposit', PurchaseDeposit::class, self::purchaseRules(requireLines: false)),
+            'purchase-deposits' => self::documentResource('purchase-deposits', 'Purchase Deposits', 'purchase-deposit', PurchaseDeposit::class, self::purchaseDepositRules()),
             'purchase-invoices' => self::documentResource('purchase-invoices', 'Purchase Invoices', 'purchase-invoice', PurchaseInvoice::class, self::purchaseRules()),
             'purchase-payments' => self::documentResource('purchase-payments', 'Purchase Payments', 'purchase-payment', PurchasePayment::class, self::purchasePaymentRules()),
             'purchase-returns' => self::documentResource('purchase-returns', 'Purchase Returns', 'purchase-return', PurchaseReturn::class, self::purchaseRules()),
@@ -241,6 +241,19 @@ class OperationBackendResources
             [
                 'customer_id' => ['prohibited'],
                 'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
+            ],
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function purchaseDepositRules(): array
+    {
+        return array_merge(
+            self::purchaseRules(requireLines: false),
+            [
+                'reference_number' => ['required', 'string', 'max:120'],
             ],
         );
     }

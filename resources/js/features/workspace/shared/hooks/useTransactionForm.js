@@ -61,6 +61,13 @@ function deriveFieldErrors(validationMessage) {
         errors.payroll = validationMessage;
     }
 
+    if (msg.includes('faktur pajak') || msg.includes('tax invoice')) {
+        errors.taxInvoiceNumber = validationMessage;
+    } else if (msg.includes('faktur') || msg.includes('invoice') || msg.includes('reference')) {
+        errors.invoiceNumber = validationMessage;
+        errors.referenceNumber = validationMessage;
+    }
+
     return Object.keys(errors).length > 0 ? errors : null;
 }
 

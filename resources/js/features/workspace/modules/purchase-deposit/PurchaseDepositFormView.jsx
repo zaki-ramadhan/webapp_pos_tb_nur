@@ -139,10 +139,11 @@ export default function PurchaseDepositFormView({
                 isDetail,
                 saveDisabled,
                 saving,
+                validationMessage,
                 onSave,
                 onDelete: onRequestDelete,
             }),
-        [values.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]
+        [values.dockActions, isDetail, saveDisabled, saving, validationMessage, onSave, onRequestDelete]
     );
 
     async function onSave() {

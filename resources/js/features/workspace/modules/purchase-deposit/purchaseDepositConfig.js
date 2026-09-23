@@ -58,6 +58,7 @@ const purchaseDepositDraft = {
     taxInvoiceNumber: '',
     taxRate: 0,
     bankAccounts: [],
+    invoiceNumber: '',
     address: '',
     notes: '',
     summary: [],
