@@ -300,8 +300,8 @@ export default function SalesDepositPaymentSection({
                                     className="h-[40px] rounded-[4px] border-ui-border w-full bg-slate-50"
                                     selectClassName="text-xs sm:text-sm text-brand-dark"
                                 >
-                                    <option value="Faktur Pajak">Faktur Pajak (Standar)</option>
-                                    <option value="Digunggung">Digunggung (Penjualan Eceran)</option>
+                                    <option value="Faktur Pajak">Faktur Pajak</option>
+                                    <option value="Digunggung">Digunggung</option>
                                 </SelectField>
                             </div>
                         </div>
