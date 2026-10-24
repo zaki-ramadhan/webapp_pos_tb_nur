@@ -9,8 +9,8 @@
         <meta name="google-site-verification" content="Hs028BUYs6Ay-vu6NwlfYy5XElxuDJIqRocvUjpq9GY" />
 
         <!-- Primary SEO Meta Tags -->
-        <meta name="description" content="Toko Bangunan &amp; Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat, pipa, dan perlengkapan material proyek lengkap di Kaliwedi, Cirebon." />
-        <meta name="keywords" content="TB Nur, Toko Bangunan TB Nur, Toko Bangunan Cirebon, Toko Material Kaliwedi, Toko Bangunan Guwa Kidul, Bahan Bangunan Murah, Semen, Besi Beton, Pasir, Bata, Cat Tembok, TB Nur POS" />
+        <meta name="description" content="Toko Bangunan &amp; Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton SNI, baja ringan, pipa, dan cat tembok. Melayani pengiriman ke Guwa Kidul, Kaliwedi, Gegesik, Arjawinangun, Susukan, dan seluruh wilayah Cirebon." />
+        <meta name="keywords" content="toko bangunan, toko material, bahan bangunan, toko bangunan terdekat, toko bangunan kaliwedi, toko material kaliwedi, toko bangunan guwa kidul, toko material guwa kidul, toko bangunan cirebon, toko material cirebon barat, TB Nur, TB Noor, semen kaliwedi, jual pasir guwa kidul, besi beton kaliwedi, baja ringan cirebon, cat tembok kaliwedi, pipa pvc kaliwedi" />
         <meta name="author" content="Toko Bangunan &amp; Material TB Nur" />
         @if (request()->routeIs('privacy-policy', 'terms-of-service'))
         <meta name="robots" content="noindex, follow" />
@@ -31,7 +31,7 @@
         <meta property="og:url" content="{{ url('/') }}" />
         <meta property="og:site_name" content="TB Nur" />
         <meta property="og:title" content="Toko Bangunan &amp; Material TB Nur Cirebon" />
-        <meta property="og:description" content="Pusat penjualan bahan bangunan dan material berkualitas di Kaliwedi, Cirebon. Semen, besi, pasir, bata, dan alat bangunan lengkap." />
+        <meta property="og:description" content="Pusat penjualan bahan bangunan dan material proyek di Kaliwedi, Cirebon. Semen, besi beton SNI, pasir, bata, baja ringan, pipa, dan cat tembok. Melayani pengiriman ke Guwa Kidul, Kaliwedi, Gegesik, Arjawinangun, dan sekitarnya." />
         <meta property="og:image" content="{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}" />
         <meta property="og:image:alt" content="Logo Toko Bangunan &amp; Material TB Nur" />
 
@@ -39,7 +39,7 @@
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="{{ url('/') }}" />
         <meta name="twitter:title" content="Toko Bangunan &amp; Material TB Nur Cirebon" />
-        <meta name="twitter:description" content="Pusat penjualan bahan bangunan dan material berkualitas di Kaliwedi, Cirebon. Semen, besi, pasir, bata, dan alat bangunan lengkap." />
+        <meta name="twitter:description" content="Pusat penjualan bahan bangunan dan material proyek di Kaliwedi, Cirebon. Semen, besi beton SNI, pasir, bata, baja ringan, pipa, dan cat tembok. Melayani pengiriman ke Guwa Kidul, Kaliwedi, Gegesik, Arjawinangun, dan sekitarnya." />
         <meta name="twitter:image" content="{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}" />
 
         <!-- Favicon -->
@@ -70,12 +70,21 @@
                     'url' => url('/'),
                     'logo' => asset('assets/images/logo%20tb%20nur%20new.svg'),
                     'image' => asset('assets/images/logo%20tb%20nur%20new.svg'),
-                    'description' => 'Toko Bangunan & Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat, dan perlengkapan material proyek lengkap di Kaliwedi, Cirebon.',
+                    'description' => 'Toko Bangunan & Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton SNI, baja ringan, pipa, dan cat tembok. Melayani pengiriman ke Guwa Kidul, Kaliwedi, Gegesik, Arjawinangun, Susukan, dan seluruh wilayah Cirebon.',
                     'telephone' => '+62-877-2498-5885',
                     'priceRange' => '$$',
                     'hasMap' => 'https://maps.google.com/?q=Toko+Bangunan+Nur+Guwa+Kidul+Kaliwedi+Cirebon',
                     'sameAs' => [
                         'https://maps.google.com/?q=Toko+Bangunan+Nur+Guwa+Kidul+Kaliwedi+Cirebon',
+                    ],
+                    'areaServed' => [
+                        'Guwa Kidul',
+                        'Guwa Lor',
+                        'Kecamatan Kaliwedi',
+                        'Kecamatan Gegesik',
+                        'Kecamatan Arjawinangun',
+                        'Kecamatan Susukan',
+                        'Kabupaten Cirebon',
                     ],
                     'address' => [
                         chr(64) . 'type' => 'PostalAddress',
