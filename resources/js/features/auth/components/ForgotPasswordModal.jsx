@@ -1,13 +1,14 @@
 import { useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
-import ModalBase from '@/components/ui/ModalBase';
+import Button from '@/components/ui/Button';
 import Notice from '@/components/ui/Notice';
+import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import { dismissToast, showErrorToast, showLoadingToast } from '@/components/feedback/toast';
 import { applyClientErrors, getAuthFormMessage, getFirstInlineError, validateForgotPasswordForm } from '@/features/auth/authFormFeedback';
 import AuthInput from '@/features/auth/components/AuthInput';
 
-export default function ForgotPasswordModal({ open, onClose, modal }) {
+export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
     const [step, setStep] = useState('input');
     const [submittedEmail, setSubmittedEmail] = useState('');
     const form = useForm({
@@ -24,7 +25,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
     }, [open]);
 
     function submit(event) {
-        event.preventDefault();
+        event?.preventDefault?.();
 
         const clientErrors = validateForgotPasswordForm(form.data);
 
@@ -77,84 +78,90 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
     const authMessage = getAuthFormMessage(form.errors);
 
     return (
-        <ModalBase
+        <WorkspaceDialog
             open={open}
-            onBackdropClick={onClose}
-            className="bg-slate-950/55 px-4 py-5 sm:px-6 sm:py-8"
-            panelClassName="w-full max-w-[460px] overflow-visible rounded-[4px] bg-white px-0 py-0 shadow-modal-auth"
-        >
-            <div data-modal-header="true" className="relative cursor-move select-none pt-2">
-                <button
-                    type="button"
-                    onClick={onClose}
-                    aria-label={modal.closeLabel || 'Tutup'}
-                    className="absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-400 hover:text-[#A20025] hover:border-red-200 active:text-red-955 shadow-card-subtle transition-colors cursor-pointer"
-                >
-                    <span className="text-sm font-semibold leading-none">&times;</span>
-                </button>
-
-                {step === 'input' ? (
-                    <div className="px-6 py-6">
-                        <h2 className="text-center text-lg font-semibold text-text-dark">{modal.title || 'Lupa Password'}</h2>
-
-                        <form className="mt-6 space-y-4" onSubmit={submit}>
-                            <AuthInput
-                                label="Email Akun Anda"
-                                name="email"
-                                placeholder="Masukkan alamat email Anda"
-                                type="email"
-                                autoCapitalize="none"
-                                autoCorrect="off"
-                                spellCheck={false}
-                                value={form.data.email}
-                                onChange={(event) => {
-                                    form.clearErrors('email');
-                                    form.clearErrors('identifier');
-                                    form.setData('email', event.target.value);
-                                }}
-                                error={form.errors.email || form.errors.identifier}
-                                required
-                            />
-
-                            {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
-
-                            <div className="flex justify-end pt-1">
-                                <button
-                                    type="submit"
-                                    onClick={submit}
-                                    disabled={form.processing}
-                                    className="py-2.5 px-5 rounded-[4px] bg-brand-blue hover:bg-brand-blue-hover text-xs sm:text-sm font-medium text-white shadow-sm transition-colors disabled:opacity-50 cursor-pointer select-none"
-                                >
-                                    {form.processing ? 'Memproses...' : 'Reset Password'}
-                                </button>
-                            </div>
-                        </form>
+            onClose={onClose}
+            disableClose={form.processing}
+            title={step === 'input' ? (modal?.title || 'Lupa Password') : 'Informasi Reset Password'}
+            closeLabel={modal?.closeLabel || 'Tutup'}
+            maxWidthClassName="max-w-[480px]"
+            contentClassName="bg-white px-5 pt-4 pb-3 sm:px-6 sm:pt-5 sm:pb-4"
+            footer={
+                step === 'input' ? (
+                    <div className="flex items-center justify-end gap-2 w-full">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            size="md"
+                            onClick={onClose}
+                            disabled={form.processing}
+                            className="min-w-[80px] rounded-[4px] text-xs sm:text-sm"
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            type="submit"
+                            form="forgot-password-form"
+                            variant="brand-blue"
+                            size="md"
+                            loading={form.processing}
+                            loadingLabel="Memproses..."
+                            disabled={form.processing}
+                            className="min-w-[100px] rounded-[4px] text-xs sm:text-sm font-medium"
+                        >
+                            {modal?.submitLabel || 'Reset Password'}
+                        </Button>
                     </div>
                 ) : (
-                    <div className="px-6 py-6 space-y-3">
-                        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                            <svg className="h-5 w-5 text-blue-500 shrink-0 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <h3 className="text-base font-semibold text-blue-440">Informasi reset password</h3>
-                        </div>
-
-                        <p className="text-sm leading-6 text-blue-550">
-                            Link verifikasi telah dikirim ke email <strong className="text-slate-800 font-semibold break-all">{submittedEmail}</strong>. Silakan periksa kotak masuk email Anda. Jika link verifikasi tidak ditemukan, mohon periksa folder spam. Apabila Anda masih belum menerima email verifikasi, silakan hubungi tim support kami di <a href="mailto:support@cpssoft.com" className="text-blue-500 hover:underline">support@cpssoft.com</a>
-                        </p>
-
-                        <div className="flex justify-center pt-2">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-brand-blue px-6 text-sm sm:text-base font-normal text-white hover:bg-brand-blue-hover active:scale-[0.98] transition cursor-pointer shadow-button-primary min-w-[80px]"
-                            >
-                                OK
-                            </button>
-                        </div>
+                    <div className="flex items-center justify-end w-full">
+                        <Button
+                            type="button"
+                            variant="brand-blue"
+                            size="md"
+                            onClick={onClose}
+                            className="min-w-[80px] rounded-[4px] text-xs sm:text-sm"
+                        >
+                            OK
+                        </Button>
                     </div>
-                )}
-            </div>
-        </ModalBase>
+                )
+            }
+        >
+            {step === 'input' ? (
+                <form id="forgot-password-form" className="space-y-4" onSubmit={submit}>
+                    <AuthInput
+                        label={modal?.identifierLabel || 'Email Akun Anda'}
+                        name="email"
+                        placeholder={modal?.identifierPlaceholder || 'Masukkan alamat email Anda'}
+                        type="email"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        value={form.data.email}
+                        onChange={(event) => {
+                            form.clearErrors('email');
+                            form.clearErrors('identifier');
+                            form.setData('email', event.target.value);
+                        }}
+                        error={form.errors.email || form.errors.identifier}
+                        required
+                    />
+
+                    {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
+                </form>
+            ) : (
+                <div className="space-y-3 py-1">
+                    <p className="text-xs sm:text-sm leading-6 text-slate-700">
+                        Link verifikasi telah dikirim ke email <strong className="text-slate-900 font-semibold break-all">{submittedEmail}</strong>. Silakan periksa kotak masuk email Anda. Jika link verifikasi tidak ditemukan, mohon periksa folder spam.
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-500">
+                        Apabila Anda belum menerima email verifikasi, silakan hubungi tim dukungan kami di{' '}
+                        <a href="mailto:support@tb-nur.shop" className="text-brand-blue hover:underline font-medium">
+                            support@tb-nur.shop
+                        </a>.
+                    </p>
+                </div>
+            )}
+        </WorkspaceDialog>
     );
 }

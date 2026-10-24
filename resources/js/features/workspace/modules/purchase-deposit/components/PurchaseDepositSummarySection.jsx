@@ -34,33 +34,55 @@ export default function PurchaseDepositSummarySection({
 
     const ppnOptions = useMemo(() => {
         const fromApi = taxRecords.filter((t) => t.code?.startsWith('PPN') || t.name?.toUpperCase().startsWith('PPN'));
-        const defaults = [
-            { id: 10, code: 'PPN-10', name: 'PPN 10%', rate: 10 },
+        if (fromApi.length > 0) {
+            return fromApi;
+        }
+        return [
             { id: 1, code: 'PPN-11', name: 'PPN 11%', rate: 11 },
             { id: 2, code: 'PPN-12', name: 'PPN 12%', rate: 12 },
         ];
-        if (fromApi.length > 0) {
-            const existingCodes = new Set(fromApi.map((t) => t.code));
-            const missing = defaults.filter((d) => !existingCodes.has(d.code));
-            return [...fromApi, ...missing];
-        }
-        return defaults;
     }, [taxRecords]);
 
     const pphOptions = useMemo(() => {
         const fromApi = taxRecords.filter((t) => t.code?.startsWith('PPH') || t.name?.toUpperCase().startsWith('PPH'));
-        const defaults = [
+        if (fromApi.length > 0) {
+            return fromApi;
+        }
+        return [
             { id: 4, code: 'PPH-23', name: 'PPh 23 (2%)', rate: 2 },
-            { id: 5, code: 'PPH-23-4', name: 'PPh 23 (4%)', rate: 4 },
             { id: 3, code: 'PPH-21', name: 'PPh 21 (5%)', rate: 5 },
         ];
-        if (fromApi.length > 0) {
-            const existingCodes = new Set(fromApi.map((t) => t.code));
-            const missing = defaults.filter((d) => !existingCodes.has(d.code));
-            return [...fromApi, ...missing];
-        }
-        return defaults;
     }, [taxRecords]);
+
+    useEffect(() => {
+        if (!values.taxEnabled || ppnOptions.length === 0) return;
+        const currentTax = ppnOptions.find((t) => Number(t.id) === Number(values.__taxId));
+        if (!currentTax) {
+            const defaultTax = ppnOptions[0];
+            setValues((current) => ({
+                ...current,
+                __taxId: defaultTax.id,
+                taxName: defaultTax.name,
+                taxRate: parseFloat(defaultTax.rate),
+            }));
+        }
+    }, [values.taxEnabled, values.__taxId, ppnOptions, setValues]);
+
+    useEffect(() => {
+        if (!values.taxEnabled || !values.__pphId || pphOptions.length === 0) return;
+        const currentPph = pphOptions.find((t) => Number(t.id) === Number(values.__pphId));
+        if (!currentPph) {
+            setValues((current) => ({
+                ...current,
+                __pphId: null,
+                pphCode: '',
+                pphName: '',
+                pphRate: 0,
+                pphAmount: 0,
+                pphAmountFormatted: 'Rp 0',
+            }));
+        }
+    }, [values.taxEnabled, values.__pphId, pphOptions, setValues]);
 
     return (
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">

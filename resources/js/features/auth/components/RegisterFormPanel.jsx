@@ -1,16 +1,18 @@
-import { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 
 import Button from '@/components/ui/Button';
-import FormField from '@/components/ui/FormField';
+import Divider from '@/components/ui/Divider';
+import Notice from '@/components/ui/Notice';
 import { dismissToast, showErrorToast, showLoadingToast } from '@/components/feedback/toast';
 import { applyClientErrors, getAuthFormMessage, getFirstInlineError, validateRegisterForm } from '@/features/auth/authFormFeedback';
 import AuthFooterPrompt from '@/features/auth/components/AuthFooterPrompt';
 import AuthHeading from '@/features/auth/components/AuthHeading';
 import AuthInput from '@/features/auth/components/AuthInput';
 import PasswordField from '@/features/auth/components/PasswordField';
+import SocialButton from '@/features/auth/components/SocialButton';
 
 export default function RegisterFormPanel({ register }) {
+    const { props } = usePage();
     const form = useForm({
         name: '',
         email: '',
@@ -84,12 +86,17 @@ export default function RegisterFormPanel({ register }) {
         });
     }
 
+    const authMessage = getAuthFormMessage(form.errors) || getAuthFormMessage(props.errors || {});
+
     return (
         <div className="flex min-h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
                 <AuthHeading title={register.title} subtitle={register.subtitle} />
 
                 <form className="mt-6 space-y-3 sm:mt-8" onSubmit={submit}>
+                    {props.flash?.warning ? <Notice tone="warning">{props.flash.warning}</Notice> : null}
+                    {props.flash?.status ? <Notice tone="success">{props.flash.status}</Notice> : null}
+                    {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
                     <AuthInput
                         id="register-name"
                         name="name"
@@ -149,6 +156,20 @@ export default function RegisterFormPanel({ register }) {
                     >
                         {register.submitLabel}
                     </Button>
+
+                    {register.googleHref ? (
+                        <>
+                            <div className="pt-3">
+                                <Divider label={register.socialDivider} />
+                            </div>
+
+                            <SocialButton
+                                label={`${register.googleLabel}`}
+                                href={register.googleHref}
+                                disabled={form.processing}
+                            />
+                        </>
+                    ) : null}
                 </form>
 
                 <AuthFooterPrompt

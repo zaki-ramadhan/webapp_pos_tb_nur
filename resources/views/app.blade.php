@@ -12,7 +12,11 @@
         <meta name="description" content="Toko Bangunan &amp; Material TB Nur Cirebon. Menyediakan aneka bahan bangunan berkualitas, semen, pasir, bata, besi beton, cat, pipa, dan perlengkapan material proyek lengkap di Kaliwedi, Cirebon." />
         <meta name="keywords" content="TB Nur, Toko Bangunan TB Nur, Toko Bangunan Cirebon, Toko Material Kaliwedi, Toko Bangunan Guwa Kidul, Bahan Bangunan Murah, Semen, Besi Beton, Pasir, Bata, Cat Tembok, TB Nur POS" />
         <meta name="author" content="Toko Bangunan &amp; Material TB Nur" />
+        @if (request()->routeIs('privacy-policy', 'terms-of-service'))
+        <meta name="robots" content="noindex, follow" />
+        @else
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        @endif
         <link rel="canonical" href="{{ request()->routeIs('home', 'login') ? url('/') : url()->current() }}" />
 
         <!-- Geo & Local SEO Tags -->
@@ -25,7 +29,7 @@
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="id_ID" />
         <meta property="og:url" content="{{ url('/') }}" />
-        <meta property="og:site_name" content="TB Nur - Toko Bangunan &amp; Material" />
+        <meta property="og:site_name" content="TB Nur" />
         <meta property="og:title" content="Toko Bangunan &amp; Material TB Nur Cirebon" />
         <meta property="og:description" content="Pusat penjualan bahan bangunan dan material berkualitas di Kaliwedi, Cirebon. Semen, besi, pasir, bata, dan alat bangunan lengkap." />
         <meta property="og:image" content="{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}" />
@@ -53,7 +57,7 @@
                     chr(64) . 'id' => url('/') . '#website',
                     'url' => url('/'),
                     'name' => 'TB Nur',
-                    'alternateName' => ['Toko Bangunan TB Nur', 'Toko Bangunan & Material TB Nur'],
+                    'alternateName' => ['Toko Bangunan TB Nur', 'TB Nur Cirebon', 'Toko Bangunan & Material TB Nur', 'TB. Nur'],
                     'publisher' => [
                         chr(64) . 'id' => url('/') . '#store',
                     ],
@@ -62,7 +66,7 @@
                     chr(64) . 'type' => 'HardwareStore',
                     chr(64) . 'id' => url('/') . '#store',
                     'name' => 'Toko Bangunan & Material TB Nur',
-                    'alternateName' => ['TB Nur', 'Toko Bangunan TB Nur', 'Toko Bangunan Nur Guwa Kidul'],
+                    'alternateName' => ['TB Nur', 'Toko Bangunan TB Nur', 'Toko Bangunan Nur Guwa Kidul', 'TB. Nur', 'TB Nur Cirebon'],
                     'url' => url('/'),
                     'logo' => asset('assets/images/logo%20tb%20nur%20new.svg'),
                     'image' => asset('assets/images/logo%20tb%20nur%20new.svg'),
@@ -70,6 +74,9 @@
                     'telephone' => '+62-877-2498-5885',
                     'priceRange' => '$$',
                     'hasMap' => 'https://maps.google.com/?q=Toko+Bangunan+Nur+Guwa+Kidul+Kaliwedi+Cirebon',
+                    'sameAs' => [
+                        'https://maps.google.com/?q=Toko+Bangunan+Nur+Guwa+Kidul+Kaliwedi+Cirebon',
+                    ],
                     'address' => [
                         chr(64) . 'type' => 'PostalAddress',
                         'streetAddress' => 'Jl. P. Anggabaya No.22, Guwa Kidul',

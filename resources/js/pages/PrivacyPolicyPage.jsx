@@ -1,24 +1,24 @@
 import { Head, Link } from '@inertiajs/react';
+import BrandMark from '@/features/auth/components/BrandMark';
 
-export default function PrivacyPolicyPage({ appName = 'Point of Sale TB NUR', supportEmail = 'zakiram4dhan@gmail.com', lastUpdated = '19 September 2026' }) {
+export default function PrivacyPolicyPage({
+    appName = 'TB Nur POS',
+    supportEmail = 'support@tb-nur.shop',
+    lastUpdated = '24 September 2026',
+}) {
     return (
         <>
-            <Head title={`Kebijakan Privasi - ${appName}`} />
+            <Head title={`Kebijakan Privasi - ${appName}`}>
+                <meta name="robots" content="noindex, follow" />
+            </Head>
 
             <div className="min-h-screen bg-slate-50 text-slate-700">
                 {/* Header Nav */}
                 <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur-sm">
                     <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3 sm:px-6">
-                        <div className="flex items-center gap-3">
-                            <img
-                                src="/assets/images/logo%20tb%20nur%20new.svg"
-                                alt="Logo TB Nur"
-                                className="h-7 w-auto"
-                            />
-                            <span className="text-sm font-semibold text-slate-800 tracking-tight">
-                                {appName}
-                            </span>
-                        </div>
+                        <Link href="/login" className="flex items-center">
+                            <BrandMark variant="decorative" />
+                        </Link>
 
                         <div className="flex items-center gap-4 text-xs sm:text-sm">
                             <Link
@@ -44,7 +44,7 @@ export default function PrivacyPolicyPage({ appName = 'Point of Sale TB NUR', su
                             href="/terms-of-service"
                             className="border-b-2 border-transparent py-3 font-medium text-slate-500 hover:border-slate-300 hover:text-slate-700"
                         >
-                            Syarat dan Ketentuan
+                            Syarat &amp; Ketentuan
                         </Link>
                     </div>
                 </div>
@@ -67,32 +67,32 @@ export default function PrivacyPolicyPage({ appName = 'Point of Sale TB NUR', su
                                     1. Pendahuluan
                                 </h2>
                                 <p>
-                                    Kebijakan Privasi ini menjelaskan bagaimana {appName} (&quot;kami&quot;, &quot;aplikasi&quot;) mengumpulkan, menggunakan, menyimpan, dan melindungi informasi pribadi pengguna (&quot;Anda&quot;) saat mengakses layanan Point of Sale (POS) dan sistem manajemen inventaris melalui situs tb-nur.shop.
+                                    Kebijakan Privasi ini menjelaskan bagaimana {appName} (&quot;kami&quot;) mengumpulkan, menggunakan, dan melindungi informasi saat Anda mengakses layanan Point of Sale (POS) dan operasional toko melalui situs tb-nur.shop.
                                 </p>
                                 <p>
-                                    Kami berkomitmen untuk menjaga kerahasiaan dan keamanan data pribadi Anda sesuai dengan peraturan perundang-undangan perlindungan data yang berlaku serta kebijakan privasi layanan pihak ketiga yang terintegrasi.
+                                    Kami berkomitmen untuk menjaga privasi serta melindungi informasi pengguna sesuai dengan prinsip dan peraturan perlindungan data yang berlaku di Indonesia.
                                 </p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    2. Informasi yang Kami Kumpulkan
+                                    2. Informasi yang Dikumpulkan
                                 </h2>
                                 <p>
-                                    Kami mengumpulkan informasi yang diperlukan untuk memastikan operasional sistem kasir dan akun pengguna berjalan secara aman dan akurat:
+                                    Kami mengumpulkan informasi yang diperlukan untuk mendukung fungsi operasional dan layanan akun secara wajar:
                                 </p>
                                 <div className="space-y-2 pl-4 border-l border-slate-200">
                                     <p>
-                                        <span className="font-semibold text-slate-700">a. Data Pendaftaran Akun:</span> Nama lengkap, alamat email, nomor telepon, dan kata sandi yang dienkripsi saat Anda mendaftar secara langsung.
+                                        <span className="font-semibold text-slate-700">a. Informasi Akun:</span> Nama, alamat email, nomor telepon, dan data autentikasi yang Anda berikan saat pendaftaran atau pengelolaan akun.
                                     </p>
                                     <p>
-                                        <span className="font-semibold text-slate-700">b. Data Akun Google (Google OAuth):</span> Ketika Anda masuk menggunakan tombol Masuk dengan Google, kami menerima identitas profil dasar dari Google Identity Services yang mencakup nama lengkap, alamat email terverifikasi, dan tautan foto profil publik Anda.
+                                        <span className="font-semibold text-slate-700">b. Informasi Masuk Pihak Ketiga:</span> Apabila Anda menggunakan opsi masuk melalui akun pihak ketiga (seperti Google), kami menerima informasi profil dasar (nama, alamat email terverifikasi, dan foto profil) yang Anda setujui untuk proses verifikasi identitas.
                                     </p>
                                     <p>
-                                        <span className="font-semibold text-slate-700">c. Data Operasional &amp; Transaksi:</span> Pencatatan transaksi penjualan, pembaruan stok material bangunan, data pelanggan/supplier toko, dan log aktivitas kasir yang dilakukan di dalam sistem POS.
+                                        <span className="font-semibold text-slate-700">c. Data Operasional:</span> Informasi pencatatan transaksi toko, inventaris, dan data terkait aktivitas kasir yang dimasukkan dalam operasional harian.
                                     </p>
                                     <p>
-                                        <span className="font-semibold text-slate-700">d. Data Teknis &amp; Log Perangkat:</span> Alamat IP, jenis peramban web (browser), sistem operasi, dan waktu akses untuk keperluan audit keamanan dan kestabilan sistem.
+                                        <span className="font-semibold text-slate-700">d. Informasi Teknis Umum:</span> Informasi standar perangkat dan peramban (browser) yang umum terekam saat mengakses situs guna memastikan ketersediaan dan kestabilan layanan.
                                     </p>
                                 </div>
                             </section>
@@ -102,97 +102,92 @@ export default function PrivacyPolicyPage({ appName = 'Point of Sale TB NUR', su
                                     3. Penggunaan Informasi
                                 </h2>
                                 <p>
-                                    Informasi yang kami kumpulkan digunakan secara eksklusif untuk tujuan-tujuan berikut:
+                                    Informasi yang dikumpulkan digunakan secara wajar untuk keperluan berikut:
                                 </p>
                                 <div className="space-y-2 pl-4 border-l border-slate-200">
                                     <p>
-                                        <span className="font-semibold text-slate-700">a. Autentikasi Pengguna:</span> Memverifikasi identitas Anda saat login ke sistem dan mencegah akses yang tidak sah.
+                                        <span className="font-semibold text-slate-700">a. Pengelolaan Layanan:</span> Memfasilitasi akses akun, fitur kasir, dan fungsi operasional toko.
                                     </p>
                                     <p>
-                                        <span className="font-semibold text-slate-700">b. Manajemen Hak Akses:</span> Menentukan peran pengguna (seperti Kasir, Admin, atau Pemilik Toko) agar fitur POS dan laporan keuangan terlindungi sesuai wewenang.
+                                        <span className="font-semibold text-slate-700">b. Pemrosesan Data:</span> Mendukung keakuratan pencatatan transaksi dan pelaporan operasional toko.
                                     </p>
                                     <p>
-                                        <span className="font-semibold text-slate-700">c. Audit dan Riwayat Transaksi:</span> Menautkan setiap transaksi kasir dan mutasi inventaris dengan akun petugas yang bertanggung jawab.
-                                    </p>
-                                    <p>
-                                        <span className="font-semibold text-slate-700">d. Komunikasi Sistem:</span> Mengirimkan pemberitahuan penting terkait keamanan, reset kata sandi, atau pembaruan operasional sistem POS.
+                                        <span className="font-semibold text-slate-700">c. Komunikasi &amp; Dukungan:</span> Mengirimkan pemberitahuan penting terkait akun serta merespons permohonan bantuan dari pengguna.
                                     </p>
                                 </div>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    4. Kepatuhan Kebijakan Data Pengguna Google API
+                                    4. Kepatuhan Kebijakan Data Pengguna Google
                                 </h2>
                                 <p>
-                                    Penggunaan dan transfer informasi yang diterima oleh {appName} dari Google API ke aplikasi lain akan sepenuhnya mematuhi 
+                                    Penggunaan informasi yang diterima oleh {appName} dari Google API tunduk pada{' '}
                                     <a
                                         href="https://developers.google.com/terms/api-services-user-data-policy"
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="font-medium text-slate-800 underline ml-1 hover:text-slate-950"
+                                        className="font-medium text-slate-800 underline hover:text-slate-950"
                                     >
                                         Kebijakan Data Pengguna Layanan Google API (Google API Services User Data Policy)
-                                    </a>, termasuk persyaratan Penggunaan Terbatas (Limited Use requirements).
+                                    </a>
+                                    , termasuk kepatuhan terhadap ketentuan Penggunaan Terbatas (Limited Use).
                                 </p>
                                 <p>
-                                    Kami hanya meminta cakupan profil dasar (Google Profile &amp; Email) yang mutlak diperlukan untuk otentikasi akun dan tidak meminta akses ke file Google Drive, kontak pribadi, atau data sensitif Google lainnya.
-                                </p>
-                            </section>
-
-                            <section className="space-y-3">
-                                <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    5. Pembagian dan Pengungkapan Data
-                                </h2>
-                                <p>
-                                    Kami menjunjung tinggi privasi Anda. Kami <span className="font-semibold text-slate-700">tidak menjual, menyewakan, memperdagangkan, atau membagikan</span> informasi pribadi maupun data akun Google Anda kepada pihak ketiga atau pengiklan mana pun.
-                                </p>
-                                <p>
-                                    Data hanya dapat diungkapkan jika diwajibkan secara sah oleh peraturan hukum yang berlaku di Republik Indonesia atas permintaan resmi dari aparat penegak hukum.
+                                    Kami hanya mengakses informasi profil dasar yang diperlukan untuk keperluan masuk pengguna dan tidak meminta akses ke berkas atau data pribadi lain di luar kebutuhan tersebut.
                                 </p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    6. Keamanan &amp; Penyimpanan Data
+                                    5. Perlindungan dan Pembagian Informasi
                                 </h2>
                                 <p>
-                                    Semua data ditransmisikan menggunakan protokol enkripsi standar industri HTTPS/TLS. Kata sandi akun disimpan dalam bentuk hash yang aman (tidak dapat dibaca dalam bentuk teks biasa). Akses ke basis data server dilindungi dengan otentikasi berlapis dan hanya dapat diakses oleh administrator sistem yang berwenang.
+                                    Kami menghargai privasi pengguna. Kami <span className="font-semibold text-slate-700">tidak menjual, menyewakan, atau membagikan</span> informasi pribadi pengguna kepada pihak ketiga atau pengiklan.
+                                </p>
+                                <p>
+                                    Informasi hanya dapat dibuka apabila diwajibkan secara sah oleh peraturan perundang-undangan yang berlaku atas permintaan resmi dari pihak berwenang.
                                 </p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    7. Retensi dan Penghapusan Data (Data Deletion)
+                                    6. Keamanan Data
                                 </h2>
                                 <p>
-                                    Kami menyimpan data akun selama akun Anda berstatus aktif dalam sistem {appName}.
-                                </p>
-                                <p>
-                                    Jika Anda ingin menghapus akun Anda beserta seluruh data pribadi yang tersimpan, Anda dapat mengirimkan permohonan penghapusan data secara tertulis ke email dukungan kami di <span className="font-semibold text-slate-800">{supportEmail}</span>. Kami akan memproses verifikasi dan menghapus data akun dalam waktu maksimal 7 hari kerja.
+                                    Kami menerapkan langkah-langkah pengamanan teknis dan organisasional yang wajar dan sesuai standar industri guna melindungi informasi pengguna dari akses tanpa hak, pengubahan, kehilangan, atau pengungkapan yang tidak sah.
                                 </p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    8. Perubahan Kebijakan Privasi
+                                    7. Penyimpanan dan Penghapusan Data
                                 </h2>
                                 <p>
-                                    Kami dapat memperbarui Kebijakan Privasi ini sewaktu-waktu untuk menyesuaikan perkembangan fitur layanan atau kepatuhan regulasi hukum. Tanggal pembaruan terakhir akan selalu dicantumkan di bagian atas halaman ini.
+                                    Informasi akun disimpan selama akun aktif dan digunakan untuk kebutuhan operasional layanan. Pengguna berhak mengajukan permohonan pembaruan atau penghapusan data akun dengan menghubungi alamat email dukungan kami.
+                                </p>
+                            </section>
+
+                            <section className="space-y-3">
+                                <h2 className="text-sm sm:text-base font-semibold text-slate-800">
+                                    8. Perubahan Kebijakan
+                                </h2>
+                                <p>
+                                    Kebijakan Privasi ini dapat ditinjau dan diperbarui sewaktu-waktu sesuai perkembangan layanan. Setiap perubahan akan dicantumkan pada halaman ini dengan tanggal pembaruan terbaru.
                                 </p>
                             </section>
 
                             <section className="space-y-3 border-t border-slate-200 pt-6">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    9. Kontak dan Layanan Dukungan
+                                    9. Kontak dan Layanan Bantuan
                                 </h2>
                                 <p>
-                                    Apabila Anda memiliki pertanyaan, keluhan, atau permohonan terkait Kebijakan Privasi dan pengelolaan data Anda, silakan hubungi kami melalui:
+                                    Apabila Anda memiliki pertanyaan terkait Kebijakan Privasi ini, silakan hubungi kami melalui:
                                 </p>
                                 <div className="text-slate-700 space-y-1">
-                                    <p><span className="font-semibold">Aplikasi:</span> {appName}</p>
+                                    <p><span className="font-semibold">Layanan:</span> {appName}</p>
                                     <p><span className="font-semibold">Domain:</span> tb-nur.shop</p>
-                                    <p><span className="font-semibold">Email Dukungan:</span> <a href={`mailto:${supportEmail}`} className="text-slate-900 underline">{supportEmail}</a></p>
+                                    <p><span className="font-semibold">Email:</span> <a href={`mailto:${supportEmail}`} className="text-slate-900 underline">{supportEmail}</a></p>
                                 </div>
                             </section>
                         </div>

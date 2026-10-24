@@ -987,6 +987,7 @@ class WorkspaceBackendResourceApiTest extends TestCase
             'primary_account_id' => $kasAcc->id,
             'tax_id' => $tax->id,
             'document_number' => 'UMP.2026.07.0001',
+            'reference_number' => 'REF-UMP-001',
             'entry_date' => '2026-07-07',
             'subtotal' => 1000.00,
             'tax_total' => 110.00,

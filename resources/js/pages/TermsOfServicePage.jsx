@@ -1,24 +1,24 @@
 import { Head, Link } from '@inertiajs/react';
+import BrandMark from '@/features/auth/components/BrandMark';
 
-export default function TermsOfServicePage({ appName = 'Point of Sale TB NUR', supportEmail = 'zakiram4dhan@gmail.com', lastUpdated = '19 September 2026' }) {
+export default function TermsOfServicePage({
+    appName = 'TB Nur POS',
+    supportEmail = 'support@tb-nur.shop',
+    lastUpdated = '24 September 2026',
+}) {
     return (
         <>
-            <Head title={`Syarat dan Ketentuan - ${appName}`} />
+            <Head title={`Syarat dan Ketentuan - ${appName}`}>
+                <meta name="robots" content="noindex, follow" />
+            </Head>
 
             <div className="min-h-screen bg-slate-50 text-slate-700">
                 {/* Header Nav */}
                 <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur-sm">
                     <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3 sm:px-6">
-                        <div className="flex items-center gap-3">
-                            <img
-                                src="/assets/images/logo%20tb%20nur%20new.svg"
-                                alt="Logo TB Nur"
-                                className="h-7 w-auto"
-                            />
-                            <span className="text-sm font-semibold text-slate-800 tracking-tight">
-                                {appName}
-                            </span>
-                        </div>
+                        <Link href="/login" className="flex items-center">
+                            <BrandMark variant="decorative" />
+                        </Link>
 
                         <div className="flex items-center gap-4 text-xs sm:text-sm">
                             <Link
@@ -44,7 +44,7 @@ export default function TermsOfServicePage({ appName = 'Point of Sale TB NUR', s
                             href="/terms-of-service"
                             className="border-b-2 border-slate-900 py-3 font-semibold text-slate-900"
                         >
-                            Syarat dan Ketentuan
+                            Syarat &amp; Ketentuan
                         </Link>
                     </div>
                 </div>
@@ -64,58 +64,61 @@ export default function TermsOfServicePage({ appName = 'Point of Sale TB NUR', s
                         <div className="space-y-8 text-xs sm:text-sm leading-relaxed text-slate-600">
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    1. Penerimaan Ketentuan
+                                    1. Ketentuan Umum
                                 </h2>
                                 <p>
-                                    Dengan mengakses atau menggunakan sistem {appName} (&quot;Layanan&quot;) yang beroperasi di tb-nur.shop, Anda menyatakan telah membaca, memahami, dan menyetujui untuk terikat oleh Syarat dan Ketentuan ini. Jika Anda tidak menyetujui bagian mana pun dari ketentuan ini, Anda tidak diperkenankan menggunakan Layanan kami.
+                                    Dengan mengakses atau menggunakan sistem {appName} (&quot;Layanan&quot;) pada situs tb-nur.shop, Anda menyatakan telah membaca, memahami, dan menyetujui untuk terikat oleh Syarat dan Ketentuan ini. Apabila Anda tidak menyetujui ketentuan ini, mohon untuk tidak menggunakan Layanan.
                                 </p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    2. Deskripsi Layanan
+                                    2. Ruang Lingkup Layanan
                                 </h2>
                                 <p>
-                                    {appName} adalah platform digital yang ditujukan untuk pengelolaan kasir (Point of Sale), manajemen inventaris bahan bangunan, pencatatan transaksi penjualan/pembelian, serta administrasi toko TB Nur.
+                                    {appName} menyediakan sistem pencatatan operasional kasir (Point of Sale), pengelolaan persediaan bahan bangunan, serta administrasi data pendukung usaha toko TB Nur.
                                 </p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    3. Akun dan Keamanan Kredensial
+                                    3. Akun dan Tanggung Jawab Pengguna
                                 </h2>
                                 <p>
-                                    Untuk menggunakan Layanan, Anda dapat didaftarkan oleh administrator atau mendaftar secara mandiri melalui email atau akun Google.
+                                    Penggunaan Layanan memerlukan akun pengguna yang sah:
                                 </p>
                                 <div className="space-y-2 pl-4 border-l border-slate-200">
                                     <p>
-                                        <span className="font-semibold text-slate-700">a. Kerahasiaan Kredensial:</span> Anda bertanggung jawab penuh untuk menjaga kerahasiaan kata sandi dan sesi login akun Anda.
+                                        <span className="font-semibold text-slate-700">a. Kerahasiaan Akun:</span> Anda bertanggung jawab penuh untuk menjaga kerahasiaan informasi masuk akun Anda.
                                     </p>
                                     <p>
-                                        <span className="font-semibold text-slate-700">b. Tanggung Jawab Aktivitas:</span> Semua transaksi kasir, perubahan stok, dan manipulasi data yang terjadi di bawah akun Anda menjadi tanggung jawab pemilik akun.
+                                        <span className="font-semibold text-slate-700">b. Tanggung Jawab Aktivitas:</span> Segala pencatatan transaksi dan aktivitas yang berlangsung di bawah akun Anda merupakan tanggung jawab pemilik akun.
                                     </p>
                                     <p>
-                                        <span className="font-semibold text-slate-700">c. Notifikasi Akses Ilegal:</span> Anda wajib segera memberitahukan kepada administrator apabila mencurigai adanya penggunaan akun tanpa izin.
+                                        <span className="font-semibold text-slate-700">c. Pelaporan:</span> Harap segera memberitahukan kepada pihak pengelola apabila terdapat indikasi penyalahgunaan akun tanpa izin.
                                     </p>
                                 </div>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    4. Kewajiban &amp; Batasan Penggunaan
+                                    4. Ketentuan Penggunaan yang Wajar
                                 </h2>
                                 <p>
-                                    Dalam menggunakan {appName}, Anda dilarang untuk:
+                                    Dalam menggunakan Layanan, pengguna sepakat untuk tidak:
                                 </p>
                                 <div className="space-y-2 pl-4 border-l border-slate-200">
                                     <p>
-                                        <span className="font-semibold text-slate-700">a.</span> Memasukkan data transaksi fiktif atau data palsu yang merugikan operasional toko.
+                                        <span className="font-semibold text-slate-700">a.</span> Menggunakan Layanan untuk tujuan yang bertentangan dengan hukum yang berlaku atau merugikan pihak lain.
                                     </p>
                                     <p>
-                                        <span className="font-semibold text-slate-700">b.</span> Mencoba merusak integritas sistem, melakukan penetrasi ilegal, atau membobol otentikasi sistem.
+                                        <span className="font-semibold text-slate-700">b.</span> Memasukkan informasi atau data pencatatan yang tidak benar atau menyesatkan.
                                     </p>
                                     <p>
-                                        <span className="font-semibold text-slate-700">c.</span> Menyalahgunakan integrasi Google OAuth atau mengeksploitasi celah API.
+                                        <span className="font-semibold text-slate-700">c.</span> Melakukan tindakan yang dapat mengganggu kestabilan, kelancaran, atau integritas sistem Layanan.
+                                    </p>
+                                    <p>
+                                        <span className="font-semibold text-slate-700">d.</span> Mengakses bagian Layanan di luar batas wewenang atau hak akses yang telah ditentukan.
                                     </p>
                                 </div>
                             </section>
@@ -125,7 +128,7 @@ export default function TermsOfServicePage({ appName = 'Point of Sale TB NUR', s
                                     5. Hak Kekayaan Intelektual
                                 </h2>
                                 <p>
-                                    Seluruh kode sumber, desain grafis, logo, antarmuka pengguna, dan dokumentasi {appName} merupakan hak kekayaan intelektual milik pengembang dan pengelola TB Nur. Pengguna tidak diperkenankan menyalin, memodifikasi, mendistribusikan ulang, atau merekayasa balik (reverse engineer) bagian mana pun dari perangkat lunak ini tanpa izin tertulis.
+                                    Seluruh desain, merek, logo, materi tampilan, dan hak cipta yang terdapat dalam Layanan merupakan hak milik pengelola {appName}. Pengguna dilarang menyalin, mengubah, atau memperbanyak bagian mana pun dari Layanan tanpa izin tertulis sebelumnya.
                                 </p>
                             </section>
 
@@ -134,16 +137,16 @@ export default function TermsOfServicePage({ appName = 'Point of Sale TB NUR', s
                                     6. Batasan Tanggung Jawab
                                 </h2>
                                 <p>
-                                    Layanan ini disediakan sebagaimana adanya (&quot;as is&quot;). Kami terus berupaya menjaga keandalan dan ketersediaan sistem, namun kami tidak bertanggung jawab atas kerugian tidak langsung atau kehilangan data akibat gangguan jaringan internet pengguna atau kelalaian pengelolaan kredensial akun.
+                                    Layanan disediakan sebagaimana adanya (&quot;as is&quot;). Pengelola berupaya sewajarnya untuk menjaga kelancaran operasional sistem, namun tidak bertanggung jawab atas kerugian tidak langsung yang timbul akibat kendala koneksi internet pengguna atau kelalaian dalam menjaga keamanan informasi akun.
                                 </p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    7. Penghentian Layanan
+                                    7. Penangguhan dan Penghentian Layanan
                                 </h2>
                                 <p>
-                                    Kami berhak untuk menangguhkan atau menghentikan akses akun Anda ke Layanan setiap saat apabila ditemukan indikasi pelanggaran terhadap Syarat dan Ketentuan ini atau penyalahgunaan hak akses operasional.
+                                    Pengelola berhak menonaktifkan atau membatasi akses akun pengguna apabila ditemukan pelanggaran terhadap ketentuan dalam dokumen ini atau hal yang dapat merugikan keberlangsungan operasional toko.
                                 </p>
                             </section>
 
@@ -152,19 +155,19 @@ export default function TermsOfServicePage({ appName = 'Point of Sale TB NUR', s
                                     8. Hukum yang Berlaku
                                 </h2>
                                 <p>
-                                    Syarat dan Ketentuan ini diatur dan ditafsirkan sesuai dengan hukum yang berlaku di Negara Kesatuan Republik Indonesia.
+                                    Syarat dan Ketentuan ini diatur dan ditafsirkan sesuai dengan ketentuan hukum yang berlaku di Negara Kesatuan Republik Indonesia.
                                 </p>
                             </section>
 
                             <section className="space-y-3 border-t border-slate-200 pt-6">
                                 <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-                                    9. Pertanyaan dan Bantuan
+                                    9. Pertanyaan dan Layanan Bantuan
                                 </h2>
                                 <p>
-                                    Jika Anda memiliki pertanyaan mengenai Syarat dan Ketentuan Layanan ini, silakan hubungi tim kami di:
+                                    Jika Anda memiliki pertanyaan mengenai Syarat dan Ketentuan ini, silakan hubungi tim kami di:
                                 </p>
                                 <div className="text-slate-700 space-y-1">
-                                    <p><span className="font-semibold">Aplikasi:</span> {appName}</p>
+                                    <p><span className="font-semibold">Layanan:</span> {appName}</p>
                                     <p><span className="font-semibold">Domain:</span> tb-nur.shop</p>
                                     <p><span className="font-semibold">Email:</span> <a href={`mailto:${supportEmail}`} className="text-slate-900 underline">{supportEmail}</a></p>
                                 </div>
