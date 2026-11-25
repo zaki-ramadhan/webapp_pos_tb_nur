@@ -5,6 +5,7 @@ namespace App\Domain\Inventory\Services;
 use App\Domain\Catalog\Models\Product;
 use App\Domain\Inventory\Models\InventoryBatch;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class InventoryCostingService
 {
@@ -56,6 +57,19 @@ class InventoryCostingService
      * Kurangi stok menggunakan metode FIFO.
      */
     public function consumeStock(
+        int $productId,
+        int $warehouseId,
+        float $qty,
+        Carbon $entryDate
+    ): array {
+        if (! DB::transactionLevel()) {
+            return DB::transaction(fn () => $this->executeConsumeStock($productId, $warehouseId, $qty, $entryDate));
+        }
+
+        return $this->executeConsumeStock($productId, $warehouseId, $qty, $entryDate);
+    }
+
+    protected function executeConsumeStock(
         int $productId,
         int $warehouseId,
         float $qty,
@@ -116,6 +130,16 @@ class InventoryCostingService
      * Batalkan konsumsi stok.
      */
     public function revertStockConsumption(array $consumptions): void
+    {
+        if (! DB::transactionLevel()) {
+            DB::transaction(fn () => $this->executeRevertStockConsumption($consumptions));
+            return;
+        }
+
+        $this->executeRevertStockConsumption($consumptions);
+    }
+
+    protected function executeRevertStockConsumption(array $consumptions): void
     {
         foreach ($consumptions as $consumption) {
             $batchId = $consumption['batch_id'] ?? null;

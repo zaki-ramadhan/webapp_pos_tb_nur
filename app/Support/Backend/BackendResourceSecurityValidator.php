@@ -33,6 +33,11 @@ class BackendResourceSecurityValidator
                 if (! in_array((int) $payload['branch_id'], $allowedBranchIds, true)) {
                     throw new AuthorizationException('Anda tidak memiliki hak akses untuk mengelola data pada cabang ini.');
                 }
+            } else {
+                $defaultBranchId = \App\Domain\Organization\Models\Branch::query()->where('is_active', true)->orderBy('id')->value('id');
+                if ($defaultBranchId && (int) $payload['branch_id'] !== (int) $defaultBranchId) {
+                    throw new AuthorizationException('Anda hanya berwenang mengelola data pada cabang utama.');
+                }
             }
         }
     }

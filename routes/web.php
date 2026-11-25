@@ -31,7 +31,11 @@ Route::get('/robots.txt', function () {
 });
 
 Route::get('/favicon.ico', function () {
-    return redirect('/assets/images/logo%20tb%20nur%20new.svg', 301);
+    $path = public_path('favicon.ico');
+    if (! file_exists($path)) {
+        abort(404);
+    }
+    return response()->file($path, ['Content-Type' => 'image/x-icon']);
 });
 
 Route::get('/templates/Template_Penyesuaian_Persediaan.xlsx', function () {
@@ -53,15 +57,19 @@ Route::get('/kebijakan-privasi', fn () => redirect()->route('privacy-policy'));
 Route::get('/ketentuan-layanan', fn () => redirect()->route('terms-of-service'));
 
 Route::get('/preview-error/{status?}', function (\Illuminate\Http\Request $request, $status = 404) {
+    $user = $request->user();
+    $isDevOrAdmin = config('app.env') !== 'production'
+        || ($user && method_exists($user, 'isSystemAdmin') && $user->isSystemAdmin());
+
+    if (! $isDevOrAdmin) {
+        abort(404);
+    }
+
     $allowed = [400, 401, 403, 404, 405, 409, 419, 429, 500, 503];
     $code = (int) $status;
     if (! in_array($code, $allowed, true)) {
         $code = 404;
     }
-
-    $user = $request->user();
-    $isDevOrAdmin = config('app.env') !== 'production'
-        || ($user && method_exists($user, 'isSystemAdmin') && $user->isSystemAdmin());
 
     $errorId = 'ERR-' . strtoupper(substr(md5(microtime() . $code), 0, 6));
 

@@ -326,6 +326,11 @@ class BackendResourceAccessService
                 if (! in_array((int) $record->branch_id, $allowedBranchIds, true)) {
                     return false;
                 }
+            } else {
+                $defaultBranchId = \App\Domain\Organization\Models\Branch::query()->where('is_active', true)->orderBy('id')->value('id');
+                if ($defaultBranchId && (int) $record->branch_id !== (int) $defaultBranchId) {
+                    return false;
+                }
             }
         }
 

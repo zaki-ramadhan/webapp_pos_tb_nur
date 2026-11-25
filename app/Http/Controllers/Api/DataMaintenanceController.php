@@ -18,6 +18,10 @@ class DataMaintenanceController extends Controller
      */
     protected function authorizeAdmin(Request $request): User
     {
+        if (app()->isProduction()) {
+            abort(403, 'Akses ditolak. Fitur pemeliharaan data dinonaktifkan pada lingkungan produksi demi keamanan data.');
+        }
+
         $user = $request->user();
         if (! $user || (! $user->isSystemAdmin() && ! $user->isOwner())) {
             abort(403, 'Akses ditolak. Fitur pemeliharaan data hanya dapat diakses oleh Administrator Sistem.');

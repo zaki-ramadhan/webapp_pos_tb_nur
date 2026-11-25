@@ -198,7 +198,7 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api', \App\Http\M
 |--------------------------------------------------------------------------
 */
 Route::prefix('v1')->group(function (): void {
-    Route::post('/auth/login', [\App\Http\Controllers\Api\V1\MobileAuthController::class, 'login'])->middleware('throttle:60,1');
+    Route::post('/auth/login', [\App\Http\Controllers\Api\V1\MobileAuthController::class, 'login'])->middleware('throttle:5,1');
 
     Route::middleware(['auth:sanctum', 'throttle:api', \App\Http\Middleware\EnsureUserHasStoreAccess::class])->group(function (): void {
         Route::get('/auth/me', [\App\Http\Controllers\Api\V1\MobileAuthController::class, 'me']);

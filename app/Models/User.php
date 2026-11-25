@@ -91,46 +91,39 @@ class User extends Authenticatable
     }
 
     /**
-     * Daftar email pengembang / Administrator Sistem.
-     *
-     * @var list<string>
+     * @return list<string>
      */
-    public const DEVELOPER_EMAILS = [
-        'piscokpiscok2610@gmail.com',
-        'zakiram4dhan@gmail.com',
-    ];
-
-    /**
-     * Daftar email pemilik toko (Owner).
-     *
-     * @var list<string>
-     */
-    public const OWNER_EMAILS = [
-        'nurhayati.karya@gmail.com',
-    ];
-
     public static function getDeveloperEmails(): array
     {
         $configured = env('DEVELOPER_EMAILS');
         if ($configured) {
             $parsed = array_filter(array_map('trim', explode(',', strtolower($configured))));
             if (!empty($parsed)) {
-                return array_values(array_unique(array_merge($parsed, self::DEVELOPER_EMAILS)));
+                return array_values(array_unique($parsed));
             }
         }
-        return self::DEVELOPER_EMAILS;
+
+        return app()->environment(['local', 'testing'])
+            ? ['piscokpiscok2610@gmail.com', 'zakiram4dhan@gmail.com']
+            : [];
     }
 
+    /**
+     * @return list<string>
+     */
     public static function getOwnerEmails(): array
     {
         $configured = env('OWNER_EMAILS');
         if ($configured) {
             $parsed = array_filter(array_map('trim', explode(',', strtolower($configured))));
             if (!empty($parsed)) {
-                return array_values(array_unique(array_merge($parsed, self::OWNER_EMAILS)));
+                return array_values(array_unique($parsed));
             }
         }
-        return self::OWNER_EMAILS;
+
+        return app()->environment(['local', 'testing'])
+            ? ['nurhayati.karya@gmail.com']
+            : [];
     }
 
     /**

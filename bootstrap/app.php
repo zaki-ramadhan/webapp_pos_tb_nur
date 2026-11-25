@@ -23,7 +23,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->trustProxies(at: '*');
+        $trustedProxies = env('TRUSTED_PROXIES');
+        if ($trustedProxies === '*') {
+            $middleware->trustProxies(at: '*');
+        } elseif (! empty($trustedProxies)) {
+            $middleware->trustProxies(at: array_map('trim', explode(',', $trustedProxies)));
+        }
+
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route('dashboard'));
 

@@ -100,7 +100,9 @@ class GoogleLoginController extends Controller
             }
 
             $guzzleClient = new \GuzzleHttp\Client($guzzleOptions);
-            $driver->setHttpClient($guzzleClient);
+            if (method_exists($driver, 'setHttpClient')) {
+                $driver->setHttpClient($guzzleClient);
+            }
 
             /** @var OAuthUser $oauthUser */
             $oauthUser = $driver->user();
@@ -250,7 +252,8 @@ class GoogleLoginController extends Controller
         $user = User::query()->create($attributes);
 
         try {
-            $isOwner = in_array(strtolower($email), ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true);
+            $privilegedList = array_merge(User::getDeveloperEmails(), User::getOwnerEmails());
+            $isOwner = in_array(strtolower($email), $privilegedList, true);
             if ($isOwner) {
                 $role = \App\Domain\Identity\Models\Role::where('code', 'super_admin')->first();
                 if ($role) {
@@ -316,7 +319,8 @@ class GoogleLoginController extends Controller
 
         try {
             $email = strtolower((string) $user->email);
-            $isOwner = in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true);
+            $privilegedList = array_merge(User::getDeveloperEmails(), User::getOwnerEmails());
+            $isOwner = in_array($email, $privilegedList, true);
 
             if ($isOwner) {
                 $role = \App\Domain\Identity\Models\Role::where('code', 'super_admin')->first();

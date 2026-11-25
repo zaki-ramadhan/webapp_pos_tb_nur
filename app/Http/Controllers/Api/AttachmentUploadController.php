@@ -29,10 +29,10 @@ class AttachmentUploadController extends Controller
             $sanitizedBaseName = trim(substr($sanitizedBaseName, 0, 100)) ?: 'attachment';
             $originalName = "{$sanitizedBaseName}.{$ext}";
 
-            $mimeType = $file->getClientMimeType() ?: 'application/octet-stream';
+            $mimeType = $file->getMimeType() ?: ($file->getClientMimeType() ?: 'application/octet-stream');
             $fileSize = $file->getSize();
 
-            $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'jfif', 'pjpeg', 'pjp', 'bmp', 'avif']) 
+            $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'jfif', 'pjpeg', 'pjp', 'bmp', 'avif'], true) 
                 || str_starts_with($mimeType, 'image/');
 
             $filePath = null;
@@ -71,8 +71,12 @@ class AttachmentUploadController extends Controller
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::error('Upload failed: ' . $e->getMessage());
 
+            $clientMessage = app()->isProduction()
+                ? 'Terjadi kendala saat memproses unggahan berkas.'
+                : 'Gagal mengunggah berkas: ' . $e->getMessage();
+
             return response()->json([
-                'message' => 'Gagal mengunggah berkas: ' . $e->getMessage(),
+                'message' => $clientMessage,
             ], 500);
         }
     }
@@ -82,7 +86,7 @@ class AttachmentUploadController extends Controller
      */
     private function compressAndSaveToWebp($file, string $targetFolder, int $maxWidth = 1600, int $quality = 80): ?array
     {
-        $mime = $file->getClientMimeType();
+        $mime = $file->getMimeType() ?: $file->getClientMimeType();
         $sourcePath = $file->getRealPath();
 
         $srcImage = null;

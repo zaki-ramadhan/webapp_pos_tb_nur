@@ -263,6 +263,7 @@ class BackendResourceWriter
                     $grossSubtotal = 0.0;
                     $discountTotal = 0.0;
                     $taxTotal = 0.0;
+                    $priceWarnings = [];
 
                     foreach ($payload['lines'] as &$line) {
                         if (empty($line['product_id']) && !empty($line['reference_code'])) {
@@ -288,8 +289,29 @@ class BackendResourceWriter
 
                         $grossSubtotal += $lineGross;
                         $discountTotal += $discount;
+
+                        if (in_array($blueprint->key, ['sales-invoices', 'sales-orders'], true) && !empty($line['product_id'])) {
+                            $checkProd = isset($prod) && $prod?->id === (int) $line['product_id']
+                                ? $prod
+                                : \App\Domain\Catalog\Models\Product::find($line['product_id']);
+                            if ($checkProd && (float) ($checkProd->default_purchase_price ?? 0) > 0 && $price < (float) $checkProd->default_purchase_price) {
+                                $priceWarnings[] = [
+                                    'product_id' => $checkProd->id,
+                                    'product_name' => $checkProd->name,
+                                    'unit_price' => $price,
+                                    'cost_price' => (float) $checkProd->default_purchase_price,
+                                ];
+                            }
+                        }
                     }
                     unset($line);
+
+                    if (!empty($priceWarnings)) {
+                        $meta = (array) ($payload['metadata'] ?? []);
+                        $meta['price_warnings'] = $priceWarnings;
+                        $payload['metadata'] = $meta;
+                        \Illuminate\Support\Facades\Log::warning("Peringatan Harga Jual di Bawah HPP pada {$blueprint->key} oleh user ID " . (auth()->id() ?? 'system'));
+                    }
 
                     $taxId = $payload['tax_id'] ?? null;
                     $taxRate = 0.0;

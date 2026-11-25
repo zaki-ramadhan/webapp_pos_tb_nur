@@ -22,20 +22,22 @@ class GeneralJournalSyncService
      */
     public function syncAll(bool $cleanOldDummy = true): array
     {
-        if ($cleanOldDummy) {
-            $this->cleanOldDummyJournals();
-        }
+        return DB::transaction(function () use ($cleanOldDummy): array {
+            if ($cleanOldDummy) {
+                $this->cleanOldDummyJournals();
+            }
 
-        $postedCount = $this->syncOperationalTransactions();
-        $adjustmentCount = $this->seedManualAdjustments();
-        $this->ensureDocumentUsers();
-        $syncedLogs = $this->syncJournalActivityLogs();
+            $postedCount = $this->syncOperationalTransactions();
+            $adjustmentCount = $this->seedManualAdjustments();
+            $this->ensureDocumentUsers();
+            $syncedLogs = $this->syncJournalActivityLogs();
 
-        return [
-            'posted_transactions' => $postedCount,
-            'manual_adjustments' => $adjustmentCount,
-            'synced_activity_logs' => $syncedLogs,
-        ];
+            return [
+                'posted_transactions' => $postedCount,
+                'manual_adjustments' => $adjustmentCount,
+                'synced_activity_logs' => $syncedLogs,
+            ];
+        });
     }
 
     /**
@@ -100,7 +102,7 @@ class GeneralJournalSyncService
     {
         $branchId = DB::table('branches')->value('id') ?? 1;
         $warehouseId = DB::table('warehouses')->value('id') ?? 1;
-        $userAdminId = DB::table('users')->where('email', 'piscokpiscok2610@gmail.com')->value('id')
+        $userAdminId = DB::table('users')->whereIn('email', \App\Models\User::getDeveloperEmails())->value('id')
             ?? DB::table('users')->value('id');
 
         $accBebanPenyKendaraan = DB::table('accounts')->where('code', '612.001-02')->value('id') ?? DB::table('accounts')->where('code', '610202')->value('id');
@@ -394,7 +396,7 @@ class GeneralJournalSyncService
      */
     protected function ensureDocumentUsers(): void
     {
-        $userAdminId = DB::table('users')->where('email', 'piscokpiscok2610@gmail.com')->value('id')
+        $userAdminId = DB::table('users')->whereIn('email', \App\Models\User::getDeveloperEmails())->value('id')
             ?? DB::table('users')->value('id');
 
         $missingUserDocs = DB::table('operation_documents')
@@ -451,7 +453,7 @@ class GeneralJournalSyncService
             : collect();
 
         $users = DB::table('users')->get()->keyBy('id');
-        $adminUser = DB::table('users')->where('email', 'piscokpiscok2610@gmail.com')->first()
+        $adminUser = DB::table('users')->whereIn('email', \App\Models\User::getDeveloperEmails())->first()
             ?? DB::table('users')->first();
 
         $accounts = DB::table('accounts')->get()->keyBy('id');
@@ -520,8 +522,8 @@ class GeneralJournalSyncService
             }
 
             $actor = $users->get($userId) ?? $adminUser;
-            $actorName = $actor->name ?? 'Zaki Ramadhan';
-            $actorEmail = $actor->email ?? 'piscokpiscok2610@gmail.com';
+            $actorName = $actor->name ?? 'Administrator';
+            $actorEmail = $actor->email ?? ($adminUser->email ?? 'admin@tb-nur.shop');
 
             $linesPayload = [];
             foreach ($journal->lines as $line) {

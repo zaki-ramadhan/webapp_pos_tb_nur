@@ -108,7 +108,8 @@ class BankStatementController extends Controller
         // 4. Save mutations atomically
         app(\App\Support\Backend\Queries\BankInquiryQueryService::class)->ensureBankStatementMutationsTable();
 
-        DB::transaction(function () use ($rows, $accountId, $expectedAccountNumber, $bankName, $fileName): void {
+        $insertedCount = 0;
+        DB::transaction(function () use ($rows, $accountId, $expectedAccountNumber, $bankName, $fileName, &$insertedCount): void {
             $currentBalance = 0;
             $lastMutation = BankStatementMutation::query()
                 ->where('bank_account_number', $expectedAccountNumber)
@@ -124,6 +125,21 @@ class BankStatementController extends Controller
                 $amt = abs((float) ($row['amount'] ?? 0));
                 $rawType = strtoupper(trim((string) ($row['type'] ?? 'CR')));
                 $type = in_array($rawType, ['DB', 'DEBIT', 'DEBET', 'D', 'KELUAR'], true) ? 'DB' : 'CR';
+                $transDate = ! empty($row['date']) ? date('Y-m-d', strtotime((string) $row['date'])) : now()->toDateString();
+                $desc = trim((string) ($row['description'] ?? 'Mutasi Bank'));
+
+                // Cegah duplikasi transaksi mutasi yang sama persis
+                $alreadyExists = BankStatementMutation::query()
+                    ->where('bank_account_number', $expectedAccountNumber)
+                    ->where('transaction_date', $transDate)
+                    ->where('amount', $amt)
+                    ->where('type', $type)
+                    ->where('description', $desc)
+                    ->exists();
+
+                if ($alreadyExists) {
+                    continue;
+                }
 
                 if ($type === 'CR') {
                     $currentBalance += $amt;
@@ -134,9 +150,6 @@ class BankStatementController extends Controller
                 $rowBalance = isset($row['balance']) && is_numeric($row['balance'])
                     ? (float) $row['balance']
                     : $currentBalance;
-
-                $transDate = ! empty($row['date']) ? date('Y-m-d', strtotime((string) $row['date'])) : now()->toDateString();
-                $desc = trim((string) ($row['description'] ?? 'Mutasi Bank'));
 
                 BankStatementMutation::create([
                     'account_id' => $accountId ?: null,
@@ -150,13 +163,17 @@ class BankStatementController extends Controller
                     'balance' => $rowBalance,
                     'status' => 'Unreconciled',
                 ]);
+
+                $insertedCount++;
             }
         });
 
         return response()->json([
             'success' => true,
-            'message' => 'File mutasi berhasil diimpor.',
-            'count' => count($rows),
+            'message' => $insertedCount > 0
+                ? "File mutasi berhasil diimpor ({$insertedCount} transaksi baru)."
+                : 'Semua transaksi pada berkas mutasi ini sudah tercatat sebelumnya.',
+            'count' => $insertedCount,
         ]);
     }
 

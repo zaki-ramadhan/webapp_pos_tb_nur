@@ -39,6 +39,11 @@ class BackendResourceIndexQuery
                 if ($user->branches()->exists()) {
                     $allowedBranchIds = $user->branches->pluck('id')->toArray();
                     $query->whereIn("{$tableName}.branch_id", $allowedBranchIds);
+                } else {
+                    $defaultBranchId = \App\Domain\Organization\Models\Branch::query()->where('is_active', true)->orderBy('id')->value('id');
+                    if ($defaultBranchId) {
+                        $query->where("{$tableName}.branch_id", $defaultBranchId);
+                    }
                 }
             }
         }

@@ -9,15 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 class EnsureUserHasStoreAccess
 {
     /**
-     * @var list<string>
-     */
-    protected array $privilegedEmails = [
-        'piscokpiscok2610@gmail.com',
-        'nurhayati.karya@gmail.com',
-        'zakiram4dhan@gmail.com',
-    ];
-
-    /**
      * Pastikan user yang login memiliki peran toko (Owner atau Karyawan Aktif).
      */
     public function handle(Request $request, Closure $next): Response
@@ -34,7 +25,6 @@ class EnsureUserHasStoreAccess
         $email = strtolower((string) $user->email);
 
         $privilegedEmails = array_values(array_unique(array_merge(
-            $this->privilegedEmails,
             \App\Models\User::getDeveloperEmails(),
             \App\Models\User::getOwnerEmails()
         )));

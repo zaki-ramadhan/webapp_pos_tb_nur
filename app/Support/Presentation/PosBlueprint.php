@@ -103,11 +103,11 @@ final class PosBlueprint
             'dashboard' => [
                 'headerContextLabel' => 'Workspace Aktif',
                 'user' => [
-                    'name' => 'Zaki Ramadhan',
-                    'email' => 'piscokpiscok2610@gmail.com',
-                    'role' => 'Administrator',
-                    'status' => 'active',
-                    'avatarUrl' => null,
+                    'name' => auth()->user()?->name ?? 'Pengguna',
+                    'email' => auth()->user()?->email ?? '',
+                    'role' => auth()->user()?->roles()->value('name') ?? 'Administrator',
+                    'status' => (auth()->user()?->is_active ?? true) ? 'active' : 'inactive',
+                    'avatarUrl' => auth()->user()?->google_avatar ?? null,
                 ],
                 'sample' => $selectedSample,
                 'sampleDashboard' => self::sampleDashboard($loadData, $asOfDate),
