@@ -48,7 +48,7 @@ router.on('start', () => showNavOverlay());
 router.on('finish', () => hideNavOverlay());
 
 createInertiaApp({
-    title: () => 'Toko Bangunan & Material TB Nur',
+    title: (title) => (title ? `${title} - TB Nur` : 'TB Nur POS'),
     resolve: (name) =>
         resolvePageComponent(`../pages/${name}.jsx`, import.meta.glob('../pages/**/*.jsx')),
     progress: {

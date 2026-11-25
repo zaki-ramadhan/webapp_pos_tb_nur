@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title inertia>{{ config('app.name', 'Toko Bangunan & Material TB Nur') }}</title>
+        <title inertia>{{ config('app.name', 'TB Nur POS') }}</title>
 
         <!-- Google Search Console Verification -->
         <meta name="google-site-verification" content="Hs028BUYs6Ay-vu6NwlfYy5XElxuDJIqRocvUjpq9GY" />

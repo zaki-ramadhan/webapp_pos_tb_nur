@@ -42,7 +42,10 @@ class GoogleLoginController extends Controller
         $request->session()->put('google_oauth_state', $stateToken);
         $request->session()->put('google_oauth_popup', $usePopup);
 
-        return Socialite::driver('google')
+        /** @var \Laravel\Socialite\Two\GoogleProvider $driver */
+        $driver = Socialite::driver('google');
+
+        return $driver
             ->stateless()
             ->with(['state' => $stateToken])
             ->redirect();
@@ -104,7 +107,7 @@ class GoogleLoginController extends Controller
         } catch (Throwable $exception) {
             report($exception);
 
-            $errorMsg = 'Autentikasi Google gagal: ' . $exception->getMessage();
+            $errorMsg = 'Gagal melakukan autentikasi dengan akun Google. Silakan coba beberapa saat lagi atau masuk dengan email dan password.';
 
             if ($usePopup) {
                 return $this->respondWithPopupError($errorMsg);

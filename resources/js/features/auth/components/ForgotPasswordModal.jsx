@@ -11,6 +11,8 @@ import AuthInput from '@/features/auth/components/AuthInput';
 export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
     const [step, setStep] = useState('input');
     const [submittedEmail, setSubmittedEmail] = useState('');
+    const [cooldownSeconds, setCooldownSeconds] = useState(0);
+
     const form = useForm({
         email: '',
     });
@@ -24,8 +26,20 @@ export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
         }
     }, [open]);
 
+    useEffect(() => {
+        if (cooldownSeconds <= 0) return;
+
+        const interval = setInterval(() => {
+            setCooldownSeconds((prev) => (prev > 0 ? prev - 1 : 0));
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [cooldownSeconds]);
+
     function submit(event) {
         event?.preventDefault?.();
+
+        if (cooldownSeconds > 0) return;
 
         const clientErrors = validateForgotPasswordForm(form.data);
 
@@ -39,10 +53,7 @@ export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
         let loadingToastId = null;
         let requestFailed = false;
 
-        form.transform((data) => ({
-            ...data,
-            identifier: data.email,
-        })).post('/forgot-password', {
+        form.post('/forgot-password', {
             preserveScroll: true,
             preserveState: true,
             onStart: () => {
@@ -58,9 +69,13 @@ export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
                     dismissToast(loadingToastId);
                 }
 
+                if (errors?.email && (errors.email.includes('baru saja dikirim') || errors.email.includes('tunggu'))) {
+                    setCooldownSeconds(60);
+                }
+
                 showErrorToast({
                     title: 'Permintaan gagal',
-                    message: getAuthFormMessage(errors) || getFirstInlineError(errors, ['email', 'identifier']) || 'Periksa kembali data akun yang Anda masukkan.',
+                    message: getAuthFormMessage(errors) || getFirstInlineError(errors, ['email']) || 'Periksa kembali alamat email yang Anda masukkan.',
                 });
             },
             onFinish: () => {
@@ -71,6 +86,7 @@ export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
             onSuccess: () => {
                 setSubmittedEmail(form.data.email);
                 setStep('success');
+                setCooldownSeconds(60);
             }
         });
     }
@@ -102,14 +118,17 @@ export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
                         <Button
                             type="submit"
                             form="forgot-password-form"
+                            onClick={submit}
                             variant="brand-blue"
                             size="md"
                             loading={form.processing}
                             loadingLabel="Memproses..."
-                            disabled={form.processing}
-                            className="min-w-[100px] rounded-[4px] text-xs sm:text-sm font-medium"
+                            disabled={form.processing || cooldownSeconds > 0}
+                            className="min-w-[120px] rounded-[4px] text-xs sm:text-sm font-medium"
                         >
-                            {modal?.submitLabel || 'Reset Password'}
+                            {cooldownSeconds > 0
+                                ? `Tunggu (${cooldownSeconds}s)`
+                                : (modal?.submitLabel || 'Reset Password')}
                         </Button>
                     </div>
                 ) : (
@@ -130,9 +149,9 @@ export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
             {step === 'input' ? (
                 <form id="forgot-password-form" className="space-y-4" onSubmit={submit}>
                     <AuthInput
-                        label={modal?.identifierLabel || 'Email Akun Anda'}
+                        label={modal?.emailLabel || modal?.identifierLabel || 'Email'}
                         name="email"
-                        placeholder={modal?.identifierPlaceholder || 'Masukkan alamat email Anda'}
+                        placeholder={modal?.emailPlaceholder || modal?.identifierPlaceholder || 'contoh@gmail.com'}
                         type="email"
                         autoCapitalize="none"
                         autoCorrect="off"
@@ -140,10 +159,9 @@ export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
                         value={form.data.email}
                         onChange={(event) => {
                             form.clearErrors('email');
-                            form.clearErrors('identifier');
                             form.setData('email', event.target.value);
                         }}
-                        error={form.errors.email || form.errors.identifier}
+                        error={form.errors.email}
                         required
                     />
 
@@ -152,9 +170,29 @@ export default function ForgotPasswordModal({ open, onClose, modal = {} }) {
             ) : (
                 <div className="space-y-3 py-1">
                     <p className="text-xs sm:text-sm leading-6 text-slate-700">
-                        Link verifikasi telah dikirim ke email <strong className="text-slate-900 font-semibold break-all">{submittedEmail}</strong>. Silakan periksa kotak masuk email Anda. Jika link verifikasi tidak ditemukan, mohon periksa folder spam.
+                        Jika alamat email <strong className="text-slate-900 font-semibold break-all">{submittedEmail}</strong> terdaftar di sistem, link verifikasi telah dikirimkan. Silakan periksa kotak masuk atau folder spam email Anda.
                     </p>
-                    <p className="text-xs sm:text-sm text-slate-500">
+
+                    <div className="pt-2 flex items-center justify-between text-xs sm:text-sm border-t border-slate-100">
+                        <span className="text-slate-500">Tidak menerima email?</span>
+                        <button
+                            type="button"
+                            disabled={cooldownSeconds > 0 || form.processing}
+                            onClick={() => {
+                                if (cooldownSeconds > 0) return;
+                                submit();
+                            }}
+                            className={`font-medium transition-colors ${
+                                cooldownSeconds > 0
+                                    ? 'text-slate-400 cursor-not-allowed'
+                                    : 'text-brand-blue hover:underline cursor-pointer'
+                            }`}
+                        >
+                            {cooldownSeconds > 0 ? `Kirim ulang (${cooldownSeconds}s)` : 'Kirim Ulang Link'}
+                        </button>
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-slate-500 pt-1">
                         Apabila Anda belum menerima email verifikasi, silakan hubungi tim dukungan kami di{' '}
                         <a href="mailto:support@tb-nur.shop" className="text-brand-blue hover:underline font-medium">
                             support@tb-nur.shop

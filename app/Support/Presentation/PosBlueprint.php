@@ -23,8 +23,8 @@ final class PosBlueprint
                 'forgotPassword' => 'Lupa Password?',
                 'forgotPasswordModal' => [
                     'title' => 'Lupa Password',
-                    'identifierLabel' => self::supportsUserPhone() ? 'Email atau No HP' : 'Email',
-                    'identifierPlaceholder' => self::supportsUserPhone() ? 'contoh@gmail.com atau 081234567890' : 'contoh@gmail.com',
+                    'emailLabel' => 'Email',
+                    'emailPlaceholder' => 'contoh@gmail.com',
                     'submitLabel' => 'Reset Password',
                     'closeLabel' => 'Tutup modal lupa password',
                     'successMessage' => 'Jika akun ditemukan, tautan reset password akan dikirim ke email terdaftar.',
