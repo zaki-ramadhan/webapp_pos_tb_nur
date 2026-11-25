@@ -43,9 +43,11 @@
         <meta name="twitter:image" content="{{ asset('assets/images/logo%20tb%20nur%20new.svg') }}" />
 
         <!-- Favicon -->
-        <link rel="icon" type="image/svg+xml" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
-        <link rel="apple-touch-icon" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
-        <link rel="shortcut icon" href="/assets/images/logo%20tb%20nur%20new.svg?v=1" />
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}" />
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}" />
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
 
         <!-- Structured Data (JSON-LD): WebSite (for Google Site Name) & HardwareStore (for Business Profile) -->
         <script type="application/ld+json">
@@ -124,6 +126,7 @@
         </script>
         @endif
         <x-inertia::head />
+    </head>
     <body class="bg-[var(--color-surface)] text-[var(--color-ink)] antialiased">
         <noscript>
             <div style="padding: 24px; font-family: sans-serif; max-width: 800px; margin: 0 auto;">
